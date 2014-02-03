@@ -3,7 +3,7 @@ EXECUTABLES := brix
 ARCH := linux
 
 TARGETS := $(EXECUTABLES:%=src/arch/$(ARCH)/%)
-SRC_DIRS := src src/$(ARCH) $(MODULES:%=src/%) $(MODULES:%=src/$(ARCH)/%)
+SRC_DIRS := src src/arch/$(ARCH) $(MODULES:%=src/%) $(MODULES:%=src/$(ARCH)/%)
 CFLAGS := $(SRC_DIRS:%=-I%) -g -Wall -pedantic -Wno-variadic-macros
 SOURCES := $(wildcard $(SRC_DIRS:%=%/*.c))
 OBJECTS := $(filter-out $(TARGETS:%=%.o), $(SOURCES:.c=.o))

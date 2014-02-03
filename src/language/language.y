@@ -1,10 +1,12 @@
 %{
+#define YYDEBUG 1
 int yylex(void);
 int yyerror(char *);
 %}
 
 %token FROM NETWORK FILTER GET EVERY QUEUE WINDOW EACH LOCAL PARENT RESAMPLE AT
 %token ON NEW CHANGE IDENTIFIER CONSTANT STRING_LITERAL
+%token AND_OP OR_OP EQ_OP NEQ_OP LE_OP GE_OP
 
 %start statement_list
 
@@ -51,7 +53,11 @@ expression_statement
 	
 expression
 	: conditional_expression
-	| postfix_expression '=' expression_statement 
+	| assignment_expression
+	;
+	
+assignment_expression
+	: postfix_expression '=' expression
 	;
 	
 postfix_expression
@@ -115,3 +121,13 @@ multiplicative_expression
 
 extern char yytext[];
 extern int column;
+
+int yyerror(char *error) {
+	printf("Error while parsing: %s\n", error);
+	return 0;
+}
+
+int main(int argc, char* argv[]) {
+	yydebug = 0;
+	yyparse();
+}

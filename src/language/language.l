@@ -5,7 +5,7 @@ E			[Ee][+-]?{D}+
 
 %{
 #include <stdio.h>
-#include "y.tab.c"
+#include "y.tab.h"
 
 void count_column();
 %}
@@ -49,17 +49,22 @@ void count_column();
 ":"				{ count_column(); return(':'); }
 "?"				{ count_column(); return('?'); }
 
+{D}+			{ count_column(); return(CONSTANT); }
+{D}*"."{D}+		{ count_column(); return(CONSTANT); }
+
+L?\"(\\.|[^\\"])*\"	{ count_column(); return(STRING_LITERAL); }
+
+{L}({L}|{D})*		{ count_column(); return(IDENTIFIER); }
+
 %%
 
-yywrap()
-{
+int yywrap() {
 	return(1);
 }
 
 int column = 0;
 
-void count_column()
-{
+void count_column() {
 	int i;
 
 	for (i = 0; yytext[i] != '\0'; i++)
