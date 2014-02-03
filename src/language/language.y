@@ -29,22 +29,25 @@ statement
 	
 conditional_execution_statement
 	: AT IDENTIFIER code_block
-	| ON '(' local_stream_modifier event_declaration ')' code_block
+	| ON '(' event_identifier IDENTIFIER ')' code_block
 	;
 	
-local_stream_modifier
+event_identifier
+	: event_source_modifier event_trigger_modifier IDENTIFIER
+	
+event_source_modifier
 	:
 	| LOCAL
 	;
 	
-event_declaration
-	: event_modifier IDENTIFIER IDENTIFIER
-	;
-	
-event_modifier
-	: NEW
+event_trigger_modifier
+	:
+	| NEW
 	| CHANGE
 	;
+	
+	
+
 	
 expression_statement
 	: ';'
@@ -56,8 +59,72 @@ expression
 	| assignment_expression
 	;
 	
+	
+	
+	
+query_expression
+	: node_set_descriptor_clause
+	| node_set_descriptor_clause document_stream_clause
+	;
+	
+node_set_descriptor_clause
+	: from_clause filter_clause_list
+	;
+	
+document_stream_clause
+	: get_clause selection_clause_list execution_condition_clause
+	;
+	
+get_clause
+	: GET IDENTIFIER
+	;
+	
+from_clause
+	: FROM IDENTIFIER
+	| FROM '(' query_expression ')'
+	;
+	
+filter_clause_list
+	: filter_clause
+	| filter_clause_list filter_clause
+	;
+	
+filter_clause
+	: FILTER expression
+	;
+	
+selection_clause_list
+	: selection_clause
+	| selection_clause_list selection_clause
+	;
+	
+selection_clause
+	: filter_clause
+	| get_clause
+	| WINDOW expression EACH expression
+	| QUEUE expression EACH expression
+	;
+	
+execution_condition_clause
+	:
+	| EVERY expression
+	| ON event_identifier_list
+	;
+	
+event_identifier_list
+	: event_identifier
+	| event_identifier_list event_identifier
+	;
+	
+	
+	
+	
+	
+	
+	
 assignment_expression
 	: postfix_expression '=' expression
+	| postfix_expression '=' query_expression
 	;
 	
 postfix_expression

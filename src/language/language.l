@@ -13,7 +13,6 @@ void count_column();
 %%
 
 "from"			{ count_column(); return(FROM); }
-"network"		{ count_column(); return(NETWORK); }
 "filter"		{ count_column(); return(FILTER); }
 "get"			{ count_column(); return(GET); }
 "every"			{ count_column(); return(EVERY); }
@@ -48,6 +47,7 @@ void count_column();
 "}"				{ count_column(); return('}'); }
 ":"				{ count_column(); return(':'); }
 "?"				{ count_column(); return('?'); }
+"."				{ count_column(); return('.'); }
 
 {D}+			{ count_column(); return(CONSTANT); }
 {D}*"."{D}+		{ count_column(); return(CONSTANT); }
