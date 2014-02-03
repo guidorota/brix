@@ -29,11 +29,14 @@ statement
 	
 conditional_execution_statement
 	: AT IDENTIFIER code_block
-	| ON '(' event_identifier IDENTIFIER ')' code_block
+	| AT '(' node_set_descriptor ')' code_block
+	| ON '(' event IDENTIFIER ')' code_block
 	;
 	
-event_identifier
+event
 	: event_source_modifier event_trigger_modifier IDENTIFIER
+	| event_source_modifier event_trigger_modifier '(' query_expression ')'
+	;
 	
 event_source_modifier
 	:
@@ -45,9 +48,6 @@ event_trigger_modifier
 	| NEW
 	| CHANGE
 	;
-	
-	
-
 	
 expression_statement
 	: ';'
@@ -63,12 +63,17 @@ expression
 	
 	
 query_expression
-	: node_set_descriptor_clause
-	| node_set_descriptor_clause document_stream_clause
+	: node_set_descriptor
+	| document_stream
 	;
 	
-node_set_descriptor_clause
-	: from_clause filter_clause_list
+node_set_descriptor
+	: from_clause
+	| from_clause filter_clause_list
+	;
+	
+document_stream
+	: node_set_descriptor document_stream_clause
 	;
 	
 document_stream_clause
@@ -94,7 +99,8 @@ filter_clause
 	;
 	
 selection_clause_list
-	: selection_clause
+	:
+	| selection_clause
 	| selection_clause_list selection_clause
 	;
 	
@@ -108,13 +114,15 @@ selection_clause
 execution_condition_clause
 	:
 	| EVERY expression
-	| ON event_identifier_list
+	| ON event_list
 	;
 	
-event_identifier_list
-	: event_identifier
-	| event_identifier_list event_identifier
+event_list
+	: event
+	| event_list ',' event
 	;
+	
+	
 	
 	
 	
