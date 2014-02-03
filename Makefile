@@ -1,4 +1,4 @@
-MODULES := language
+MODULES := 
 EXECUTABLES := brix
 ARCH := linux
 
@@ -7,6 +7,7 @@ SRC_DIRS := src src/arch/$(ARCH) $(MODULES:%=src/%) $(MODULES:%=src/$(ARCH)/%)
 CFLAGS := $(SRC_DIRS:%=-I%) -g -Wall -pedantic -Wno-variadic-macros
 SOURCES := $(wildcard $(SRC_DIRS:%=%/*.c))
 OBJECTS := $(filter-out $(TARGETS:%=%.o), $(SOURCES:.c=.o))
+COMPILER_DIR := src/language
 
 TEST_TARGETS := test/ha_test
 TEST_DIRS := test test/$(ARCH) $(MODULES:%=test/%) $(MODULES:%=test/$(ARCH)/%)
@@ -19,6 +20,8 @@ OUTPUT_DIR := out
 .SUFFIXES:
 .SUFFIXES: .o .c
 
+# System
+
 .PHONY: all
 all: targets
 
@@ -30,7 +33,31 @@ targets: $(TARGETS)
 .SECONDEXPANSION:
 $(TARGETS): $(OBJECTS) $$(@).o
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS) $(@).o
+
 	
+# Compiler 
+
+.PHONY: compiler
+compiler: $(COMPILER_DIR)/y.tab.o $(COMPILER_DIR)/lex.yy.o
+	gcc -o $(COMPILER_DIR)/compiler $(COMPILER_DIR)/y.tab.o $(COMPILER_DIR)/lex.yy.o
+	test -d $(OUTPUT_DIR) || mkdir $(OUTPUT_DIR)
+	mv $(COMPILER_DIR)/compiler $(OUTPUT_DIR)
+
+$(COMPILER_DIR)/y.tab.o: $(COMPILER_DIR)/y.tab.c $(COMPILER_DIR)/y.tab.h
+	gcc -c -o $(COMPILER_DIR)/y.tab.o $(COMPILER_DIR)/y.tab.c
+	
+$(COMPILER_DIR)/lex.yy.o: $(COMPILER_DIR)/lex.yy.c $(COMPILER_DIR)/y.tab.h
+	gcc -c -o $(COMPILER_DIR)/lex.yy.o $(COMPILER_DIR)/lex.yy.c
+
+$(COMPILER_DIR)/y.tab.h $(COMPILER_DIR)/y.tab.c: $(COMPILER_DIR)/language.y
+	bison -d -y -v -b $(COMPILER_DIR)/y $(COMPILER_DIR)/language.y
+	
+$(COMPILER_DIR)/lex.yy.c: $(COMPILER_DIR)/language.l
+	flex -o $(COMPILER_DIR)/lex.yy.c $(COMPILER_DIR)/language.l
+
+
+# Unit Tests	
+
 .PHONY: test
 test: $(TEST_TARGETS)
 
@@ -45,6 +72,9 @@ include $(TEST_SOURCES:.c=.d)
 %.d: %.c
 	bash depend.sh $(CC) $^ $(CFLAGS) > $@
 
+
+# Clean
+
 .PHONY: clean
 clean:
 	-rm -f $(OUTPUT_DIR)/*
@@ -53,4 +83,9 @@ clean:
 	-rm -f $(OUTPUT_DIR)
 	-rm -f $(TEST_TARGETS)
 	-rm -f $(wildcard $(TEST_DIRS:%=%/*.d) $(TEST_DIRS:%=%/*.o))
+	-rm -f $(wildcard $(COMPILER_DIR)/*.o)
+	-rm -f $(wildcard $(COMPILER_DIR)/*.c)
+	-rm -f $(wildcard $(COMPILER_DIR)/*.h)
+	-rm -f $(wildcard $(COMPILER_DIR)/*.output)
+	-rm -f $(wildcard $(COMPILER_DIR)/*.gch)
 	
