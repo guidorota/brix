@@ -8,6 +8,12 @@ int yyerror(char *);
 %token ON NEW CHANGE IDENTIFIER CONSTANT STRING_LITERAL
 %token AND_OP OR_OP EQ_OP NEQ_OP LE_OP GE_OP
 
+%union {
+   int intval;
+   float floatval;
+   char *stringval;
+} 
+
 %start statement_list
 
 %%

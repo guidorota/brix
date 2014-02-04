@@ -1,60 +1,60 @@
-D			[0-9]
-L			[a-zA-Z_]
-H			[a-fA-F0-9]
-E			[Ee][+-]?{D}+
+DIGIT		[0-9]
+LETTER		[a-zA-Z_]
+
+%top{
+	#include <stdio.h>
+	#include "y.tab.h"
+}
 
 %{
-#include <stdio.h>
-#include "y.tab.h"
-
-void count_column();
+	void count_column();
 %}
 
 %%
 
-"from"			{ count_column(); return(FROM); }
-"filter"		{ count_column(); return(FILTER); }
-"get"			{ count_column(); return(GET); }
-"every"			{ count_column(); return(EVERY); }
-"queue"			{ count_column(); return(QUEUE); }
-"window"		{ count_column(); return(WINDOW); }
-"each"			{ count_column(); return(EACH); }
-"local"			{ count_column(); return(LOCAL); }
-"parent"		{ count_column(); return(PARENT); }
-"resample"		{ count_column(); return(RESAMPLE); }
-"@"				{ count_column(); return(AT); }
-"on"			{ count_column(); return(ON); }
-"new"			{ count_column(); return(NEW); }
-"change"		{ count_column(); return(CHANGE); }
+"from"			{ count_column(); return FROM; }
+"filter"		{ count_column(); return FILTER; }
+"get"			{ count_column(); return GET; }
+"every"			{ count_column(); return EVERY; }
+"queue"			{ count_column(); return QUEUE; }
+"window"		{ count_column(); return WINDOW; }
+"each"			{ count_column(); return EACH; }
+"local"			{ count_column(); return LOCAL; }
+"parent"		{ count_column(); return PARENT; }
+"resample"		{ count_column(); return RESAMPLE; }
+"@"				{ count_column(); return AT; }
+"on"			{ count_column(); return ON; }
+"new"			{ count_column(); return NEW; }
+"change"		{ count_column(); return CHANGE; }
 
-"&&"			{ count_column(); return(AND_OP); }
-"||"			{ count_column(); return(OR_OP); }
-"=="			{ count_column(); return(EQ_OP); }
-"!="			{ count_column(); return(NEQ_OP); }
-"<="			{ count_column(); return(LE_OP); }
-">="			{ count_column(); return(GE_OP); }
-"<"				{ count_column(); return('<'); }
-"+"				{ count_column(); return('+'); }
-"-"				{ count_column(); return('-'); }
-"*"				{ count_column(); return('*'); }
-"/"				{ count_column(); return('/'); }
-"%"				{ count_column(); return('%'); }
-"="				{ count_column(); return('='); }
-";"				{ count_column(); return(';'); }
-"("				{ count_column(); return('('); }
-")"				{ count_column(); return(')'); }
-"{"				{ count_column(); return('{'); }
-"}"				{ count_column(); return('}'); }
-":"				{ count_column(); return(':'); }
-"?"				{ count_column(); return('?'); }
-"."				{ count_column(); return('.'); }
+"&&"			{ count_column(); return AND_OP; }
+"||"			{ count_column(); return OR_OP; }
+"=="			{ count_column(); return EQ_OP; }
+"!="			{ count_column(); return NEQ_OP; }
+"<="			{ count_column(); return LE_OP; }
+">="			{ count_column(); return GE_OP; }
+"<"				{ count_column(); return '<'; }
+"+"				{ count_column(); return '+'; }
+"-"				{ count_column(); return '-'; }
+"*"				{ count_column(); return '*'; }
+"/"				{ count_column(); return '/'; }
+"%"				{ count_column(); return '%'; }
+"="				{ count_column(); return '='; }
+";"				{ count_column(); return ';'; }
+"("				{ count_column(); return '('; }
+")"				{ count_column(); return ')'; }
+"{"				{ count_column(); return '{'; }
+"}"				{ count_column(); return '}'; }
+":"				{ count_column(); return ':'; }
+"?"				{ count_column(); return '?'; }
+"."				{ count_column(); return '.'; }
 
-{D}+			{ count_column(); return(CONSTANT); }
-{D}*"."{D}+		{ count_column(); return(CONSTANT); }
+{DIGIT}+				{ count_column(); yylval.intval = atoi(yytext); return CONSTANT; }
+{DIGIT}*"."{DIGIT}+		{ count_column(); yylval.floatval = atof(yytext); return CONSTANT; }
 
-L?\"(\\.|[^\\"])*\"	{ count_column(); return(STRING_LITERAL); }
+LETTER?\"(\\.|[^\\"])*\"		{ count_column(); yylval.stringval = strdup(yytext); return STRING_LITERAL; }
 
-{L}({L}|{D})*		{ count_column(); return(IDENTIFIER); }
+{LETTER}({LETTER}|{DIGIT})*		{ count_column(); yylval.stringval = strdup(yytext); return IDENTIFIER; }
 
 %%
 
