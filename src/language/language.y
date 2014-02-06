@@ -35,13 +35,11 @@ statement
 	
 conditional_execution_statement
 	: AT IDENTIFIER code_block
-	| AT '(' node_set_descriptor ')' code_block
 	| ON '(' event IDENTIFIER ')' code_block
 	;
 	
 event
 	: event_source_modifier event_trigger_modifier IDENTIFIER
-	| event_source_modifier event_trigger_modifier '(' query_expression ')'
 	;
 	
 event_source_modifier
@@ -69,21 +67,16 @@ expression
 	
 	
 query_expression
-	: node_set_descriptor
-	| document_stream
+	: subnet_expression
+	| subnet_expression document_stream_clause
 	;
 	
-node_set_descriptor
-	: from_clause
-	| from_clause filter_clause_list
-	;
-	
-document_stream
-	: node_set_descriptor document_stream_clause
+subnet_expression
+	: from_clause filter_clause_list
 	;
 	
 document_stream_clause
-	: get_clause selection_clause_list execution_condition_clause
+	: get_clause filter_clause_list window_clause execution_condition_clause
 	;
 	
 get_clause
@@ -92,11 +85,10 @@ get_clause
 	
 from_clause
 	: FROM IDENTIFIER
-	| FROM '(' query_expression ')'
 	;
 	
 filter_clause_list
-	: filter_clause
+	:
 	| filter_clause_list filter_clause
 	;
 	
@@ -104,15 +96,8 @@ filter_clause
 	: FILTER expression
 	;
 	
-selection_clause_list
+window_clause
 	:
-	| selection_clause
-	| selection_clause_list selection_clause
-	;
-	
-selection_clause
-	: filter_clause
-	| get_clause
 	| WINDOW expression EACH expression
 	| QUEUE expression EACH expression
 	;

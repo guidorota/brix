@@ -48,6 +48,7 @@ LETTER		[a-zA-Z_]
 ":"				{ count_column(); return ':'; }
 "?"				{ count_column(); return '?'; }
 "."				{ count_column(); return '.'; }
+","				{ count_column(); return ','; }
 
 {DIGIT}+				{ count_column(); yylval.intval = atoi(yytext); return CONSTANT; }
 {DIGIT}*"."{DIGIT}+		{ count_column(); yylval.floatval = atof(yytext); return CONSTANT; }
