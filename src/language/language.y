@@ -5,7 +5,7 @@ int yyerror(char *);
 %}
 
 %token FROM NETWORK FILTER GET EVERY QUEUE WINDOW EACH LOCAL PARENT RESAMPLE AT
-%token ON NEW CHANGE IDENTIFIER CONSTANT STRING_LITERAL
+%token ON NEW CHANGE IDENTIFIER CONSTANT STRING_LITERAL IF ELSE
 %token AND_OP OR_OP EQ_OP NEQ_OP LE_OP GE_OP
 
 %union {
@@ -29,9 +29,14 @@ code_block
 	;
 
 statement
-	: expression_statement
+	: selection_statement
+	| expression_statement
 	| conditional_execution_statement
 	;
+	
+selection_statement
+	: IF '(' expression ')' statement
+	| IF '(' expression ')' statement ELSE statement
 	
 conditional_execution_statement
 	: AT IDENTIFIER code_block
@@ -78,22 +83,18 @@ filtered_document_stream
 document_stream
 	: queue_clause GET IDENTIFIER
 	| subnet_expression GET IDENTIFIER
-	| from_clause GET IDENTIFIER
 	;
 	
 queue_clause
 	: subnet_expression WINDOW expression EACH expression
 	| subnet_expression QUEUE expression EACH expression
-	| from_clause WINDOW expression EACH expression
-	| from_clause QUEUE expression EACH expression
+	;
 	
 subnet_expression
-	: from_clause FILTER expression
-	;
-
-from_clause
 	: FROM IDENTIFIER
+	| FROM IDENTIFIER FILTER expression
 	| execution_condition FROM IDENTIFIER
+	| execution_condition FROM IDENTIFIER FILTER expression
 	;
 	
 execution_condition

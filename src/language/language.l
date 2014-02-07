@@ -26,6 +26,8 @@ LETTER		[a-zA-Z_]
 "on"			{ count_column(); return ON; }
 "new"			{ count_column(); return NEW; }
 "change"		{ count_column(); return CHANGE; }
+"if"			{ count_column(); return IF; }
+"else"			{ count_column(); return ELSE; }
 
 "&&"			{ count_column(); return AND_OP; }
 "||"			{ count_column(); return OR_OP; }
