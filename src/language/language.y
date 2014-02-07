@@ -66,29 +66,28 @@ expression
 	
 	
 query_expression
-	: post_get_filter_clause
-	| get_clause
-	| pre_get_filter_clause
-	| from_clause
+	: filtered_document_stream
+	| document_stream
+	| subnet_expression
 	;
 	
-post_get_filter_clause
-	: get_clause FILTER expression
+filtered_document_stream
+	: document_stream FILTER expression
 	;
 	
-get_clause
+document_stream
 	: queue_clause GET IDENTIFIER
-	| pre_get_filter_clause GET IDENTIFIER
+	| subnet_expression GET IDENTIFIER
 	| from_clause GET IDENTIFIER
 	;
 	
 queue_clause
-	: pre_get_filter_clause WINDOW expression EACH expression
-	| pre_get_filter_clause QUEUE expression EACH expression
+	: subnet_expression WINDOW expression EACH expression
+	| subnet_expression QUEUE expression EACH expression
 	| from_clause WINDOW expression EACH expression
 	| from_clause QUEUE expression EACH expression
 	
-pre_get_filter_clause
+subnet_expression
 	: from_clause FILTER expression
 	;
 
