@@ -35,11 +35,11 @@ statement
 	
 conditional_execution_statement
 	: AT IDENTIFIER code_block
-	| ON '(' event IDENTIFIER ')' code_block
+	| ON event_descriptor code_block
 	;
 	
-event
-	: event_source_modifier event_trigger_modifier IDENTIFIER
+event_descriptor
+	: event_source_modifier event_trigger_modifier IDENTIFIER IDENTIFIER
 	;
 	
 event_source_modifier
@@ -98,7 +98,7 @@ from_clause
 	
 execution_condition
 	: EVERY expression
-	| ON event
+	| ON event_descriptor
 	;
 	
 
