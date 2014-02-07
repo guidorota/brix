@@ -65,59 +65,44 @@ expression
 	
 	
 	
-	
 query_expression
-	: subnet_expression
-	| subnet_expression document_stream_clause
+	: post_get_filter_clause
+	| get_clause
+	| pre_get_filter_clause
+	| from_clause
 	;
 	
-subnet_expression
-	: from_clause filter_clause_list
-	;
-	
-document_stream_clause
-	: get_clause filter_clause_list window_clause execution_condition_clause
+post_get_filter_clause
+	: get_clause FILTER expression
 	;
 	
 get_clause
-	: GET IDENTIFIER
+	: queue_clause GET IDENTIFIER
+	| pre_get_filter_clause GET IDENTIFIER
+	| from_clause GET IDENTIFIER
 	;
 	
+queue_clause
+	: pre_get_filter_clause WINDOW expression EACH expression
+	| pre_get_filter_clause QUEUE expression EACH expression
+	| from_clause WINDOW expression EACH expression
+	| from_clause QUEUE expression EACH expression
+	
+pre_get_filter_clause
+	: from_clause FILTER expression
+	;
+
 from_clause
 	: FROM IDENTIFIER
+	| execution_condition FROM IDENTIFIER
 	;
 	
-filter_clause_list
-	:
-	| filter_clause_list filter_clause
+execution_condition
+	: EVERY expression
+	| ON event
 	;
 	
-filter_clause
-	: FILTER expression
-	;
-	
-window_clause
-	:
-	| WINDOW expression EACH expression
-	| QUEUE expression EACH expression
-	;
-	
-execution_condition_clause
-	:
-	| EVERY expression
-	| ON event_list
-	;
-	
-event_list
-	: event
-	| event_list ',' event
-	;
-	
-	
-	
-	
-	
-	
+
 	
 	
 	
