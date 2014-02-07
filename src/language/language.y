@@ -112,8 +112,8 @@ assignment_expression
 	
 postfix_expression
 	: primary_expression
-	| primary_expression '[' expression ']'
-	| primary_expression '.' IDENTIFIER
+	| postfix_expression '[' expression ']'
+	| postfix_expression '.' IDENTIFIER
 	;
 	
 primary_expression
