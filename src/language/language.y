@@ -39,12 +39,12 @@ selection_statement
 	| IF '(' expression ')' statement ELSE statement
 	
 conditional_execution_statement
-	: AT IDENTIFIER code_block
+	: AT expression code_block
 	| ON event_descriptor code_block
 	;
 	
 event_descriptor
-	: event_source_modifier event_trigger_modifier IDENTIFIER IDENTIFIER
+	: event_source_modifier event_trigger_modifier expression IDENTIFIER
 	;
 	
 event_source_modifier
@@ -66,9 +66,8 @@ expression_statement
 expression
 	: conditional_expression
 	| assignment_expression
+	| query_expression
 	;
-	
-	
 	
 query_expression
 	: filtered_document_stream
@@ -108,7 +107,6 @@ execution_condition
 	
 assignment_expression
 	: postfix_expression '=' expression
-	| postfix_expression '=' query_expression
 	;
 	
 postfix_expression
