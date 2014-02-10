@@ -12,7 +12,7 @@ int yyerror(char *);
    int intval;
    float floatval;
    char *stringval;
-} 
+}
 
 %start statement_list
 
@@ -32,16 +32,16 @@ statement
 	: selection_statement
 	| expression_statement
 	| conditional_execution_statement
-	| query_expression
 	;
 	
 selection_statement
-	: IF '(' expression ')' statement
-	| IF '(' expression ')' statement ELSE statement
+	: IF '(' expression ')' code_block
+	| IF '(' expression ')' code_block ELSE code_block
 	
 conditional_execution_statement
 	: AT expression code_block
 	| ON event_descriptor code_block
+	| EVERY expression code_block
 	;
 	
 event_descriptor
@@ -67,44 +67,39 @@ expression_statement
 expression
 	: conditional_expression
 	| assignment_expression
+	| query_expression
 	;
 	
-	
-
-
 query_expression
-	: post_filter_clause
+	: subnet_expression
+	| subnet_expression document_stream
 	;
 	
-post_filter_clause
-	: window_clause
-	| window_clause FILTER expression
+document_stream
+	: windowed_document_stream
+	| ON event_descriptor windowed_document_stream
+	| EVERY conditional_expression windowed_document_stream
+	;
+	
+windowed_document_stream
+	: basic_document_stream
+	| WINDOW conditional_expression EACH conditional_expression basic_document_stream
+	| QUEUE conditional_expression EACH conditional_expression basic_document_stream
+	;
+	
+basic_document_stream
+	: GET IDENTIFIER
+	| GET IDENTIFIER FILTER conditional_expression
+	;
+	
+subnet_expression
+	: FROM conditional_expression
+	| FROM conditional_expression FILTER conditional_expression
 	;
 
-window_clause
-	: get_clause
-	| WINDOW expression EACH expression get_clause
-	| QUEUE expression EACH expression get_clause
-	;
 	
-get_clause
-	: subnet_expression_clause
-	| subnet_expression_clause GET IDENTIFIER
-	;
-	
-subnet_expression_clause
-	: from_clause 
-	| from_clause FILTER expression
-	;
-	
-from_clause
-	: FROM basic_query_expression
-	;
-	
-basic_query_expression
-	: '(' query_expression ')'
-	| IDENTIFIER
-	;
+
+
 
 	
 	
