@@ -32,6 +32,7 @@ statement
 	: selection_statement
 	| expression_statement
 	| conditional_execution_statement
+	| query_expression
 	;
 	
 selection_statement
@@ -66,44 +67,48 @@ expression_statement
 expression
 	: conditional_expression
 	| assignment_expression
-	| query_expression
 	;
 	
+	
+
+
 query_expression
-	: filtered_document_stream
-	| document_stream
-	| subnet_expression
+	: post_filter_clause
 	;
 	
-filtered_document_stream
-	: document_stream FILTER expression
+post_filter_clause
+	: window_clause
+	| window_clause FILTER expression
+	;
+
+window_clause
+	: get_clause
+	| WINDOW expression EACH expression get_clause
+	| QUEUE expression EACH expression get_clause
 	;
 	
-document_stream
-	: queue_clause GET IDENTIFIER
-	| subnet_expression GET IDENTIFIER
+get_clause
+	: subnet_expression_clause
+	| subnet_expression_clause GET IDENTIFIER
 	;
 	
-queue_clause
-	: subnet_expression WINDOW expression EACH expression
-	| subnet_expression QUEUE expression EACH expression
+subnet_expression_clause
+	: from_clause 
+	| from_clause FILTER expression
 	;
 	
-subnet_expression
-	: FROM IDENTIFIER
-	| FROM IDENTIFIER FILTER expression
-	| execution_condition FROM IDENTIFIER
-	| execution_condition FROM IDENTIFIER FILTER expression
+from_clause
+	: FROM basic_query_expression
 	;
 	
-execution_condition
-	: EVERY expression
-	| ON event_descriptor
+basic_query_expression
+	: '(' query_expression ')'
+	| IDENTIFIER
 	;
-	
 
 	
 	
+
 	
 assignment_expression
 	: postfix_expression '=' expression
