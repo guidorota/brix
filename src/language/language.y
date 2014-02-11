@@ -4,8 +4,8 @@ int yylex(void);
 int yyerror(char *);
 %}
 
-%token FROM NETWORK FILTER GET EVERY QUEUE WINDOW EACH LOCAL PARENT RESAMPLE AT
-%token ON NEW CHANGE IDENTIFIER CONSTANT STRING_LITERAL IF ELSE
+%token FROM NETWORK FILTER GET EVERY QUEUE WINDOW EACH LOCAL PARENT AT
+%token ON NEW CHANGE IDENTIFIER CONSTANT STRING_LITERAL IF ELSE ALLOW RESAMPLE 
 %token AND_OP OR_OP EQ_OP NEQ_OP LE_OP GE_OP
 
 %union {
@@ -78,7 +78,12 @@ query_expression
 document_stream
 	: windowed_document_stream
 	| ON event_descriptor windowed_document_stream
-	| EVERY conditional_expression windowed_document_stream
+	| EVERY conditional_expression resample_modifier windowed_document_stream
+	;
+	
+resample_modifier
+	:
+	| ALLOW RESAMPLE
 	;
 	
 windowed_document_stream

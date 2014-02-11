@@ -28,6 +28,8 @@ LETTER		[a-zA-Z_]
 "change"		{ count_column(); return CHANGE; }
 "if"			{ count_column(); return IF; }
 "else"			{ count_column(); return ELSE; }
+"allow"			{ count_column(); return ALLOW; }
+"resample"		{ count_column(); return RESAMPLE; }
 
 "&&"			{ count_column(); return AND_OP; }
 "||"			{ count_column(); return OR_OP; }
