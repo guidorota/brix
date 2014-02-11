@@ -21,7 +21,6 @@ LETTER		[a-zA-Z_]
 "each"			{ count_column(); return EACH; }
 "local"			{ count_column(); return LOCAL; }
 "parent"		{ count_column(); return PARENT; }
-"resample"		{ count_column(); return RESAMPLE; }
 "@"				{ count_column(); return AT; }
 "on"			{ count_column(); return ON; }
 "new"			{ count_column(); return NEW; }

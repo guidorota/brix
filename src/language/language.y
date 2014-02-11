@@ -35,8 +35,9 @@ statement
 	;
 	
 selection_statement
-	: IF '(' expression ')' code_block
-	| IF '(' expression ')' code_block ELSE code_block
+	: IF '(' expression ')' statement
+	| IF '(' expression ')' statement ELSE statement
+	;
 	
 conditional_execution_statement
 	: AT expression code_block
@@ -45,10 +46,10 @@ conditional_execution_statement
 	;
 	
 event_descriptor
-	: event_source_modifier event_trigger_modifier expression IDENTIFIER
+	: source_modifier event_trigger_modifier expression IDENTIFIER
 	;
 	
-event_source_modifier
+source_modifier
 	:
 	| LOCAL
 	;
@@ -68,6 +69,11 @@ expression
 	: conditional_expression
 	| assignment_expression
 	| query_expression
+	| resample_expression
+	;
+	
+resample_expression
+	: RESAMPLE source_modifier IDENTIFIER EVERY expression
 	;
 	
 query_expression
