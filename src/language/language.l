@@ -29,6 +29,7 @@ LETTER		[a-zA-Z_]
 "else"			{ count_column(); return ELSE; }
 "allow"			{ count_column(); return ALLOW; }
 "resample"		{ count_column(); return RESAMPLE; }
+"document"		{ count_column(); return DOCUMENT; }
 
 "&&"			{ count_column(); return AND_OP; }
 "||"			{ count_column(); return OR_OP; }
