@@ -7,7 +7,7 @@ SRC_DIRS := src src/arch/$(ARCH) $(MODULES:%=src/%) $(MODULES:%=src/$(ARCH)/%)
 CFLAGS := $(SRC_DIRS:%=-I%) -g -Wall -pedantic -Wno-variadic-macros
 SOURCES := $(wildcard $(SRC_DIRS:%=%/*.c))
 OBJECTS := $(filter-out $(TARGETS:%=%.o), $(SOURCES:.c=.o))
-COMPILER_DIR := src/language
+COMPILER_DIR := src/compiler
 
 TEST_TARGETS := test/ha_test
 TEST_DIRS := test test/$(ARCH) $(MODULES:%=test/%) $(MODULES:%=test/$(ARCH)/%)
@@ -38,10 +38,13 @@ $(TARGETS): $(OBJECTS) $$(@).o
 # Compiler 
 
 .PHONY: compiler
-compiler: $(COMPILER_DIR)/y.tab.o $(COMPILER_DIR)/lex.yy.o
-	gcc -o $(COMPILER_DIR)/compiler $(COMPILER_DIR)/y.tab.o $(COMPILER_DIR)/lex.yy.o
+compiler: $(COMPILER_DIR)/compiler.o $(COMPILER_DIR)/y.tab.o $(COMPILER_DIR)/lex.yy.o
+	gcc -o $(COMPILER_DIR)/compiler $(COMPILER_DIR)/compiler.o $(COMPILER_DIR)/y.tab.o $(COMPILER_DIR)/lex.yy.o
 	test -d $(OUTPUT_DIR) || mkdir $(OUTPUT_DIR)
 	mv $(COMPILER_DIR)/compiler $(OUTPUT_DIR)
+
+$(COMPILER_DIR)/compiler.o: $(COMPILER_DIR)/compiler.c
+	gcc -c -o $(COMPILER_DIR)/compiler.o $(COMPILER_DIR)/compiler.c
 
 $(COMPILER_DIR)/y.tab.o: $(COMPILER_DIR)/y.tab.c $(COMPILER_DIR)/y.tab.h
 	gcc -c -o $(COMPILER_DIR)/y.tab.o $(COMPILER_DIR)/y.tab.c
@@ -84,7 +87,8 @@ clean:
 	-rm -f $(TEST_TARGETS)
 	-rm -f $(wildcard $(TEST_DIRS:%=%/*.d) $(TEST_DIRS:%=%/*.o))
 	-rm -f $(wildcard $(COMPILER_DIR)/*.o)
-	-rm -f $(wildcard $(COMPILER_DIR)/*.c)
+	-rm -f $(COMPILER_DIR)/y.tab.c
+	-rm -f $(COMPILER_DIR)/lex.yy.c
 	-rm -f $(wildcard $(COMPILER_DIR)/*.h)
 	-rm -f $(wildcard $(COMPILER_DIR)/*.output)
 	-rm -f $(wildcard $(COMPILER_DIR)/*.gch)

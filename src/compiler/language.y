@@ -249,8 +249,3 @@ int yyerror(char *error) {
 	printf("Error while parsing: %s\n", error);
 	return 0;
 }
-
-int main(int argc, char* argv[]) {
-	yydebug = 0;
-	yyparse();
-}
