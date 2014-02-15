@@ -29,7 +29,17 @@ LETTER		[a-zA-Z_]
 "else"			{ count_column(); return ELSE; }
 "allow"			{ count_column(); return ALLOW; }
 "resample"		{ count_column(); return RESAMPLE; }
+"do"			{ count_column(); return DO; }
+"while"			{ count_column(); return WHILE; }
+"for"			{ count_column(); return FOR; }
+
 "document"		{ count_column(); return DOCUMENT; }
+"int"			{ count_column(); return INT; }
+"float"			{ count_column(); return FLOAT; }
+"bool"			{ count_column(); return BOOL; }
+"string"		{ count_column(); return STRING; }
+"stream"		{ count_column(); return STREAM; }
+"subnet"		{ count_column(); return SUBNET; }
 
 "&&"			{ count_column(); return AND_OP; }
 "||"			{ count_column(); return OR_OP; }

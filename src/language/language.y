@@ -6,7 +6,8 @@ int yyerror(char *);
 
 %token FROM NETWORK FILTER GET EVERY QUEUE WINDOW EACH LOCAL PARENT AT DOCUMENT
 %token ON NEW CHANGE IDENTIFIER CONSTANT STRING_LITERAL IF ELSE ALLOW RESAMPLE 
-%token AND_OP OR_OP EQ_OP NEQ_OP LE_OP GE_OP
+%token DO WHILE FOR AND_OP OR_OP EQ_OP NEQ_OP LE_OP GE_OP
+%token INT FLOAT BOOL STRING STREAM SUBNET
 
 %union {
    int intval;
@@ -29,9 +30,32 @@ code_block
 	;
 
 statement
-	: selection_statement
+	: declaration_statement
+	| selection_statement
+	| iteration_statement
 	| expression_statement
 	| conditional_execution_statement
+	;
+	
+declaration_statement
+	: type_specifier IDENTIFIER ';'
+	| type_specifier IDENTIFIER '=' expression ';'
+	;
+	
+type_specifier
+	: INT
+	| FLOAT
+	| BOOL
+	| STRING
+	| STREAM
+	| SUBNET
+	;
+	
+iteration_statement
+	: WHILE '(' expression ')' statement
+	| DO statement WHILE '(' expression ')' ';'
+	| FOR '(' expression_statement expression_statement ')' statement
+	| FOR '(' expression_statement expression_statement expression ')' statement
 	;
 	
 selection_statement
@@ -99,13 +123,28 @@ windowed_document_stream
 	;
 	
 basic_document_stream
-	: GET IDENTIFIER
-	| GET IDENTIFIER FILTER conditional_expression
+	: GET document_definition
+	| GET document_definition FILTER conditional_expression
 	;
 	
 subnet_expression
 	: FROM conditional_expression
 	| FROM conditional_expression FILTER conditional_expression
+	;
+
+document_definition
+	: DOCUMENT '{' document_field_list '}'
+	;
+	
+document_field_list
+	: document_field
+	| document_field_list ',' document_field
+	;
+	
+document_field
+	: IDENTIFIER
+	| IDENTIFIER ':' expression
+	| IDENTIFIER ':' document_definition
 	;
 
 assignment_expression
