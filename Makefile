@@ -23,7 +23,7 @@ OUTPUT_DIR := out
 # System
 
 .PHONY: all
-all: targets
+all: targets compiler
 
 .PHONY: targets
 targets: $(TARGETS)
