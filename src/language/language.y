@@ -123,8 +123,8 @@ windowed_document_stream
 	;
 	
 basic_document_stream
-	: GET document_definition
-	| GET document_definition FILTER conditional_expression
+	: GET document_structure_definition
+	| GET document_structure_definition FILTER conditional_expression
 	;
 	
 subnet_expression
@@ -132,7 +132,7 @@ subnet_expression
 	| FROM conditional_expression FILTER conditional_expression
 	;
 
-document_definition
+document_structure_definition
 	: DOCUMENT '{' document_field_list '}'
 	;
 	
@@ -142,9 +142,9 @@ document_field_list
 	;
 	
 document_field
-	: IDENTIFIER
-	| IDENTIFIER ':' expression
-	| IDENTIFIER ':' document_definition
+	: type_specifier IDENTIFIER
+	| type_specifier IDENTIFIER ':' expression
+	| type_specifier IDENTIFIER ':' document_definition
 	;
 
 assignment_expression
