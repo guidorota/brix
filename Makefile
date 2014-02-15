@@ -9,7 +9,7 @@ SOURCES := $(wildcard $(SRC_DIRS:%=%/*.c))
 OBJECTS := $(filter-out $(TARGETS:%=%.o), $(SOURCES:.c=.o))
 COMPILER_DIR := src/compiler
 
-TEST_TARGETS := test/ha_test
+TEST_TARGETS := test/test
 TEST_DIRS := test test/$(ARCH) $(MODULES:%=test/%) $(MODULES:%=test/$(ARCH)/%)
 TEST_SOURCES := $(wildcard $(TEST_DIRS:%=%/*.c))
 TEST_OBJECTS := $(filter-out $(TEST_TARGETS:%=%.o), $(TEST_SOURCES:.c=.o))
@@ -23,7 +23,7 @@ OUTPUT_DIR := out
 # System
 
 .PHONY: all
-all: targets compiler
+all: targets
 
 .PHONY: targets
 targets: $(TARGETS)
@@ -39,18 +39,18 @@ $(TARGETS): $(OBJECTS) $$(@).o
 
 .PHONY: compiler
 compiler: $(COMPILER_DIR)/compiler.o $(COMPILER_DIR)/y.tab.o $(COMPILER_DIR)/lex.yy.o
-	gcc -o $(COMPILER_DIR)/compiler $(COMPILER_DIR)/compiler.o $(COMPILER_DIR)/y.tab.o $(COMPILER_DIR)/lex.yy.o
+	$(CC) -o $(COMPILER_DIR)/compiler $(COMPILER_DIR)/compiler.o $(COMPILER_DIR)/y.tab.o $(COMPILER_DIR)/lex.yy.o
 	test -d $(OUTPUT_DIR) || mkdir $(OUTPUT_DIR)
-	mv $(COMPILER_DIR)/compiler $(OUTPUT_DIR)
+	mv $(COMPILER_DIR)/compiler $(OUTPUT_DIR)/bxc
 
 $(COMPILER_DIR)/compiler.o: $(COMPILER_DIR)/compiler.c
-	gcc -c -o $(COMPILER_DIR)/compiler.o $(COMPILER_DIR)/compiler.c
+	$(CC) -c -o $(COMPILER_DIR)/compiler.o $(COMPILER_DIR)/compiler.c
 
 $(COMPILER_DIR)/y.tab.o: $(COMPILER_DIR)/y.tab.c $(COMPILER_DIR)/y.tab.h
-	gcc -c -o $(COMPILER_DIR)/y.tab.o $(COMPILER_DIR)/y.tab.c
+	$(CC) -c -o $(COMPILER_DIR)/y.tab.o $(COMPILER_DIR)/y.tab.c
 	
 $(COMPILER_DIR)/lex.yy.o: $(COMPILER_DIR)/lex.yy.c $(COMPILER_DIR)/y.tab.h
-	gcc -c -o $(COMPILER_DIR)/lex.yy.o $(COMPILER_DIR)/lex.yy.c
+	$(CC) -c -o $(COMPILER_DIR)/lex.yy.o $(COMPILER_DIR)/lex.yy.c
 
 $(COMPILER_DIR)/y.tab.h $(COMPILER_DIR)/y.tab.c: $(COMPILER_DIR)/language.y
 	bison -d -y -v -b $(COMPILER_DIR)/y $(COMPILER_DIR)/language.y
@@ -62,12 +62,23 @@ $(COMPILER_DIR)/lex.yy.c: $(COMPILER_DIR)/language.l
 # Unit Tests	
 
 .PHONY: test
-test: $(TEST_TARGETS)
+test: $(TEST_TARGETS) 
 
 .SECONDEXPANSION:
 $(TEST_TARGETS): $(TEST_OBJECTS) $(OBJECTS) $$(@).o
 	$(CC) $(TEST_CFLAGS) -o $@ $(TEST_OBJECTS) $(OBJECTS) $(@).o `pkg-config --cflags --libs check`
 	./$(@)
+	
+.PHONY: test_compiler
+test_compiler: test/compiler/test_compiler
+
+test/compiler/test_compiler: test/compiler/test_compiler.o $(COMPILER_DIR)/y.tab.o $(COMPILER_DIR)/lex.yy.o
+	$(CC) -o $(@) test/compiler/test_compiler.o $(COMPILER_DIR)/y.tab.o $(COMPILER_DIR)/lex.yy.o `pkg-config --cflags --libs check`
+	./$(@)
+	
+test/compiler/test_compiler.o: test/compiler/test_compiler.c
+	$(CC) -c -o $(@) test/compiler/test_compiler.c
+	
 	
 include $(SOURCES:.c=.d)
 include $(TEST_SOURCES:.c=.d)
@@ -86,10 +97,13 @@ clean:
 	-rm -f $(OUTPUT_DIR)
 	-rm -f $(TEST_TARGETS)
 	-rm -f $(wildcard $(TEST_DIRS:%=%/*.d) $(TEST_DIRS:%=%/*.o))
+	# Clean compiler
 	-rm -f $(wildcard $(COMPILER_DIR)/*.o)
 	-rm -f $(COMPILER_DIR)/y.tab.c
 	-rm -f $(COMPILER_DIR)/lex.yy.c
 	-rm -f $(wildcard $(COMPILER_DIR)/*.h)
 	-rm -f $(wildcard $(COMPILER_DIR)/*.output)
 	-rm -f $(wildcard $(COMPILER_DIR)/*.gch)
+	-rm -f test/compiler/test_compiler.o
+	-rm -f test/compiler/test_compiler
 	

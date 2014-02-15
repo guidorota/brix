@@ -37,7 +37,7 @@ int main(void) {
 	SRunner *runner = srunner_create(NULL);
 
 	srunner_set_fork_status(runner, CK_NOFORK);
-	srunner_add_suite(runner, ha_types_create_suite());
+	srunner_add_suite(runner, compiler_create_suite());
 
 	srunner_run_all(runner, CK_VERBOSE);
 	number_failed = srunner_ntests_failed(runner);

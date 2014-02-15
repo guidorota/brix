@@ -30,6 +30,35 @@
  *
  */
 
+#include <stdio.h>
+#include <check.h>
 
+//extern int yyparse();
+//extern FILE *yyin;
 
+START_TEST (basic_expressions) {
+	ck_assert_int_eq(3, 3);
+} END_TEST
 
+Suite *compiler_create_suite(void) {
+	Suite *suite = suite_create("compiler");
+	TCase *tcase;
+
+	tcase = tcase_create("basic_expressions");
+	tcase_add_test(tcase, basic_expressions);
+	suite_add_tcase(suite, tcase);
+
+	return suite;
+}
+
+int main(void) {
+	int number_failed = 0;
+	SRunner *runner = srunner_create(NULL);
+
+	srunner_set_fork_status(runner, CK_NOFORK);
+	srunner_add_suite(runner, compiler_create_suite());
+
+	srunner_run_all(runner, CK_VERBOSE);
+	number_failed = srunner_ntests_failed(runner);
+	return (number_failed == 0) ? 0 : -1;
+}
