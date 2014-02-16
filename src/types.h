@@ -38,6 +38,18 @@
 #define TYPE_BOOLEAN_FALSE 0
 #define TYPE_BOOLEAN_TRUE 1
 
-typedef uint8_t boolean;
+typedef uint8_t bx_bool;
+
+typedef int8_t bx_int8;
+typedef int16_t bx_int16;
+typedef int32_t bx_int32;
+typedef int64_t bx_int64;
+
+typedef uint8_t bx_uint8;
+typedef uint16_t bx_uint16;
+typedef uint32_t bx_uint32;
+typedef uint64_t bx_uint64;
+
+typedef size_t bx_size;
 
 #endif /* TYPES_H_ */

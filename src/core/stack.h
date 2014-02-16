@@ -34,8 +34,8 @@
 
 #include "types.h"
 
-#define BS_STACK_PUSH_VARIABLE(stack_pointer, variable) stack_push(stack_pointer, &variable, sizeof variable)
-#define BX_STACK_POP_VARIABLE(stack_pointer, variable) stack_pop(stack_pointer, &variable, sizeof variable)
+#define BX_STACK_PUSH_VARIABLE(stack_pointer, variable) bx_stack_push(stack_pointer, &variable, sizeof variable)
+#define BX_STACK_POP_VARIABLE(stack_pointer, variable) bx_stack_pop(stack_pointer, &variable, sizeof variable)
 
 struct bx_stack {
 	void *stack;
@@ -43,10 +43,10 @@ struct bx_stack {
 	size_t size;
 };
 
-int8_t bx_stack_setup(struct bx_stack *stack, void *byte_array, size_t stack_size);
+bx_int8 bx_stack_setup(struct bx_stack *stack, void *byte_array, bx_size stack_size);
 
-int8_t bx_stack_push(struct bx_stack *stack, void *variable, size_t size);
+bx_int8 bx_stack_push(struct bx_stack *stack, void *variable, bx_size size);
 
-int8_t bx_stack_pop(struct bx_stack *stack, void *variable, size_t size);
+bx_int8 bx_stack_pop(struct bx_stack *stack, void *variable, bx_size size);
 
 #endif /* STACK_H_ */

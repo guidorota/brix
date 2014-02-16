@@ -37,13 +37,13 @@
 #define STACK_SIZE 4
 
 struct bx_stack test_stack;
-uint8_t byte_array[STACK_SIZE];
+bx_int8 byte_array[STACK_SIZE];
 
-uint8_t byte_var = 12;
-uint32_t int_value = 987364758;
+bx_int8 byte_var = 12;
+bx_int32 int_value = 987364758;
 
 START_TEST (create_stack) {
-	int error;
+	bx_int8 error;
 
 	error = bx_stack_setup(&test_stack, (void *) byte_array, STACK_SIZE);
 
@@ -54,10 +54,10 @@ START_TEST (create_stack) {
 } END_TEST
 
 START_TEST (empty_stack_pop) {
-	int error;
-	uint8_t popped_byte;
-	size_t prior_stack_top = test_stack.top;
-	uint8_t stack_copy[STACK_SIZE];
+	bx_int8 error;
+	bx_int8 popped_byte;
+	bx_size prior_stack_top = test_stack.top;
+	bx_int8 stack_copy[STACK_SIZE];
 	memcpy((void *) stack_copy, test_stack.stack, STACK_SIZE);
 
 	error = bx_stack_pop(&test_stack, &popped_byte, sizeof popped_byte);
@@ -67,9 +67,9 @@ START_TEST (empty_stack_pop) {
 } END_TEST
 
 START_TEST (push_pop_byte) {
-	int error;
-	size_t prior_stack_top;
-	uint8_t popped_byte;
+	bx_int8 error;
+	bx_size prior_stack_top;
+	bx_int8 popped_byte;
 
 	prior_stack_top = test_stack.top;
 	error = bx_stack_push(&test_stack, &byte_var, sizeof byte_var);
@@ -84,9 +84,9 @@ START_TEST (push_pop_byte) {
 } END_TEST
 
 START_TEST (push_pop_4_bytes) {
-	int error;
-	size_t prior_stack_top;
-	uint32_t popped_int;
+	bx_int8 error;
+	bx_size prior_stack_top;
+	bx_int32 popped_int;
 
 	prior_stack_top = test_stack.top;
 	error = bx_stack_push(&test_stack, &int_value, sizeof int_value);
@@ -101,26 +101,26 @@ START_TEST (push_pop_4_bytes) {
 } END_TEST
 
 START_TEST (push_pop_macro) {
-	int error;
-	size_t prior_stack_top;
-	uint32_t popped_int;
+	bx_int8 error;
+	bx_size prior_stack_top;
+	bx_int32 popped_int;
 
 	prior_stack_top = test_stack.top;
-	error = STACK_PUSH_VARIABLE(&test_stack, int_value);
+	error = BX_STACK_PUSH_VARIABLE(&test_stack, int_value);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(test_stack.top, prior_stack_top + sizeof int_value);
 
 	prior_stack_top = test_stack.top;
-	error = STACK_POP_VARIABLE(&test_stack, popped_int);
+	error = BX_STACK_POP_VARIABLE(&test_stack, popped_int);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(test_stack.top, prior_stack_top - sizeof int_value);
 	ck_assert_int_eq(int_value, popped_int);
 } END_TEST
 
 START_TEST (full_stack_push) {
-	int error;
-	size_t prior_stack_top;
-	uint8_t stack_copy[STACK_SIZE];
+	bx_int8 error;
+	bx_size prior_stack_top;
+	bx_int8 stack_copy[STACK_SIZE];
 
 	prior_stack_top = test_stack.top;
 	error = bx_stack_push(&test_stack, &int_value, sizeof int_value);

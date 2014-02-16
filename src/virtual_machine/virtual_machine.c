@@ -34,9 +34,9 @@
 #include "core/stack.h"
 
 struct bx_stack vm_stack;
-uint8_t stack_byte_array[VM_STACK_SIZE];
+bx_int8 stack_byte_array[VM_STACK_SIZE];
 
-int8_t bx_vm_init() {
+bx_int8 bx_vm_init() {
 
 	bx_stack_setup(&vm_stack, stack_byte_array, VM_STACK_SIZE);
 
