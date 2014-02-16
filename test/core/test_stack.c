@@ -61,7 +61,7 @@ START_TEST (empty_stack_pop) {
 	memcpy((void *) stack_copy, test_stack.stack, STACK_SIZE);
 
 	error = stack_pop(&test_stack, &popped_byte, sizeof popped_byte);
-	ck_assert_int_eq(error, -1);
+	ck_assert_int_ne(error, 0);
 	ck_assert_int_eq(test_stack.top, prior_stack_top);
 	ck_assert_int_eq(memcmp((void *) stack_copy, test_stack.stack, STACK_SIZE), 0);
 } END_TEST
@@ -100,6 +100,23 @@ START_TEST (push_pop_4_bytes) {
 	ck_assert_int_eq(int_value, popped_int);
 } END_TEST
 
+START_TEST (push_pop_macro) {
+	int error;
+	size_t prior_stack_top;
+	uint32_t popped_int;
+
+	prior_stack_top = test_stack.top;
+	error = STACK_PUSH_VARIABLE(&test_stack, int_value);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(test_stack.top, prior_stack_top + sizeof int_value);
+
+	prior_stack_top = test_stack.top;
+	error = STACK_POP_VARIABLE(&test_stack, popped_int);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(test_stack.top, prior_stack_top - sizeof int_value);
+	ck_assert_int_eq(int_value, popped_int);
+} END_TEST
+
 START_TEST (full_stack_push) {
 	int error;
 	size_t prior_stack_top;
@@ -114,7 +131,7 @@ START_TEST (full_stack_push) {
 	memcpy((void *) stack_copy, test_stack.stack, STACK_SIZE);
 	prior_stack_top = test_stack.top;
 	error = stack_push(&test_stack, &int_value, sizeof int_value);
-	ck_assert_int_eq(error, -1);
+	ck_assert_int_ne(error, 0);
 	ck_assert_int_eq(memcmp((void *) &stack_copy, test_stack.stack, STACK_SIZE), 0);
 	ck_assert_int_eq(test_stack.top, prior_stack_top);
 } END_TEST
@@ -137,6 +154,10 @@ Suite *test_stack_create_suite(void) {
 
 	tcase = tcase_create("push_pop_4_bytes");
 	tcase_add_test(tcase, push_pop_4_bytes);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("push_pop_macro");
+	tcase_add_test(tcase, push_pop_macro);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("full_stack_push");

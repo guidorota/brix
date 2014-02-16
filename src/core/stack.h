@@ -34,6 +34,9 @@
 
 #include "types.h"
 
+#define STACK_PUSH_VARIABLE(stack_pointer, variable) stack_push(stack_pointer, &variable, sizeof variable)
+#define STACK_POP_VARIABLE(stack_pointer, variable) stack_pop(stack_pointer, &variable, sizeof variable)
+
 struct stack {
 	void *stack;
 	size_t top;
