@@ -33,7 +33,7 @@
 #define CONFIGURATION_H_
 
 // Virtual machine
-
 #define VM_STACK_SIZE 256
+#define VM_APPLICATION_POOL_SIZE 512
 
 #endif /* CONFIGURATION_H_ */

@@ -45,7 +45,7 @@ uint32_t int_value = 987364758;
 START_TEST (create_stack) {
 	int error;
 
-	error = stack_allocate(&test_stack, (void *) byte_array, STACK_SIZE);
+	error = stack_setup(&test_stack, (void *) byte_array, STACK_SIZE);
 
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(test_stack.top, 0);

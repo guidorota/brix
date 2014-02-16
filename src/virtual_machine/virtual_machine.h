@@ -32,6 +32,8 @@
 #ifndef VIRTUAL_MACHINE_H_
 #define VIRTUAL_MACHINE_H_
 
+#include "types.h"
 
+int8_t vm_init();
 
 #endif /* VIRTUAL_MACHINE_H_ */

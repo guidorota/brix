@@ -5,11 +5,14 @@
  *      Author: sidewinder
  */
 #include <stdio.h>
-#include "core/stack.h"
+#include "logging.h"
+#include "virtual_machine/virtual_machine.h"
 
 int main(int argc, char* argv[]) {
 
-	printf("Hello, World!\n");
+	BX_LOG(LOG_INFO, "main", "Initializing...");
+	vm_init();
+
 	return 0;
 }
 

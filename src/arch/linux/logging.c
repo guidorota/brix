@@ -1,5 +1,5 @@
 /*
- * stack.c
+ * logging.c
  * Created on: Feb 16, 2014
  * Author: Guido Rota
  *
@@ -29,40 +29,30 @@
  *
  */
 
-#include "stack.h"
-#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <stdarg.h>
+#include "logging.h"
 
-#define STACK_TOP_POINTER(stack_pointer) ((uint8_t *) stack_pointer->stack + stack_pointer->top)
+void bx_log_v(const int level, const char *tag, const char *message, va_list args) {
+	time_t now;
+	char time_string[20];
 
-int8_t stack_setup(struct stack *stack, void *byte_array, size_t stack_size) {
-
-	stack->stack = byte_array;
-	stack->top = 0;
-	stack->size = stack_size;
-
-	return 0;
+	if (level < DEFAULT_LEVEL) {
+		return;
+	}
+	time(&now);
+	strftime(time_string, 20, "%d-%m-%Y %H:%M:%S", localtime(&now));
+	printf("%s [%s]: ", time_string, tag);
+	vprintf(message, args);
+	printf("\n");
 }
 
-int8_t stack_push(struct stack *stack, void *variable, size_t size) {
+void bx_log(const int level, const char *tag, const char *message, ...) {
+	va_list args;
 
-	if (stack->size - stack->top < size) {
-		return -1;
-	}
-
-	memcpy(STACK_TOP_POINTER(stack), variable, size);
-	stack->top += size;
-
-	return 0;
-}
-
-int8_t stack_pop(struct stack *stack, void *variable, size_t size) {
-
-	if (stack->top < size) {
-		return -1;
-	}
-
-	memcpy(variable, STACK_TOP_POINTER(stack) - size, size);
-	stack->top -= size;
-
-	return 0;
+	va_start(args, message);
+	bx_log_v(level, tag, message, args);
+	va_end(args);
 }

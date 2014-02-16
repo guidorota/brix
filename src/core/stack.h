@@ -43,10 +43,10 @@ struct stack {
 	size_t size;
 };
 
-int stack_allocate(struct stack *stack, void *byte_array, size_t stack_size);
+int8_t stack_setup(struct stack *stack, void *byte_array, size_t stack_size);
 
-int stack_push(struct stack *stack, void *variable, size_t size);
+int8_t stack_push(struct stack *stack, void *variable, size_t size);
 
-int stack_pop(struct stack *stack, void *variable, size_t size);
+int8_t stack_pop(struct stack *stack, void *variable, size_t size);
 
 #endif /* STACK_H_ */
