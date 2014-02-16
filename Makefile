@@ -2,7 +2,7 @@ MODULES := virtual_machine
 EXECUTABLES := brix
 ARCH := linux
 
-TARGETS := $(EXECUTABLES:%=src/arch/$(ARCH)/%)
+TARGETS := $(EXECUTABLES:%=src/%)
 SRC_DIRS := src src/arch/$(ARCH) $(MODULES:%=src/%) $(MODULES:%=src/$(ARCH)/%)
 CFLAGS := $(SRC_DIRS:%=-I%) -g -Wall -pedantic -Wno-variadic-macros
 SOURCES := $(wildcard $(SRC_DIRS:%=%/*.c))
