@@ -1,5 +1,5 @@
 /*
- * list.c
+ * stack.c
  * Created on: Feb 16, 2014
  * Author: Guido Rota
  *
@@ -29,8 +29,40 @@
  *
  */
 
-#include "list.h"
+#include "stack.h"
+#include <string.h>
 
-struct list {
+#define STACK_TOP_POINTER(stack_pointer) ((uint8_t *) stack_pointer->stack + stack_pointer->top)
 
-};
+int stack_allocate(struct stack *stack, void *byte_array, size_t stack_size) {
+
+	stack->stack = byte_array;
+	stack->top = 0;
+	stack->size = stack_size;
+
+	return 0;
+}
+
+int stack_push(struct stack *stack, void *variable, size_t size) {
+
+	if (stack->size - stack->top < size) {
+		return -1;
+	}
+
+	memcpy(STACK_TOP_POINTER(stack), variable, size);
+	stack->top += size;
+
+	return 0;
+}
+
+int stack_pop(struct stack *stack, void *variable, size_t size) {
+
+	if (stack->top < size) {
+		return -1;
+	}
+
+	memcpy(variable, STACK_TOP_POINTER(stack) - size, size);
+	stack->top -= size;
+
+	return 0;
+}

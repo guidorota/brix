@@ -1,4 +1,4 @@
-MODULES := virtual_machine
+MODULES := core
 EXECUTABLES := brix
 ARCH := linux
 

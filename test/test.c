@@ -31,13 +31,14 @@
  */
 
 #include <check.h>
+#include "core/test_stack.h"
 
 int main(void) {
 	int number_failed = 0;
 	SRunner *runner = srunner_create(NULL);
 
 	srunner_set_fork_status(runner, CK_NOFORK);
-	srunner_add_suite(runner, compiler_create_suite());
+	srunner_add_suite(runner, test_stack_create_suite());
 
 	srunner_run_all(runner, CK_VERBOSE);
 	number_failed = srunner_ntests_failed(runner);

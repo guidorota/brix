@@ -1,5 +1,5 @@
 /*
- * configuration.h
+ * test_stack.h
  * Created on: Feb 16, 2014
  * Author: Guido Rota
  *
@@ -29,11 +29,11 @@
  *
  */
 
-#ifndef CONFIGURATION_H_
-#define CONFIGURATION_H_
+#ifndef TEST_STACK_H_
+#define TEST_STACK_H_
 
-// Virtual machine
+#include <check.h>
 
-#define VM_STACK_SIZE 256
+Suite *test_stack_create_suite(void);
 
-#endif /* CONFIGURATION_H_ */
+#endif /* TEST_STACK_H_ */

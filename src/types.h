@@ -1,5 +1,5 @@
 /*
- * list.h
+ * types.h
  * Created on: Feb 16, 2014
  * Author: Guido Rota
  *
@@ -29,9 +29,15 @@
  *
  */
 
-#ifndef LIST_H_
-#define LIST_H_
+#ifndef TYPES_H_
+#define TYPES_H_
 
+#include <inttypes.h>
+#include <stddef.h>
 
+#define TYPE_BOOLEAN_FALSE 0
+#define TYPE_BOOLEAN_TRUE 1
 
-#endif /* LIST_H_ */
+typedef uint8_t boolean;
+
+#endif /* TYPES_H_ */

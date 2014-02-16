@@ -1,5 +1,5 @@
 /*
- * configuration.h
+ * stack.h
  * Created on: Feb 16, 2014
  * Author: Guido Rota
  *
@@ -29,11 +29,21 @@
  *
  */
 
-#ifndef CONFIGURATION_H_
-#define CONFIGURATION_H_
+#ifndef STACK_H_
+#define STACK_H_
 
-// Virtual machine
+#include "types.h"
 
-#define VM_STACK_SIZE 256
+struct stack {
+	void *stack;
+	size_t top;
+	size_t size;
+};
 
-#endif /* CONFIGURATION_H_ */
+int stack_allocate(struct stack *stack, void *byte_array, size_t stack_size);
+
+int stack_push(struct stack *stack, void *variable, size_t size);
+
+int stack_pop(struct stack *stack, void *variable, size_t size);
+
+#endif /* STACK_H_ */

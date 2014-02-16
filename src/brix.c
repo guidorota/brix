@@ -5,6 +5,7 @@
  *      Author: sidewinder
  */
 #include <stdio.h>
+#include "core/stack.h"
 
 int main(int argc, char* argv[]) {
 

@@ -1,5 +1,5 @@
 /*
- * configuration.h
+ * instruction_set.h
  * Created on: Feb 16, 2014
  * Author: Guido Rota
  *
@@ -29,11 +29,9 @@
  *
  */
 
-#ifndef CONFIGURATION_H_
-#define CONFIGURATION_H_
+#ifndef INSTRUCTION_SET_H_
+#define INSTRUCTION_SET_H_
 
-// Virtual machine
 
-#define VM_STACK_SIZE 256
 
-#endif /* CONFIGURATION_H_ */
+#endif /* INSTRUCTION_SET_H_ */
