@@ -34,6 +34,6 @@
 
 #include "types.h"
 
-int8_t vm_init();
+int8_t bx_vm_init();
 
 #endif /* VIRTUAL_MACHINE_H_ */

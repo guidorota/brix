@@ -33,12 +33,12 @@
 #include "configuration.h"
 #include "core/stack.h"
 
-struct stack vm_stack;
+struct bx_stack vm_stack;
 uint8_t stack_byte_array[VM_STACK_SIZE];
 
-int8_t vm_init() {
+int8_t bx_vm_init() {
 
-	stack_setup(&vm_stack, stack_byte_array, VM_STACK_SIZE);
+	bx_stack_setup(&vm_stack, stack_byte_array, VM_STACK_SIZE);
 
 	return 0;
 }

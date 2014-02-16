@@ -34,7 +34,7 @@
 
 #define STACK_TOP_POINTER(stack_pointer) ((uint8_t *) stack_pointer->stack + stack_pointer->top)
 
-int8_t stack_setup(struct stack *stack, void *byte_array, size_t stack_size) {
+int8_t bx_stack_setup(struct bx_stack *stack, void *byte_array, size_t stack_size) {
 
 	stack->stack = byte_array;
 	stack->top = 0;
@@ -43,7 +43,7 @@ int8_t stack_setup(struct stack *stack, void *byte_array, size_t stack_size) {
 	return 0;
 }
 
-int8_t stack_push(struct stack *stack, void *variable, size_t size) {
+int8_t bx_stack_push(struct bx_stack *stack, void *variable, size_t size) {
 
 	if (stack->size - stack->top < size) {
 		return -1;
@@ -55,7 +55,7 @@ int8_t stack_push(struct stack *stack, void *variable, size_t size) {
 	return 0;
 }
 
-int8_t stack_pop(struct stack *stack, void *variable, size_t size) {
+int8_t bx_stack_pop(struct bx_stack *stack, void *variable, size_t size) {
 
 	if (stack->top < size) {
 		return -1;

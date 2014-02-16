@@ -36,7 +36,7 @@
 
 #define STACK_SIZE 4
 
-struct stack test_stack;
+struct bx_stack test_stack;
 uint8_t byte_array[STACK_SIZE];
 
 uint8_t byte_var = 12;
@@ -45,7 +45,7 @@ uint32_t int_value = 987364758;
 START_TEST (create_stack) {
 	int error;
 
-	error = stack_setup(&test_stack, (void *) byte_array, STACK_SIZE);
+	error = bx_stack_setup(&test_stack, (void *) byte_array, STACK_SIZE);
 
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(test_stack.top, 0);
@@ -60,7 +60,7 @@ START_TEST (empty_stack_pop) {
 	uint8_t stack_copy[STACK_SIZE];
 	memcpy((void *) stack_copy, test_stack.stack, STACK_SIZE);
 
-	error = stack_pop(&test_stack, &popped_byte, sizeof popped_byte);
+	error = bx_stack_pop(&test_stack, &popped_byte, sizeof popped_byte);
 	ck_assert_int_ne(error, 0);
 	ck_assert_int_eq(test_stack.top, prior_stack_top);
 	ck_assert_int_eq(memcmp((void *) stack_copy, test_stack.stack, STACK_SIZE), 0);
@@ -72,12 +72,12 @@ START_TEST (push_pop_byte) {
 	uint8_t popped_byte;
 
 	prior_stack_top = test_stack.top;
-	error = stack_push(&test_stack, &byte_var, sizeof byte_var);
+	error = bx_stack_push(&test_stack, &byte_var, sizeof byte_var);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(test_stack.top, prior_stack_top + sizeof byte_var);
 
 	prior_stack_top = test_stack.top;
-	error = stack_pop(&test_stack, &popped_byte, sizeof popped_byte);
+	error = bx_stack_pop(&test_stack, &popped_byte, sizeof popped_byte);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(test_stack.top, prior_stack_top - sizeof byte_var);
 	ck_assert_int_eq(popped_byte, byte_var);
@@ -89,12 +89,12 @@ START_TEST (push_pop_4_bytes) {
 	uint32_t popped_int;
 
 	prior_stack_top = test_stack.top;
-	error = stack_push(&test_stack, &int_value, sizeof int_value);
+	error = bx_stack_push(&test_stack, &int_value, sizeof int_value);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(test_stack.top, prior_stack_top + sizeof int_value);
 
 	prior_stack_top = test_stack.top;
-	error = stack_pop(&test_stack, &popped_int, sizeof popped_int);
+	error = bx_stack_pop(&test_stack, &popped_int, sizeof popped_int);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(test_stack.top, prior_stack_top - sizeof int_value);
 	ck_assert_int_eq(int_value, popped_int);
@@ -123,14 +123,14 @@ START_TEST (full_stack_push) {
 	uint8_t stack_copy[STACK_SIZE];
 
 	prior_stack_top = test_stack.top;
-	error = stack_push(&test_stack, &int_value, sizeof int_value);
+	error = bx_stack_push(&test_stack, &int_value, sizeof int_value);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(test_stack.top, prior_stack_top + sizeof int_value);
 	ck_assert_int_eq(test_stack.size, STACK_SIZE);
 
 	memcpy((void *) stack_copy, test_stack.stack, STACK_SIZE);
 	prior_stack_top = test_stack.top;
-	error = stack_push(&test_stack, &int_value, sizeof int_value);
+	error = bx_stack_push(&test_stack, &int_value, sizeof int_value);
 	ck_assert_int_ne(error, 0);
 	ck_assert_int_eq(memcmp((void *) &stack_copy, test_stack.stack, STACK_SIZE), 0);
 	ck_assert_int_eq(test_stack.top, prior_stack_top);

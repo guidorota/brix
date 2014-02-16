@@ -11,7 +11,7 @@
 int main(int argc, char* argv[]) {
 
 	BX_LOG(LOG_INFO, "main", "Initializing...");
-	vm_init();
+	bx_vm_init();
 
 	return 0;
 }
