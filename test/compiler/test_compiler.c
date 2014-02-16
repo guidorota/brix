@@ -36,7 +36,7 @@
 //extern int yyparse();
 //extern FILE *yyin;
 
-START_TEST (basic_expressions) {
+START_TEST (test_compiler) {
 	ck_assert_int_eq(3, 3);
 } END_TEST
 
@@ -44,8 +44,8 @@ Suite *compiler_create_suite(void) {
 	Suite *suite = suite_create("compiler");
 	TCase *tcase;
 
-	tcase = tcase_create("basic_expressions");
-	tcase_add_test(tcase, basic_expressions);
+	tcase = tcase_create("test_compiler");
+	tcase_add_test(tcase, test_compiler);
 	suite_add_tcase(suite, tcase);
 
 	return suite;
