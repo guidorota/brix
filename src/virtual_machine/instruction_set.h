@@ -32,6 +32,17 @@
 #ifndef INSTRUCTION_SET_H_
 #define INSTRUCTION_SET_H_
 
+#include "types.h"
+#include "core/stack.h"
 
+#define BX_IADD 0x0
+#define BX_ISUB 0x0
+#define BX_IMUL 0x0
+#define BX_IDIV 0x0
+#define BX_IMOD 0x0
+
+typedef bx_int8 (*bx_instruction)(struct bx_stack *);
+
+bx_int8 bx_instr_init();
 
 #endif /* INSTRUCTION_SET_H_ */

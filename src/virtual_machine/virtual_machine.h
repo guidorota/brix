@@ -36,4 +36,6 @@
 
 bx_int8 bx_vm_init();
 
+bx_int8 bx_vm_execute(void *code, bx_size code_size);
+
 #endif /* VIRTUAL_MACHINE_H_ */

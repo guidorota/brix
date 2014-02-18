@@ -32,13 +32,20 @@
 #include "virtual_machine.h"
 #include "configuration.h"
 #include "core/stack.h"
+#include "logging.h"
 
 struct bx_stack vm_stack;
 bx_int8 stack_byte_array[VM_STACK_SIZE];
 
 bx_int8 bx_vm_init() {
 
+	BX_LOG(LOG_INFO, "virtual_machine", "Initializing virtual machine");
 	bx_stack_setup(&vm_stack, stack_byte_array, VM_STACK_SIZE);
 
 	return 0;
+}
+
+bx_int8 bx_vm_execute(void *code, bx_size code_size) {
+
+	return 0; //TODO: Stub
 }
