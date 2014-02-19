@@ -29,6 +29,7 @@
  *
  */
 
+#include <strings.h>
 #include "virtual_machine.h"
 #include "configuration.h"
 #include "core/stack.h"
@@ -43,11 +44,12 @@
 struct bx_vm_status {
 	bx_size program_counter;
 	struct bx_stack execution_stack;
+	bx_uint8 *code;
+	bx_size code_size;
+	bx_boolean stop;
 };
 
-typedef bx_uint8 instruction_identifier;
-
-typedef bx_int8 (*bx_instruction)(struct bx_stack *, struct bx_vm_status);
+typedef bx_int8 (*bx_instruction)(struct bx_vm_status *);
 
 struct bx_vm_status vm_status;
 bx_int8 stack_byte_array[VM_STACK_SIZE];
@@ -56,29 +58,31 @@ bx_instruction instruction_array[256];
 
 static inline bx_int8 bx_integer_arithmetic_function(struct bx_stack *execution_stack, bx_int8 operation);
 static inline bx_int8 bx_float_arithmetic_function(struct bx_stack *execution_stack, bx_int8 operation);
+static inline bx_int8 bx_fetch_instruction(struct bx_vm_status *vm_status, bx_uint8 *instruction_id);
+static inline bx_int8 bx_fetch(struct bx_vm_status *vm_status, void *data, bx_size data_length);
 
 //////////////////
 // Instructions //
 //////////////////
 
-static bx_int8 bx_iadd_function(struct bx_stack *execution_stack, struct bx_vm_status vm_status) {
-	return bx_integer_arithmetic_function(execution_stack, ADD);
+static bx_int8 bx_iadd_function(struct bx_vm_status *vm_status) {
+	return bx_integer_arithmetic_function(&vm_status->execution_stack, ADD);
 }
 
-static bx_int8 bx_isub_function(struct bx_stack *execution_stack, struct bx_vm_status vm_status) {
-	return bx_integer_arithmetic_function(execution_stack, SUB);
+static bx_int8 bx_isub_function(struct bx_vm_status *vm_status) {
+	return bx_integer_arithmetic_function(&vm_status->execution_stack, SUB);
 }
 
-static bx_int8 bx_imul_function(struct bx_stack *execution_stack, struct bx_vm_status vm_status) {
-	return bx_integer_arithmetic_function(execution_stack, MUL);
+static bx_int8 bx_imul_function(struct bx_vm_status *vm_status) {
+	return bx_integer_arithmetic_function(&vm_status->execution_stack, MUL);
 }
 
-static bx_int8 bx_idiv_function(struct bx_stack *execution_stack, struct bx_vm_status vm_status) {
-	return bx_integer_arithmetic_function(execution_stack, DIV);
+static bx_int8 bx_idiv_function(struct bx_vm_status *vm_status) {
+	return bx_integer_arithmetic_function(&vm_status->execution_stack, DIV);
 }
 
-static bx_int8 bx_imod_function(struct bx_stack *execution_stack, struct bx_vm_status vm_status) {
-	return bx_integer_arithmetic_function(execution_stack, MOD);
+static bx_int8 bx_imod_function(struct bx_vm_status *vm_status) {
+	return bx_integer_arithmetic_function(&vm_status->execution_stack, MOD);
 }
 
 static inline bx_int8 bx_integer_arithmetic_function(struct bx_stack *execution_stack, bx_int8 operation) {
@@ -123,20 +127,20 @@ static inline bx_int8 bx_integer_arithmetic_function(struct bx_stack *execution_
 	return 0;
 }
 
-static bx_int8 bx_fadd_function(struct bx_stack *execution_stack, struct bx_vm_status vm_status) {
-	return bx_float_arithmetic_function(execution_stack, ADD);
+static bx_int8 bx_fadd_function(struct bx_vm_status *vm_status) {
+	return bx_float_arithmetic_function(&vm_status->execution_stack, ADD);
 }
 
-static bx_int8 bx_fsub_function(struct bx_stack *execution_stack, struct bx_vm_status vm_status) {
-	return bx_float_arithmetic_function(execution_stack, SUB);
+static bx_int8 bx_fsub_function(struct bx_vm_status *vm_status) {
+	return bx_float_arithmetic_function(&vm_status->execution_stack, SUB);
 }
 
-static bx_int8 bx_fmul_function(struct bx_stack *execution_stack, struct bx_vm_status vm_status) {
-	return bx_float_arithmetic_function(execution_stack, MUL);
+static bx_int8 bx_fmul_function(struct bx_vm_status *vm_status) {
+	return bx_float_arithmetic_function(&vm_status->execution_stack, MUL);
 }
 
-static bx_int8 bx_fdiv_function(struct bx_stack *execution_stack, struct bx_vm_status vm_status) {
-	return bx_float_arithmetic_function(execution_stack, DIV);
+static bx_int8 bx_fdiv_function(struct bx_vm_status *vm_status) {
+	return bx_float_arithmetic_function(&vm_status->execution_stack, DIV);
 }
 
 static inline bx_int8 bx_float_arithmetic_function(struct bx_stack *execution_stack, bx_int8 operation) {
@@ -178,26 +182,90 @@ static inline bx_int8 bx_float_arithmetic_function(struct bx_stack *execution_st
 	return 0;
 }
 
+static bx_int8 bx_push32_function(struct bx_vm_status *vm_status) {
+	bx_int8 error;
+	bx_uint32 data;
+
+	error = bx_fetch(vm_status, &data, sizeof data);
+	if (error == -1) {
+		return -1;
+	}
+	error = BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, data);
+	if (error == -1) {
+		return -1;
+	}
+
+	return 0;
+}
+
 bx_int8 bx_vm_init() {
 
 	BX_LOG(LOG_INFO, "virtual_machine", "Initializing virtual machine data structures...");
 	bx_stack_setup(&vm_status.execution_stack, stack_byte_array, VM_STACK_SIZE);
 
 	BX_LOG(LOG_INFO, "virtual_machine", "Initializing instructions...");
-	instruction_array[BX_IADD] = &bx_iadd_function;
-	instruction_array[BX_ISUB] = &bx_isub_function;
-	instruction_array[BX_IMUL] = &bx_imul_function;
-	instruction_array[BX_IDIV] = &bx_idiv_function;
-	instruction_array[BX_IMOD] = &bx_imod_function;
-	instruction_array[BX_FADD] = &bx_fadd_function;
-	instruction_array[BX_FSUB] = &bx_fsub_function;
-	instruction_array[BX_FMUL] = &bx_fmul_function;
-	instruction_array[BX_FDIV] = &bx_fdiv_function;
+	instruction_array[BX_INSTR_IADD] = &bx_iadd_function;
+	instruction_array[BX_INSTR_ISUB] = &bx_isub_function;
+	instruction_array[BX_INSTR_IMUL] = &bx_imul_function;
+	instruction_array[BX_INSTR_IDIV] = &bx_idiv_function;
+	instruction_array[BX_INSTR_IMOD] = &bx_imod_function;
+	instruction_array[BX_INSTR_FADD] = &bx_fadd_function;
+	instruction_array[BX_INSTR_FSUB] = &bx_fsub_function;
+	instruction_array[BX_INSTR_FMUL] = &bx_fmul_function;
+	instruction_array[BX_INSTR_FDIV] = &bx_fdiv_function;
+	instruction_array[BX_INSTR_PUSH32] = &bx_push32_function;
 
 	return 0;
 }
 
-bx_int8 bx_vm_execute(void *code, bx_size code_size) {
+bx_int8 bx_vm_execute(bx_uint8 *code, bx_size code_size) {
+	bx_int8 error;
+	bx_uint8 instruction_id;
 
-	return 0; //TODO: Stub
+	vm_status.code = code;
+	vm_status.code_size = code_size;
+	vm_status.program_counter = 0;
+	bx_stack_reset(&vm_status.execution_stack);
+	vm_status.stop = BX_TYPE_BOOLEAN_FALSE;
+
+	do {
+		error = bx_fetch_instruction(&vm_status, &instruction_id);
+		if (error != 0) {
+			break;
+		}
+
+	} while(vm_status.stop == BX_TYPE_BOOLEAN_FALSE);
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "virtual_machine", "Abnormal virtual machine termination");
+		return -1;
+	}
+
+	return 0;
+}
+
+static inline bx_int8 bx_fetch_instruction(struct bx_vm_status *vm_status, bx_uint8 *instruction_id) {
+
+	if (vm_status->program_counter >= vm_status->code_size) {
+		BX_LOG(LOG_ERROR, "virtual_machine", "Error while fetching instruction: unexpected end of code");
+		return -1;
+	}
+
+	*instruction_id = *vm_status->code;
+	vm_status->program_counter++;
+
+	return 0;
+}
+
+static inline bx_int8 bx_fetch(struct bx_vm_status *vm_status, void *data, bx_size data_length) {
+
+	if (vm_status->program_counter + data_length >= vm_status->code_size) {
+		BX_LOG(LOG_ERROR, "virtual_machine", "Error while fetching instruction: unexpected end of code");
+		return -1;
+	}
+
+	memcpy(data, (void *) vm_status->code, data_length);
+	vm_status->program_counter += data_length;
+
+	return 0;
 }

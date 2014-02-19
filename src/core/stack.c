@@ -66,3 +66,8 @@ bx_int8 bx_stack_pop(struct bx_stack *stack, void *variable, bx_size size) {
 
 	return 0;
 }
+
+void bx_stack_reset(struct bx_stack *stack) {
+
+	stack->top = 0;
+}

@@ -34,18 +34,19 @@
 
 #include "types.h"
 
-#define BX_IADD 0x0
-#define BX_ISUB 0x1
-#define BX_IMUL 0x2
-#define BX_IDIV 0x3
-#define BX_IMOD 0x4
-#define BX_FADD 0x5
-#define BX_FSUB 0x6
-#define BX_FMUL 0x7
-#define BX_FDIV 0x8
+#define BX_INSTR_IADD 0x0
+#define BX_INSTR_ISUB 0x1
+#define BX_INSTR_IMUL 0x2
+#define BX_INSTR_IDIV 0x3
+#define BX_INSTR_IMOD 0x4
+#define BX_INSTR_FADD 0x5
+#define BX_INSTR_FSUB 0x6
+#define BX_INSTR_FMUL 0x7
+#define BX_INSTR_FDIV 0x8
+#define BX_INSTR_PUSH32 0x9
 
 bx_int8 bx_vm_init();
 
-bx_int8 bx_vm_execute(void *code, bx_size code_size);
+bx_int8 bx_vm_execute(bx_uint8 *code, bx_size code_size);
 
 #endif /* VIRTUAL_MACHINE_H_ */

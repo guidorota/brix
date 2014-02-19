@@ -35,10 +35,10 @@
 #include <inttypes.h>
 #include <stddef.h>
 
-#define TYPE_BOOLEAN_FALSE 0
-#define TYPE_BOOLEAN_TRUE 1
+#define BX_TYPE_BOOLEAN_FALSE 0
+#define BX_TYPE_BOOLEAN_TRUE 1
 
-typedef uint8_t bx_bool;
+typedef uint8_t bx_boolean;
 
 typedef int8_t bx_int8;
 typedef int16_t bx_int16;

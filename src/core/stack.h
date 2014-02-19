@@ -49,4 +49,6 @@ bx_int8 bx_stack_push(struct bx_stack *stack, void *variable, bx_size size);
 
 bx_int8 bx_stack_pop(struct bx_stack *stack, void *variable, bx_size size);
 
+void bx_stack_reset(struct bx_stack *stack);
+
 #endif /* STACK_H_ */
