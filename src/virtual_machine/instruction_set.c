@@ -114,3 +114,7 @@ bx_int8 bx_instr_init() {
 
 	return 0;
 }
+
+bx_instruction bx_instr_get(instruction_identifier instruction_identifier) {
+	return instruction_array[instruction_identifier];
+}
