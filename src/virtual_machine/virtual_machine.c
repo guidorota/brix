@@ -233,6 +233,10 @@ bx_int8 bx_vm_execute(bx_uint8 *code, bx_size code_size) {
 		if (error != 0) {
 			break;
 		}
+		error = instruction_array[instruction_id](&vm_status);
+		if (error != 0) {
+			break;
+		}
 
 	} while(vm_status.stop == BX_TYPE_BOOLEAN_FALSE);
 

@@ -45,6 +45,14 @@
 #define BX_INSTR_FDIV 0x8
 #define BX_INSTR_PUSH32 0x9
 
+//TODO: Negation
+//TODO: Boolean operations
+//TODO: Comparison
+//TODO: Cast
+//TODO: Variable storage
+//TODO: Branching
+//TODO: Stop instruction
+
 bx_int8 bx_vm_init();
 
 bx_int8 bx_vm_execute(bx_uint8 *code, bx_size code_size);
