@@ -103,6 +103,61 @@ static bx_int8 bx_imod_function(struct bx_stack *execution_stack) {
 	return bx_integer_arithmetic_function(execution_stack, MOD);
 }
 
+static inline bx_int8 bx_float_arithmetic_function(struct bx_stack *execution_stack, bx_int8 operation) {
+	bx_float32 operand1;
+	bx_float32 operand2;
+	bx_float32 result;
+	bx_int8 error;
+
+	error = BX_STACK_POP_VARIABLE(execution_stack, operand1);
+	if (error != 0) {
+		return -1;
+	}
+	error = BX_STACK_POP_VARIABLE(execution_stack, operand2);
+	if (error != 0) {
+		return -1;
+	}
+
+	switch (operation) {
+		case ADD:
+			result = operand1 + operand2;
+			break;
+		case SUB:
+			result = operand1 - operand2;
+			break;
+		case MUL:
+			result = operand1 * operand2;
+			break;
+		case DIV:
+			result = operand1 / operand2;
+			break;
+		default:
+			return -1;
+		}
+	error = BX_STACK_PUSH_VARIABLE(execution_stack, result);
+	if (error != 0) {
+		return -1;
+	}
+
+	return 0;
+}
+
+static bx_int8 bx_fadd_function(struct bx_stack *execution_stack) {
+	return bx_float_arithmetic_function(execution_stack, ADD);
+}
+
+static bx_int8 bx_fsub_function(struct bx_stack *execution_stack) {
+	return bx_float_arithmetic_function(execution_stack, SUB);
+}
+
+static bx_int8 bx_fmul_function(struct bx_stack *execution_stack) {
+	return bx_float_arithmetic_function(execution_stack, MUL);
+}
+
+static bx_int8 bx_fdiv_function(struct bx_stack *execution_stack) {
+	return bx_float_arithmetic_function(execution_stack, DIV);
+}
+
 bx_int8 bx_instr_init() {
 
 	BX_LOG(LOG_INFO, "instruction_set", "Initializing instructions...");
@@ -111,6 +166,10 @@ bx_int8 bx_instr_init() {
 	instruction_array[BX_IMUL] = &bx_imul_function;
 	instruction_array[BX_IDIV] = &bx_idiv_function;
 	instruction_array[BX_IMOD] = &bx_imod_function;
+	instruction_array[BX_FADD] = &bx_fadd_function;
+	instruction_array[BX_FSUB] = &bx_fsub_function;
+	instruction_array[BX_FMUL] = &bx_fmul_function;
+	instruction_array[BX_FDIV] = &bx_fdiv_function;
 
 	return 0;
 }

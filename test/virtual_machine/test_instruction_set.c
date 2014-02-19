@@ -40,8 +40,11 @@
 struct bx_stack execution_stack;
 bx_uint8 stack_byte_array[STACK_SIZE];
 
-bx_int32 operand1 = 56;
-bx_int32 operand2 = 158;
+bx_int32 int_operand1 = 56;
+bx_int32 int_operand2 = 158;
+
+bx_float32 float_operand1 = 83.3;
+bx_float32 float_operand2 = 2954.4566;
 
 START_TEST (test_init) {
 	bx_instr_init();
@@ -53,13 +56,13 @@ START_TEST (test_iadd_function) {
 	bx_instruction iadd_instruction;
 
 	memset((void *) stack_byte_array, 0, STACK_SIZE);
-	BX_STACK_PUSH_VARIABLE(&execution_stack, operand2);
-	BX_STACK_PUSH_VARIABLE(&execution_stack, operand1);
+	BX_STACK_PUSH_VARIABLE(&execution_stack, int_operand2);
+	BX_STACK_PUSH_VARIABLE(&execution_stack, int_operand1);
 	iadd_instruction = bx_instr_get(BX_IADD);
 	iadd_instruction(&execution_stack);
 	BX_STACK_POP_VARIABLE(&execution_stack, result);
 
-	ck_assert_int_eq(result, operand1 + operand2);
+	ck_assert_int_eq(result, int_operand1 + int_operand2);
 
 } END_TEST
 
@@ -68,13 +71,13 @@ START_TEST (test_isub_function) {
 	bx_instruction isub_instruction;
 
 	memset((void *) stack_byte_array, 0, STACK_SIZE);
-	BX_STACK_PUSH_VARIABLE(&execution_stack, operand2);
-	BX_STACK_PUSH_VARIABLE(&execution_stack, operand1);
+	BX_STACK_PUSH_VARIABLE(&execution_stack, int_operand2);
+	BX_STACK_PUSH_VARIABLE(&execution_stack, int_operand1);
 	isub_instruction = bx_instr_get(BX_ISUB);
 	isub_instruction(&execution_stack);
 	BX_STACK_POP_VARIABLE(&execution_stack, result);
 
-	ck_assert_int_eq(result, operand1 - operand2);
+	ck_assert_int_eq(result, int_operand1 - int_operand2);
 
 } END_TEST
 
@@ -84,13 +87,13 @@ START_TEST (test_imul_function) {
 
 	memset((void *) stack_byte_array, 0, STACK_SIZE);
 	bx_stack_setup(&execution_stack, stack_byte_array, STACK_SIZE);
-	BX_STACK_PUSH_VARIABLE(&execution_stack, operand2);
-	BX_STACK_PUSH_VARIABLE(&execution_stack, operand1);
+	BX_STACK_PUSH_VARIABLE(&execution_stack, int_operand2);
+	BX_STACK_PUSH_VARIABLE(&execution_stack, int_operand1);
 	imul_instruction = bx_instr_get(BX_IMUL);
 	imul_instruction(&execution_stack);
 	BX_STACK_POP_VARIABLE(&execution_stack, result);
 
-	ck_assert_int_eq(result, operand1 * operand2);
+	ck_assert_int_eq(result, int_operand1 * int_operand2);
 
 } END_TEST
 
@@ -100,13 +103,13 @@ START_TEST (test_idiv_function) {
 	bx_instruction idiv_instruction;
 
 	memset((void *) stack_byte_array, 0, STACK_SIZE);
-	BX_STACK_PUSH_VARIABLE(&execution_stack, operand2);
-	BX_STACK_PUSH_VARIABLE(&execution_stack, operand1);
+	BX_STACK_PUSH_VARIABLE(&execution_stack, int_operand2);
+	BX_STACK_PUSH_VARIABLE(&execution_stack, int_operand1);
 	idiv_instruction = bx_instr_get(BX_IDIV);
 	idiv_instruction(&execution_stack);
 	BX_STACK_POP_VARIABLE(&execution_stack, result);
 
-	simulated_result = operand1 / operand2;
+	simulated_result = int_operand1 / int_operand2;
 
 	ck_assert_int_eq(result, simulated_result);
 
@@ -117,13 +120,73 @@ START_TEST (test_imod_function) {
 	bx_instruction imod_instruction;
 
 	memset((void *) stack_byte_array, 0, STACK_SIZE);
-	BX_STACK_PUSH_VARIABLE(&execution_stack, operand2);
-	BX_STACK_PUSH_VARIABLE(&execution_stack, operand1);
+	BX_STACK_PUSH_VARIABLE(&execution_stack, int_operand2);
+	BX_STACK_PUSH_VARIABLE(&execution_stack, int_operand1);
 	imod_instruction = bx_instr_get(BX_IMOD);
 	imod_instruction(&execution_stack);
 	BX_STACK_POP_VARIABLE(&execution_stack, result);
 
-	ck_assert_int_eq(result, operand1 % operand2);
+	ck_assert_int_eq(result, int_operand1 % int_operand2);
+
+} END_TEST
+
+START_TEST (test_fadd_function) {
+	bx_float32 result;
+	bx_instruction fadd_instruction;
+
+	memset((void *) stack_byte_array, 0, STACK_SIZE);
+	BX_STACK_PUSH_VARIABLE(&execution_stack, float_operand2);
+	BX_STACK_PUSH_VARIABLE(&execution_stack, float_operand1);
+	fadd_instruction = bx_instr_get(BX_FADD);
+	fadd_instruction(&execution_stack);
+	BX_STACK_POP_VARIABLE(&execution_stack, result);
+
+	ck_assert_int_eq(result, float_operand1 + float_operand2);
+
+} END_TEST
+
+START_TEST (test_fsub_function) {
+	bx_float32 result;
+	bx_instruction fsub_instruction;
+
+	memset((void *) stack_byte_array, 0, STACK_SIZE);
+	BX_STACK_PUSH_VARIABLE(&execution_stack, float_operand2);
+	BX_STACK_PUSH_VARIABLE(&execution_stack, float_operand1);
+	fsub_instruction = bx_instr_get(BX_FSUB);
+	fsub_instruction(&execution_stack);
+	BX_STACK_POP_VARIABLE(&execution_stack, result);
+
+	ck_assert_int_eq(result, float_operand1 - float_operand2);
+
+} END_TEST
+
+START_TEST (test_fmul_function) {
+	bx_float32 result;
+	bx_instruction fmul_instruction;
+
+	memset((void *) stack_byte_array, 0, STACK_SIZE);
+	BX_STACK_PUSH_VARIABLE(&execution_stack, float_operand2);
+	BX_STACK_PUSH_VARIABLE(&execution_stack, float_operand1);
+	fmul_instruction = bx_instr_get(BX_FMUL);
+	fmul_instruction(&execution_stack);
+	BX_STACK_POP_VARIABLE(&execution_stack, result);
+
+	ck_assert_int_eq(result, float_operand1 * float_operand2);
+
+} END_TEST
+
+START_TEST (test_fdiv_function) {
+	bx_float32 result;
+	bx_instruction fdiv_instruction;
+
+	memset((void *) stack_byte_array, 0, STACK_SIZE);
+	BX_STACK_PUSH_VARIABLE(&execution_stack, float_operand2);
+	BX_STACK_PUSH_VARIABLE(&execution_stack, float_operand1);
+	fdiv_instruction = bx_instr_get(BX_FDIV);
+	fdiv_instruction(&execution_stack);
+	BX_STACK_POP_VARIABLE(&execution_stack, result);
+
+	ck_assert_int_eq(result, float_operand1 / float_operand2);
 
 } END_TEST
 
@@ -153,6 +216,22 @@ Suite *test_instruction_set_create_suite() {
 
 	tcase = tcase_create("test_imod_function");
 	tcase_add_test(tcase, test_imod_function);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("test_fadd_function");
+	tcase_add_test(tcase, test_fadd_function);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("test_fsub_function");
+	tcase_add_test(tcase, test_fsub_function);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("test_fmul_function");
+	tcase_add_test(tcase, test_fmul_function);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("test_fdiv_function");
+	tcase_add_test(tcase, test_fdiv_function);
 	suite_add_tcase(suite, tcase);
 
 	return suite;

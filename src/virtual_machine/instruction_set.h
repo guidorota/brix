@@ -40,6 +40,10 @@
 #define BX_IMUL 0x2
 #define BX_IDIV 0x3
 #define BX_IMOD 0x4
+#define BX_FADD 0x5
+#define BX_FSUB 0x6
+#define BX_FMUL 0x7
+#define BX_FDIV 0x8
 
 typedef bx_uint8 instruction_identifier;
 
