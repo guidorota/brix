@@ -34,6 +34,16 @@
 
 #include "types.h"
 
+#define BX_IADD 0x0
+#define BX_ISUB 0x1
+#define BX_IMUL 0x2
+#define BX_IDIV 0x3
+#define BX_IMOD 0x4
+#define BX_FADD 0x5
+#define BX_FSUB 0x6
+#define BX_FMUL 0x7
+#define BX_FDIV 0x8
+
 bx_int8 bx_vm_init();
 
 bx_int8 bx_vm_execute(void *code, bx_size code_size);

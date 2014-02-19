@@ -32,7 +32,7 @@
 
 #include <check.h>
 #include "core/test_stack.h"
-#include "virtual_machine/test_instruction_set.h"
+#include "virtual_machine/test_virtual_machine.h"
 
 int main(void) {
 	int number_failed = 0;
@@ -40,7 +40,7 @@ int main(void) {
 
 	srunner_set_fork_status(runner, CK_NOFORK);
 	srunner_add_suite(runner, test_stack_create_suite());
-	srunner_add_suite(runner, test_instruction_set_create_suite());
+	srunner_add_suite(runner, test_virtual_machine_create_suite());
 
 	srunner_run_all(runner, CK_VERBOSE);
 	number_failed = srunner_ntests_failed(runner);

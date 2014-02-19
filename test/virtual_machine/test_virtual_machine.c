@@ -1,5 +1,5 @@
 /*
- * test_instruction_set.h
+ * test_instruction_set.c
  * Created on: Feb 19, 2014
  * Author: Guido Rota
  *
@@ -29,11 +29,23 @@
  *
  */
 
-#ifndef TEST_INSTRUCTION_SET_H_
-#define TEST_INSTRUCTION_SET_H_
+#include <string.h>
+#include "types.h"
+#include "core/stack.h"
+#include "virtual_machine/virtual_machine.h"
+#include "test_virtual_machine.h"
 
-#include <check.h>
+START_TEST (test_init) {
+	bx_vm_init();
+} END_TEST
 
-Suite *test_instruction_set_create_suite(void);
+Suite *test_virtual_machine_create_suite() {
+	Suite *suite = suite_create("test_instruction_set");
+	TCase *tcase;
 
-#endif /* TEST_INSTRUCTION_SET_H_ */
+	tcase = tcase_create("test_init");
+	tcase_add_test(tcase, test_init);
+	suite_add_tcase(suite, tcase);
+
+	return suite;
+}
