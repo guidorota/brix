@@ -95,6 +95,38 @@ bx_int8 bx_list_copy_element(struct bx_list *list, bx_size index, void *element)
 	return 0;
 }
 
+bx_int8 bx_list_indexof(struct bx_list *list, bx_size *index, void *comparison_element, equals_function equals) {
+
+	if (list == NULL || index == NULL || comparison_element == NULL || equals == NULL) {
+		return -1;
+	}
+
+	int i;
+	for (i = 0; i * list->element_size < list->storage_used; i++) {
+		if (equals(ELEMENT_POINTER(list, i), comparison_element) == BX_BOOLEAN_TRUE) {
+			*index = i;
+		}
+	}
+
+	return 0;
+}
+
+bx_int8 bx_list_search_element(struct bx_list *list, void **element, void *comparison_element, equals_function equals) {
+
+	if (list == NULL || element == NULL || comparison_element == NULL || equals == NULL) {
+		return -1;
+	}
+
+	int i;
+	for (i = 0; i * list->element_size < list->storage_used; i++) {
+		if (equals(ELEMENT_POINTER(list, i), comparison_element) == BX_BOOLEAN_TRUE) {
+			*element = ELEMENT_POINTER(list, i);
+		}
+	}
+
+	return 0;
+}
+
 bx_int8 bx_list_remove_element(struct bx_list *list, bx_size index) {
 
 	if (list == NULL) {

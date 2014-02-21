@@ -41,6 +41,8 @@ struct bx_list {
 	bx_size storage_used;
 };
 
+typedef bx_boolean (*equals_function)(void *list_element, void *comparison_element);
+
 bx_int8 bx_list_init(struct bx_list *list, void *storage, bx_size storage_size, bx_size element_size);
 
 bx_int8 bx_list_add_element(struct bx_list *list, void *element);
@@ -48,6 +50,10 @@ bx_int8 bx_list_add_element(struct bx_list *list, void *element);
 bx_int8 bx_list_get_element(struct bx_list *list, bx_size index, void **element);
 
 bx_int8 bx_list_copy_element(struct bx_list *list, bx_size index, void *element);
+
+bx_int8 bx_list_indexof(struct bx_list *list, bx_size *index, void *comparison_element, equals_function equals);
+
+bx_int8 bx_list_search_element(struct bx_list *list, void **element, void *comparison_element, equals_function equals);
 
 bx_int8 bx_list_remove_element(struct bx_list *list, bx_size index);
 

@@ -42,6 +42,7 @@ bx_int32 element0 = 54;
 bx_int32 element1 = 57;
 bx_int32 element2 = 92;
 
+bx_boolean equals_int32(bx_int32 *element, bx_int32 *comparison_element);
 
 START_TEST (create_list) {
 	bx_int8 error;
@@ -131,6 +132,46 @@ START_TEST (copy_element) {
 	ck_assert_ptr_eq(list.storage, list_storage);
 } END_TEST
 
+START_TEST (search_element) {
+	bx_int8 error;
+	bx_size previous_storage_used;
+	bx_int32 *element_pointer;
+	bx_int32 comparison_element = 54;
+
+	previous_storage_used = list.storage_used;
+	error = bx_list_search_element(&list, (void *) &element_pointer, &comparison_element, (equals_function) &equals_int32);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(*element_pointer, comparison_element);
+	ck_assert_int_eq(list.element_size, sizeof (bx_int32));
+	ck_assert_int_eq(list.storage_used, previous_storage_used);
+	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_ptr_eq(list.storage, list_storage);
+} END_TEST
+
+bx_boolean equals_int32(bx_int32 *element, bx_int32 *comparison_element) {
+
+	if (*element == *comparison_element) {
+		return BX_BOOLEAN_TRUE;
+	} else {
+		return BX_BOOLEAN_FALSE;
+	}
+}
+
+START_TEST (indexof) {
+	bx_int8 error;
+	bx_size previous_storage_used;
+	bx_size index;
+
+	previous_storage_used = list.storage_used;
+	error = bx_list_indexof(&list, &index, &element1, (equals_function) &equals_int32);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(index, 1);
+	ck_assert_int_eq(list.element_size, sizeof (bx_int32));
+	ck_assert_int_eq(list.storage_used, previous_storage_used);
+	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_ptr_eq(list.storage, list_storage);
+} END_TEST
+
 START_TEST (remove_item) {
 	bx_int8 error;
 	bx_size previous_storage_used;
@@ -175,6 +216,14 @@ Suite *test_list_create_suite() {
 
 	tcase = tcase_create("copy_element");
 	tcase_add_test(tcase, copy_element);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("search_element");
+	tcase_add_test(tcase, search_element);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("indexof");
+	tcase_add_test(tcase, indexof);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("remove_item");
