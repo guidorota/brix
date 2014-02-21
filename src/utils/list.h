@@ -1,6 +1,6 @@
 /*
- * test_instruction_set.c
- * Created on: Feb 19, 2014
+ * list.h
+ * Created on: Feb 21, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,22 +29,28 @@
  *
  */
 
-#include <string.h>
+#ifndef LIST_H_
+#define LIST_H_
+
 #include "types.h"
-#include "virtual_machine/virtual_machine.h"
-#include "test_virtual_machine.h"
 
-START_TEST (test_init) {
-	bx_vm_virtual_machine_init();
-} END_TEST
+struct bx_list {
+	void *storage;
+	bx_size storage_size;
+	bx_size element_size;
+	bx_size storage_used;
+};
 
-Suite *test_virtual_machine_create_suite() {
-	Suite *suite = suite_create("test_instruction_set");
-	TCase *tcase;
+bx_int8 bx_list_init(struct bx_list *list, void *storage, bx_size storage_size, bx_size element_size);
 
-	tcase = tcase_create("test_init");
-	tcase_add_test(tcase, test_init);
-	suite_add_tcase(suite, tcase);
+bx_int8 bx_list_add_element(struct bx_list *list, void *element);
 
-	return suite;
-}
+bx_int8 bx_list_get_element(struct bx_list *list, bx_size index, void **element);
+
+bx_int8 bx_list_copy_element(struct bx_list *list, bx_size index, void *element);
+
+bx_int8 bx_list_remove_element(struct bx_list *list, bx_size index);
+
+bx_int8 bx_list_reset(struct bx_list *list);
+
+#endif /* LIST_H_ */

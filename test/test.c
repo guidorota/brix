@@ -31,7 +31,8 @@
  */
 
 #include <check.h>
-#include "core/test_stack.h"
+#include "utils/test_stack.h"
+#include "utils/test_list.h"
 #include "virtual_machine/test_virtual_machine.h"
 
 int main(void) {
@@ -41,6 +42,7 @@ int main(void) {
 	srunner_set_fork_status(runner, CK_NOFORK);
 	srunner_add_suite(runner, test_stack_create_suite());
 	srunner_add_suite(runner, test_virtual_machine_create_suite());
+	srunner_add_suite(runner, test_list_create_suite());
 
 	srunner_run_all(runner, CK_VERBOSE);
 	number_failed = srunner_ntests_failed(runner);

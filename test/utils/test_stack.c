@@ -31,7 +31,7 @@
 
 #include "test_stack.h"
 #include "types.h"
-#include "core/stack.h"
+#include "utils/stack.h"
 #include <stdio.h>
 
 #define STACK_SIZE 4

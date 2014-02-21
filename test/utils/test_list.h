@@ -1,6 +1,6 @@
 /*
- * test_instruction_set.c
- * Created on: Feb 19, 2014
+ * test_list.h
+ * Created on: Feb 21, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,22 +29,11 @@
  *
  */
 
-#include <string.h>
-#include "types.h"
-#include "virtual_machine/virtual_machine.h"
-#include "test_virtual_machine.h"
+#ifndef TEST_LIST_H_
+#define TEST_LIST_H_
 
-START_TEST (test_init) {
-	bx_vm_virtual_machine_init();
-} END_TEST
+#include <check.h>
 
-Suite *test_virtual_machine_create_suite() {
-	Suite *suite = suite_create("test_instruction_set");
-	TCase *tcase;
+Suite *test_list_create_suite(void);
 
-	tcase = tcase_create("test_init");
-	tcase_add_test(tcase, test_init);
-	suite_add_tcase(suite, tcase);
-
-	return suite;
-}
+#endif /* TEST_LIST_H_ */

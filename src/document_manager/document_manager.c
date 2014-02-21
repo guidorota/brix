@@ -33,26 +33,24 @@
 #include "configuration.h"
 #include "document_manager/document_manager.h"
 
-struct bx_dm_status {
-	struct bx_document_field *field_array[DM_MAX_FIELDS];
-	bx_size field_count;
-} dm_status;
+struct bx_document_field *field_array[DM_MAX_FIELDS];
+bx_size field_count;
 
 bx_int8 bx_dm_document_manager_init() {
 	BX_LOG(LOG_INFO, "document_manager", "Initializing document manager...");
-	dm_status.field_count = 0;
+	field_count = 0;
 	return 0;
 }
 
 bx_int8 bx_dm_add_field(struct bx_document_field *field) {
 
-	if (dm_status.field_count == DM_MAX_FIELDS) {
+	if (field_count == DM_MAX_FIELDS) {
 		return -1;
 	}
 
 	//TODO: Still missing quite a few checks!
-	dm_status.field_array[dm_status.field_count] = field;
-	dm_status.field_count++;
+	field_array[field_count] = field;
+	field_count++;
 
 	return 0;
 }
