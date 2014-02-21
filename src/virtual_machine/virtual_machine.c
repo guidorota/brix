@@ -32,7 +32,7 @@
 #include <strings.h>
 #include "virtual_machine.h"
 #include "configuration.h"
-#include "core/stack.h"
+#include "utils/stack.h"
 #include "logging.h"
 
 #define ADD 0
@@ -198,7 +198,7 @@ static bx_int8 bx_push32_function(struct bx_vm_status *vm_status) {
 	return 0;
 }
 
-bx_int8 bx_vm_init() {
+bx_int8 bx_vm_virtual_machine_init() {
 
 	BX_LOG(LOG_INFO, "virtual_machine", "Initializing virtual machine data structures...");
 	bx_stack_setup(&vm_status.execution_stack, stack_byte_array, VM_STACK_SIZE);
@@ -226,7 +226,7 @@ bx_int8 bx_vm_execute(bx_uint8 *code, bx_size code_size) {
 	vm_status.code_size = code_size;
 	vm_status.program_counter = 0;
 	bx_stack_reset(&vm_status.execution_stack);
-	vm_status.stop = BX_TYPE_BOOLEAN_FALSE;
+	vm_status.stop = BX_BOOLEAN_FALSE;
 
 	do {
 		error = bx_fetch_instruction(&vm_status, &instruction_id);
@@ -238,7 +238,7 @@ bx_int8 bx_vm_execute(bx_uint8 *code, bx_size code_size) {
 			break;
 		}
 
-	} while(vm_status.stop == BX_TYPE_BOOLEAN_FALSE);
+	} while(vm_status.stop == BX_BOOLEAN_FALSE);
 
 	if (error != 0) {
 		BX_LOG(LOG_ERROR, "virtual_machine", "Abnormal virtual machine termination");

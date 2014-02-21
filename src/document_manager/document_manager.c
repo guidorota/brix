@@ -29,21 +29,22 @@
  *
  */
 
-#include "types.h"
+#include "logging.h"
 #include "configuration.h"
 #include "document_manager/document_manager.h"
 
 struct bx_dm_status {
-	struct bx_document_field field_array[DM_MAX_FIELDS];
+	struct bx_document_field *field_array[DM_MAX_FIELDS];
 	bx_size field_count;
 } dm_status;
 
-bx_int8 bx_dm_init() {
+bx_int8 bx_dm_document_manager_init() {
+	BX_LOG(LOG_INFO, "document_manager", "Initializing document manager...");
 	dm_status.field_count = 0;
 	return 0;
 }
 
-bx_int8 bx_dm_add_field(struct bx_document_field field) {
+bx_int8 bx_dm_add_field(struct bx_document_field *field) {
 
 	if (dm_status.field_count == DM_MAX_FIELDS) {
 		return -1;

@@ -40,5 +40,6 @@
 
 // Document manager
 #define DM_MAX_FIELDS 256
+#define DM_MMAP_STORAGE_SIZE 512
 
 #endif /* CONFIGURATION_H_ */

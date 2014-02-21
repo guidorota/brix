@@ -32,13 +32,22 @@
 #ifndef DOCUMENT_MANAGER_H_
 #define DOCUMENT_MANAGER_H_
 
-struct bx_document_field {
-	char* field_id;
-	// This has to be linked to the field access methods
+#include "types.h"
+
+enum bx_field_type {
+	INT,
+	FLOAT
 };
 
-bx_int8 bx_dm_init(void);
+struct bx_document_field {
+	char* identifier;
+	enum bx_field_type type;
+	bx_int8 (*get)(struct bx_document_field *instance, void *data);
+	bx_int8 (*set)(struct bx_document_field *instance, void *data);
+};
 
-bx_int8 bx_dm_add_field(struct bx_document_field field);
+bx_int8 bx_dm_document_manager_init(void);
+
+bx_int8 bx_dm_add_field(struct bx_document_field *field);
 
 #endif /* DOCUMENT_MANAGER_H_ */

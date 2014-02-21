@@ -53,7 +53,7 @@
 //TODO: Branching
 //TODO: Stop instruction
 
-bx_int8 bx_vm_init();
+bx_int8 bx_vm_virtual_machine_init();
 
 bx_int8 bx_vm_execute(bx_uint8 *code, bx_size code_size);
 

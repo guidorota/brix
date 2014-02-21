@@ -31,7 +31,6 @@
 
 #include <string.h>
 #include "types.h"
-#include "core/stack.h"
 #include "virtual_machine/virtual_machine.h"
 #include "test_virtual_machine.h"
 

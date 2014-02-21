@@ -1,4 +1,4 @@
-MODULES := core virtual_machine document_manager
+MODULES := utils virtual_machine document_manager
 EXECUTABLES := brix
 ARCH := linux
 

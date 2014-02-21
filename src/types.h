@@ -35,8 +35,8 @@
 #include <inttypes.h>
 #include <stddef.h>
 
-#define BX_TYPE_BOOLEAN_FALSE 0
-#define BX_TYPE_BOOLEAN_TRUE 1
+#define BX_BOOLEAN_FALSE 0
+#define BX_BOOLEAN_TRUE 1
 
 typedef uint8_t bx_boolean;
 

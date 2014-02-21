@@ -29,8 +29,16 @@
  *
  */
 
+#include "configuration.h"
 #include "document_manager/memory_map_field.h"
 
-bx_uint8 bx_mmap_field_init(struct bx_document_field document_field) {
+bx_uint8 bx_mmap_field_init(struct bx_document_field *instance, char *identifier, enum bx_field_type type) {
+
+	if (instance == NULL || identifier == NULL) {
+		return -1;
+	}
+
+	instance->identifier = identifier;
+
 	return 0; //TODO: Stub
 }
