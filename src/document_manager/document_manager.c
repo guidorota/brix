@@ -1,6 +1,6 @@
 /*
- * configuration.h
- * Created on: Feb 16, 2014
+ * document_manager.c
+ * Created on: Feb 21, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,16 +29,29 @@
  *
  */
 
-#ifndef CONFIGURATION_H_
-#define CONFIGURATION_H_
+#include "types.h"
+#include "configuration.h"
+#include "document_manager/document_manager.h"
 
-// Virtual machine
-#define VM_STACK_SIZE 2024
+struct bx_dm_status {
+	struct bx_document_field field_array[DM_MAX_FIELDS];
+	bx_size field_count;
+} dm_status;
 
-// Application manager
-#define CODE_STORAGE_SIZE 4092
+bx_int8 bx_dm_init() {
+	dm_status.field_count = 0;
+	return 0;
+}
 
-// Document manager
-#define DM_MAX_FIELDS 256
+bx_int8 bx_dm_add_field(struct bx_document_field field) {
 
-#endif /* CONFIGURATION_H_ */
+	if (dm_status.field_count == DM_MAX_FIELDS) {
+		return -1;
+	}
+
+	//TODO: Still missing quite a few checks!
+	dm_status.field_array[dm_status.field_count] = field;
+	dm_status.field_count++;
+
+	return 0;
+}

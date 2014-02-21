@@ -1,6 +1,6 @@
 /*
- * configuration.h
- * Created on: Feb 16, 2014
+ * document_manager.h
+ * Created on: Feb 21, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,16 +29,16 @@
  *
  */
 
-#ifndef CONFIGURATION_H_
-#define CONFIGURATION_H_
+#ifndef DOCUMENT_MANAGER_H_
+#define DOCUMENT_MANAGER_H_
 
-// Virtual machine
-#define VM_STACK_SIZE 2024
+struct bx_document_field {
+	char* field_id;
+	// This has to be linked to the field access methods
+};
 
-// Application manager
-#define CODE_STORAGE_SIZE 4092
+bx_int8 bx_dm_init(void);
 
-// Document manager
-#define DM_MAX_FIELDS 256
+bx_int8 bx_dm_add_field(struct bx_document_field field);
 
-#endif /* CONFIGURATION_H_ */
+#endif /* DOCUMENT_MANAGER_H_ */

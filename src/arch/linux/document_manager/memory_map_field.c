@@ -1,6 +1,6 @@
 /*
- * configuration.h
- * Created on: Feb 16, 2014
+ * memory_map_field.c
+ * Created on: Feb 21, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,16 +29,8 @@
  *
  */
 
-#ifndef CONFIGURATION_H_
-#define CONFIGURATION_H_
+#include "document_manager/memory_map_field.h"
 
-// Virtual machine
-#define VM_STACK_SIZE 2024
-
-// Application manager
-#define CODE_STORAGE_SIZE 4092
-
-// Document manager
-#define DM_MAX_FIELDS 256
-
-#endif /* CONFIGURATION_H_ */
+bx_uint8 bx_mmap_field_init(struct bx_document_field document_field) {
+	return 0; //TODO: Stub
+}
