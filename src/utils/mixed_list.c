@@ -85,16 +85,28 @@ bx_int8 bx_mlist_get_element(struct bx_mlist *list, bx_size index, void **elemen
 		current_index++;
 	} while(current_position < list->storage_used);
 
-	return -1;
+	return 1;
 }
 
 bx_int8 bx_mlist_remove_element(struct bx_mlist *list, bx_size index) {
+	bx_int8 error;
+	bx_uint8 *element;
+	bx_size element_size;
+	bx_size remaining_bytes;
 
 	if (list == NULL) {
 		return -1;
 	}
 
-	//TODO: Stub
+	error = bx_mlist_get_element(list, index, (void **) &element, &element_size);
+	if (error != 0) {
+		return error;
+	}
+	element -= sizeof element_size;
+	element_size += sizeof element_size;
+	remaining_bytes = list->storage_used - (element - (bx_uint8 *) list->storage) + element_size;
+	memcpy((void *) element, (void *) (element + element_size), remaining_bytes);
+	list->storage_used -= element_size;
 
 	return 0;
 }

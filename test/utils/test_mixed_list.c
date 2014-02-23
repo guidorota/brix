@@ -130,6 +130,26 @@ START_TEST (out_of_bound_get) {
 	ck_assert_int_ne(error, 0);
 } END_TEST
 
+START_TEST (remove_test) {
+	bx_uint8 error;
+	bx_size previous_storage_used;
+	bx_size element_size;
+	bx_uint8 *element_pointer;
+
+	previous_storage_used = list.storage_used;
+	error = bx_mlist_remove_element(&list, 1);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(list.storage_used, previous_storage_used - sizeof array1 - sizeof (bx_size));
+	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+
+	error = bx_mlist_get_element(&list, 1, (void *) &element_pointer, &element_size);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_ptr_eq(list.storage, list_storage);
+	ck_assert_int_eq(element_size, sizeof array2);
+	ck_assert_int_eq(memcmp((void *) element_pointer, (void *) array2, element_size), 0);
+} END_TEST
+
 Suite *test_mixed_list_create_suite() {
 	Suite *suite = suite_create("test_stack");
 	TCase *tcase;
@@ -152,6 +172,10 @@ Suite *test_mixed_list_create_suite() {
 
 	tcase = tcase_create("out_of_bound_get");
 	tcase_add_test(tcase, out_of_bound_get);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("remove_test");
+	tcase_add_test(tcase, remove_test);
 	suite_add_tcase(suite, tcase);
 
 	return suite;
