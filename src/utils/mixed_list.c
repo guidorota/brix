@@ -62,7 +62,7 @@ bx_int8 bx_mlist_add_element(struct bx_mlist *list, void *element, bx_size eleme
 	return 0;
 }
 
-bx_int8 bx_mlist_get_element(struct bx_mlist *list, bx_size index, void **element) {
+bx_int8 bx_mlist_get_element(struct bx_mlist *list, bx_size index, void **element, bx_size *element_size) {
 
 	if (list == NULL || element == NULL) {
 		return -1;
@@ -74,43 +74,29 @@ bx_int8 bx_mlist_get_element(struct bx_mlist *list, bx_size index, void **elemen
 
 	int current_index = 0;
 	bx_size current_position = 0;
-	bx_size element_size;
 	do {
+		memcpy((void *) element_size, (void *) OFFSET_POINTER(list, current_position), sizeof *element_size);
+		current_position += sizeof *element_size;
 		if (current_index == index) {
-			*element = (void *) OFFSET_POINTER(list, current_position + sizeof element_size);
+			*element = (void *) OFFSET_POINTER(list, current_position);
 			return 0;
 		}
-		memcpy((void *) &element_size, (void *) OFFSET_POINTER(list, current_position), sizeof element_size);
-		current_position += element_size;
+		current_position += *element_size;
 		current_index++;
 	} while(current_position < list->storage_used);
 
 	return -1;
 }
 
-bx_int8 bx_mlist_get_element_size(struct bx_mlist *list, bx_size index, bx_size *element_size) {
+bx_int8 bx_mlist_remove_element(struct bx_mlist *list, bx_size index) {
 
-	if (list == NULL || element_size == NULL) {
+	if (list == NULL) {
 		return -1;
 	}
 
-	if (list->storage_used == 0) {
-		return -1;
-	}
+	//TODO: Stub
 
-	int current_index = 0;
-	bx_size current_position = 0;
-	do {
-		if (current_index == index) {
-			memcpy((void *) element_size, (void *) OFFSET_POINTER(list, current_position), sizeof *element_size);
-			return 0;
-		}
-		memcpy((void *) element_size, (void *) OFFSET_POINTER(list, current_position), sizeof *element_size);
-		current_position += *element_size;
-		current_index++;
-	} while(current_position < list->storage_used);
-
-	return -1;
+	return 0;
 }
 
 bx_int8 bx_mlist_reset(struct bx_mlist *list) {

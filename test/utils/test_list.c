@@ -42,7 +42,14 @@ bx_int32 element0 = 54;
 bx_int32 element1 = 57;
 bx_int32 element2 = 92;
 
-bx_boolean equals_int32(bx_int32 *element, bx_int32 *comparison_element);
+bx_boolean equals_int32(bx_int32 *element, bx_int32 *comparison_element) {
+
+	if (*element == *comparison_element) {
+		return BX_BOOLEAN_TRUE;
+	} else {
+		return BX_BOOLEAN_FALSE;
+	}
+}
 
 START_TEST (create_list) {
 	bx_int8 error;
@@ -53,6 +60,29 @@ START_TEST (create_list) {
 	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
 	ck_assert_int_eq(list.storage_used, 0);
 	ck_assert_ptr_eq(list.storage, list_storage);
+} END_TEST
+
+START_TEST (empty_list_get) {
+	bx_int8 error;
+	bx_int32 *element_pointer;
+
+	error = bx_list_get_element(&list, 0, (void **) &element_pointer);
+	ck_assert_int_ne(error, 0);
+} END_TEST
+
+START_TEST (empty_list_copy) {
+	bx_int8 error;
+	bx_int32 element;
+
+	error = bx_list_copy_element(&list, 0, &element);
+	ck_assert_int_ne(error, 0);
+} END_TEST
+
+START_TEST (empty_list_remove) {
+	bx_int8 error;
+
+	error = bx_list_remove_element(&list, 0);
+	ck_assert_int_ne(error, 0);
 } END_TEST
 
 START_TEST (add_element) {
@@ -117,6 +147,14 @@ START_TEST (get_element) {
 	ck_assert_ptr_eq(list.storage, list_storage);
 } END_TEST
 
+START_TEST (out_of_bound_get) {
+	bx_int8 error;
+	bx_int32 *element_pointer;
+
+	error = bx_list_get_element(&list, 7, (void **) &element_pointer);
+	ck_assert_int_ne(error, 0);
+} END_TEST
+
 START_TEST (copy_element) {
 	bx_int8 error;
 	bx_size previous_storage_used;
@@ -132,6 +170,14 @@ START_TEST (copy_element) {
 	ck_assert_ptr_eq(list.storage, list_storage);
 } END_TEST
 
+START_TEST (out_of_bound_copy) {
+	bx_int8 error;
+	bx_int32 element;
+
+	error = bx_list_copy_element(&list, 7, &element);
+	ck_assert_int_ne(error, 0);
+} END_TEST
+
 START_TEST (search_element) {
 	bx_int8 error;
 	bx_size previous_storage_used;
@@ -139,7 +185,7 @@ START_TEST (search_element) {
 	bx_int32 comparison_element = 54;
 
 	previous_storage_used = list.storage_used;
-	error = bx_list_search_element(&list, (void *) &element_pointer, &comparison_element, (equals_function) &equals_int32);
+	error = bx_list_search_element(&list, (void **) &element_pointer, &comparison_element, (equals_function) &equals_int32);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(*element_pointer, comparison_element);
 	ck_assert_int_eq(list.element_size, sizeof (bx_int32));
@@ -148,14 +194,14 @@ START_TEST (search_element) {
 	ck_assert_ptr_eq(list.storage, list_storage);
 } END_TEST
 
-bx_boolean equals_int32(bx_int32 *element, bx_int32 *comparison_element) {
+START_TEST (search_non_existing_element) {
+	bx_int8 error;
+	bx_int32 *element_pointer;
+	bx_int32 non_existing_element = 105;
 
-	if (*element == *comparison_element) {
-		return BX_BOOLEAN_TRUE;
-	} else {
-		return BX_BOOLEAN_FALSE;
-	}
-}
+	error = bx_list_search_element(&list, (void **) &element_pointer, &non_existing_element, (equals_function) &equals_int32);
+	ck_assert_int_ne(error, 0);
+} END_TEST
 
 START_TEST (indexof) {
 	bx_int8 error;
@@ -172,16 +218,36 @@ START_TEST (indexof) {
 	ck_assert_ptr_eq(list.storage, list_storage);
 } END_TEST
 
-START_TEST (remove_item) {
+START_TEST (indexof_non_existing_element) {
+	bx_int8 error;
+	bx_size index;
+	bx_int32 non_existing_element = 105;
+
+	error = bx_list_indexof(&list, &index, &non_existing_element, (equals_function) &equals_int32);
+	ck_assert_int_ne(error, 0);
+} END_TEST
+
+START_TEST (remove_element) {
 	bx_int8 error;
 	bx_size previous_storage_used;
-	bx_size previous_storage_size;
 
 	previous_storage_used = list.storage_used;
-	previous_storage_size = list.storage_size;
 	error = bx_list_remove_element(&list, 2);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(list.storage_used, previous_storage_used - sizeof (bx_int32));
+	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_ptr_eq(list.storage, list_storage);
+	ck_assert_int_eq(list.element_size, sizeof (bx_int32));
+} END_TEST
+
+START_TEST (remove_non_existing_element) {
+	bx_int8 error;
+	bx_size previous_storage_used;
+
+	previous_storage_used = list.storage_used;
+	error = bx_list_remove_element(&list, 5);
+	ck_assert_int_ne(error, 0);
+	ck_assert_int_eq(list.storage_used, previous_storage_used);
 	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
 	ck_assert_ptr_eq(list.storage, list_storage);
 	ck_assert_int_eq(list.element_size, sizeof (bx_int32));
@@ -206,6 +272,18 @@ Suite *test_list_create_suite() {
 	tcase_add_test(tcase, create_list);
 	suite_add_tcase(suite, tcase);
 
+	tcase = tcase_create("empty_list_get");
+	tcase_add_test(tcase, empty_list_get);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("empty_list_copy");
+	tcase_add_test(tcase, empty_list_copy);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("empty_list_remove");
+	tcase_add_test(tcase, empty_list_remove);
+	suite_add_tcase(suite, tcase);
+
 	tcase = tcase_create("add_element");
 	tcase_add_test(tcase, add_element);
 	suite_add_tcase(suite, tcase);
@@ -214,20 +292,40 @@ Suite *test_list_create_suite() {
 	tcase_add_test(tcase, get_element);
 	suite_add_tcase(suite, tcase);
 
+	tcase = tcase_create("out_of_bound_get");
+	tcase_add_test(tcase, out_of_bound_get);
+	suite_add_tcase(suite, tcase);
+
 	tcase = tcase_create("copy_element");
 	tcase_add_test(tcase, copy_element);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("out_of_bound_copy");
+	tcase_add_test(tcase, out_of_bound_copy);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("search_element");
 	tcase_add_test(tcase, search_element);
 	suite_add_tcase(suite, tcase);
 
+	tcase = tcase_create("search_non_existing_element");
+	tcase_add_test(tcase, search_non_existing_element);
+	suite_add_tcase(suite, tcase);
+
 	tcase = tcase_create("indexof");
 	tcase_add_test(tcase, indexof);
 	suite_add_tcase(suite, tcase);
 
+	tcase = tcase_create("indexof_non_existing_element");
+	tcase_add_test(tcase, indexof_non_existing_element);
+	suite_add_tcase(suite, tcase);
+
 	tcase = tcase_create("remove_item");
-	tcase_add_test(tcase, remove_item);
+	tcase_add_test(tcase, remove_element);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("remove_non_existing_element");
+	tcase_add_test(tcase, remove_non_existing_element);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("reset_list");

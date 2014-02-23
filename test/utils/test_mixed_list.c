@@ -38,16 +38,120 @@
 bx_uint8 list_storage[LIST_STORAGE_SIZE];
 struct bx_mlist list;
 
-START_TEST (reset_list) {
+bx_uint8 array0[4] = { 4, 4, 4, 4 };
+bx_uint8 array1[12] = { 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 };
+bx_uint8 array2[8] = { 9, 9, 9, 9, 9, 9, 9, 9 };
 
+START_TEST (init_list) {
+	bx_int8 error;
+
+	error = bx_mlist_init(&list, list_storage, LIST_STORAGE_SIZE);
+	ck_assert_int_eq(error, 0);
+	ck_assert_ptr_eq(list.storage, list_storage);
+	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_int_eq(list.storage_used, 0);
+} END_TEST
+
+START_TEST (get_from_empty_list) {
+	bx_int8 error;
+	bx_size element_size;
+	bx_uint8 *element_pointer;
+
+	error = bx_mlist_get_element(&list, 0, (void **) &element_pointer, &element_size);
+	ck_assert_int_eq(error, -1);
+
+	error = bx_mlist_get_element(&list, 1, (void **) &element_pointer, &element_size);
+	ck_assert_int_eq(error, -1);
+
+	error = bx_mlist_get_element(&list, 2, (void **) &element_pointer, &element_size);
+	ck_assert_int_eq(error, -1);
+} END_TEST
+
+START_TEST (add_element) {
+	bx_int8 error;
+	bx_size previous_storage_used;
+
+	previous_storage_used = list.storage_used;
+	error = bx_mlist_add_element(&list, (void *) array0, sizeof array0);
+	ck_assert_int_eq(list.storage_used, previous_storage_used + sizeof array0 + sizeof (bx_size));
+	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_ptr_eq(list.storage, list_storage);
+
+	previous_storage_used = list.storage_used;
+	error = bx_mlist_add_element(&list, (void *) array1, sizeof array1);
+	ck_assert_int_eq(list.storage_used, previous_storage_used + sizeof array1 + sizeof (bx_size));
+	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_ptr_eq(list.storage, list_storage);
+
+	previous_storage_used = list.storage_used;
+	error = bx_mlist_add_element(&list, (void *) array2, sizeof array2);
+	ck_assert_int_eq(list.storage_used, previous_storage_used + sizeof array2 + sizeof (bx_size));
+	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_ptr_eq(list.storage, list_storage);
+} END_TEST
+
+START_TEST (get_element) {
+	bx_int8 error;
+	bx_size element_size;
+	bx_uint8 *element_pointer;
+	bx_size previous_storage_used;
+
+	previous_storage_used = list.storage_used;
+	error = bx_mlist_get_element(&list, 0, (void *) &element_pointer, &element_size);
+	ck_assert_int_eq(list.storage_used, previous_storage_used);
+	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_ptr_eq(list.storage, list_storage);
+	ck_assert_int_eq(element_size, sizeof array0);
+	ck_assert_int_eq(memcmp((void *) element_pointer, (void *) array0, element_size), 0);
+
+	previous_storage_used = list.storage_used;
+	error = bx_mlist_get_element(&list, 1, (void *) &element_pointer, &element_size);
+	ck_assert_int_eq(list.storage_used, previous_storage_used);
+	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_ptr_eq(list.storage, list_storage);
+	ck_assert_int_eq(element_size, sizeof array1);
+	ck_assert_int_eq(memcmp((void *) element_pointer, (void *) array1, element_size), 0);
+
+	previous_storage_used = list.storage_used;
+	error = bx_mlist_get_element(&list, 2, (void *) &element_pointer, &element_size);
+	ck_assert_int_eq(list.storage_used, previous_storage_used);
+	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_ptr_eq(list.storage, list_storage);
+	ck_assert_int_eq(element_size, sizeof array2);
+	ck_assert_int_eq(memcmp((void *) element_pointer, (void *) array2, element_size), 0);
+} END_TEST
+
+START_TEST (out_of_bound_get) {
+	bx_int8 error;
+	bx_uint8 *element_pointer;
+	bx_size element_size;
+
+	error = bx_mlist_get_element(&list, 4, (void **) &element_pointer, &element_size);
+	ck_assert_int_ne(error, 0);
 } END_TEST
 
 Suite *test_mixed_list_create_suite() {
 	Suite *suite = suite_create("test_stack");
 	TCase *tcase;
 
-	tcase = tcase_create("reset_list");
-	tcase_add_test(tcase, reset_list);
+	tcase = tcase_create("init_list");
+	tcase_add_test(tcase, init_list);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("get_from_empty_list");
+	tcase_add_test(tcase, get_from_empty_list);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("add_element");
+	tcase_add_test(tcase, add_element);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("get_element");
+	tcase_add_test(tcase, get_element);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("out_of_bound_get");
+	tcase_add_test(tcase, out_of_bound_get);
 	suite_add_tcase(suite, tcase);
 
 	return suite;

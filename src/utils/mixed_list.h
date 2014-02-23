@@ -44,9 +44,9 @@ bx_int8 bx_mlist_init(struct bx_mlist *list, void *storage, bx_size storage_size
 
 bx_int8 bx_mlist_add_element(struct bx_mlist *list, void *element, bx_size element_size);
 
-bx_int8 bx_mlist_get_element(struct bx_mlist *list, bx_size index, void **element);
+bx_int8 bx_mlist_get_element(struct bx_mlist *list, bx_size index, void **element, bx_size *element_size);
 
-bx_int8 bx_mlist_get_element_size(struct bx_mlist *list, bx_size index, bx_size *element_size);
+bx_int8 bx_mlist_remove_element(struct bx_mlist *list, bx_size index);
 
 bx_int8 bx_mlist_reset(struct bx_mlist *list);
 
