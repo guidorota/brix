@@ -48,18 +48,20 @@ bx_int8 bx_mlist_init(struct bx_mlist *list, void *storage, bx_size storage_size
 	return 0;
 }
 
-bx_int8 bx_mlist_add_element(struct bx_mlist *list, void *element, bx_size element_size) {
+void *bx_mlist_add_element(struct bx_mlist *list, void *element, bx_size element_size) {
+	void *new_element;
 
 	if (list == NULL || element == NULL || element_size == 0) {
-		return -1;
+		return NULL;
 	}
 
 	memcpy(TAIL_POINTER(list), &element_size, sizeof element_size);
 	list->storage_used += sizeof element_size;
-	memcpy(TAIL_POINTER(list), element, element_size);
+	new_element = TAIL_POINTER(list);
+	memcpy(new_element, element, element_size);
 	list->storage_used += element_size;
 
-	return 0;
+	return new_element;
 }
 
 bx_int8 bx_mlist_get_element(struct bx_mlist *list, bx_size index, void **element, bx_size *element_size) {

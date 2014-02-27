@@ -49,20 +49,22 @@ bx_int8 bx_list_init(struct bx_list *list, void *storage, bx_size storage_size, 
 	return 0;
 }
 
-bx_int8 bx_list_add_element(struct bx_list *list, void *element) {
+void * bx_list_add_element(struct bx_list *list, void *element) {
+	void *new_element;
 
 	if (list == NULL) {
-		return -1;
+		return NULL;
 	}
 
 	if (list->storage_used + list->element_size > list->storage_size) {
-		return -1;
+		return NULL;
 	}
 
-	memcpy(TAIL_POINTER(list), element, list->element_size);
+	new_element = TAIL_POINTER(list);
+	memcpy(new_element, element, list->element_size);
 	list->storage_used += list->element_size;
 
-	return 0;
+	return new_element;
 }
 
 bx_int8 bx_list_get_element(struct bx_list *list, bx_size index, void **element) {

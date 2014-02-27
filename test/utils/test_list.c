@@ -86,28 +86,28 @@ START_TEST (empty_list_remove) {
 } END_TEST
 
 START_TEST (add_element) {
-	bx_int8 error;
+	void *result;
 	bx_size previous_storage_used;
 
 	previous_storage_used = list.storage_used;
-	error = bx_list_add_element(&list, (void *) &element0);
-	ck_assert_int_eq(error, 0);
+	result = bx_list_add_element(&list, (void *) &element0);
+	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(list.element_size, sizeof (bx_int32));
 	ck_assert_int_eq(list.storage_used, previous_storage_used + sizeof (bx_int32));
 	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
 	ck_assert_ptr_eq(list.storage, list_storage);
 
 	previous_storage_used = list.storage_used;
-	error = bx_list_add_element(&list, (void *) &element1);
-	ck_assert_int_eq(error, 0);
+	result = bx_list_add_element(&list, (void *) &element1);
+	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(list.element_size, sizeof (bx_int32));
 	ck_assert_int_eq(list.storage_used, previous_storage_used + sizeof (bx_int32));
 	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
 	ck_assert_ptr_eq(list.storage, list_storage);
 
 	previous_storage_used = list.storage_used;
-	error = bx_list_add_element(&list, (void *) &element2);
-	ck_assert_int_eq(error, 0);
+	result = bx_list_add_element(&list, (void *) &element2);
+	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(list.element_size, sizeof (bx_int32));
 	ck_assert_int_eq(list.storage_used, previous_storage_used + sizeof (bx_int32));
 	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);

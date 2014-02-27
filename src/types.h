@@ -34,6 +34,7 @@
 
 #include <inttypes.h>
 #include <stddef.h>
+#include <sys/types.h>
 
 #define BX_BOOLEAN_FALSE 0
 #define BX_BOOLEAN_TRUE 1
@@ -53,5 +54,6 @@ typedef uint64_t bx_uint64;
 typedef float bx_float32;
 
 typedef size_t bx_size;
+typedef ssize_t bx_ssize;
 
 #endif /* TYPES_H_ */

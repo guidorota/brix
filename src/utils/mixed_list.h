@@ -42,7 +42,7 @@ struct bx_mlist {
 
 bx_int8 bx_mlist_init(struct bx_mlist *list, void *storage, bx_size storage_size);
 
-bx_int8 bx_mlist_add_element(struct bx_mlist *list, void *element, bx_size element_size);
+void *bx_mlist_add_element(struct bx_mlist *list, void *element, bx_size element_size);
 
 bx_int8 bx_mlist_get_element(struct bx_mlist *list, bx_size index, void **element, bx_size *element_size);
 

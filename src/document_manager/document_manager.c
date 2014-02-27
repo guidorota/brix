@@ -30,27 +30,21 @@
  */
 
 #include "logging.h"
-#include "configuration.h"
+#include "utils/list.h"
 #include "document_manager/document_manager.h"
 
-struct bx_document_field *field_array[DM_MAX_FIELDS];
+struct bx_field_node {
+	struct bx_document_field field;
+	struct bx_document_field *next_sibling;
+	struct bx_document_field *first_child;
+};
+
+struct bx_field_node field_tree[DM_MAX_FIELDS];
 bx_size field_count;
 
 bx_int8 bx_dm_document_manager_init() {
 	BX_LOG(LOG_INFO, "document_manager", "Initializing document manager...");
 	field_count = 0;
-	return 0;
-}
-
-bx_int8 bx_dm_add_field(struct bx_document_field *field) {
-
-	if (field_count == DM_MAX_FIELDS) {
-		return -1;
-	}
-
-	//TODO: Still missing quite a few checks!
-	field_array[field_count] = field;
-	field_count++;
 
 	return 0;
 }

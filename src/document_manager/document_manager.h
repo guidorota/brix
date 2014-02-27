@@ -33,6 +33,7 @@
 #define DOCUMENT_MANAGER_H_
 
 #include "types.h"
+#include "configuration.h"
 
 enum bx_field_type {
 	INT,
@@ -40,14 +41,16 @@ enum bx_field_type {
 };
 
 struct bx_document_field {
-	char* identifier;
+	bx_uint8 identifier[DM_FIELD_IDENTIFIER_LENGTH];
+	bx_size identifier_length;
 	enum bx_field_type type;
+	void *private_data;
 	bx_int8 (*get)(struct bx_document_field *instance, void *data);
 	bx_int8 (*set)(struct bx_document_field *instance, void *data);
 };
 
 bx_int8 bx_dm_document_manager_init(void);
 
-bx_int8 bx_dm_add_field(struct bx_document_field *field);
+bx_int8 bx_dm_add_field(struct bx_document_field *field, char *parent_identifier);
 
 #endif /* DOCUMENT_MANAGER_H_ */
