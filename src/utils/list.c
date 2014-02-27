@@ -67,21 +67,19 @@ void * bx_list_add_element(struct bx_list *list, void *element) {
 	return new_element;
 }
 
-bx_int8 bx_list_get_element(struct bx_list *list, bx_size index, void **element) {
+void *bx_list_get_element(struct bx_list *list, bx_size index) {
 
-	if (list == NULL || element == NULL) {
-		return -1;
+	if (list == NULL) {
+		return NULL;
 	}
 
 	if (list->storage_used == 0 ||
 			index * list->element_size > list->storage_size ||
 			index * list->element_size > list->storage_used) {
-		return -1;
+		return NULL;
 	}
 
-	*element = ELEMENT_POINTER(list, index);
-
-	return 0;
+	return ELEMENT_POINTER(list, index);
 }
 
 bx_int8 bx_list_copy_element(struct bx_list *list, bx_size index, void *element) {

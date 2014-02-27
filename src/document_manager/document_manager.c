@@ -29,22 +29,49 @@
  *
  */
 
+#include <string.h>
 #include "logging.h"
 #include "utils/list.h"
 #include "document_manager/document_manager.h"
 
-struct bx_field_node {
-	struct bx_document_field field;
-	struct bx_document_field *next_sibling;
-	struct bx_document_field *first_child;
-};
+bx_boolean search_field_by_id(struct bx_document_field *field, char *field_identifier);
 
-struct bx_field_node field_tree[DM_MAX_FIELDS];
-bx_size field_count;
+struct bx_document_field field_storage[DM_MAX_FIELD_NUMBER];
+
+struct bx_list field_list;
 
 bx_int8 bx_dm_document_manager_init() {
 	BX_LOG(LOG_INFO, "document_manager", "Initializing document manager...");
-	field_count = 0;
+
+	bx_list_init(&field_list, field_storage, DM_MAX_FIELD_NUMBER, sizeof (struct bx_document_field));
 
 	return 0;
+}
+
+bx_int8 bx_dm_add_field(struct bx_document_field *field) {
+	void *result;
+	if (field == NULL) {
+		return -1;
+	}
+
+	result = bx_list_add_element(&field_list, field);
+
+	return result != NULL ? 0 : -1;
+}
+
+bx_int8 bx_dm_invoke_get(char *field_identifier, void *data) {
+	return 0; //TODO: Stub
+}
+
+bx_int8 bx_dm_invoke_set(char *field_identifier, void *data) {
+	return 0; //TODO: Stub
+}
+
+bx_boolean search_field_by_id(struct bx_document_field *field, char *field_identifier) {
+
+	if (memcmp((void *) field->identifier, (void *) field_identifier, DM_FIELD_IDENTIFIER_LENGTH) == 0) {
+		return BX_BOOLEAN_TRUE;
+	} else {
+		return BX_BOOLEAN_FALSE;
+	}
 }

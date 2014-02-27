@@ -42,7 +42,6 @@ enum bx_field_type {
 
 struct bx_document_field {
 	bx_uint8 identifier[DM_FIELD_IDENTIFIER_LENGTH];
-	bx_size identifier_length;
 	enum bx_field_type type;
 	void *private_data;
 	bx_int8 (*get)(struct bx_document_field *instance, void *data);
@@ -51,6 +50,10 @@ struct bx_document_field {
 
 bx_int8 bx_dm_document_manager_init(void);
 
-bx_int8 bx_dm_add_field(struct bx_document_field *field, char *parent_identifier);
+bx_int8 bx_dm_add_field(struct bx_document_field *field);
+
+bx_int8 bx_dm_invoke_get(char *field_identifier, void *data);
+
+bx_int8 bx_dm_invoke_set(char *field_identifier, void *data);
 
 #endif /* DOCUMENT_MANAGER_H_ */

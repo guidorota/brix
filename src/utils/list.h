@@ -34,6 +34,8 @@
 
 #include "types.h"
 
+#define BX_LIST_GET(list_pointer, index, type) (type *) bx_list_get_element(list_pointer, index)
+
 struct bx_list {
 	void *storage;
 	bx_size storage_size;
@@ -47,7 +49,7 @@ bx_int8 bx_list_init(struct bx_list *list, void *storage, bx_size storage_size, 
 
 void *bx_list_add_element(struct bx_list *list, void *element);
 
-bx_int8 bx_list_get_element(struct bx_list *list, bx_size index, void **element);
+void *bx_list_get_element(struct bx_list *list, bx_size index);
 
 bx_int8 bx_list_copy_element(struct bx_list *list, bx_size index, void *element);
 

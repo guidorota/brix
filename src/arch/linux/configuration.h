@@ -39,7 +39,7 @@
 #define CODE_STORAGE_SIZE 4092
 
 // Document manager
-#define DM_MAX_FIELDS 256
+#define DM_MAX_FIELD_NUMBER 256
 #define DM_FIELD_IDENTIFIER_LENGTH 16
 #define DM_MMAP_STORAGE_SIZE 512
 

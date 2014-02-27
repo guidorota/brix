@@ -63,11 +63,10 @@ START_TEST (create_list) {
 } END_TEST
 
 START_TEST (empty_list_get) {
-	bx_int8 error;
-	bx_int32 *element_pointer;
+	bx_int32 *result;
 
-	error = bx_list_get_element(&list, 0, (void **) &element_pointer);
-	ck_assert_int_ne(error, 0);
+	result = BX_LIST_GET(&list, 0, bx_int32);
+	ck_assert_ptr_eq(result, NULL);
 } END_TEST
 
 START_TEST (empty_list_copy) {
@@ -115,32 +114,31 @@ START_TEST (add_element) {
 } END_TEST
 
 START_TEST (get_element) {
-	bx_int8 error;
+	bx_int32 *result;
 	bx_size previous_storage_used;
-	bx_int32 *element_pointer;
 
 	previous_storage_used = list.storage_used;
-	error = bx_list_get_element(&list, 0, (void **) &element_pointer);
-	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(*element_pointer, element0);
+	result = BX_LIST_GET(&list, 0, bx_int32);
+	ck_assert_ptr_ne(result, NULL);
+	ck_assert_int_eq(*result, element0);
 	ck_assert_int_eq(list.element_size, sizeof (bx_int32));
 	ck_assert_int_eq(list.storage_used, previous_storage_used);
 	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
 	ck_assert_ptr_eq(list.storage, list_storage);
 
 	previous_storage_used = list.storage_used;
-	error = bx_list_get_element(&list, 1, (void **) &element_pointer);
-	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(*element_pointer, element1);
+	result = BX_LIST_GET(&list, 1, bx_int32);
+	ck_assert_ptr_ne(result, NULL);
+	ck_assert_int_eq(*result, element1);
 	ck_assert_int_eq(list.element_size, sizeof (bx_int32));
 	ck_assert_int_eq(list.storage_used, previous_storage_used);
 	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
 	ck_assert_ptr_eq(list.storage, list_storage);
 
 	previous_storage_used = list.storage_used;
-	error = bx_list_get_element(&list, 2, (void **) &element_pointer);
-	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(*element_pointer, element2);
+	result = BX_LIST_GET(&list, 2, bx_int32);
+	ck_assert_ptr_ne(result, NULL);
+	ck_assert_int_eq(*result, element2);
 	ck_assert_int_eq(list.element_size, sizeof (bx_int32));
 	ck_assert_int_eq(list.storage_used, previous_storage_used);
 	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
@@ -148,11 +146,10 @@ START_TEST (get_element) {
 } END_TEST
 
 START_TEST (out_of_bound_get) {
-	bx_int8 error;
-	bx_int32 *element_pointer;
+	bx_int32 *result;
 
-	error = bx_list_get_element(&list, 7, (void **) &element_pointer);
-	ck_assert_int_ne(error, 0);
+	result = BX_LIST_GET(&list, 5, bx_int32);
+	ck_assert_ptr_eq(result, NULL);
 } END_TEST
 
 START_TEST (copy_element) {
