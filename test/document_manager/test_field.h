@@ -37,4 +37,8 @@
 
 bx_int8 bx_test_field_init(struct bx_document_field *document_field);
 
+void bx_test_field_set_data(bx_int32 value);
+
+bx_int32 bx_test_field_get_data(void);
+
 #endif /* TEST_FIELD_H_ */

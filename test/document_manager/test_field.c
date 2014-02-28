@@ -34,7 +34,7 @@
 static bx_int8 test_field_get(struct bx_document_field *instance, void *data);
 static bx_int8 test_field_set(struct bx_document_field *instance, void *data);
 
-static bx_int32 value;
+static bx_int32 internal_value;
 
 bx_int8 bx_test_field_init(struct bx_document_field *field) {
 
@@ -44,10 +44,18 @@ bx_int8 bx_test_field_init(struct bx_document_field *field) {
 
 	field->get = &test_field_get;
 	field->set = &test_field_set;
-	field->private_data = &value;
+	field->private_data = &internal_value;
 	field->type = INT;
 
 	return 0;
+}
+
+void bx_test_field_set_data(bx_int32 value) {
+	internal_value = value;
+}
+
+bx_int32 bx_test_field_get_data() {
+	return internal_value;
 }
 
 bx_int8 test_field_get(struct bx_document_field *instance, void *data) {
@@ -56,7 +64,7 @@ bx_int8 test_field_get(struct bx_document_field *instance, void *data) {
 		return -1;
 	}
 
-	*(bx_int32 *) data = value;
+	*(bx_int32 *) data = internal_value;
 	return 0;
 }
 
@@ -65,6 +73,6 @@ bx_int8 test_field_set(struct bx_document_field *instance, void *data) {
 		return -1;
 	}
 
-	value = *(bx_int32 *) data;
+	internal_value = *(bx_int32 *) data;
 	return 0;
 }

@@ -35,7 +35,8 @@
 
 #define TEST_FIELD_ID "test_field_id"
 
-struct bx_document_field test_field;
+static struct bx_document_field test_field;
+static bx_int32 value = 52;
 
 START_TEST (test_field_init) {
 	bx_int8 error;
@@ -65,6 +66,16 @@ START_TEST (reject_duplicate_id) {
 	ck_assert_int_ne(error, 0);
 } END_TEST
 
+START_TEST (set_field_value) {
+	bx_int8 error;
+
+	bx_test_field_set_data(0);
+	ck_assert_int_ne(bx_test_field_get_data(), value);
+	error = bx_dm_invoke_set(TEST_FIELD_ID, &value);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_data(), value);
+} END_TEST
+
 Suite *test_document_manager_create_suite() {
 	Suite *suite = suite_create("test_document_manager");
 	TCase *tcase;
@@ -83,6 +94,14 @@ Suite *test_document_manager_create_suite() {
 
 	tcase = tcase_create("reject_duplicate_id");
 	tcase_add_test(tcase, reject_duplicate_id);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("reject_duplicate_id");
+	tcase_add_test(tcase, reject_duplicate_id);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("set_field_value");
+	tcase_add_test(tcase, set_field_value);
 	suite_add_tcase(suite, tcase);
 
 	return suite;

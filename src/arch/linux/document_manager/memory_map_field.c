@@ -33,17 +33,14 @@
 #include "configuration.h"
 #include "document_manager/memory_map_field.h"
 
-bx_uint8 storage[DM_MMAP_STORAGE_SIZE];
-bx_size memory_used;
+static bx_uint8 storage[DM_MMAP_STORAGE_SIZE];
+static bx_size memory_used;
 
-bx_int8 bx_mmap_field_init(struct bx_document_field *instance, char *identifier, enum bx_field_type type) {
+bx_int8 bx_mmap_field_init(struct bx_document_field *instance, enum bx_field_type type) {
 
-	if (instance == NULL || identifier == NULL) {
+	if (instance == NULL) {
 		return -1;
 	}
-
-	memcpy((void *) instance->identifier, (void *) identifier, strnlen(identifier, DM_FIELD_IDENTIFIER_LENGTH));
-	instance->identifier = identifier;
 
 	return 0; //TODO: Stub
 }

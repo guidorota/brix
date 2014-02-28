@@ -39,8 +39,8 @@ struct internal_field {
 	struct bx_document_field field;
 };
 
-struct internal_field field_list_storage[DM_MAX_FIELD_NUMBER];
-struct bx_list field_list;
+static struct internal_field field_list_storage[DM_MAX_FIELD_NUMBER];
+static struct bx_list field_list;
 
 bx_boolean compare_by_id(struct internal_field *field, char *identifier);
 
@@ -74,12 +74,35 @@ bx_int8 bx_dm_add_field(struct bx_document_field *field, char *identifier) {
 }
 
 bx_int8 bx_dm_invoke_get(char *field_identifier, void *data) {
-	return 0; //TODO: Stub
+	struct internal_field *internal_field;
+
+	if (field_identifier == NULL) {
+		return -1;
+	}
+
+	internal_field = bx_list_search(&field_list, field_identifier, (equals_function) compare_by_id);
+	if (internal_field == NULL) {
+		return -1;
+	}
+	internal_field->field.get(&internal_field->field, data);
+
+	return 0;
 }
 
 bx_int8 bx_dm_invoke_set(char *field_identifier, void *data) {
-	return 0; //TODO: Stub
-}
+	struct internal_field *internal_field;
+
+	if (field_identifier == NULL) {
+		return -1;
+	}
+
+	internal_field = bx_list_search(&field_list, field_identifier, (equals_function) compare_by_id);
+	if (internal_field == NULL) {
+		return -1;
+	}
+	internal_field->field.set(&internal_field->field, data);
+
+	return 0;}
 
 bx_boolean compare_by_id(struct internal_field *field, char *identifier) {
 

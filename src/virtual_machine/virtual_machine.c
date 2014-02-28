@@ -51,10 +51,10 @@ struct bx_vm_status {
 
 typedef bx_int8 (*bx_instruction)(struct bx_vm_status *);
 
-struct bx_vm_status vm_status;
-bx_int8 stack_byte_array[VM_STACK_SIZE];
+static struct bx_vm_status vm_status;
+static bx_int8 stack_byte_array[VM_STACK_SIZE];
 
-bx_instruction instruction_array[256];
+static bx_instruction instruction_array[256];
 
 static inline bx_int8 bx_integer_arithmetic_function(struct bx_stack *execution_stack, bx_int8 operation);
 static inline bx_int8 bx_float_arithmetic_function(struct bx_stack *execution_stack, bx_int8 operation);
