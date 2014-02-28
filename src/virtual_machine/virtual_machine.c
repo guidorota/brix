@@ -201,7 +201,7 @@ static bx_int8 bx_push32_function(struct bx_vm_status *vm_status) {
 bx_int8 bx_vm_virtual_machine_init() {
 
 	BX_LOG(LOG_INFO, "virtual_machine", "Initializing virtual machine data structures...");
-	bx_stack_setup(&vm_status.execution_stack, stack_byte_array, VM_STACK_SIZE);
+	bx_stack_init(&vm_status.execution_stack, stack_byte_array, VM_STACK_SIZE);
 
 	BX_LOG(LOG_INFO, "virtual_machine", "Initializing instructions...");
 	instruction_array[BX_INSTR_IADD] = &bx_iadd_function;

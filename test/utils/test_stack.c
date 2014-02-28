@@ -45,7 +45,7 @@ bx_int32 int_value = 987364758;
 START_TEST (create_stack) {
 	bx_int8 error;
 
-	error = bx_stack_setup(&test_stack, (void *) byte_array, STACK_SIZE);
+	error = bx_stack_init(&test_stack, (void *) byte_array, STACK_SIZE);
 
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(test_stack.top, 0);

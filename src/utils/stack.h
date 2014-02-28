@@ -43,12 +43,44 @@ struct bx_stack {
 	size_t size;
 };
 
-bx_int8 bx_stack_setup(struct bx_stack *stack, void *byte_array, bx_size stack_size);
+/**
+ * Initializes the stack data structure.
+ *
+ * @param stack Stack data structure to initialize
+ * @param storage Pointer to the storage memory reserved for the stack
+ * @param storage_size Size of the storage memory reserved for the stack
+ *
+ * @return 0 on success, -1 on error
+ */
+bx_int8 bx_stack_init(struct bx_stack *stack, void *storage, bx_size storage_size);
 
-bx_int8 bx_stack_push(struct bx_stack *stack, void *variable, bx_size size);
+/**
+ * Pushes bytes from a variable the stack.
+ *
+ * @param stack Stack pointer
+ * @param from Starting memory position to push
+ * @param size Number of bytes to push
+ *
+ * @return 0 on success, -1 on error
+ */
+bx_int8 bx_stack_push(struct bx_stack *stack, void *from, bx_size size);
 
-bx_int8 bx_stack_pop(struct bx_stack *stack, void *variable, bx_size size);
+/**
+ * Pops bytes from the stack to a variable.
+ *
+ * @param stack Stack pointer
+ * @param to Destination memory address
+ * @param size Number of bytes to pop
+ *
+ * @return 0 on success, -1 on error
+ */
+bx_int8 bx_stack_pop(struct bx_stack *stack, void *to, bx_size size);
 
+/**
+ * Resets the stack.
+ *
+ * @param stack Stack pointer
+ */
 void bx_stack_reset(struct bx_stack *stack);
 
 #endif /* STACK_H_ */
