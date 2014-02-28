@@ -35,12 +35,12 @@
 
 #define LIST_STORAGE_SIZE 512
 
-bx_uint8 list_storage[LIST_STORAGE_SIZE];
-struct bx_mlist list;
+static bx_uint8 list_storage[LIST_STORAGE_SIZE];
+static struct bx_mlist list;
 
-bx_uint8 array0[4] = { 4, 4, 4, 4 };
-bx_uint8 array1[12] = { 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 };
-bx_uint8 array2[8] = { 9, 9, 9, 9, 9, 9, 9, 9 };
+static bx_uint8 array0[4] = { 4, 4, 4, 4 };
+static bx_uint8 array1[12] = { 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 };
+static bx_uint8 array2[8] = { 9, 9, 9, 9, 9, 9, 9, 9 };
 
 START_TEST (init_list) {
 	bx_int8 error;

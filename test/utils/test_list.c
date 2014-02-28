@@ -36,12 +36,12 @@
 #define LIST_STORAGE_SIZE 512
 #define LIST_CAPACITY LIST_STORAGE_SIZE / sizeof (bx_int32)
 
-bx_uint8 list_storage[LIST_STORAGE_SIZE];
-struct bx_list list;
+static bx_uint8 list_storage[LIST_STORAGE_SIZE];
+static struct bx_list list;
 
-bx_int32 element0 = 54;
-bx_int32 element1 = 57;
-bx_int32 element2 = 92;
+static bx_int32 element0 = 54;
+static bx_int32 element1 = 57;
+static bx_int32 element2 = 92;
 
 bx_boolean equals_int32(bx_int32 *element, bx_int32 *comparison_element) {
 

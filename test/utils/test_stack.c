@@ -36,11 +36,11 @@
 
 #define STACK_SIZE 4
 
-struct bx_stack test_stack;
-bx_int8 byte_array[STACK_SIZE];
+static struct bx_stack test_stack;
+static bx_int8 byte_array[STACK_SIZE];
 
-bx_int8 byte_var = 12;
-bx_int32 int_value = 987364758;
+static bx_int8 byte_var = 12;
+static bx_int32 int_value = 987364758;
 
 START_TEST (create_stack) {
 	bx_int8 error;
