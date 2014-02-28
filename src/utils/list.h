@@ -117,7 +117,7 @@ bx_int8 bx_list_copy(struct bx_list *list, bx_size index, void *to);
  * @param element Element to search
  * @param equals Function used to compare the 2 elements
  *
- * @return Index of the element, -1 on error
+ * @return Index of the element, -1 on not found or error
  */
 bx_ssize bx_list_indexof(struct bx_list *list, void *element, equals_function equals);
 

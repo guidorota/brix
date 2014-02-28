@@ -42,7 +42,7 @@ struct internal_field {
 struct internal_field field_list_storage[DM_MAX_FIELD_NUMBER];
 struct bx_list field_list;
 
-bx_boolean search_field_by_id(struct internal_field *field, char *identifier);
+bx_boolean compare_by_id(struct internal_field *field, char *identifier);
 
 bx_int8 bx_dm_document_manager_init() {
 	BX_LOG(LOG_INFO, "document_manager", "Initializing document manager...");
@@ -52,10 +52,14 @@ bx_int8 bx_dm_document_manager_init() {
 	return 0;
 }
 
-bx_int8 bx_dm_add_field(struct bx_document_field *field, char* identifier) {
+bx_int8 bx_dm_add_field(struct bx_document_field *field, char *identifier) {
 	struct internal_field *internal_field;
 
 	if (field == NULL) {
+		return -1;
+	}
+
+	if (bx_list_indexof(&field_list, identifier, (equals_function) compare_by_id) != -1) {
 		return -1;
 	}
 
@@ -77,7 +81,7 @@ bx_int8 bx_dm_invoke_set(char *field_identifier, void *data) {
 	return 0; //TODO: Stub
 }
 
-bx_boolean search_field_by_id(struct internal_field *field, char *identifier) {
+bx_boolean compare_by_id(struct internal_field *field, char *identifier) {
 
 	if (strncmp(field->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH) == 0) {
 		return BX_BOOLEAN_TRUE;
