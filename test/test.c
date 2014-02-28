@@ -34,6 +34,7 @@
 #include "utils/test_stack.h"
 #include "utils/test_list.h"
 #include "utils/test_mixed_list.h"
+#include "document_manager/test_document_manager.h"
 #include "virtual_machine/test_virtual_machine.h"
 
 int main(void) {
@@ -44,6 +45,7 @@ int main(void) {
 	srunner_add_suite(runner, test_stack_create_suite());
 	srunner_add_suite(runner, test_list_create_suite());
 	srunner_add_suite(runner, test_mixed_list_create_suite());
+	srunner_add_suite(runner, test_document_manager_create_suite());
 	srunner_add_suite(runner, test_virtual_machine_create_suite());
 
 	srunner_run_all(runner, CK_VERBOSE);

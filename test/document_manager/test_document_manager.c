@@ -1,6 +1,6 @@
 /*
- * test_virtual_machine.h
- * Created on: Feb 19, 2014
+ * document_manager.c
+ * Created on: Feb 28, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,11 +29,11 @@
  *
  */
 
-#ifndef TEST_VIRTUAL_MACHINE_H_
-#define TEST_VIRTUAL_MACHINE_H_
+#include "test_document_manager.h"
 
-#include <check.h>
+Suite *test_document_manager_create_suite() {
+	Suite *suite = suite_create("test_document_manager");
+	TCase *tcase;
 
-Suite *test_virtual_machine_create_suite(void);
-
-#endif /* TEST_VIRTUAL_MACHINE_H_ */
+	return suite;
+}

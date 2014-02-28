@@ -255,7 +255,7 @@ START_TEST (reset_list) {
 } END_TEST
 
 Suite *test_list_create_suite() {
-	Suite *suite = suite_create("test_stack");
+	Suite *suite = suite_create("test_list");
 	TCase *tcase;
 
 	tcase = tcase_create("create_list");

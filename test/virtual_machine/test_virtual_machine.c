@@ -39,7 +39,7 @@ START_TEST (test_init) {
 } END_TEST
 
 Suite *test_virtual_machine_create_suite() {
-	Suite *suite = suite_create("test_instruction_set");
+	Suite *suite = suite_create("test_virtual_machine");
 	TCase *tcase;
 
 	tcase = tcase_create("test_init");
