@@ -32,7 +32,7 @@
 #include "list.h"
 #include <string.h>
 
-#define TAIL_POINTER(list_pointer) ((bx_uint8 *) list_pointer->storage) + list->storage_used
+#define TAIL_POINTER(list_pointer) ((bx_uint8 *) list_pointer->storage) + list->element_size * list->size
 #define ELEMENT_POINTER(list_pointer, element_index) ((bx_uint8 *) list_pointer->storage) + element_index * list_pointer->element_size
 
 bx_int8 bx_list_init(struct bx_list *list, void *storage, bx_size storage_size, bx_size element_size) {
@@ -42,9 +42,9 @@ bx_int8 bx_list_init(struct bx_list *list, void *storage, bx_size storage_size, 
 	}
 
 	list->storage = storage;
-	list->storage_size = storage_size;
+	list->capacity = storage_size / element_size;
 	list->element_size = element_size;
-	list->storage_used = 0;
+	list->size = 0;
 
 	return 0;
 }
@@ -52,17 +52,13 @@ bx_int8 bx_list_init(struct bx_list *list, void *storage, bx_size storage_size, 
 void * bx_list_add(struct bx_list *list, void *element) {
 	void *new_element;
 
-	if (list == NULL) {
-		return NULL;
-	}
-
-	if (list->storage_used + list->element_size > list->storage_size) {
+	if (list == NULL || list->size >= list->capacity) {
 		return NULL;
 	}
 
 	new_element = TAIL_POINTER(list);
 	memcpy(new_element, element, list->element_size);
-	list->storage_used += list->element_size;
+	list->size++;
 
 	return new_element;
 }
@@ -73,9 +69,7 @@ void *bx_list_get(struct bx_list *list, bx_size index) {
 		return NULL;
 	}
 
-	if (list->storage_used == 0 ||
-			index * list->element_size > list->storage_size ||
-			index * list->element_size > list->storage_used) {
+	if (list->size == 0 || index > list->size - 1) {
 		return NULL;
 	}
 
@@ -85,13 +79,12 @@ void *bx_list_get(struct bx_list *list, bx_size index) {
 void *bx_list_get_empty(struct bx_list *list) {
 	void *element;
 
-	if (list == NULL ||
-			list->storage_used + list->element_size > list->storage_size) {
+	if (list == NULL || list->size >= list->capacity) {
 		return NULL;
 	}
 
 	element = TAIL_POINTER(list);
-	list->storage_used += list->element_size;
+	list->size++;
 
 	return element;
 }
@@ -102,9 +95,7 @@ bx_int8 bx_list_copy(struct bx_list *list, bx_size index, void *to) {
 		return -1;
 	}
 
-	if (list->storage_used == 0 ||
-			index * list->element_size > list->storage_size ||
-			index * list->element_size > list->storage_used) {
+	if (list->size == 0 || index > list->size - 1) {
 		return -1;
 	}
 
@@ -120,7 +111,7 @@ bx_ssize bx_list_indexof(struct bx_list *list, void *element, equals_function eq
 	}
 
 	int i;
-	for (i = 0; i * list->element_size < list->storage_used; i++) {
+	for (i = 0; i < list->size; i++) {
 		if (equals(ELEMENT_POINTER(list, i), element) == BX_BOOLEAN_TRUE) {
 			return i;
 		}
@@ -136,7 +127,7 @@ void *bx_list_search(struct bx_list *list, void *element, equals_function equals
 	}
 
 	int i;
-	for (i = 0; i * list->element_size < list->storage_used; i++) {
+	for (i = 0; i< list->size; i++) {
 		if (equals(ELEMENT_POINTER(list, i), element) == BX_BOOLEAN_TRUE) {
 			return ELEMENT_POINTER(list, i);
 		}
@@ -151,16 +142,14 @@ bx_int8 bx_list_remove(struct bx_list *list, bx_size index) {
 		return -1;
 	}
 
-	if (list->storage_used == 0 ||
-			index * list->element_size > list->storage_size ||
-			index * list->element_size > list->storage_used) {
+	if (list->size == 0 || index > list->size - 1) {
 		return -1;
 	}
 
-	if (index * list->element_size < list->storage_used) {
+	if (index < list->size - 1) {
 		memcpy(ELEMENT_POINTER(list, index), ELEMENT_POINTER(list, index), list->element_size);
 	}
-	list->storage_used -= list->element_size;
+	list->size--;
 
 	return 0;
 }
@@ -171,5 +160,5 @@ void bx_list_reset(struct bx_list *list) {
 		return;
 	}
 
-	list->storage_used = 0;
+	list->size = 0;
 }

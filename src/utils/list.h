@@ -41,11 +41,14 @@
 #define BX_LIST_GET(list_pointer, index, type) (type *) bx_list_get(list_pointer, index)
 #define BX_LIST_GET_EMPTY(list_pointer, type) (type *) bx_list_get_empty(list_pointer)
 
+/**
+ * List data structure
+ */
 struct bx_list {
-	void *storage;
-	bx_size storage_size;
-	bx_size element_size;
-	bx_size storage_used;
+	void *storage;			///< Byte array
+	bx_size element_size;	///< Size in bytes of a single element
+	bx_size size;			///< Current number of elements in the list
+	bx_size capacity;		///< List max capacity
 };
 
 typedef bx_boolean (*equals_function)(void *list_element, void *comparison_element);
