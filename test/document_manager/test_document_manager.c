@@ -76,6 +76,17 @@ START_TEST (set_field_value) {
 	ck_assert_int_eq(bx_test_field_get_data(), value);
 } END_TEST
 
+START_TEST (get_field_value) {
+	bx_int8 error;
+	bx_int32 out_value;
+
+	bx_test_field_set_data(value);
+	ck_assert_int_eq(bx_test_field_get_data(), value);
+	error = bx_dm_invoke_get(TEST_FIELD_ID, &out_value);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(out_value, bx_test_field_get_data());
+} END_TEST
+
 Suite *test_document_manager_create_suite() {
 	Suite *suite = suite_create("test_document_manager");
 	TCase *tcase;
@@ -102,6 +113,10 @@ Suite *test_document_manager_create_suite() {
 
 	tcase = tcase_create("set_field_value");
 	tcase_add_test(tcase, set_field_value);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("get_field_value");
+	tcase_add_test(tcase, get_field_value);
 	suite_add_tcase(suite, tcase);
 
 	return suite;
