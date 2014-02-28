@@ -39,6 +39,7 @@
 #include "types.h"
 
 #define BX_LIST_GET(list_pointer, index, type) (type *) bx_list_get(list_pointer, index)
+#define BX_LIST_GET_EMPTY(list_pointer, type) (type *) bx_list_get_empty(list_pointer)
 
 struct bx_list {
 	void *storage;
@@ -74,6 +75,14 @@ bx_int8 bx_list_init(struct bx_list *list, void *storage, bx_size storage_size, 
  */
 void *bx_list_add(struct bx_list *list, void *element);
 
+/**
+ * Allocates an empty element in the list and returns its memory address
+ *
+ * @param list List pointer
+ *
+ * @return A pointer to the newly allocated element, NULL on error
+ */
+void *bx_list_get_empty(struct bx_list *list);
 
 /**
  * Returns a pointer to an element given its index.

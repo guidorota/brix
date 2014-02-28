@@ -32,6 +32,10 @@
 #ifndef STACK_H_
 #define STACK_H_
 
+/**
+ * Stack data structure.
+ */
+
 #include "types.h"
 
 #define BX_STACK_PUSH_VARIABLE(stack_pointer, variable) bx_stack_push(stack_pointer, &variable, sizeof variable)

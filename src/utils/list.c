@@ -82,6 +82,20 @@ void *bx_list_get(struct bx_list *list, bx_size index) {
 	return ELEMENT_POINTER(list, index);
 }
 
+void *bx_list_get_empty(struct bx_list *list) {
+	void *element;
+
+	if (list == NULL ||
+			list->storage_used + list->element_size > list->storage_size) {
+		return NULL;
+	}
+
+	element = TAIL_POINTER(list);
+	list->storage_used += list->element_size;
+
+	return element;
+}
+
 bx_int8 bx_list_copy(struct bx_list *list, bx_size index, void *to) {
 
 	if (list == NULL || to == NULL) {

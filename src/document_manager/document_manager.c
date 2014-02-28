@@ -34,29 +34,38 @@
 #include "utils/list.h"
 #include "document_manager/document_manager.h"
 
-bx_boolean search_field_by_id(struct bx_document_field *field, char *field_identifier);
+struct internal_field {
+	char identifier[DM_FIELD_IDENTIFIER_LENGTH];
+	struct bx_document_field field;
+};
 
-struct bx_document_field field_storage[DM_MAX_FIELD_NUMBER];
-
+struct internal_field field_list_storage[DM_MAX_FIELD_NUMBER];
 struct bx_list field_list;
+
+bx_boolean search_field_by_id(struct internal_field *field, char *identifier);
 
 bx_int8 bx_dm_document_manager_init() {
 	BX_LOG(LOG_INFO, "document_manager", "Initializing document manager...");
 
-	bx_list_init(&field_list, field_storage, DM_MAX_FIELD_NUMBER, sizeof (struct bx_document_field));
+	bx_list_init(&field_list, field_list_storage, DM_MAX_FIELD_NUMBER, sizeof (struct bx_document_field));
 
 	return 0;
 }
 
-bx_int8 bx_dm_add_field(struct bx_document_field *field) {
-	void *result;
+bx_int8 bx_dm_add_field(struct bx_document_field *field, char* identifier) {
+	struct internal_field *internal_field;
+
 	if (field == NULL) {
 		return -1;
 	}
 
-	result = bx_list_add(&field_list, field);
+	internal_field = bx_list_get_empty(&field_list);
+	if (internal_field == NULL) {
+		return -1;
+	}
+	memcpy(&internal_field->field, field, sizeof (struct bx_document_field));
 
-	return result != NULL ? 0 : -1;
+	return 0;
 }
 
 bx_int8 bx_dm_invoke_get(char *field_identifier, void *data) {
@@ -67,9 +76,9 @@ bx_int8 bx_dm_invoke_set(char *field_identifier, void *data) {
 	return 0; //TODO: Stub
 }
 
-bx_boolean search_field_by_id(struct bx_document_field *field, char *field_identifier) {
+bx_boolean search_field_by_id(struct internal_field *field, char *identifier) {
 
-	if (memcmp((void *) field->identifier, (void *) field_identifier, DM_FIELD_IDENTIFIER_LENGTH) == 0) {
+	if (memcmp((void *) field->identifier, (void *) identifier, DM_FIELD_IDENTIFIER_LENGTH) == 0) {
 		return BX_BOOLEAN_TRUE;
 	} else {
 		return BX_BOOLEAN_FALSE;
