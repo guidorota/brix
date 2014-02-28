@@ -1,6 +1,6 @@
 /*
- * document_manager.c
- * Created on: Feb 21, 2014
+ * test_field.c
+ * Created on: Feb 28, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,59 +29,42 @@
  *
  */
 
-#include <string.h>
-#include "logging.h"
-#include "utils/list.h"
-#include "document_manager/document_manager.h"
+#include "test_field.h"
 
-struct internal_field {
-	char identifier[DM_FIELD_IDENTIFIER_LENGTH];
-	struct bx_document_field field;
-};
+static bx_int8 test_field_get(struct bx_document_field *instance, void *data);
+static bx_int8 test_field_set(struct bx_document_field *instance, void *data);
 
-struct internal_field field_list_storage[DM_MAX_FIELD_NUMBER];
-struct bx_list field_list;
+static bx_int32 value;
 
-bx_boolean search_field_by_id(struct internal_field *field, char *identifier);
-
-bx_int8 bx_dm_document_manager_init() {
-	BX_LOG(LOG_INFO, "document_manager", "Initializing document manager...");
-
-	bx_list_init(&field_list, field_list_storage, DM_MAX_FIELD_NUMBER, sizeof (struct bx_document_field));
-
-	return 0;
-}
-
-bx_int8 bx_dm_add_field(struct bx_document_field *field, char* identifier) {
-	struct internal_field *internal_field;
+bx_int8 bx_test_field_init(struct bx_document_field *field) {
 
 	if (field == NULL) {
 		return -1;
 	}
 
-	internal_field = bx_list_get_empty(&field_list);
-	if (internal_field == NULL) {
-		return -1;
-	}
-	memcpy(&internal_field->field, field, sizeof (struct bx_document_field));
-	strncpy(internal_field->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH);
+	field->get = &test_field_get;
+	field->set = &test_field_set;
+	field->private_data = &value;
+	field->type = INT;
 
 	return 0;
 }
 
-bx_int8 bx_dm_invoke_get(char *field_identifier, void *data) {
-	return 0; //TODO: Stub
-}
+bx_int8 test_field_get(struct bx_document_field *instance, void *data) {
 
-bx_int8 bx_dm_invoke_set(char *field_identifier, void *data) {
-	return 0; //TODO: Stub
-}
-
-bx_boolean search_field_by_id(struct internal_field *field, char *identifier) {
-
-	if (strncmp(field->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH) == 0) {
-		return BX_BOOLEAN_TRUE;
-	} else {
-		return BX_BOOLEAN_FALSE;
+	if (instance == NULL || data == NULL) {
+		return -1;
 	}
+
+	*(bx_int32 *) data = value;
+	return 0;
+}
+
+bx_int8 test_field_set(struct bx_document_field *instance, void *data) {
+	if (instance == NULL || data == NULL) {
+		return -1;
+	}
+
+	value = *(bx_int32 *) data;
+	return 0;
 }
