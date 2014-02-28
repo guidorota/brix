@@ -48,7 +48,7 @@ bx_int8 bx_mlist_init(struct bx_mlist *list, void *storage, bx_size storage_size
 	return 0;
 }
 
-void *bx_mlist_add_element(struct bx_mlist *list, void *element, bx_size element_size) {
+void *bx_mlist_add(struct bx_mlist *list, void *element, bx_size element_size) {
 	void *new_element;
 
 	if (list == NULL || element == NULL || element_size == 0) {
@@ -64,14 +64,10 @@ void *bx_mlist_add_element(struct bx_mlist *list, void *element, bx_size element
 	return new_element;
 }
 
-bx_int8 bx_mlist_get_element(struct bx_mlist *list, bx_size index, void **element, bx_size *element_size) {
+void *bx_mlist_get(struct bx_mlist *list, bx_size index, bx_size *element_size) {
 
-	if (list == NULL || element == NULL) {
-		return -1;
-	}
-
-	if (list->storage_used == 0) {
-		return -1;
+	if (list == NULL || list->storage_used == 0) {
+		return NULL;
 	}
 
 	int current_index = 0;
@@ -80,18 +76,16 @@ bx_int8 bx_mlist_get_element(struct bx_mlist *list, bx_size index, void **elemen
 		memcpy((void *) element_size, (void *) OFFSET_POINTER(list, current_position), sizeof *element_size);
 		current_position += sizeof *element_size;
 		if (current_index == index) {
-			*element = (void *) OFFSET_POINTER(list, current_position);
-			return 0;
+			return (void *) OFFSET_POINTER(list, current_position);
 		}
 		current_position += *element_size;
 		current_index++;
 	} while(current_position < list->storage_used);
 
-	return 1;
+	return NULL;
 }
 
 bx_int8 bx_mlist_remove_element(struct bx_mlist *list, bx_size index) {
-	bx_int8 error;
 	bx_uint8 *element;
 	bx_size element_size;
 	bx_size remaining_bytes;
@@ -100,9 +94,9 @@ bx_int8 bx_mlist_remove_element(struct bx_mlist *list, bx_size index) {
 		return -1;
 	}
 
-	error = bx_mlist_get_element(list, index, (void **) &element, &element_size);
-	if (error != 0) {
-		return error;
+	element = bx_mlist_get(list, index, &element_size);
+	if (element == NULL) {
+		return -1;
 	}
 	element -= sizeof element_size;
 	element_size += sizeof element_size;

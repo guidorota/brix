@@ -49,7 +49,7 @@ bx_int8 bx_list_init(struct bx_list *list, void *storage, bx_size storage_size, 
 	return 0;
 }
 
-void * bx_list_add_element(struct bx_list *list, void *element) {
+void * bx_list_add(struct bx_list *list, void *element) {
 	void *new_element;
 
 	if (list == NULL) {
@@ -67,7 +67,7 @@ void * bx_list_add_element(struct bx_list *list, void *element) {
 	return new_element;
 }
 
-void *bx_list_get_element(struct bx_list *list, bx_size index) {
+void *bx_list_get(struct bx_list *list, bx_size index) {
 
 	if (list == NULL) {
 		return NULL;
@@ -82,9 +82,9 @@ void *bx_list_get_element(struct bx_list *list, bx_size index) {
 	return ELEMENT_POINTER(list, index);
 }
 
-bx_int8 bx_list_copy_element(struct bx_list *list, bx_size index, void *element) {
+bx_int8 bx_list_copy(struct bx_list *list, bx_size index, void *to) {
 
-	if (list == NULL || element == NULL) {
+	if (list == NULL || to == NULL) {
 		return -1;
 	}
 
@@ -94,46 +94,44 @@ bx_int8 bx_list_copy_element(struct bx_list *list, bx_size index, void *element)
 		return -1;
 	}
 
-	memcpy(element, ELEMENT_POINTER(list, index), list->element_size);
+	memcpy(to, ELEMENT_POINTER(list, index), list->element_size);
 
 	return 0;
 }
 
-bx_int8 bx_list_indexof(struct bx_list *list, bx_size *index, void *comparison_element, equals_function equals) {
+bx_ssize bx_list_indexof(struct bx_list *list, void *element, equals_function equals) {
 
-	if (list == NULL || index == NULL || comparison_element == NULL || equals == NULL) {
+	if (list == NULL || element == NULL || equals == NULL) {
 		return -1;
 	}
 
 	int i;
 	for (i = 0; i * list->element_size < list->storage_used; i++) {
-		if (equals(ELEMENT_POINTER(list, i), comparison_element) == BX_BOOLEAN_TRUE) {
-			*index = i;
-			return 0;
+		if (equals(ELEMENT_POINTER(list, i), element) == BX_BOOLEAN_TRUE) {
+			return i;
 		}
 	}
 
-	return 1;
+	return -1;
 }
 
-bx_int8 bx_list_search_element(struct bx_list *list, void **element, void *comparison_element, equals_function equals) {
+void *bx_list_search(struct bx_list *list, void *element, equals_function equals) {
 
-	if (list == NULL || element == NULL || comparison_element == NULL || equals == NULL) {
-		return -1;
+	if (list == NULL || element == NULL || equals == NULL) {
+		return NULL;
 	}
 
 	int i;
 	for (i = 0; i * list->element_size < list->storage_used; i++) {
-		if (equals(ELEMENT_POINTER(list, i), comparison_element) == BX_BOOLEAN_TRUE) {
-			*element = ELEMENT_POINTER(list, i);
-			return 0;
+		if (equals(ELEMENT_POINTER(list, i), element) == BX_BOOLEAN_TRUE) {
+			return ELEMENT_POINTER(list, i);
 		}
 	}
 
-	return 1;
+	return NULL;
 }
 
-bx_int8 bx_list_remove_element(struct bx_list *list, bx_size index) {
+bx_int8 bx_list_remove(struct bx_list *list, bx_size index) {
 
 	if (list == NULL) {
 		return -1;
@@ -153,12 +151,11 @@ bx_int8 bx_list_remove_element(struct bx_list *list, bx_size index) {
 	return 0;
 }
 
-bx_int8 bx_list_reset(struct bx_list *list) {
+void bx_list_reset(struct bx_list *list) {
 
 	if (list == NULL) {
-		return -1;
+		return;
 	}
 
 	list->storage_used = 0;
-	return 0;
 }

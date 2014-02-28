@@ -54,7 +54,7 @@ bx_int8 bx_dm_add_field(struct bx_document_field *field) {
 		return -1;
 	}
 
-	result = bx_list_add_element(&field_list, field);
+	result = bx_list_add(&field_list, field);
 
 	return result != NULL ? 0 : -1;
 }

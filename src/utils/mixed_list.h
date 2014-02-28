@@ -32,6 +32,10 @@
 #ifndef MIXED_LIST_H_
 #define MIXED_LIST_H_
 
+/**
+ * An ordered collection of data with different storage sizes.
+ */
+
 #include "types.h"
 
 struct bx_mlist {
@@ -40,14 +44,62 @@ struct bx_mlist {
 	bx_size storage_used;
 };
 
+/**
+ * List data structure initialization.
+ *
+ * @param list List to initialize
+ * @param storage Storage byte array
+ * @param storage_size Size of the storage byte array
+ *
+ * @return 0 upon successful initialization, -1 otherwise
+ */
 bx_int8 bx_mlist_init(struct bx_mlist *list, void *storage, bx_size storage_size);
 
-void *bx_mlist_add_element(struct bx_mlist *list, void *element, bx_size element_size);
+/**
+ * Appends the element at the end of the list.
+ * New elements are copied in the underliying storage byte array upon insertion.
+ *
+ * @param list Destination list
+ * @param element Element to add in the list
+ * @param element_size Size of the element to add
+ *
+ * @return Pointer to element added, NULL on error
+ */
+void *bx_mlist_add(struct bx_mlist *list, void *element, bx_size element_size);
 
-bx_int8 bx_mlist_get_element(struct bx_mlist *list, bx_size index, void **element, bx_size *element_size);
+/**
+ * Returns a pointer to an element given its index.
+ * The size of the element returned is stored inside the element_size parameter.
+ *
+ * @param list List pointer
+ * @param index Index of the element to retrieve
+ * @param element_size Pointer to a memory location where
+ *
+ * @return Pointer to the element at the specified index, NULL if error or index out of bound
+ */
+void *bx_mlist_get(struct bx_mlist *list, bx_size index, bx_size *element_size);
 
+/**
+ * Removes an element from a list.
+ * All data following the removed element will be shifted to avoid fragmentation.
+ * All pointers to the removed list element will be invalid after the reset
+ * operation. Continued use of these pointers will lead to undefined behaviour.
+ *
+ * @param List pointer
+ * @param index Index of the element to remove
+ *
+ * @return 0 upon success, -1 otherwise
+ */
 bx_int8 bx_mlist_remove_element(struct bx_mlist *list, bx_size index);
 
+/**
+ * Resets the list.
+ * The reset operation does not alter the underlying storage array.
+ * All pointers to list elements will be invalid after the reset operation.
+ * Continued use of these pointers will lead to undefined behaviour.
+ *
+ * @param list List pointer
+ */
 bx_int8 bx_mlist_reset(struct bx_mlist *list);
 
 #endif /* MIXED_LIST_H_ */
