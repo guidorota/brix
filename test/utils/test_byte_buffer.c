@@ -1,6 +1,6 @@
 /*
- * virtual_machine.h
- * Created on: Feb 16, 2014
+ * test_byte_buffer.c
+ * Created on: Mar 1, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,34 +29,39 @@
  *
  */
 
-#ifndef VIRTUAL_MACHINE_H_
-#define VIRTUAL_MACHINE_H_
+#include "test_byte_buffer.h"
+#include "utils/byte_buffer.h"
 
-#include "types.h"
+#define BYTE_BUFFER_CAPACITY 10
 
-#define BX_INSTR_IADD 0x0
-#define BX_INSTR_ISUB 0x1
-#define BX_INSTR_IMUL 0x2
-#define BX_INSTR_IDIV 0x3
-#define BX_INSTR_IMOD 0x4
-#define BX_INSTR_FADD 0x5
-#define BX_INSTR_FSUB 0x6
-#define BX_INSTR_FMUL 0x7
-#define BX_INSTR_FDIV 0x8
-#define BX_INSTR_PUSH32 0x9
-#define BX_INSTR_LOAD32 0xA //TODO: Complete
-#define BX_INSTR_STORE32 0xB //TODO: Complete
+static struct bx_byte_buffer buffer;
+static bx_uint8 byte_buffer_storage[BYTE_BUFFER_CAPACITY];
 
-//TODO: Negation
-//TODO: Boolean operations
-//TODO: Comparison
-//TODO: Cast
-//TODO: Variable storage
-//TODO: Branching
-//TODO: Stop instruction
+START_TEST (create_byte_buffer) {
+	bx_int8 error;
 
-bx_int8 bx_vm_virtual_machine_init();
+	error = bx_bbuf_init(&buffer, byte_buffer_storage, BYTE_BUFFER_CAPACITY);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(buffer.capacity, BYTE_BUFFER_CAPACITY);
+	ck_assert_int_eq(buffer.size, 0);
+	ck_assert_ptr_eq(buffer.storage, byte_buffer_storage);
+} END_TEST
 
-bx_int8 bx_vm_execute(bx_uint8 *code, bx_size code_size);
+START_TEST (reset_byte_buffer) {
 
-#endif /* VIRTUAL_MACHINE_H_ */
+} END_TEST
+
+Suite *test_list_create_suite() {
+	Suite *suite = suite_create("test_list");
+	TCase *tcase;
+
+	tcase = tcase_create("create_byte_buffer");
+	tcase_add_test(tcase, create_byte_buffer);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("reset_byte_buffer");
+	tcase_add_test(tcase, reset_byte_buffer);
+	suite_add_tcase(suite, tcase);
+
+	return suite;
+}

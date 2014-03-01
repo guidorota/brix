@@ -1,6 +1,6 @@
 /*
- * virtual_machine.h
- * Created on: Feb 16, 2014
+ * byte_buffer.h
+ * Created on: Mar 1, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,34 +29,25 @@
  *
  */
 
-#ifndef VIRTUAL_MACHINE_H_
-#define VIRTUAL_MACHINE_H_
+#ifndef BYTE_BUFFER_H_
+#define BYTE_BUFFER_H_
 
-#include "types.h"
+/**
+ * A FIFO byte buffer.
+ */
 
-#define BX_INSTR_IADD 0x0
-#define BX_INSTR_ISUB 0x1
-#define BX_INSTR_IMUL 0x2
-#define BX_INSTR_IDIV 0x3
-#define BX_INSTR_IMOD 0x4
-#define BX_INSTR_FADD 0x5
-#define BX_INSTR_FSUB 0x6
-#define BX_INSTR_FMUL 0x7
-#define BX_INSTR_FDIV 0x8
-#define BX_INSTR_PUSH32 0x9
-#define BX_INSTR_LOAD32 0xA //TODO: Complete
-#define BX_INSTR_STORE32 0xB //TODO: Complete
+struct bx_byte_buffer {
+	bx_uint8 *storage;
+	bx_size capacity;
+	bx_size size;
+};
 
-//TODO: Negation
-//TODO: Boolean operations
-//TODO: Comparison
-//TODO: Cast
-//TODO: Variable storage
-//TODO: Branching
-//TODO: Stop instruction
+bx_int8 bx_bbuf_init(struct bx_byte_buffer *buffer, bx_uint8 *storage, bx_size capacity);
 
-bx_int8 bx_vm_virtual_machine_init();
+bx_int8 bx_bbuf_add(struct bx_byte_buffer *buffer, void *data, bx_size length);
 
-bx_int8 bx_vm_execute(bx_uint8 *code, bx_size code_size);
+bx_int8 bx_bbuf_get(struct bx_byte_buffer *buffer, void *data, bx_size length);
 
-#endif /* VIRTUAL_MACHINE_H_ */
+bx_int8 bx_bbuf_reset(struct bx_byte_buffer *buffer);
+
+#endif /* BYTE_BUFFER_H_ */

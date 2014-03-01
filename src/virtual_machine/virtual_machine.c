@@ -220,6 +220,27 @@ static bx_int8 bx_load32_function(struct bx_vm_status *vm_status) {
 	return 0;
 }
 
+static bx_int8 bx_store32_function(struct bx_vm_status *vm_status) {
+	bx_int8 error;
+	char identifier[DM_FIELD_IDENTIFIER_LENGTH];
+	bx_uint32 data;
+
+	error = bx_fetch(vm_status, &identifier, DM_FIELD_IDENTIFIER_LENGTH);
+	if (error == -1) {
+		return -1;
+	}
+	error = BX_STACK_POP_VARIABLE(&vm_status->execution_stack, data);
+	if (error == -1) {
+		return -1;
+	}
+	error = bx_dm_invoke_set(identifier, &data);
+	if (error == -1) {
+		return -1;
+	}
+
+	return 0;
+}
+
 bx_int8 bx_vm_virtual_machine_init() {
 
 	BX_LOG(LOG_INFO, "virtual_machine", "Initializing virtual machine data structures...");
@@ -237,6 +258,7 @@ bx_int8 bx_vm_virtual_machine_init() {
 	instruction_array[BX_INSTR_FDIV] = &bx_fdiv_function;
 	instruction_array[BX_INSTR_PUSH32] = &bx_push32_function;
 	instruction_array[BX_INSTR_LOAD32] = &bx_load32_function;
+	instruction_array[BX_INSTR_STORE32] = &bx_store32_function;
 
 	return 0;
 }
