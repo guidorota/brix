@@ -32,6 +32,8 @@
 #ifndef BYTE_BUFFER_H_
 #define BYTE_BUFFER_H_
 
+#include "types.h"
+
 /**
  * A FIFO byte buffer.
  */
@@ -39,14 +41,17 @@
 struct bx_byte_buffer {
 	bx_uint8 *storage;
 	bx_size capacity;
+	bx_size head;
 	bx_size size;
 };
 
 bx_int8 bx_bbuf_init(struct bx_byte_buffer *buffer, bx_uint8 *storage, bx_size capacity);
 
-bx_int8 bx_bbuf_add(struct bx_byte_buffer *buffer, void *data, bx_size length);
+bx_int8 bx_bbuf_append(struct bx_byte_buffer *buffer, void *data, bx_size length);
 
 bx_int8 bx_bbuf_get(struct bx_byte_buffer *buffer, void *data, bx_size length);
+
+bx_ssize bx_bbuf_size(struct bx_byte_buffer *buffer);
 
 bx_int8 bx_bbuf_reset(struct bx_byte_buffer *buffer);
 
