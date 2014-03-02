@@ -30,11 +30,12 @@
  */
 
 #include "test_field.h"
+#include <string.h>
 
 static bx_int8 test_field_get(struct bx_document_field *instance, void *data);
 static bx_int8 test_field_set(struct bx_document_field *instance, void *data);
 
-static bx_int32 internal_value;
+static bx_uint8 internal_value[4];
 
 bx_int8 bx_test_field_init(struct bx_document_field *field) {
 
@@ -50,12 +51,20 @@ bx_int8 bx_test_field_init(struct bx_document_field *field) {
 	return 0;
 }
 
-void bx_test_field_set_data(bx_int32 value) {
-	internal_value = value;
+void bx_test_field_set_int(bx_int32 value) {
+	*(bx_int32 *) internal_value = value;
 }
 
-bx_int32 bx_test_field_get_data() {
-	return internal_value;
+void bx_test_field_set_float(bx_float32 value) {
+	*(bx_float32 *) internal_value = value;
+}
+
+bx_int32 bx_test_field_get_int() {
+	return *(bx_int32 *) internal_value;
+}
+
+bx_float32 bx_test_field_get_float() {
+	return *(bx_float32 *) internal_value;
 }
 
 bx_int8 test_field_get(struct bx_document_field *instance, void *data) {
@@ -64,7 +73,7 @@ bx_int8 test_field_get(struct bx_document_field *instance, void *data) {
 		return -1;
 	}
 
-	*(bx_int32 *) data = internal_value;
+	memcpy(data, (void *) internal_value, 4);
 	return 0;
 }
 
@@ -73,6 +82,6 @@ bx_int8 test_field_set(struct bx_document_field *instance, void *data) {
 		return -1;
 	}
 
-	internal_value = *(bx_int32 *) data;
+	memcpy((void *) internal_value, data, 4);
 	return 0;
 }

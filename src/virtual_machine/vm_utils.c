@@ -50,6 +50,15 @@ bx_int8 bx_vmutils_add_int(struct bx_byte_buffer *buffer, bx_int32 data) {
 	return bx_bbuf_append(buffer, &data, sizeof data);
 }
 
+bx_int8 bx_vmutils_add_float(struct bx_byte_buffer *buffer, bx_float32 data) {
+
+	if (buffer == NULL) {
+		return -1;
+	}
+
+	return bx_bbuf_append(buffer, &data, sizeof data);
+}
+
 bx_int8 bx_vmutils_add_identifier(struct bx_byte_buffer *buffer, char *identifier) {
 
 	if (buffer == NULL) {

@@ -29,9 +29,9 @@
  *
  */
 
-#include "test_field.h"
 #include "test_document_manager.h"
 #include "document_manager/document_manager.h"
+#include "document_manager/test_field.h"
 
 #define TEST_FIELD_ID "test_field_id"
 
@@ -69,22 +69,22 @@ START_TEST (reject_duplicate_id) {
 START_TEST (set_field_value) {
 	bx_int8 error;
 
-	bx_test_field_set_data(0);
-	ck_assert_int_ne(bx_test_field_get_data(), value);
+	bx_test_field_set_int(0);
+	ck_assert_int_ne(bx_test_field_get_int(), value);
 	error = bx_dm_invoke_set(TEST_FIELD_ID, &value);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_data(), value);
+	ck_assert_int_eq(bx_test_field_get_int(), value);
 } END_TEST
 
 START_TEST (get_field_value) {
 	bx_int8 error;
 	bx_int32 out_value;
 
-	bx_test_field_set_data(value);
-	ck_assert_int_eq(bx_test_field_get_data(), value);
+	bx_test_field_set_int(value);
+	ck_assert_int_eq(bx_test_field_get_int(), value);
 	error = bx_dm_invoke_get(TEST_FIELD_ID, &out_value);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(out_value, bx_test_field_get_data());
+	ck_assert_int_eq(out_value, bx_test_field_get_int());
 } END_TEST
 
 Suite *test_document_manager_create_suite() {
