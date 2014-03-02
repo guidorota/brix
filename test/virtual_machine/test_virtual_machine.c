@@ -261,6 +261,33 @@ START_TEST (int_expression) {
 	ck_assert_int_eq(bx_test_field_get_int(), (operand1 + operand2) * operand3 - operand4);
 } END_TEST
 
+START_TEST (float_expression) {
+	bx_int8 error;
+	bx_float32 operand1 = 12.398;
+	bx_float32 operand2 = -98.1;
+	bx_float32 operand3 = -1.12;
+	bx_float32 operand4 = 12;
+
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_float(&buffer, operand1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_float(&buffer, operand2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_FADD);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_float(&buffer, operand3);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_FMUL);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_float(&buffer, operand4);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_FSUB);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_float(), (operand1 + operand2) * operand3 - operand4);
+} END_TEST
+
 Suite *test_virtual_machine_create_suite() {
 	Suite *suite = suite_create("test_virtual_machine");
 	TCase *tcase;
@@ -287,6 +314,10 @@ Suite *test_virtual_machine_create_suite() {
 
 	tcase = tcase_create("int_expression");
 	tcase_add_test(tcase, int_expression);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("float_expression");
+	tcase_add_test(tcase, float_expression);
 	suite_add_tcase(suite, tcase);
 
 	return suite;
