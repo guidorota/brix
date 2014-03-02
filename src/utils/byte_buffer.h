@@ -38,21 +38,77 @@
  * A FIFO byte buffer.
  */
 
+/**
+ * Buffer data structure
+ */
 struct bx_byte_buffer {
-	bx_uint8 *storage;
-	bx_size capacity;
-	bx_size head;
-	bx_size size;
+	bx_uint8 *storage;		///< Byte array
+	bx_size capacity;		///< Byte buffer capacity in byte
+	bx_size head;			///< Pointer to the first readable byte
+	bx_size size;			///< Number of bytes in the buffer
 };
 
-bx_int8 bx_bbuf_init(struct bx_byte_buffer *buffer, bx_uint8 *storage, bx_size capacity);
+/**
+ * Byte buffer data structure initialization.
+ *
+ * @param list Byte buffer to initialize
+ * @param storage Storage byte array
+ * @param storage_size Size of the storage byte array in bytes
+ * @param element_size Size in bytes of a single element of the list
+ *
+ * @return 0 upon successful initialization, -1 otherwise
+ */
+bx_int8 bx_bbuf_init(struct bx_byte_buffer *buffer, bx_uint8 *storage, bx_size storage_size);
 
+/**
+ * Append data to the byte buffer.
+ *
+ * @param buffer Byte buffer pointer
+ * @param data Pointer to the data to append
+ * @param length Number of bytes to append
+ *
+ * @return 0 on success, -1 on failure
+ */
 bx_int8 bx_bbuf_append(struct bx_byte_buffer *buffer, void *data, bx_size length);
 
+/**
+ * Retrieve data from a byte buffer.
+ * After retrieval, the data is removed from the byte buffer.
+ *
+ * @param buffer Byte buffer pointer
+ * @param data Pointer to the output memory location
+ * @param length Number of bytes to append
+ *
+ * @return 0 on success, -1 on failure
+ */
 bx_int8 bx_bbuf_get(struct bx_byte_buffer *buffer, void *data, bx_size length);
 
+/**
+ * Retrieves the current size of a byte buffer
+ *
+ * @param buffer Byte buffer pointer
+ *
+ * @return Current byte buffer size, -1 on failure
+ */
 bx_ssize bx_bbuf_size(struct bx_byte_buffer *buffer);
 
+/**
+ * Retrieves the capacity of the byte buffer
+ *
+ * @param buffer Byte buffer pointer
+ *
+ * @return Byte buffer capacity, -1 on failure
+ */
+bx_ssize bx_bbuf_capacity(struct bx_byte_buffer *buffer);
+
+/**
+ * Resets the byte buffer.
+ * The reset operation does not alter the underlying storage array.
+ *
+ * @param buffer Byte buffer pointer
+ *
+ * @return 0 on success, -1 on failure
+ */
 bx_int8 bx_bbuf_reset(struct bx_byte_buffer *buffer);
 
 #endif /* BYTE_BUFFER_H_ */

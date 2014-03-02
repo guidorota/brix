@@ -46,9 +46,9 @@
  */
 struct bx_list {
 	void *storage;			///< Byte array
-	bx_size element_size;	///< Size in bytes of a single element
+	bx_size element_size;	///< Element size in bytes
 	bx_size size;			///< Current number of elements in the list
-	bx_size capacity;		///< List max capacity
+	bx_size capacity;		///< List capacity (max number of elements)
 };
 
 typedef bx_boolean (*equals_function)(void *list_element, void *comparison_element);
@@ -58,7 +58,7 @@ typedef bx_boolean (*equals_function)(void *list_element, void *comparison_eleme
  *
  * @param list List to initialize
  * @param storage Storage byte array
- * @param storage_size Size of the storage byte array
+ * @param storage_size Size of the storage byte array in bytes
  * @param element_size Size in bytes of a single element of the list
  *
  * @return 0 upon successful initialization, -1 otherwise
@@ -152,6 +152,8 @@ bx_int8 bx_list_remove(struct bx_list *list, bx_size index);
  * Continued use of these pointers will lead to undefined behaviour.
  *
  * @param list List pointer
+ *
+ * @return 0 on success, -1 on failure
  */
 void bx_list_reset(struct bx_list *list);
 

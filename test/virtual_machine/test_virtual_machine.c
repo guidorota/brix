@@ -35,7 +35,10 @@
 #include "test_virtual_machine.h"
 
 START_TEST (test_init) {
-	bx_vm_virtual_machine_init();
+	bx_int8 error;
+
+	error = bx_vm_virtual_machine_init();
+	ck_assert_int_eq(error, 0);
 } END_TEST
 
 Suite *test_virtual_machine_create_suite() {

@@ -43,7 +43,7 @@ START_TEST (create_byte_buffer) {
 
 	error = bx_bbuf_init(&buffer, byte_buffer_storage, BYTE_BUFFER_CAPACITY);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(buffer.capacity, BYTE_BUFFER_CAPACITY);
+	ck_assert_int_eq(bx_bbuf_capacity(&buffer), BYTE_BUFFER_CAPACITY);
 	ck_assert_int_eq(bx_bbuf_size(&buffer), 0);
 	ck_assert_ptr_eq(buffer.storage, byte_buffer_storage);
 } END_TEST
@@ -97,7 +97,7 @@ START_TEST (reset_byte_buffer) {
 
 	error = bx_bbuf_reset(&buffer);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(buffer.capacity, BYTE_BUFFER_CAPACITY);
+	ck_assert_int_eq(bx_bbuf_capacity(&buffer), BYTE_BUFFER_CAPACITY);
 	ck_assert_int_eq(bx_bbuf_size(&buffer), 0);
 	ck_assert_ptr_eq(buffer.storage, byte_buffer_storage);
 } END_TEST

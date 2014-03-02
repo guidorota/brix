@@ -31,14 +31,14 @@
 
 #include "utils/byte_buffer.h"
 
-bx_int8 bx_bbuf_init(struct bx_byte_buffer *buffer, bx_uint8 *storage, bx_size capacity) {
+bx_int8 bx_bbuf_init(struct bx_byte_buffer *buffer, bx_uint8 *storage, bx_size storage_size) {
 
 	if (buffer == NULL || storage == NULL) {
 		return -1;
 	}
 
 	buffer->storage = storage;
-	buffer->capacity = capacity;
+	buffer->capacity = storage_size;
 	buffer->head = 0;
 	buffer->size = 0;
 
@@ -100,6 +100,15 @@ bx_ssize bx_bbuf_size(struct bx_byte_buffer *buffer) {
 	}
 
 	return buffer->size;
+}
+
+bx_ssize bx_bbuf_capacity(struct bx_byte_buffer *buffer) {
+
+	if (buffer == NULL) {
+		return -1;
+	}
+
+	return buffer->capacity;
 }
 
 bx_int8 bx_bbuf_reset(struct bx_byte_buffer *buffer) {
