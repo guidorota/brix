@@ -77,7 +77,23 @@ START_TEST (store32_test) {
 } END_TEST
 
 START_TEST (load32_test) {
-	//TODO: Stub
+	bx_int8 error;
+	bx_int32 operand1 = 87;
+	bx_int32 operand2 = 69;
+
+	bx_test_field_set_int(operand2);
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_LOAD32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, operand1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_IADD);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), operand1 + operand2);
 } END_TEST
 
 START_TEST (integer_arithmetics_test) {
@@ -147,82 +163,6 @@ START_TEST (integer_arithmetics_test) {
 	bx_vmutils_add_int(&buffer, operand2);
 	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
 	bx_vmutils_add_int(&buffer, operand1);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_IMOD);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
-	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
-
-	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
-	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), operand1 % operand2);
-} END_TEST
-
-START_TEST (byte_arithmetics_test) {
-	bx_int8 error;
-	bx_uint8 operand1 = 12;
-	bx_uint8 operand2 = 24;
-
-	// ADDITION
-	bx_bbuf_reset(&buffer);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
-	bx_vmutils_add_byte(&buffer, operand2);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
-	bx_vmutils_add_byte(&buffer, operand1);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_IADD);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
-	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
-
-	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
-	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), operand1 + operand2);
-
-	// SUBTRACTION
-	bx_bbuf_reset(&buffer);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
-	bx_vmutils_add_byte(&buffer, operand2);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
-	bx_vmutils_add_byte(&buffer, operand1);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_ISUB);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
-	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
-
-	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
-	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), operand1 - operand2);
-
-	// MULTIPLICATION
-	bx_bbuf_reset(&buffer);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
-	bx_vmutils_add_byte(&buffer, operand2);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
-	bx_vmutils_add_byte(&buffer, operand1);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_IMUL);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
-	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
-
-	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
-	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), operand1 * operand2);
-
-	// DIVISION
-	bx_bbuf_reset(&buffer);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
-	bx_vmutils_add_byte(&buffer, operand2);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
-	bx_vmutils_add_byte(&buffer, operand1);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_IDIV);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
-	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
-
-	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
-	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), operand1 / operand2);
-
-	// MODULO
-	bx_bbuf_reset(&buffer);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
-	bx_vmutils_add_byte(&buffer, operand2);
-	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
-	bx_vmutils_add_byte(&buffer, operand1);
 	bx_vmutils_add_instruction(&buffer, BX_INSTR_IMOD);
 	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
 	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
@@ -315,10 +255,6 @@ Suite *test_virtual_machine_create_suite() {
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("integer_arithmetics_test");
-	tcase_add_test(tcase, integer_arithmetics_test);
-	suite_add_tcase(suite, tcase);
-
-	tcase = tcase_create("byte_arithmetics_test");
 	tcase_add_test(tcase, integer_arithmetics_test);
 	suite_add_tcase(suite, tcase);
 
