@@ -348,6 +348,29 @@ START_TEST (float_expression) {
 	ck_assert_int_eq(bx_test_field_get_float(), (operand1 + operand2) * operand3 - operand4);
 } END_TEST
 
+START_TEST (unconditional_jump) {
+	bx_int8 error;
+	bx_int32 value1 = 12;
+	bx_int32 value2 = 21;
+
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_JUMP);
+	bx_vmutils_add_short(&buffer, 47);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_NOP);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), value1);
+} END_TEST
+
 Suite *test_virtual_machine_create_suite() {
 	Suite *suite = suite_create("test_virtual_machine");
 	TCase *tcase;
@@ -382,6 +405,10 @@ Suite *test_virtual_machine_create_suite() {
 
 	tcase = tcase_create("float_expression");
 	tcase_add_test(tcase, float_expression);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("unconditional_jump");
+	tcase_add_test(tcase, unconditional_jump);
 	suite_add_tcase(suite, tcase);
 
 	return suite;

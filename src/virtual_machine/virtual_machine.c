@@ -48,6 +48,15 @@ enum operations {
 	XOR
 };
 
+enum comparison_type {
+	EQ,
+	NE,
+	GT,
+	GE,
+	LT,
+	LE
+};
+
 #define BYTE_AT_PC(vm_status_pointer) (vm_status_pointer->code + vm_status_pointer->program_counter)
 
 struct bx_vm_status {
@@ -69,6 +78,7 @@ static inline bx_int8 bx_integer_arithmetic_function(struct bx_stack *execution_
 static inline bx_int8 bx_float_arithmetic_function(struct bx_stack *execution_stack, enum operations operation);
 static inline bx_int8 bx_fetch_instruction(struct bx_vm_status *vm_status, bx_uint8 *instruction_id);
 static inline bx_int8 bx_fetch(struct bx_vm_status *vm_status, void *data, bx_size data_length);
+static inline bx_int8 bx_general_jump_function(struct bx_vm_status *vm_status, enum comparison_type comparison);
 
 //////////////////
 // Instructions //
@@ -289,6 +299,104 @@ static bx_int8 bx_store32_function(struct bx_vm_status *vm_status) {
 	return 0;
 }
 
+static bx_int8 bx_jump_function(struct bx_vm_status *vm_status) {
+	bx_int8 error;
+	bx_uint16 address;
+
+	error = bx_fetch(vm_status, &address, sizeof address);
+	if (error == -1) {
+		return -1;
+	}
+	if (address >= vm_status->code_size) {
+		return -1;
+	}
+	vm_status->program_counter = address;
+
+	return 0;
+}
+
+static bx_int8 bx_jeqz_function(struct bx_vm_status *vm_status) {
+	return bx_general_jump_function(vm_status, EQ);
+}
+
+static bx_int8 bx_jnez_function(struct bx_vm_status *vm_status) {
+	return bx_general_jump_function(vm_status, NE);
+}
+
+static bx_int8 bx_jgez_function(struct bx_vm_status *vm_status) {
+	return bx_general_jump_function(vm_status, GE);
+}
+
+static bx_int8 bx_jgtz_function(struct bx_vm_status *vm_status) {
+	return bx_general_jump_function(vm_status, GT);
+}
+
+static bx_int8 bx_jlez_function(struct bx_vm_status *vm_status) {
+	return bx_general_jump_function(vm_status, LE);
+}
+
+static bx_int8 bx_jltz_function(struct bx_vm_status *vm_status) {
+	return bx_general_jump_function(vm_status, LT);
+}
+
+static inline bx_int8 bx_general_jump_function(struct bx_vm_status *vm_status, enum comparison_type comparison) {
+	bx_int8 error;
+	bx_uint16 address;
+	bx_int32 data;
+
+	error = bx_fetch(vm_status, &data, sizeof data);
+	if (error == -1) {
+		return -1;
+	}
+	error = bx_fetch(vm_status, &address, sizeof address);
+	if (error == -1) {
+		return -1;
+	}
+	if (address >= vm_status->code_size) {
+		return -1;
+	}
+	switch(comparison) {
+	case EQ:
+		if (data == 0) {
+			vm_status->program_counter = address;
+		}
+		break;
+	case NE:
+		if (data != 0) {
+			vm_status->program_counter = address;
+		}
+		break;
+	case LT:
+		if (data < 0) {
+			vm_status->program_counter = address;
+		}
+		break;
+	case LE:
+		if (data <= 0) {
+			vm_status->program_counter = address;
+		}
+		break;
+	case GT:
+		if (data > 0) {
+			vm_status->program_counter = address;
+		}
+		break;
+	case GE:
+		if (data >= 0) {
+			vm_status->program_counter = address;
+		}
+		break;
+	default:
+		return -1;
+	}
+
+	return 0;
+}
+
+static bx_int8 bx_nop_function(struct bx_vm_status *vm_status) {
+	return 0;
+}
+
 bx_int8 bx_vm_virtual_machine_init() {
 
 	BX_LOG(LOG_INFO, "virtual_machine", "Initializing virtual machine data structures...");
@@ -311,6 +419,14 @@ bx_int8 bx_vm_virtual_machine_init() {
 	instruction_array[BX_INSTR_PUSH32] = &bx_push32_function;
 	instruction_array[BX_INSTR_LOAD32] = &bx_load32_function;
 	instruction_array[BX_INSTR_STORE32] = &bx_store32_function;
+	instruction_array[BX_INSTR_JUMP] = &bx_jump_function;
+	instruction_array[BX_INSTR_JEQZ] = &bx_jeqz_function;
+	instruction_array[BX_INSTR_JNEZ] = &bx_jnez_function;
+	instruction_array[BX_INSTR_JGTZ] = &bx_jgtz_function;
+	instruction_array[BX_INSTR_JGEZ] = &bx_jgez_function;
+	instruction_array[BX_INSTR_JLTZ] = &bx_jltz_function;
+	instruction_array[BX_INSTR_JLEZ] = &bx_jlez_function;
+	instruction_array[BX_INSTR_NOP] = &bx_nop_function;
 
 	return 0;
 }
