@@ -371,6 +371,346 @@ START_TEST (unconditional_jump) {
 	ck_assert_int_eq(bx_test_field_get_int(), value1);
 } END_TEST
 
+START_TEST (jump_eq_zero) {
+	bx_int8 error;
+	bx_int32 value1 = 12;
+	bx_int32 value2 = 21;
+
+	// Jump taken
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_JEQZ);
+	bx_vmutils_add_int(&buffer, 0);
+	bx_vmutils_add_short(&buffer, 51);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_NOP);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), value1);
+
+	// Jump not taken
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_JEQZ);
+	bx_vmutils_add_int(&buffer, 12);
+	bx_vmutils_add_short(&buffer, 51);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_NOP);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), value2);
+} END_TEST
+
+START_TEST (jump_ne_zero) {
+	bx_int8 error;
+	bx_int32 value1 = 12;
+	bx_int32 value2 = 21;
+
+	// Jump taken
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_JNEZ);
+	bx_vmutils_add_int(&buffer, 5);
+	bx_vmutils_add_short(&buffer, 51);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_NOP);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), value1);
+
+	// Jump not taken
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_JNEZ);
+	bx_vmutils_add_int(&buffer, 0);
+	bx_vmutils_add_short(&buffer, 51);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_NOP);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), value2);
+} END_TEST
+
+START_TEST (jump_gt_zero) {
+	bx_int8 error;
+	bx_int32 value1 = 12;
+	bx_int32 value2 = 21;
+
+	// Jump taken
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_JGTZ);
+	bx_vmutils_add_int(&buffer, 5);
+	bx_vmutils_add_short(&buffer, 51);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_NOP);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), value1);
+
+	// Jump not taken
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_JGTZ);
+	bx_vmutils_add_int(&buffer, 0);
+	bx_vmutils_add_short(&buffer, 51);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_NOP);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), value2);
+
+	// Jump not taken
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_JGTZ);
+	bx_vmutils_add_int(&buffer, -8);
+	bx_vmutils_add_short(&buffer, 51);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_NOP);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), value2);
+} END_TEST
+
+START_TEST (jump_ge_zero) {
+	bx_int8 error;
+	bx_int32 value1 = 12;
+	bx_int32 value2 = 21;
+
+	// Jump taken
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_JGEZ);
+	bx_vmutils_add_int(&buffer, 5);
+	bx_vmutils_add_short(&buffer, 51);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_NOP);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), value1);
+
+	// Jump taken
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_JGEZ);
+	bx_vmutils_add_int(&buffer, 0);
+	bx_vmutils_add_short(&buffer, 51);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_NOP);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), value1);
+
+	// Jump not taken
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_JGEZ);
+	bx_vmutils_add_int(&buffer, -8);
+	bx_vmutils_add_short(&buffer, 51);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_NOP);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), value2);
+} END_TEST
+
+START_TEST (jump_lt_zero) {
+	bx_int8 error;
+	bx_int32 value1 = 12;
+	bx_int32 value2 = 21;
+
+	// Jump taken
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_JLTZ);
+	bx_vmutils_add_int(&buffer, -5);
+	bx_vmutils_add_short(&buffer, 51);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_NOP);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), value1);
+
+	// Jump not taken
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_JLTZ);
+	bx_vmutils_add_int(&buffer, 0);
+	bx_vmutils_add_short(&buffer, 51);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_NOP);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), value2);
+
+	// Jump not taken
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_JLTZ);
+	bx_vmutils_add_int(&buffer, 8);
+	bx_vmutils_add_short(&buffer, 51);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_NOP);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), value2);
+} END_TEST
+
+START_TEST (jump_le_zero) {
+	bx_int8 error;
+	bx_int32 value1 = 12;
+	bx_int32 value2 = 21;
+
+	// Jump taken
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_JLEZ);
+	bx_vmutils_add_int(&buffer, -5);
+	bx_vmutils_add_short(&buffer, 51);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_NOP);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), value1);
+
+	// Jump taken
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_JLEZ);
+	bx_vmutils_add_int(&buffer, 0);
+	bx_vmutils_add_short(&buffer, 51);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_NOP);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), value1);
+
+	// Jump not taken
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_JLEZ);
+	bx_vmutils_add_int(&buffer, 9);
+	bx_vmutils_add_short(&buffer, 51);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_NOP);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), value2);
+} END_TEST
+
 Suite *test_virtual_machine_create_suite() {
 	Suite *suite = suite_create("test_virtual_machine");
 	TCase *tcase;
@@ -409,6 +749,30 @@ Suite *test_virtual_machine_create_suite() {
 
 	tcase = tcase_create("unconditional_jump");
 	tcase_add_test(tcase, unconditional_jump);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("jump_eq_zero");
+	tcase_add_test(tcase, jump_eq_zero);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("jump_ne_zero");
+	tcase_add_test(tcase, jump_ne_zero);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("jump_gt_zero");
+	tcase_add_test(tcase, jump_gt_zero);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("jump_ge_zero");
+	tcase_add_test(tcase, jump_ge_zero);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("jump_lt_zero");
+	tcase_add_test(tcase, jump_lt_zero);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("jump_le_zero");
+	tcase_add_test(tcase, jump_le_zero);
 	suite_add_tcase(suite, tcase);
 
 	return suite;
