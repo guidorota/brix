@@ -36,8 +36,12 @@
 
 bx_int8 bx_stack_init(struct bx_stack *stack, void *storage, bx_size storage_size) {
 
+	if (stack == NULL || storage == NULL) {
+		return -1;
+	}
+
 	stack->stack = storage;
-	stack->size = storage_size;
+	stack->capacity = storage_size;
 	stack->top = 0;
 
 	return 0;
@@ -45,7 +49,11 @@ bx_int8 bx_stack_init(struct bx_stack *stack, void *storage, bx_size storage_siz
 
 bx_int8 bx_stack_push(struct bx_stack *stack, void *from, bx_size size) {
 
-	if (stack->size - stack->top < size) {
+	if (stack == NULL || from == NULL) {
+		return -1;
+	}
+
+	if (stack->capacity - stack->top < size) {
 		return -1;
 	}
 
@@ -57,6 +65,10 @@ bx_int8 bx_stack_push(struct bx_stack *stack, void *from, bx_size size) {
 
 bx_int8 bx_stack_pop(struct bx_stack *stack, void *to, bx_size size) {
 
+	if (stack == NULL) {
+		return -1;
+	}
+
 	if (stack->top < size) {
 		return -1;
 	}
@@ -67,7 +79,31 @@ bx_int8 bx_stack_pop(struct bx_stack *stack, void *to, bx_size size) {
 	return 0;
 }
 
-void bx_stack_reset(struct bx_stack *stack) {
+bx_ssize bx_stack_size(struct bx_stack *stack) {
+
+	if (stack == NULL) {
+		return -1;
+	}
+
+	return stack->top;
+}
+
+bx_ssize bx_stack_capacity(struct bx_stack *stack) {
+
+	if (stack == NULL) {
+		return -1;
+	}
+
+	return stack->capacity;
+}
+
+bx_int8 bx_stack_reset(struct bx_stack *stack) {
+
+	if (stack == NULL) {
+		return -1;
+	}
 
 	stack->top = 0;
+
+	return 0;
 }

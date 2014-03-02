@@ -44,7 +44,7 @@
 struct bx_stack {
 	void *stack;
 	size_t top;
-	size_t size;
+	size_t capacity;
 };
 
 /**
@@ -81,10 +81,28 @@ bx_int8 bx_stack_push(struct bx_stack *stack, void *from, bx_size size);
 bx_int8 bx_stack_pop(struct bx_stack *stack, void *to, bx_size size);
 
 /**
+ * Returns the current stack size.
+ *
+ * @param stack Stack pointer
+ *
+ * return Number of bytes in the stack, -1 on error
+ */
+bx_ssize bx_stack_size(struct bx_stack *stack);
+
+/**
+ * Returns the stack capacity.
+ *
+ * @param stack Stack pointer
+ *
+ * @return Stack capacity, -1 on error
+ */
+bx_ssize bx_stack_capacity(struct bx_stack *stack);
+
+/**
  * Resets the stack.
  *
  * @param stack Stack pointer
  */
-void bx_stack_reset(struct bx_stack *stack);
+bx_int8 bx_stack_reset(struct bx_stack *stack);
 
 #endif /* STACK_H_ */
