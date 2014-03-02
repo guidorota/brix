@@ -40,8 +40,8 @@
 
 struct bx_mlist {
 	void *storage;
-	bx_size storage_size;
-	bx_size storage_used;
+	bx_size capacity;
+	bx_size size;
 };
 
 /**
@@ -91,6 +91,24 @@ void *bx_mlist_get(struct bx_mlist *list, bx_size index, bx_size *element_size);
  * @return 0 upon success, -1 otherwise
  */
 bx_int8 bx_mlist_remove_element(struct bx_mlist *list, bx_size index);
+
+/**
+ * Returns the current size of the list.
+ *
+ * @param list List pointer
+ *
+ * @return Number of bytes used in the list, -1 on error
+ */
+bx_ssize bx_mlist_size(struct bx_mlist *list);
+
+/**
+ * Returns the capacity of the list.
+ *
+ * @param list List pointer
+ *
+ * @return Capacity of the list, -1 on error
+ */
+bx_ssize bx_mlist_capacity(struct bx_mlist *list);
 
 /**
  * Resets the list.

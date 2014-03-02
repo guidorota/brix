@@ -48,8 +48,8 @@ START_TEST (init_list) {
 	error = bx_mlist_init(&list, list_storage, LIST_STORAGE_SIZE);
 	ck_assert_int_eq(error, 0);
 	ck_assert_ptr_eq(list.storage, list_storage);
-	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
-	ck_assert_int_eq(list.storage_used, 0);
+	ck_assert_int_eq(bx_mlist_capacity(&list), LIST_STORAGE_SIZE);
+	ck_assert_int_eq(bx_mlist_size(&list), 0);
 } END_TEST
 
 START_TEST (get_from_empty_list) {
@@ -68,58 +68,58 @@ START_TEST (get_from_empty_list) {
 
 START_TEST (add_element) {
 	void *result;
-	bx_size previous_storage_used;
+	bx_size previous_size;
 
-	previous_storage_used = list.storage_used;
+	previous_size = bx_mlist_size(&list);
 	result = bx_mlist_add(&list, (void *) array0, sizeof array0);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(list.storage_used, previous_storage_used + sizeof array0 + sizeof (bx_size));
-	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_int_eq(bx_mlist_size(&list), previous_size + sizeof array0 + sizeof (bx_size));
+	ck_assert_int_eq(bx_mlist_capacity(&list), LIST_STORAGE_SIZE);
 	ck_assert_ptr_eq(list.storage, list_storage);
 
-	previous_storage_used = list.storage_used;
+	previous_size = bx_mlist_size(&list);
 	result = bx_mlist_add(&list, (void *) array1, sizeof array1);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(list.storage_used, previous_storage_used + sizeof array1 + sizeof (bx_size));
-	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_int_eq(bx_mlist_size(&list), previous_size + sizeof array1 + sizeof (bx_size));
+	ck_assert_int_eq(bx_mlist_capacity(&list), LIST_STORAGE_SIZE);
 	ck_assert_ptr_eq(list.storage, list_storage);
 
-	previous_storage_used = list.storage_used;
+	previous_size = bx_mlist_size(&list);
 	result = bx_mlist_add(&list, (void *) array2, sizeof array2);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(list.storage_used, previous_storage_used + sizeof array2 + sizeof (bx_size));
-	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_int_eq(bx_mlist_size(&list), previous_size + sizeof array2 + sizeof (bx_size));
+	ck_assert_int_eq(bx_mlist_capacity(&list), LIST_STORAGE_SIZE);
 	ck_assert_ptr_eq(list.storage, list_storage);
 } END_TEST
 
 START_TEST (get_element) {
 	bx_size element_size;
 	bx_uint8 *element;
-	bx_size previous_storage_used;
+	bx_size previous_size;
 
-	previous_storage_used = list.storage_used;
+	previous_size = bx_mlist_size(&list);
 	element = bx_mlist_get(&list, 0, &element_size);
 	ck_assert_ptr_ne(element, NULL);
-	ck_assert_int_eq(list.storage_used, previous_storage_used);
-	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_int_eq(bx_mlist_size(&list), previous_size);
+	ck_assert_int_eq(bx_mlist_capacity(&list), LIST_STORAGE_SIZE);
 	ck_assert_ptr_eq(list.storage, list_storage);
 	ck_assert_int_eq(element_size, sizeof array0);
 	ck_assert_int_eq(memcmp((void *) element, (void *) array0, element_size), 0);
 
-	previous_storage_used = list.storage_used;
+	previous_size = bx_mlist_size(&list);
 	element = bx_mlist_get(&list, 1, &element_size);
 	ck_assert_ptr_ne(element, NULL);
-	ck_assert_int_eq(list.storage_used, previous_storage_used);
-	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_int_eq(bx_mlist_size(&list), previous_size);
+	ck_assert_int_eq(bx_mlist_capacity(&list), LIST_STORAGE_SIZE);
 	ck_assert_ptr_eq(list.storage, list_storage);
 	ck_assert_int_eq(element_size, sizeof array1);
 	ck_assert_int_eq(memcmp((void *) element, (void *) array1, element_size), 0);
 
-	previous_storage_used = list.storage_used;
+	previous_size = bx_mlist_size(&list);
 	element = bx_mlist_get(&list, 2, &element_size);
 	ck_assert_ptr_ne(element, NULL);
-	ck_assert_int_eq(list.storage_used, previous_storage_used);
-	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_int_eq(bx_mlist_size(&list), previous_size);
+	ck_assert_int_eq(bx_mlist_capacity(&list), LIST_STORAGE_SIZE);
 	ck_assert_ptr_eq(list.storage, list_storage);
 	ck_assert_int_eq(element_size, sizeof array2);
 	ck_assert_int_eq(memcmp((void *) element, (void *) array2, element_size), 0);
@@ -135,19 +135,19 @@ START_TEST (out_of_bound_get) {
 
 START_TEST (remove_element) {
 	bx_uint8 error;
-	bx_size previous_storage_used;
+	bx_size previous_size;
 	bx_size element_size;
 	bx_uint8 *element;
 
-	previous_storage_used = list.storage_used;
+	previous_size = bx_mlist_size(&list);
 	error = bx_mlist_remove_element(&list, 1);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(list.storage_used, previous_storage_used - sizeof array1 - sizeof (bx_size));
-	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_int_eq(bx_mlist_size(&list), previous_size - sizeof array1 - sizeof (bx_size));
+	ck_assert_int_eq(bx_mlist_capacity(&list), LIST_STORAGE_SIZE);
 
 	element = bx_mlist_get(&list, 1, &element_size);
 	ck_assert_ptr_ne(element, NULL);
-	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_int_eq(bx_mlist_capacity(&list), LIST_STORAGE_SIZE);
 	ck_assert_ptr_eq(list.storage, list_storage);
 	ck_assert_int_eq(element_size, sizeof array2);
 	ck_assert_int_eq(memcmp((void *) element, (void *) array2, element_size), 0);
@@ -155,12 +155,12 @@ START_TEST (remove_element) {
 
 START_TEST (out_of_bound_remove) {
 	bx_int8 error;
-	bx_size previous_storage_used;
+	bx_size previous_size;
 
-	previous_storage_used = list.storage_used;
+	previous_size = bx_mlist_size(&list);
 	error = bx_mlist_remove_element(&list, 6);
 	ck_assert_int_ne(error, 0);
-	ck_assert_int_eq(list.storage_used, previous_storage_used);
+	ck_assert_int_eq(bx_mlist_size(&list), previous_size);
 } END_TEST
 
 START_TEST (reset_list) {
@@ -168,8 +168,8 @@ START_TEST (reset_list) {
 
 	error = bx_mlist_reset(&list);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(list.storage_used, 0);
-	ck_assert_int_eq(list.storage_size, LIST_STORAGE_SIZE);
+	ck_assert_int_eq(bx_mlist_size(&list), 0);
+	ck_assert_int_eq(bx_mlist_capacity(&list), LIST_STORAGE_SIZE);
 	ck_assert_ptr_eq(list.storage, list_storage);
 } END_TEST
 

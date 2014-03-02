@@ -32,18 +32,18 @@
 #include "utils/mixed_list.h"
 #include <string.h>
 
-#define TAIL_POINTER(list_pointer) ((bx_uint8 *) list_pointer->storage) + list_pointer->storage_used
+#define TAIL_POINTER(list_pointer) ((bx_uint8 *) list_pointer->storage) + list_pointer->size
 #define OFFSET_POINTER(list_pointer, offset) ((bx_uint8 *) list_pointer->storage + offset)
 
-bx_int8 bx_mlist_init(struct bx_mlist *list, void *storage, bx_size storage_size) {
+bx_int8 bx_mlist_init(struct bx_mlist *list, void *storage, bx_size capacity) {
 
-	if (list == NULL || storage == NULL || storage_size == 0) {
+	if (list == NULL || storage == NULL || capacity == 0) {
 		return -1;
 	}
 
 	list->storage = storage;
-	list->storage_size = storage_size;
-	list->storage_used = 0;
+	list->capacity = capacity;
+	list->size = 0;
 
 	return 0;
 }
@@ -56,17 +56,17 @@ void *bx_mlist_add(struct bx_mlist *list, void *element, bx_size element_size) {
 	}
 
 	memcpy(TAIL_POINTER(list), &element_size, sizeof element_size);
-	list->storage_used += sizeof element_size;
+	list->size += sizeof element_size;
 	new_element = TAIL_POINTER(list);
 	memcpy(new_element, element, element_size);
-	list->storage_used += element_size;
+	list->size += element_size;
 
 	return new_element;
 }
 
 void *bx_mlist_get(struct bx_mlist *list, bx_size index, bx_size *element_size) {
 
-	if (list == NULL || list->storage_used == 0) {
+	if (list == NULL || list->size == 0) {
 		return NULL;
 	}
 
@@ -80,7 +80,7 @@ void *bx_mlist_get(struct bx_mlist *list, bx_size index, bx_size *element_size) 
 		}
 		current_position += *element_size;
 		current_index++;
-	} while(current_position < list->storage_used);
+	} while(current_position < list->size);
 
 	return NULL;
 }
@@ -100,11 +100,29 @@ bx_int8 bx_mlist_remove_element(struct bx_mlist *list, bx_size index) {
 	}
 	element -= sizeof element_size;
 	element_size += sizeof element_size;
-	remaining_bytes = list->storage_used - (element - (bx_uint8 *) list->storage) + element_size;
+	remaining_bytes = list->size - (element - (bx_uint8 *) list->storage) + element_size;
 	memcpy((void *) element, (void *) (element + element_size), remaining_bytes);
-	list->storage_used -= element_size;
+	list->size -= element_size;
 
 	return 0;
+}
+
+bx_ssize bx_mlist_size(struct bx_mlist *list) {
+
+	if (list == NULL) {
+		return -1;
+	}
+
+	return list->size;
+}
+
+bx_ssize bx_mlist_capacity(struct bx_mlist *list) {
+
+	if (list == NULL) {
+		return -1;
+	}
+
+	return list->capacity;
 }
 
 bx_int8 bx_mlist_reset(struct bx_mlist *list) {
@@ -113,7 +131,7 @@ bx_int8 bx_mlist_reset(struct bx_mlist *list) {
 		return -1;
 	}
 
-	list->storage_used = 0;
+	list->size = 0;
 
 	return 0;
 }
