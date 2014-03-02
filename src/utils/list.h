@@ -133,6 +133,33 @@ bx_ssize bx_list_indexof(struct bx_list *list, void *element, equals_function eq
 void *bx_list_search(struct bx_list *list, void *element, equals_function equals);
 
 /**
+ * Returns the maximum number of elements that the list can contain.
+ *
+ * @param list List pointer
+ *
+ * @return List capacity, -1 on error
+ */
+bx_ssize bx_list_capacity(struct bx_list *list);
+
+/**
+ * Return the number of elements currently in the list
+ *
+ * @param list List pointer
+ *
+ * @return List size, -1 on error
+ */
+bx_ssize bx_list_size(struct bx_list *list);
+
+/**
+ * Return the size of a single list element
+ *
+ * @param list List pointer
+ *
+ * @return Element size, -1 on error
+ */
+bx_ssize bx_list_element_size(struct bx_list *list);
+
+/**
  * Removes an element from a list.
  * All data following the removed element will be shifted to avoid fragmentation.
  * All pointers to the removed list element will be invalid after the reset

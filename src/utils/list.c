@@ -154,6 +154,33 @@ bx_int8 bx_list_remove(struct bx_list *list, bx_size index) {
 	return 0;
 }
 
+bx_ssize bx_list_capacity(struct bx_list *list) {
+
+	if (list == NULL) {
+		return -1;
+	}
+
+	return list->capacity;
+}
+
+bx_ssize bx_list_size(struct bx_list *list) {
+
+	if (list == NULL) {
+		return -1;
+	}
+
+	return list->size;
+}
+
+bx_ssize bx_list_element_size(struct bx_list *list) {
+
+	if (list == NULL) {
+		return -1;
+	}
+
+	return list->element_size;
+}
+
 void bx_list_reset(struct bx_list *list) {
 
 	if (list == NULL) {
