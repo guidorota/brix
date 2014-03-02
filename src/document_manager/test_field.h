@@ -41,12 +41,8 @@ void bx_test_field_set_int(bx_int32 value);
 
 void bx_test_field_set_float(bx_float32 value);
 
-void bx_test_field_set_byte(bx_uint8 value);
-
 bx_int32 bx_test_field_get_int(void);
 
 bx_float32 bx_test_field_get_float(void);
-
-bx_uint8 bx_test_field_get_byte(void);
 
 #endif /* TEST_FIELD_H_ */

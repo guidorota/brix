@@ -60,7 +60,6 @@ static bx_int8 stack_byte_array[VM_STACK_SIZE];
 static bx_instruction instruction_array[256];
 
 static inline bx_int8 bx_integer_arithmetic_function(struct bx_stack *execution_stack, bx_int8 operation);
-static inline bx_int8 bx_byte_arithmetic_function(struct bx_stack *execution_stack, bx_int8 operation);
 static inline bx_int8 bx_float_arithmetic_function(struct bx_stack *execution_stack, bx_int8 operation);
 static inline bx_int8 bx_fetch_instruction(struct bx_vm_status *vm_status, bx_uint8 *instruction_id);
 static inline bx_int8 bx_fetch(struct bx_vm_status *vm_status, void *data, bx_size data_length);
@@ -95,11 +94,11 @@ static inline bx_int8 bx_integer_arithmetic_function(struct bx_stack *execution_
 	bx_int32 result;
 	bx_int8 error;
 
-	error = BX_STACK_POP_VARIABLE(execution_stack, operand1);
+	error = BX_STACK_POP_VARIABLE(execution_stack, operand2);
 	if (error != 0) {
 		return -1;
 	}
-	error = BX_STACK_POP_VARIABLE(execution_stack, operand2);
+	error = BX_STACK_POP_VARIABLE(execution_stack, operand1);
 	if (error != 0) {
 		return -1;
 	}
@@ -153,11 +152,11 @@ static inline bx_int8 bx_float_arithmetic_function(struct bx_stack *execution_st
 	bx_float32 result;
 	bx_int8 error;
 
-	error = BX_STACK_POP_VARIABLE(execution_stack, operand1);
+	error = BX_STACK_POP_VARIABLE(execution_stack, operand2);
 	if (error != 0) {
 		return -1;
 	}
-	error = BX_STACK_POP_VARIABLE(execution_stack, operand2);
+	error = BX_STACK_POP_VARIABLE(execution_stack, operand1);
 	if (error != 0) {
 		return -1;
 	}
