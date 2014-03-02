@@ -60,6 +60,7 @@ static bx_int8 stack_byte_array[VM_STACK_SIZE];
 static bx_instruction instruction_array[256];
 
 static inline bx_int8 bx_integer_arithmetic_function(struct bx_stack *execution_stack, bx_int8 operation);
+static inline bx_int8 bx_byte_arithmetic_function(struct bx_stack *execution_stack, bx_int8 operation);
 static inline bx_int8 bx_float_arithmetic_function(struct bx_stack *execution_stack, bx_int8 operation);
 static inline bx_int8 bx_fetch_instruction(struct bx_vm_status *vm_status, bx_uint8 *instruction_id);
 static inline bx_int8 bx_fetch(struct bx_vm_status *vm_status, void *data, bx_size data_length);
@@ -185,6 +186,68 @@ static inline bx_int8 bx_float_arithmetic_function(struct bx_stack *execution_st
 	return 0;
 }
 
+static bx_int8 bx_badd_function(struct bx_vm_status *vm_status) {
+	return bx_byte_arithmetic_function(&vm_status->execution_stack, ADD);
+}
+
+static bx_int8 bx_bsub_function(struct bx_vm_status *vm_status) {
+	return bx_byte_arithmetic_function(&vm_status->execution_stack, SUB);
+}
+
+static bx_int8 bx_bmul_function(struct bx_vm_status *vm_status) {
+	return bx_byte_arithmetic_function(&vm_status->execution_stack, MUL);
+}
+
+static bx_int8 bx_bdiv_function(struct bx_vm_status *vm_status) {
+	return bx_byte_arithmetic_function(&vm_status->execution_stack, DIV);
+}
+
+static bx_int8 bx_bmod_function(struct bx_vm_status *vm_status) {
+	return bx_byte_arithmetic_function(&vm_status->execution_stack, MOD);
+}
+
+static inline bx_int8 bx_byte_arithmetic_function(struct bx_stack *execution_stack, bx_int8 operation) {
+	bx_uint8 operand1;
+	bx_uint8 operand2;
+	bx_uint8 result;
+	bx_int8 error;
+
+	error = BX_STACK_POP_VARIABLE(execution_stack, operand1);
+	if (error != 0) {
+		return -1;
+	}
+	error = BX_STACK_POP_VARIABLE(execution_stack, operand2);
+	if (error != 0) {
+		return -1;
+	}
+
+	switch (operation) {
+		case ADD:
+			result = operand1 + operand2;
+			break;
+		case SUB:
+			result = operand1 - operand2;
+			break;
+		case MUL:
+			result = operand1 * operand2;
+			break;
+		case DIV:
+			result = operand1 / operand2;
+			break;
+		case MOD:
+			result = operand1 % operand2;
+			break;
+		default:
+			return -1;
+		}
+	error = BX_STACK_PUSH_VARIABLE(execution_stack, result);
+	if (error != 0) {
+		return -1;
+	}
+
+	return 0;
+}
+
 static bx_int8 bx_push32_function(struct bx_vm_status *vm_status) {
 	bx_int8 error;
 	bx_uint32 data;
@@ -258,6 +321,11 @@ bx_int8 bx_vm_virtual_machine_init() {
 	instruction_array[BX_INSTR_FSUB] = &bx_fsub_function;
 	instruction_array[BX_INSTR_FMUL] = &bx_fmul_function;
 	instruction_array[BX_INSTR_FDIV] = &bx_fdiv_function;
+	instruction_array[BX_INSTR_BADD] = &bx_badd_function;
+	instruction_array[BX_INSTR_BSUB] = &bx_bsub_function;
+	instruction_array[BX_INSTR_BMUL] = &bx_bmul_function;
+	instruction_array[BX_INSTR_BDIV] = &bx_bdiv_function;
+	instruction_array[BX_INSTR_BMOD] = &bx_bmod_function;
 	instruction_array[BX_INSTR_PUSH32] = &bx_push32_function;
 	instruction_array[BX_INSTR_LOAD32] = &bx_load32_function;
 	instruction_array[BX_INSTR_STORE32] = &bx_store32_function;

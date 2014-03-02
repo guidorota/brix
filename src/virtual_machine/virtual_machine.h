@@ -43,9 +43,14 @@
 #define BX_INSTR_FSUB 0x6
 #define BX_INSTR_FMUL 0x7
 #define BX_INSTR_FDIV 0x8
-#define BX_INSTR_PUSH32 0x9
-#define BX_INSTR_LOAD32 0xA
-#define BX_INSTR_STORE32 0xB
+#define BX_INSTR_BADD 0x9
+#define BX_INSTR_BSUB 0xA
+#define BX_INSTR_BMUL 0xB
+#define BX_INSTR_BDIV 0xC
+#define BX_INSTR_BMOD 0xD
+#define BX_INSTR_PUSH32 0xE
+#define BX_INSTR_LOAD32 0xF
+#define BX_INSTR_STORE32 0x10
 
 //TODO: Negation
 //TODO: Boolean operations

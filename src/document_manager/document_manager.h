@@ -41,6 +41,7 @@
 #include "configuration.h"
 
 enum bx_field_type {
+	BYTE,
 	INT,
 	FLOAT
 };
