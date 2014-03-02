@@ -172,6 +172,66 @@ START_TEST (integer_arithmetics_test) {
 	ck_assert_int_eq(bx_test_field_get_int(), operand1 % operand2);
 } END_TEST
 
+START_TEST (integer_boolean_test) {
+	bx_int8 error;
+	bx_int32 operand1 = 12;
+	bx_int32 operand2 = 24;
+
+	// AND
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, operand1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, operand2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_IAND);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), operand1 & operand2);
+
+	// OR
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, operand1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, operand2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_IOR);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), operand1 | operand2);
+
+	// XOR
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, operand1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, operand2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_IXOR);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), operand1 ^ operand2);
+
+	// NOT
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, operand1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_INOT);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), ~operand1);
+} END_TEST
+
 START_TEST (float_arithmetics_test) {
 	bx_int8 error;
 	bx_float32 operand1 = 26.987;
@@ -306,6 +366,10 @@ Suite *test_virtual_machine_create_suite() {
 
 	tcase = tcase_create("integer_arithmetics_test");
 	tcase_add_test(tcase, integer_arithmetics_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("integer_boolean_test");
+	tcase_add_test(tcase, integer_boolean_test);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("float_arithmetics_test");

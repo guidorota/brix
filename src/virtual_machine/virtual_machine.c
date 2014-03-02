@@ -36,11 +36,17 @@
 #include "logging.h"
 #include "document_manager/document_manager.h"
 
-#define ADD 0
-#define SUB 1
-#define MUL 2
-#define DIV 3
-#define MOD 4
+enum operations {
+	ADD,
+	SUB,
+	MUL,
+	DIV,
+	MOD,
+	NOT,
+	AND,
+	OR,
+	XOR
+};
 
 #define BYTE_AT_PC(vm_status_pointer) (vm_status_pointer->code + vm_status_pointer->program_counter)
 
@@ -59,8 +65,8 @@ static bx_int8 stack_byte_array[VM_STACK_SIZE];
 
 static bx_instruction instruction_array[256];
 
-static inline bx_int8 bx_integer_arithmetic_function(struct bx_stack *execution_stack, bx_int8 operation);
-static inline bx_int8 bx_float_arithmetic_function(struct bx_stack *execution_stack, bx_int8 operation);
+static inline bx_int8 bx_integer_arithmetic_function(struct bx_stack *execution_stack, enum operations operation);
+static inline bx_int8 bx_float_arithmetic_function(struct bx_stack *execution_stack, enum operations operation);
 static inline bx_int8 bx_fetch_instruction(struct bx_vm_status *vm_status, bx_uint8 *instruction_id);
 static inline bx_int8 bx_fetch(struct bx_vm_status *vm_status, void *data, bx_size data_length);
 
@@ -88,7 +94,19 @@ static bx_int8 bx_imod_function(struct bx_vm_status *vm_status) {
 	return bx_integer_arithmetic_function(&vm_status->execution_stack, MOD);
 }
 
-static inline bx_int8 bx_integer_arithmetic_function(struct bx_stack *execution_stack, bx_int8 operation) {
+static bx_int8 bx_iand_function(struct bx_vm_status *vm_status) {
+	return bx_integer_arithmetic_function(&vm_status->execution_stack, AND);
+}
+
+static bx_int8 bx_ior_function(struct bx_vm_status *vm_status) {
+	return bx_integer_arithmetic_function(&vm_status->execution_stack, OR);
+}
+
+static bx_int8 bx_ixor_function(struct bx_vm_status *vm_status) {
+	return bx_integer_arithmetic_function(&vm_status->execution_stack, XOR);
+}
+
+static inline bx_int8 bx_integer_arithmetic_function(struct bx_stack *execution_stack, enum operations operation) {
 	bx_int32 operand1;
 	bx_int32 operand2;
 	bx_int32 result;
@@ -119,10 +137,38 @@ static inline bx_int8 bx_integer_arithmetic_function(struct bx_stack *execution_
 		case MOD:
 			result = operand1 % operand2;
 			break;
+		case AND:
+			result = operand1 & operand2;
+			break;
+		case OR:
+			result = operand1 | operand2;
+			break;
+		case XOR:
+			result = operand1 ^ operand2;
+			break;
 		default:
 			return -1;
 		}
 	error = BX_STACK_PUSH_VARIABLE(execution_stack, result);
+	if (error != 0) {
+		return -1;
+	}
+
+	return 0;
+}
+
+static bx_int8 bx_inot_function(struct bx_vm_status *vm_status) {
+	bx_int32 operand;
+	bx_int32 result;
+	bx_int8 error;
+
+	error = BX_STACK_POP_VARIABLE(&vm_status->execution_stack, operand);
+	if (error != 0) {
+		return -1;
+	}
+	result = ~operand;
+
+	error = BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, result);
 	if (error != 0) {
 		return -1;
 	}
@@ -146,7 +192,7 @@ static bx_int8 bx_fdiv_function(struct bx_vm_status *vm_status) {
 	return bx_float_arithmetic_function(&vm_status->execution_stack, DIV);
 }
 
-static inline bx_int8 bx_float_arithmetic_function(struct bx_stack *execution_stack, bx_int8 operation) {
+static inline bx_int8 bx_float_arithmetic_function(struct bx_stack *execution_stack, enum operations operation) {
 	bx_float32 operand1;
 	bx_float32 operand2;
 	bx_float32 result;
@@ -254,6 +300,10 @@ bx_int8 bx_vm_virtual_machine_init() {
 	instruction_array[BX_INSTR_IMUL] = &bx_imul_function;
 	instruction_array[BX_INSTR_IDIV] = &bx_idiv_function;
 	instruction_array[BX_INSTR_IMOD] = &bx_imod_function;
+	instruction_array[BX_INSTR_IAND] = &bx_iand_function;
+	instruction_array[BX_INSTR_IOR] = &bx_ior_function;
+	instruction_array[BX_INSTR_IXOR] = &bx_ixor_function;
+	instruction_array[BX_INSTR_INOT] = &bx_inot_function;
 	instruction_array[BX_INSTR_FADD] = &bx_fadd_function;
 	instruction_array[BX_INSTR_FSUB] = &bx_fsub_function;
 	instruction_array[BX_INSTR_FMUL] = &bx_fmul_function;
