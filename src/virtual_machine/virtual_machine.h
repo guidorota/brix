@@ -44,8 +44,8 @@
 #define BX_INSTR_FMUL 0x7
 #define BX_INSTR_FDIV 0x8
 #define BX_INSTR_PUSH32 0x9
-#define BX_INSTR_LOAD32 0xA //TODO: Complete
-#define BX_INSTR_STORE32 0xB //TODO: Complete
+#define BX_INSTR_LOAD32 0xA
+#define BX_INSTR_STORE32 0xB
 
 //TODO: Negation
 //TODO: Boolean operations

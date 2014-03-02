@@ -3,14 +3,14 @@ EXECUTABLES := brix
 ARCH := linux
 
 TARGETS := $(EXECUTABLES:%=src/%)
-SRC_DIRS := src src/arch/$(ARCH) $(MODULES:%=src/%) $(MODULES:%=src/$(ARCH)/%)
+SRC_DIRS := src src/arch/$(ARCH) $(MODULES:%=src/%) $(MODULES:%=src/arch/$(ARCH)/%)
 CFLAGS := $(SRC_DIRS:%=-I%) -g -Wall -pedantic -Wno-variadic-macros
 SOURCES := $(wildcard $(SRC_DIRS:%=%/*.c))
 OBJECTS := $(filter-out $(TARGETS:%=%.o), $(SOURCES:.c=.o))
 COMPILER_DIR := src/compiler
 
 TEST_TARGETS := test/test
-TEST_DIRS := test test/$(ARCH) $(MODULES:%=test/%) $(MODULES:%=test/$(ARCH)/%)
+TEST_DIRS := test test/arch/$(ARCH) $(MODULES:%=test/%) $(MODULES:%=test/arch/$(ARCH)/%)
 TEST_SOURCES := $(wildcard $(TEST_DIRS:%=%/*.c))
 TEST_OBJECTS := $(filter-out $(TEST_TARGETS:%=%.o), $(TEST_SOURCES:.c=.o))
 TEST_CFLAGS := $(TEST_DIRS:%=-I%) $(CFLAGS)

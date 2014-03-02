@@ -102,7 +102,8 @@ bx_int8 bx_dm_invoke_set(char *field_identifier, void *data) {
 	}
 	internal_field->field.set(&internal_field->field, data);
 
-	return 0;}
+	return 0;
+}
 
 bx_boolean compare_by_id(struct internal_field *field, char *identifier) {
 

@@ -42,6 +42,8 @@
 #define DIV 3
 #define MOD 4
 
+#define BYTE_AT_PC(vm_status_pointer) (vm_status_pointer->code + vm_status_pointer->program_counter)
+
 struct bx_vm_status {
 	bx_size program_counter;
 	struct bx_stack execution_stack;
@@ -283,7 +285,7 @@ bx_int8 bx_vm_execute(bx_uint8 *code, bx_size code_size) {
 			break;
 		}
 
-	} while(vm_status.stop == BX_BOOLEAN_FALSE);
+	} while(vm_status.stop == BX_BOOLEAN_FALSE && vm_status.program_counter < vm_status.code_size);
 
 	if (error != 0) {
 		BX_LOG(LOG_ERROR, "virtual_machine", "Abnormal virtual machine termination");
@@ -295,12 +297,12 @@ bx_int8 bx_vm_execute(bx_uint8 *code, bx_size code_size) {
 
 static inline bx_int8 bx_fetch_instruction(struct bx_vm_status *vm_status, bx_uint8 *instruction_id) {
 
-	if (vm_status->program_counter >= vm_status->code_size) {
+	if (vm_status->program_counter > vm_status->code_size) {
 		BX_LOG(LOG_ERROR, "virtual_machine", "Error while fetching instruction: unexpected end of code");
 		return -1;
 	}
 
-	*instruction_id = *vm_status->code;
+	*instruction_id = *BYTE_AT_PC(vm_status);
 	vm_status->program_counter++;
 
 	return 0;
@@ -308,12 +310,12 @@ static inline bx_int8 bx_fetch_instruction(struct bx_vm_status *vm_status, bx_ui
 
 static inline bx_int8 bx_fetch(struct bx_vm_status *vm_status, void *data, bx_size data_length) {
 
-	if (vm_status->program_counter + data_length >= vm_status->code_size) {
+	if (vm_status->program_counter + data_length > vm_status->code_size) {
 		BX_LOG(LOG_ERROR, "virtual_machine", "Error while fetching instruction: unexpected end of code");
 		return -1;
 	}
 
-	memcpy(data, (void *) vm_status->code, data_length);
+	memcpy(data, (void *) BYTE_AT_PC(vm_status), data_length);
 	vm_status->program_counter += data_length;
 
 	return 0;
