@@ -115,8 +115,31 @@ START_TEST (fill_test) {
 
 	previous_size = bx_bbuf_size(&buffer);
 	error = bx_bbuf_append(&buffer, (void *) &value, sizeof value);
-	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(error, -1);
 	ck_assert_int_eq(bx_bbuf_size(&buffer), previous_size);
+} END_TEST
+
+START_TEST (write_and_read_around) {
+	bx_int8 error;
+	bx_uint8 source[BYTE_BUFFER_CAPACITY - 1];
+	bx_uint8 destination[BYTE_BUFFER_CAPACITY - 1];
+
+	error = bx_bbuf_reset(&buffer);
+	ck_assert_int_eq(error, 0);
+
+	bx_size i;
+	for (i = 0; i < sizeof source; i++) {
+		source[i] = 1;
+	}
+
+	for (i = 0; i < 10; i++) {
+		error = bx_bbuf_append(&buffer, source, sizeof source);
+		ck_assert_int_eq(error, 0);
+		error = bx_bbuf_get(&buffer, destination, sizeof destination);
+		ck_assert_int_eq(error, 0);
+		ck_assert_int_eq(memcmp((void *) source, (void *) destination, sizeof source), 0);
+	}
+
 } END_TEST
 
 Suite *test_byte_buffer_create_suite() {
@@ -137,6 +160,10 @@ Suite *test_byte_buffer_create_suite() {
 
 	tcase = tcase_create("fill_test");
 	tcase_add_test(tcase, fill_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("write_and_read_around");
+	tcase_add_test(tcase, write_and_read_around);
 	suite_add_tcase(suite, tcase);
 
 	return suite;

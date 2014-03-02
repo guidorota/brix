@@ -59,7 +59,7 @@ $(COMPILER_DIR)/lex.yy.c: $(COMPILER_DIR)/language.l
 	flex -o $(COMPILER_DIR)/lex.yy.c $(COMPILER_DIR)/language.l
 
 
-# Unit Tests	
+# Unit Tests
 
 .PHONY: test
 test: $(TEST_TARGETS) 

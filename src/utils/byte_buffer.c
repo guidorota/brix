@@ -46,7 +46,8 @@ bx_int8 bx_bbuf_init(struct bx_byte_buffer *buffer, bx_uint8 *storage, bx_size c
 }
 
 bx_int8 bx_bbuf_append(struct bx_byte_buffer *buffer, void *data, bx_size length) {
-	bx_uint8 *tail;
+	bx_size tail;
+	bx_uint8 *source;
 
 	if (buffer == NULL || data == NULL) {
 		return -1;
@@ -56,16 +57,40 @@ bx_int8 bx_bbuf_append(struct bx_byte_buffer *buffer, void *data, bx_size length
 		return -1;
 	}
 
+	source = (bx_uint8 *) data;
 	tail = (buffer->head + buffer->size) % buffer->capacity;
-	memcpy((void *) buffer->storage + tail, data, length);
 	buffer->size += length;
+	while(length > 0) {
+		*(buffer->storage + tail) = *source++;
+		tail = (tail + 1) % buffer->capacity;
+		length--;
+	}
 
 	return 0;
 }
 
 bx_int8 bx_bbuf_get(struct bx_byte_buffer *buffer, void *data, bx_size length) {
+	bx_size i;
+	bx_uint8 *destination;
 
-	return -1; //TODO: Stub
+	if (buffer == NULL || data == NULL) {
+		return -1;
+	}
+
+	if (length > buffer->size) {
+		return -1;
+	}
+
+	destination = (bx_uint8 *) data;
+	i = buffer->head;
+	buffer->size -= length;
+	while(length > 0) {
+		*destination++ = *(buffer->storage + i);
+		i = (i + 1) % buffer->capacity;
+		length--;
+	}
+
+	return 0;
 }
 
 bx_ssize bx_bbuf_size(struct bx_byte_buffer *buffer) {
