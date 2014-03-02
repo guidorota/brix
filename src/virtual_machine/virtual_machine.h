@@ -50,7 +50,7 @@
 //TODO: Negation
 //TODO: Boolean operations
 //TODO: Comparison
-//TODO: Cast
+//TODO: Type conversion
 //TODO: Variable storage
 //TODO: Branching
 //TODO: Stop instruction

@@ -76,6 +76,10 @@ START_TEST (store32_test) {
 	ck_assert_int_eq(bx_test_field_get_int(), test_data);
 } END_TEST
 
+START_TEST (load32_test) {
+	//TODO: Stub
+} END_TEST
+
 START_TEST (integer_arithmetics_test) {
 	bx_int8 error;
 	bx_int32 operand1 = 12;
@@ -214,6 +218,10 @@ START_TEST (float_arithmetics_test) {
 	ck_assert_int_eq(bx_test_field_get_float(), operand1 / operand2);
 } END_TEST
 
+START_TEST (int_expression) {
+	//TODO: Stub
+} END_TEST
+
 Suite *test_virtual_machine_create_suite() {
 	Suite *suite = suite_create("test_virtual_machine");
 	TCase *tcase;
@@ -226,12 +234,20 @@ Suite *test_virtual_machine_create_suite() {
 	tcase_add_test(tcase, store32_test);
 	suite_add_tcase(suite, tcase);
 
+	tcase = tcase_create("load32_test");
+	tcase_add_test(tcase, load32_test);
+	suite_add_tcase(suite, tcase);
+
 	tcase = tcase_create("integer_arithmetics_test");
 	tcase_add_test(tcase, integer_arithmetics_test);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("float_arithmetics_test");
 	tcase_add_test(tcase, float_arithmetics_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("int_expression");
+	tcase_add_test(tcase, int_expression);
 	suite_add_tcase(suite, tcase);
 
 	return suite;
