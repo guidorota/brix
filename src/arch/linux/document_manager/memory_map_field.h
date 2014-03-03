@@ -35,6 +35,6 @@
 #include "types.h"
 #include "document_manager/document_manager.h"
 
-bx_int8 bx_mmap_field_init(struct bx_document_field *instance, enum bx_builtin_types type);
+bx_int8 bx_mmap_field_init(struct bx_document_field *instance, enum bx_builtin_type type);
 
 #endif /* MEMORY_MAP_FIELD_H_ */

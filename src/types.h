@@ -40,9 +40,9 @@
 #define BX_BOOLEAN_TRUE 1
 
 // Builtin Brix types
-enum bx_builtin_types {
-	INT,
-	FLOAT
+enum bx_builtin_type {
+	BX_INT,
+	BX_FLOAT
 };
 
 // Code types

@@ -46,7 +46,7 @@ bx_int8 bx_test_field_init(struct bx_document_field *field) {
 	field->get = &test_field_get;
 	field->set = &test_field_set;
 	field->private_data = &internal_value;
-	field->type = INT;
+	field->type = BX_INT;
 
 	return 0;
 }

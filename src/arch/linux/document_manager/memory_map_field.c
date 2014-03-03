@@ -36,7 +36,7 @@
 static bx_uint8 storage[DM_MMAP_STORAGE_SIZE];
 static bx_size memory_used;
 
-bx_int8 bx_mmap_field_init(struct bx_document_field *instance, enum bx_builtin_types type) {
+bx_int8 bx_mmap_field_init(struct bx_document_field *instance, enum bx_builtin_type type) {
 
 	if (instance == NULL) {
 		return -1;

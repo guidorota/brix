@@ -41,7 +41,7 @@
 #include "configuration.h"
 
 struct bx_document_field {
-	enum bx_builtin_types type;
+	enum bx_builtin_type type;
 	void *private_data;
 	bx_int8 (*get)(struct bx_document_field *instance, void *data);
 	bx_int8 (*set)(struct bx_document_field *instance, void *data);

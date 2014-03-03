@@ -38,12 +38,18 @@ enum bx_comp_qualifier {
 };
 
 struct bx_comp_expression {
-	enum bx_builtin_types data_type;
+	enum bx_builtin_type data_type;
 	enum bx_comp_qualifier qualifier;
 	union {
 		bx_int32 int_value;
 		bx_float32 float_value;
 	};
 };
+
+struct expression *bx_cgen_create_int_constant(bx_int32 value);
+
+struct expression *bx_cgen_create_float_constant(bx_float32 value);
+
+void bx_cgen_free_expression(struct bx_comp_expression *expression);
 
 #endif /* BX_CODEGEN_EXPRESSION_H_ */
