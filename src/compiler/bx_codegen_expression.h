@@ -32,6 +32,8 @@
 #ifndef BX_CODEGEN_EXPRESSION_H_
 #define BX_CODEGEN_EXPRESSION_H_
 
+#include "types.h"
+
 enum bx_comp_qualifier {
 	BX_COMP_CONSTANT,
 	BX_COMP_VARIABLE
@@ -40,15 +42,15 @@ enum bx_comp_qualifier {
 struct bx_comp_expression {
 	enum bx_builtin_type data_type;
 	enum bx_comp_qualifier qualifier;
-	union {
+	union bx_value {
 		bx_int32 int_value;
 		bx_float32 float_value;
-	};
+	} bx_value;
 };
 
-struct expression *bx_cgen_create_int_constant(bx_int32 value);
+struct bx_comp_expression *bx_cgen_create_int_constant(bx_int32 value);
 
-struct expression *bx_cgen_create_float_constant(bx_float32 value);
+struct bx_comp_expression *bx_cgen_create_float_constant(bx_float32 value);
 
 void bx_cgen_free_expression(struct bx_comp_expression *expression);
 

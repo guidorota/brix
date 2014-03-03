@@ -32,7 +32,7 @@
 #include "compiler/bx_memory_utils.h"
 #include "compiler/bx_codegen_expression.h"
 
-struct expression *bx_cgen_create_int_constant(bx_int32 value) {
+struct bx_comp_expression *bx_cgen_create_int_constant(bx_int32 value) {
 	struct bx_comp_expression *expression;
 
 	expression = BX_MALLOC(struct bx_comp_expression);
@@ -42,22 +42,22 @@ struct expression *bx_cgen_create_int_constant(bx_int32 value) {
 
 	expression->data_type = BX_INT;
 	expression->qualifier = BX_COMP_CONSTANT;
-	expression->int_value = value;
+	expression->bx_value.int_value = value;
 
 	return expression;
 }
 
-struct expression *bx_cgen_create_float_constant(bx_float32 value) {
+struct bx_comp_expression *bx_cgen_create_float_constant(bx_float32 value) {
 	struct bx_comp_expression *expression;
 
-	expression = BX_MALLOC(struct expression);
+	expression = BX_MALLOC(struct bx_comp_expression);
 	if (expression == NULL) {
 		return NULL;
 	}
 
 	expression->data_type = BX_FLOAT;
 	expression->qualifier = BX_COMP_CONSTANT;
-	expression->float_value = value;
+	expression->bx_value.float_value = value;
 
 	return expression;
 }

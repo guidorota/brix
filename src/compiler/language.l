@@ -97,12 +97,12 @@ LETTER		[a-zA-Z_]
 "."				{ count_column(); return '.'; }
 ","				{ count_column(); return ','; }
 
-{DIGIT}+				{ count_column(); yylval.intval = atoi(yytext); return INT_CONSTANT; }
-{DIGIT}*"."{DIGIT}+		{ count_column(); yylval.floatval = atof(yytext); return FLOAT_CONSTANT; }
+{DIGIT}+				{ count_column(); yylval.int_val = atoi(yytext); return INT_CONSTANT; }
+{DIGIT}*"."{DIGIT}+		{ count_column(); yylval.float_val = atof(yytext); return FLOAT_CONSTANT; }
 
-LETTER?\"(\\.|[^\\"])*\"		{ count_column(); yylval.stringval = strdup(yytext); return STRING_LITERAL; }
+LETTER?\"(\\.|[^\\"])*\"		{ count_column(); yylval.string_val = strdup(yytext); return STRING_LITERAL; }
 
-{LETTER}({LETTER}|{DIGIT})*		{ count_column(); yylval.stringval = strdup(yytext); return IDENTIFIER; }
+{LETTER}({LETTER}|{DIGIT})*		{ count_column(); yylval.string_val = strdup(yytext); return IDENTIFIER; }
 
 %%
 

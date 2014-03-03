@@ -30,6 +30,8 @@
  */
 
 #include <stdio.h>
+#include "compiler/lex.yy.h"
+#include "compiler/y.tab.h"
 
 extern int yyparse();
 extern FILE *yyin;

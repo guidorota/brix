@@ -31,20 +31,30 @@
  */
 
 %{
+#include "bx_codegen_expression.h"
+
 #define YYDEBUG 1
 int yylex(void);
 int yyerror(char *);
 %}
 
 %token FROM NETWORK FILTER GET EVERY QUEUE WINDOW EACH LOCAL PARENT AT DOCUMENT
-%token ON NEW CHANGE IDENTIFIER INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IF ELSE ALLOW RESAMPLE 
+%token ON NEW CHANGE IF ELSE ALLOW RESAMPLE 
 %token DO WHILE FOR AND_OP OR_OP EQ_OP NEQ_OP LE_OP GE_OP
 %token INT FLOAT BOOL STRING STREAM SUBNET
 
+%token <int_val> INT_CONSTANT
+%token <float_val> FLOAT_CONSTANT
+%token <string_val> IDENTIFIER
+%token <string_val> STRING_LITERAL
+
+%type <expression> primary_expression
+
 %union {
-   int intval;
-   float floatval;
-   char *stringval;
+   int int_val;
+   float float_val;
+   char *string_val;
+   struct bx_comp_expression *expression;
 }
 
 %start statement_list
@@ -190,11 +200,11 @@ postfix_expression
 	;
 	
 primary_expression
-	: IDENTIFIER
-	| INT_CONSTANT
-	| FLOAT_CONSTANT
-	| STRING_LITERAL
-	| '(' expression ')'
+	: IDENTIFIER { }
+	| INT_CONSTANT { $$ = bx_cgen_create_int_constant($1); }
+	| FLOAT_CONSTANT { $$ = bx_cgen_create_float_constant($1); }
+	| STRING_LITERAL { }
+	| '(' expression ')' { }
 	;
 
 conditional_expression

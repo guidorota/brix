@@ -1,3 +1,9 @@
 *.o
+*.yy.c
+*.yy.h
+*.tab.c
+*.tab.h
+y.output
 .cproject
 .project
+.DS_Store
