@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 	int parse_result;
 
 	if (argc < 2) {
-		printf("Usage: bxc <file_name>\n");
+		printf("Usage: compiler <file_name>\n");
 		return -1;
 	}
 
