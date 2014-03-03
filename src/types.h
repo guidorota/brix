@@ -42,7 +42,11 @@
 // Builtin Brix types
 enum bx_builtin_type {
 	BX_INT,
-	BX_FLOAT
+	BX_FLOAT,
+	BX_BOOL,
+	BX_STRING,
+	BX_SUBNET,
+	BX_STREAM
 };
 
 // Code types

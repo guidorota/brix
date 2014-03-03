@@ -66,7 +66,7 @@ LETTER		[a-zA-Z_]
 "while"			{ count_column(); return WHILE; }
 "for"			{ count_column(); return FOR; }
 
-"document"		{ count_column(); return DOCUMENT; }
+"onboard"		{ count_column(); return ONBOARD; }
 "int"			{ count_column(); return INT; }
 "float"			{ count_column(); return FLOAT; }
 "bool"			{ count_column(); return BOOL; }

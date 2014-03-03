@@ -29,13 +29,14 @@
  *
  */
 
+#include <string.h>
 #include "compiler/bx_memory_utils.h"
 #include "compiler/bx_codegen_expression.h"
 
-struct bx_comp_expression *bx_cgen_create_int_constant(bx_int32 value) {
-	struct bx_comp_expression *expression;
+struct bx_comp_expr *bx_cgen_create_int_constant(bx_int32 value) {
+	struct bx_comp_expr *expression;
 
-	expression = BX_MALLOC(struct bx_comp_expression);
+	expression = BX_MALLOC(struct bx_comp_expr);
 	if (expression == NULL) {
 		return NULL;
 	}
@@ -47,10 +48,10 @@ struct bx_comp_expression *bx_cgen_create_int_constant(bx_int32 value) {
 	return expression;
 }
 
-struct bx_comp_expression *bx_cgen_create_float_constant(bx_float32 value) {
-	struct bx_comp_expression *expression;
+struct bx_comp_expr *bx_cgen_create_float_constant(bx_float32 value) {
+	struct bx_comp_expr *expression;
 
-	expression = BX_MALLOC(struct bx_comp_expression);
+	expression = BX_MALLOC(struct bx_comp_expr);
 	if (expression == NULL) {
 		return NULL;
 	}
@@ -62,7 +63,46 @@ struct bx_comp_expression *bx_cgen_create_float_constant(bx_float32 value) {
 	return expression;
 }
 
-void bx_cgen_free_expression(struct bx_comp_expression *expression) {
+struct bx_comp_expr *bx_cgen_create_variable(char *identifier) {
+	struct bx_comp_expr *expression;
+
+	if (identifier == NULL) {
+		return NULL;
+	}
+
+	expression = BX_MALLOC(struct bx_comp_expr);
+	if (expression == NULL) {
+		return NULL;
+	}
+
+	//TODO: Lookup in symbol table
+	expression->qualifier = BX_COMP_VARIABLE;
+	strncpy((void *) expression->bx_value.identifier, (void *) identifier, DM_FIELD_IDENTIFIER_LENGTH);
+
+	return expression;
+}
+
+struct bx_comp_expr *bx_cgen_arithmetic_expression(struct bx_comp_expr *operand1,
+		struct bx_comp_expr *operand2, enum bx_comp_operation operation) {
+	struct bx_comp_expr *result;
+
+	if (operand1 == NULL || operand2 == NULL) {
+		return NULL;
+	}
+
+	result = BX_MALLOC(struct bx_comp_expr);
+	if (result == NULL) {
+		return NULL;
+	}
+
+	//TODO: Some additional checks on the data type (avoid int and string, etc)
+	//TODO: For the time being the compiler will not perform any computation, even when there's static data
+	// (e.g., 5 + 4 * 3 will not be substituted by 17)
+
+	return NULL;
+}
+
+void bx_cgen_free_expression(struct bx_comp_expr *expression) {
 
 	if (expression == NULL) {
 		return;

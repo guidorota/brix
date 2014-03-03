@@ -33,25 +33,45 @@
 #define BX_CODEGEN_EXPRESSION_H_
 
 #include "types.h"
+#include "configuration.h"
 
-enum bx_comp_qualifier {
-	BX_COMP_CONSTANT,
-	BX_COMP_VARIABLE
+enum bx_comp_operation {
+	ADD,
+	SUB,
+	MUL,
+	DIV,
+	MOD,
+	NOT,
+	AND,
+	OR,
+	XOR
 };
 
-struct bx_comp_expression {
+enum bx_comp_qualifier {
+	BX_COMP_CONSTANT,	// Constant value
+	BX_COMP_VARIABLE,	// Variable corresponding to the identifier
+	BX_COMP_EXPRESSION	// An expression in binary form
+};
+
+struct bx_comp_expr {
 	enum bx_builtin_type data_type;
 	enum bx_comp_qualifier qualifier;
 	union bx_value {
 		bx_int32 int_value;
 		bx_float32 float_value;
+		char identifier[DM_FIELD_IDENTIFIER_LENGTH];
 	} bx_value;
 };
 
-struct bx_comp_expression *bx_cgen_create_int_constant(bx_int32 value);
+struct bx_comp_expr *bx_cgen_create_int_constant(bx_int32 value);
 
-struct bx_comp_expression *bx_cgen_create_float_constant(bx_float32 value);
+struct bx_comp_expr *bx_cgen_create_float_constant(bx_float32 value);
 
-void bx_cgen_free_expression(struct bx_comp_expression *expression);
+struct bx_comp_expr *bx_cgen_create_variable(char *identifier);
+
+struct bx_comp_expr *bx_cgen_arithmetic_expression(struct bx_comp_expr *operand1,
+		struct bx_comp_expr *operand2, enum bx_comp_operation operation);
+
+void bx_cgen_free_expression(struct bx_comp_expr *expression);
 
 #endif /* BX_CODEGEN_EXPRESSION_H_ */

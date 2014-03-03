@@ -39,7 +39,7 @@ int yyerror(char *);
 %}
 
 %token FROM NETWORK FILTER GET EVERY QUEUE WINDOW EACH LOCAL PARENT AT DOCUMENT
-%token ON NEW CHANGE IF ELSE ALLOW RESAMPLE 
+%token ON NEW CHANGE IF ELSE ALLOW RESAMPLE ONBOARD
 %token DO WHILE FOR AND_OP OR_OP EQ_OP NEQ_OP LE_OP GE_OP
 %token INT FLOAT BOOL STRING STREAM SUBNET
 
@@ -54,7 +54,7 @@ int yyerror(char *);
    int int_val;
    float float_val;
    char *string_val;
-   struct bx_comp_expression *expression;
+   struct bx_comp_expr *expression;
 }
 
 %start statement_list
@@ -80,8 +80,8 @@ statement
 	;
 	
 declaration_statement
-	: type_specifier IDENTIFIER ';'
-	| type_specifier IDENTIFIER '=' expression ';'
+	: field_source type_specifier IDENTIFIER ';'
+	| field_source type_specifier IDENTIFIER '=' expression ';'
 	;
 	
 type_specifier
@@ -91,6 +91,11 @@ type_specifier
 	| STRING
 	| STREAM
 	| SUBNET
+	;
+	
+field_source
+	:
+	| ONBOARD
 	;
 	
 iteration_statement
@@ -200,11 +205,11 @@ postfix_expression
 	;
 	
 primary_expression
-	: IDENTIFIER { }
-	| INT_CONSTANT { $$ = bx_cgen_create_int_constant($1); }
-	| FLOAT_CONSTANT { $$ = bx_cgen_create_float_constant($1); }
-	| STRING_LITERAL { }
-	| '(' expression ')' { }
+	: IDENTIFIER	 		{ $$ = bx_cgen_create_variable($1); }
+	| INT_CONSTANT 			{ $$ = bx_cgen_create_int_constant($1); }
+	| FLOAT_CONSTANT 		{ $$ = bx_cgen_create_float_constant($1); }
+	| STRING_LITERAL 		{ }
+	| '(' expression ')' 	{ }
 	;
 
 conditional_expression
