@@ -101,7 +101,7 @@ clean:
 	-rm -f $(wildcard $(COMPILER_DIR)/*.o)
 	-rm -f $(COMPILER_DIR)/y.tab.c
 	-rm -f $(COMPILER_DIR)/lex.yy.c
-	-rm -f $(wildcard $(COMPILER_DIR)/*.h)
+	-rm -f $(COMPILER_DIR)/y.tab.h
 	-rm -f $(wildcard $(COMPILER_DIR)/*.output)
 	-rm -f $(wildcard $(COMPILER_DIR)/*.gch)
 	-rm -f test/compiler/test_compiler.o

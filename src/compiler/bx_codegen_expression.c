@@ -1,6 +1,6 @@
 /*
- * document_manager.h
- * Created on: Feb 21, 2014
+ * bx_codegen_expression.c
+ * Created on: Mar 3, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,45 +29,35 @@
  *
  */
 
-#ifndef TEST_DOCUMENT_MANAGER_H_
-#define TEST_DOCUMENT_MANAGER_H_
+#include "compiler/bx_memory_utils.h"
+#include "compiler/bx_codegen_expression.h"
 
-/**
- * Document manager.
- * The document manager stores information regarding the documents and the fields
- */
+struct expression *bx_cgen_create_int_constant(bx_int32 value) {
+	struct bx_comp_expression *expression;
 
-#include "types.h"
-#include "configuration.h"
+	expression = BX_MALLOC(struct bx_comp_expression);
+	if (expression == NULL) {
+		return NULL;
+	}
 
-struct bx_document_field {
-	enum bx_builtin_types type;
-	void *private_data;
-	bx_int8 (*get)(struct bx_document_field *instance, void *data);
-	bx_int8 (*set)(struct bx_document_field *instance, void *data);
-};
+	expression->data_type = INT;
+	expression->qualifier = BX_COMP_CONSTANT;
+	expression->int_value = value;
 
-/**
- * Initializes the document manager.
- *
- * @return 0 on success, -1 on failure.
- */
-bx_int8 bx_dm_document_manager_init(void);
+	return expression;
+}
 
-/**
- * Adds a new field to the document manager.
- * Upon addition the document manager performs a copy of the field data
- * in its internal data structures.
- *
- * @param field Field to add
- * @param identifier Name of the field to add
- *
- * @return 0 on success, -1 on failure
- */
-bx_int8 bx_dm_add_field(struct bx_document_field *field, char *identifier);
+struct expression *bx_cgen_create_float_constant(bx_float32 value) {
+	struct expression *expression;
 
-bx_int8 bx_dm_invoke_get(char *field_identifier, void *data);
+	expression = BX_MALLOC(struct expression);
+	if (expression == NULL) {
+		return NULL;
+	}
 
-bx_int8 bx_dm_invoke_set(char *field_identifier, void *data);
+	expression->data_type = FLOAT;
+	expression->qualifier = BX_COMP_CONSTANT;
+	expression->float_value = value;
 
-#endif /* TEST_DOCUMENT_MANAGER_H_ */
+	return expression;
+}

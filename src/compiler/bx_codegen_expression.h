@@ -1,6 +1,6 @@
 /*
- * document_manager.h
- * Created on: Feb 21, 2014
+ * bx_codegen_expression.h
+ * Created on: Mar 3, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,45 +29,21 @@
  *
  */
 
-#ifndef TEST_DOCUMENT_MANAGER_H_
-#define TEST_DOCUMENT_MANAGER_H_
+#ifndef BX_CODEGEN_EXPRESSION_H_
+#define BX_CODEGEN_EXPRESSION_H_
 
-/**
- * Document manager.
- * The document manager stores information regarding the documents and the fields
- */
-
-#include "types.h"
-#include "configuration.h"
-
-struct bx_document_field {
-	enum bx_builtin_types type;
-	void *private_data;
-	bx_int8 (*get)(struct bx_document_field *instance, void *data);
-	bx_int8 (*set)(struct bx_document_field *instance, void *data);
+enum bx_comp_qualifier {
+	BX_COMP_CONSTANT,
+	BX_COMP_VARIABLE
 };
 
-/**
- * Initializes the document manager.
- *
- * @return 0 on success, -1 on failure.
- */
-bx_int8 bx_dm_document_manager_init(void);
+struct bx_comp_expression {
+	enum bx_builtin_types data_type;
+	enum bx_comp_qualifier qualifier;
+	union {
+		bx_int32 int_value;
+		bx_float32 float_value;
+	};
+};
 
-/**
- * Adds a new field to the document manager.
- * Upon addition the document manager performs a copy of the field data
- * in its internal data structures.
- *
- * @param field Field to add
- * @param identifier Name of the field to add
- *
- * @return 0 on success, -1 on failure
- */
-bx_int8 bx_dm_add_field(struct bx_document_field *field, char *identifier);
-
-bx_int8 bx_dm_invoke_get(char *field_identifier, void *data);
-
-bx_int8 bx_dm_invoke_set(char *field_identifier, void *data);
-
-#endif /* TEST_DOCUMENT_MANAGER_H_ */
+#endif /* BX_CODEGEN_EXPRESSION_H_ */

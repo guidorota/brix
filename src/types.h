@@ -39,6 +39,13 @@
 #define BX_BOOLEAN_FALSE 0
 #define BX_BOOLEAN_TRUE 1
 
+// Builtin Brix types
+enum bx_builtin_types {
+	INT,
+	FLOAT
+};
+
+// Code types
 typedef uint8_t bx_boolean;
 
 typedef int8_t bx_int8;
