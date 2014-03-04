@@ -33,7 +33,7 @@
 #include "compiler/memory_utils.h"
 #include "compiler/codegen_expression.h"
 
-struct bx_comp_expr *bx_cgen_create_int_constant(bx_int32 value) {
+struct bx_comp_expr *bx_cgex_create_int_constant(bx_int32 value) {
 	struct bx_comp_expr *expression;
 
 	expression = BX_MALLOC(struct bx_comp_expr);
@@ -48,7 +48,7 @@ struct bx_comp_expr *bx_cgen_create_int_constant(bx_int32 value) {
 	return expression;
 }
 
-struct bx_comp_expr *bx_cgen_create_float_constant(bx_float32 value) {
+struct bx_comp_expr *bx_cgex_create_float_constant(bx_float32 value) {
 	struct bx_comp_expr *expression;
 
 	expression = BX_MALLOC(struct bx_comp_expr);
@@ -63,7 +63,7 @@ struct bx_comp_expr *bx_cgen_create_float_constant(bx_float32 value) {
 	return expression;
 }
 
-struct bx_comp_expr *bx_cgen_create_variable(char *identifier) {
+struct bx_comp_expr *bx_cgex_create_variable(char *identifier) {
 	struct bx_comp_expr *expression;
 
 	if (identifier == NULL) {
@@ -82,7 +82,7 @@ struct bx_comp_expr *bx_cgen_create_variable(char *identifier) {
 	return expression;
 }
 
-struct bx_comp_expr *bx_cgen_arithmetic_expression(struct bx_comp_expr *operand1,
+struct bx_comp_expr *bx_cgex_arithmetic_expression(struct bx_comp_expr *operand1,
 		struct bx_comp_expr *operand2, enum bx_comp_operation operation) {
 	struct bx_comp_expr *result;
 
@@ -102,7 +102,7 @@ struct bx_comp_expr *bx_cgen_arithmetic_expression(struct bx_comp_expr *operand1
 	return NULL;
 }
 
-void bx_cgen_free_expression(struct bx_comp_expr *expression) {
+void bx_cgex_free_expression(struct bx_comp_expr *expression) {
 
 	if (expression == NULL) {
 		return;

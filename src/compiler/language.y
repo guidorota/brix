@@ -33,6 +33,7 @@
 %{
 #include "types.h"
 #include "codegen_expression.h"
+#include "codegen_symbol_table.h"
 
 #define YYDEBUG 1
 int yylex(void);
@@ -83,7 +84,7 @@ statement
 	;
 	
 declaration_statement
-	: field_source type_specifier IDENTIFIER ';'
+	: field_source type_specifier IDENTIFIER ';' {  }
 	| field_source type_specifier IDENTIFIER '=' expression ';'
 	;
 	
@@ -208,9 +209,9 @@ postfix_expression
 	;
 	
 primary_expression
-	: IDENTIFIER	 		{ $$ = bx_cgen_create_variable($1); }
-	| INT_CONSTANT 			{ $$ = bx_cgen_create_int_constant($1); }
-	| FLOAT_CONSTANT 		{ $$ = bx_cgen_create_float_constant($1); }
+	: IDENTIFIER	 		{ $$ = bx_cgex_create_variable($1); }
+	| INT_CONSTANT 			{ $$ = bx_cgex_create_int_constant($1); }
+	| FLOAT_CONSTANT 		{ $$ = bx_cgex_create_float_constant($1); }
 	| STRING_LITERAL 		{ }
 	| '(' expression ')' 	{ }
 	;

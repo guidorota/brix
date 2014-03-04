@@ -93,7 +93,7 @@ bx_int8 bx_llist_contains(struct bx_linked_list *linked_list, void *element) {
 bx_int8 bx_llist_contains_equals(struct bx_linked_list *linked_list, void *element, bx_llist_equals equals) {
 	struct bx_linked_list *node;
 
-	if (linked_list == NULL || element == NULL || equals == NULL) {
+	if (element == NULL || equals == NULL) {
 		return -1;
 	}
 
@@ -110,10 +110,6 @@ bx_ssize bx_llist_size(struct bx_linked_list *linked_list) {
 	struct bx_linked_list *node;
 	int size = 0;
 
-	if (linked_list == NULL) {
-		return -1;
-	}
-
 	for (node = linked_list; node != NULL; node = node->next) {
 		size++;
 	}
@@ -127,7 +123,7 @@ void *bx_llist_find(struct bx_linked_list *linked_list, void *element) {
 void *bx_llist_find_equals(struct bx_linked_list *linked_list, void *element, bx_llist_equals equals) {
 	struct bx_linked_list *node;
 
-	if (linked_list == NULL || element == NULL || equals == NULL) {
+	if (element == NULL || equals == NULL) {
 		return NULL;
 	}
 

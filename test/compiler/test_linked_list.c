@@ -31,7 +31,7 @@
 
 #include "types.h"
 #include "compiler/linked_list.h"
-#include "test_bx_linked_list.h"
+#include "test_linked_list.h"
 
 struct bx_linked_list *linked_list = NULL;
 
@@ -49,6 +49,7 @@ START_TEST (bx_linked_list_create) {
 	bx_llist_add(&linked_list, &element1);
 	bx_llist_add(&linked_list, &element2);
 	bx_llist_add(&linked_list, &element3);
+
 	ck_assert_int_eq(bx_llist_size(linked_list), 3);
 } END_TEST
 

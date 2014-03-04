@@ -1,5 +1,5 @@
 /*
- * test_bx_linked_list.h
+ * test_linked_list.h
  * Created on: Mar 4, 2014
  * Author: Guido Rota
  *
@@ -29,11 +29,11 @@
  *
  */
 
-#ifndef TEST_BX_LINKED_LIST_H_
-#define TEST_BX_LINKED_LIST_H_
+#ifndef TEST_LINKED_LIST_H_
+#define TEST_LINKED_LIST_H_
 
 #include <check.h>
 
 Suite *test_linked_list_create_suite(void);
 
-#endif /* TEST_BX_LINKED_LIST_H_ */
+#endif /* TEST_LINKED_LIST_H_ */

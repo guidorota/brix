@@ -37,7 +37,7 @@
 #include "utils/test_byte_buffer.h"
 #include "document_manager/test_document_manager.h"
 #include "virtual_machine/test_virtual_machine.h"
-#include "compiler/test_bx_linked_list.h"
+#include "compiler/test_linked_list.h"
 
 int main(void) {
 	int number_failed = 0;
