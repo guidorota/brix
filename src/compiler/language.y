@@ -32,8 +32,8 @@
 
 %{
 #include "types.h"
-#include "codegen_expression.h"
 #include "codegen_symbol_table.h"
+#include "codegen_expression.h"
 
 #define YYDEBUG 1
 int yylex(void);
@@ -41,7 +41,7 @@ int yyerror(char *);
 %}
 
 %token FROM NETWORK FILTER GET EVERY QUEUE WINDOW EACH LOCAL PARENT AT DOCUMENT
-%token ON NEW CHANGE IF ELSE ALLOW RESAMPLE ONBOARD
+%token ON CHANGE IF ELSE ALLOW RESAMPLE EXISTING NEW
 %token DO WHILE FOR AND_OP OR_OP EQ_OP NEQ_OP LE_OP GE_OP
 %token INT FLOAT BOOL STRING STREAM SUBNET
 
@@ -52,13 +52,15 @@ int yyerror(char *);
 
 %type <expression> primary_expression
 %type <data_type> type_specifier
+%type <creation_modifier> creation_modifier
 
 %union {
-   enum bx_builtin_type data_type;
-   bx_int32 int_val;
-   bx_float32 float_val;
-   char *string_val;
-   struct bx_comp_expr *expression;
+	enum bx_comp_creation_modifier creation_modifier;
+	enum bx_builtin_type data_type;
+	bx_int32 int_val;
+	bx_float32 float_val;
+	char *string_val;
+	struct bx_comp_expr *expression;
 }
 
 %start statement_list
@@ -84,8 +86,8 @@ statement
 	;
 	
 declaration_statement
-	: field_source type_specifier IDENTIFIER ';' {  }
-	| field_source type_specifier IDENTIFIER '=' expression ';'
+	: creation_modifier type_specifier IDENTIFIER ';' { bx_cgsy_add($3, $2, $1); }
+	| creation_modifier type_specifier IDENTIFIER '=' expression ';'
 	;
 	
 type_specifier
@@ -97,9 +99,10 @@ type_specifier
 	| SUBNET	{ $$ = BX_SUBNET; }
 	;
 	
-field_source
-	:
-	| ONBOARD
+creation_modifier
+	:			{ $$ = BX_COMP_NEW; }
+	| NEW		{ $$ = BX_COMP_NEW; }
+	| EXISTING	{ $$ = BX_COMP_EXISTING; }
 	;
 	
 iteration_statement

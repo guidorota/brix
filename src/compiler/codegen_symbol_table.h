@@ -34,17 +34,22 @@
 
 #include "types.h"
 #include "configuration.h"
-#include "compiler/codegen_expression.h"
+
+enum bx_comp_creation_modifier {
+	BX_COMP_EXISTING,
+	BX_COMP_NEW
+};
 
 struct bx_comp_symbol {
 	enum bx_builtin_type data_type;
-	enum bx_comp_qualifier qualifier;
+	enum bx_comp_creation_modifier creation_modifier;
 	char identifier[DM_FIELD_IDENTIFIER_LENGTH];
 };
 
 bx_int8 bx_cgsy_init();
 
-bx_int8 bx_cgsy_add(char *identifier, enum bx_builtin_type data_type, enum bx_comp_qualifier qualifier);
+bx_int8 bx_cgsy_add(char *identifier, enum bx_builtin_type data_type,
+		enum bx_comp_creation_modifier creation_modifier);
 
 struct bx_comp_symbol *bx_cgsy_get(char *identifier);
 

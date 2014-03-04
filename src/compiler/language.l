@@ -34,9 +34,11 @@
 DIGIT		[0-9]
 LETTER		[a-zA-Z_]
 
-%top{
+%top {
 	#include <stdio.h>
 	#include "types.h"
+	#include "codegen_symbol_table.h"
+	#include "codegen_expression.h"
 	#include "y.tab.h"
 }
 
@@ -67,7 +69,7 @@ LETTER		[a-zA-Z_]
 "while"			{ count_column(); return WHILE; }
 "for"			{ count_column(); return FOR; }
 
-"onboard"		{ count_column(); return ONBOARD; }
+"existing"		{ count_column(); return EXISTING; }
 "int"			{ count_column(); return INT; }
 "float"			{ count_column(); return FLOAT; }
 "bool"			{ count_column(); return BOOL; }

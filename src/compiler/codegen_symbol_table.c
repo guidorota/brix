@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include "logging.h"
 #include "compiler/memory_utils.h"
 #include "compiler/linked_list.h"
 #include "compiler/codegen_symbol_table.h"
@@ -51,7 +52,7 @@ bx_int8 bx_cgsy_init() {
 	return 0;
 }
 
-bx_int8 bx_cgsy_add(char *identifier, enum bx_builtin_type data_type, enum bx_comp_qualifier qualifier) {
+bx_int8 bx_cgsy_add(char *identifier, enum bx_builtin_type data_type, enum bx_comp_creation_modifier creation_modifier) {
 	struct bx_comp_symbol *symbol;
 	struct bx_linked_list *node;
 
@@ -60,6 +61,7 @@ bx_int8 bx_cgsy_add(char *identifier, enum bx_builtin_type data_type, enum bx_co
 	}
 
 	if (bx_llist_contains_equals(symbol_list, identifier, (bx_llist_equals) &identifier_equals) == 1) {
+		BX_LOG(LOG_ERROR, "symbol_table", "Duplicate variable %s", identifier);
 		return -1;
 	}
 
@@ -69,8 +71,9 @@ bx_int8 bx_cgsy_add(char *identifier, enum bx_builtin_type data_type, enum bx_co
 	}
 
 	symbol->data_type = data_type;
-	symbol->qualifier = qualifier;
+	symbol->creation_modifier = creation_modifier;
 	strncpy(symbol->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH);
+	BX_LOG(LOG_DEBUG, "symbol_table", "Symbol %s added", identifier);
 
 	node = bx_llist_add(&symbol_list, (void *) symbol);
 	if (node == NULL) {

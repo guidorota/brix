@@ -52,26 +52,29 @@ START_TEST (add_symbols) {
 	bx_int8 error;
 	struct bx_comp_symbol *symbol;
 
-	error = bx_cgsy_add(SYMBOL_ID_1, BX_INT, BX_COMP_VARIABLE);
+	error = bx_cgsy_add(SYMBOL_ID_1, BX_INT, BX_COMP_EXISTING);
 	ck_assert_int_eq(error, 0);
-	error = bx_cgsy_add(SYMBOL_ID_2, BX_FLOAT, BX_COMP_VARIABLE);
+	error = bx_cgsy_add(SYMBOL_ID_2, BX_FLOAT, BX_COMP_NEW);
 	ck_assert_int_eq(error, 0);
-	error = bx_cgsy_add(SYMBOL_ID_3, BX_BOOL, BX_COMP_VARIABLE);
+	error = bx_cgsy_add(SYMBOL_ID_3, BX_BOOL, BX_COMP_EXISTING);
 	ck_assert_int_eq(error, 0);
 
 	symbol = bx_cgsy_get(SYMBOL_ID_1);
 	ck_assert_ptr_ne(symbol, NULL);
 	ck_assert_int_eq(symbol->data_type, BX_INT);
+	ck_assert_int_eq(symbol->creation_modifier, BX_COMP_EXISTING);
 	ck_assert_int_eq(strncmp(SYMBOL_ID_1, (char *) symbol->identifier, DM_FIELD_IDENTIFIER_LENGTH), 0);
 
 	symbol = bx_cgsy_get(SYMBOL_ID_2);
 	ck_assert_ptr_ne(symbol, NULL);
 	ck_assert_int_eq(symbol->data_type, BX_FLOAT);
+	ck_assert_int_eq(symbol->creation_modifier, BX_COMP_NEW);
 	ck_assert_int_eq(strncmp(SYMBOL_ID_2, (char *) symbol->identifier, DM_FIELD_IDENTIFIER_LENGTH), 0);
 
 	symbol = bx_cgsy_get(SYMBOL_ID_3);
 	ck_assert_ptr_ne(symbol, NULL);
 	ck_assert_int_eq(symbol->data_type, BX_BOOL);
+	ck_assert_int_eq(symbol->creation_modifier, BX_COMP_EXISTING);
 	ck_assert_int_eq(strncmp(SYMBOL_ID_3, (char *) symbol->identifier, DM_FIELD_IDENTIFIER_LENGTH), 0);
 
 	symbol = bx_cgsy_get(NOT_IN_TABLE);
