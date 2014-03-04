@@ -1,5 +1,5 @@
 /*
- * codegen_symbol_table.h
+ * test_cgen_symbol_table.h
  * Created on: Mar 4, 2014
  * Author: Guido Rota
  *
@@ -29,25 +29,11 @@
  *
  */
 
-#ifndef CODEGEN_SYMBOL_TABLE_H_
-#define CODEGEN_SYMBOL_TABLE_H_
+#ifndef TEST_CGEN_SYMBOL_TABLE_H_
+#define TEST_CGEN_SYMBOL_TABLE_H_
 
-#include "types.h"
-#include "configuration.h"
-#include "compiler/codegen_expression.h"
+#include <check.h>
 
-struct bx_comp_symbol {
-	enum bx_builtin_type data_type;
-	enum bx_comp_qualifier qualifier;
-	char *identifier[DM_FIELD_IDENTIFIER_LENGTH];
-};
+Suite *test_codegen_symbol_table_create_suite(void);
 
-bx_int8 bx_cgsy_init();
-
-bx_int8 bx_cgsy_add(char *identifier, enum bx_builtin_type data_type, enum bx_comp_qualifier qualifier);
-
-struct bx_comp_symbol *bx_cgsy_get(char *identifier);
-
-bx_int8 bx_cgsy_reset();
-
-#endif /* CODEGEN_SYMBOL_TABLE_H_ */
+#endif /* TEST_CGEN_SYMBOL_TABLE_H_ */

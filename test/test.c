@@ -38,6 +38,7 @@
 #include "document_manager/test_document_manager.h"
 #include "virtual_machine/test_virtual_machine.h"
 #include "compiler/test_linked_list.h"
+#include "compiler/test_codegen_symbol_table.h"
 
 int main(void) {
 	int number_failed = 0;
@@ -51,6 +52,7 @@ int main(void) {
 	srunner_add_suite(runner, test_document_manager_create_suite());
 	srunner_add_suite(runner, test_virtual_machine_create_suite());
 	srunner_add_suite(runner, test_linked_list_create_suite());
+	srunner_add_suite(runner, test_codegen_symbol_table_create_suite());
 
 	srunner_run_all(runner, CK_VERBOSE);
 	number_failed = srunner_ntests_failed(runner);
