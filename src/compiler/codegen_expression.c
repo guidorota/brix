@@ -34,6 +34,8 @@
 #include "memory_utils.h"
 #include "compiler/codegen_expression.h"
 #include "compiler/codegen_symbol_table.h"
+#include "compiler/codegen_code.h"
+#include "virtual_machine/virtual_machine.h"
 
 struct bx_comp_expr *bx_cgex_create_int_constant(bx_int32 value) {
 	struct bx_comp_expr *expression;
@@ -68,6 +70,7 @@ struct bx_comp_expr *bx_cgex_create_float_constant(bx_float32 value) {
 struct bx_comp_expr *bx_cgex_create_variable(char *identifier) {
 	struct bx_comp_symbol *symbol;
 	struct bx_comp_expr *expression;
+	struct bx_comp_code *code;
 
 	if (identifier == NULL) {
 		return NULL;
@@ -84,9 +87,15 @@ struct bx_comp_expr *bx_cgex_create_variable(char *identifier) {
 		return NULL;
 	}
 
-	expression->qualifier = BX_COMP_VARIABLE;
+	code = bx_cgco_create();
+	if (code == NULL) {
+		return NULL;
+	}
+	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
+	bx_cgco_add_identifier(code, identifier);
+
+	expression->qualifier = BX_COMP_BINARY;
 	expression->data_type = symbol->data_type;
-	strncpy((void *) expression->bx_value.identifier, (void *) identifier, DM_FIELD_IDENTIFIER_LENGTH);
 
 	return expression;
 }

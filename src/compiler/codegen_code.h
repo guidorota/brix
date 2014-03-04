@@ -35,18 +35,23 @@
 #include "types.h"
 
 struct bx_comp_code {
-	bx_uint8 *data;
+	void *data;
 	bx_size size;
+	bx_size capacity;
 };
 
-struct bx_comp_program *bx_cgpr_init();
+struct bx_comp_code *bx_cgco_create();
 
-bx_int8 bx_cgco_add_instruction(bx_uint8 instruction);
+void bx_cgco_destroy(struct bx_comp_code *code);
 
-bx_int8 bx_cgco_add_identifier(char *identifier);
+bx_int8 bx_cgco_add_instruction(struct bx_comp_code *code, bx_uint8 instruction);
 
-bx_int8 bx_cgco_add_int_constant(bx_int32 value);
+bx_int8 bx_cgco_add_identifier(struct bx_comp_code *code, char *identifier);
 
-bx_int8 bx_cgco_add_float_constant(bx_float32 value);
+bx_int8 bx_cgco_add_int_constant(struct bx_comp_code *code, bx_int32 value);
+
+bx_int8 bx_cgco_add_float_constant(struct bx_comp_code *code, bx_float32 value);
+
+bx_int8 bx_cgco_append_code(struct bx_comp_code *code, struct bx_comp_code *append);
 
 #endif /* CODEGEN_CODE_H_ */

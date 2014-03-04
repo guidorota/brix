@@ -29,24 +29,81 @@
  *
  */
 
+#include <string.h>
+#include "configuration.h"
+#include "utils/memory_utils.h"
 #include "compiler/codegen_code.h"
 
-struct bx_comp_program *bx_cgpr_init() {
-	return NULL; //TODO: Stub
+#define DEFAULT_SIZE 256
+
+static bx_int8 add_to_code(struct bx_comp_code *code, void *data, bx_size data_length);
+
+struct bx_comp_code *bx_cgco_create() {
+	struct bx_comp_code *code;
+
+	code = BX_MALLOC(struct bx_comp_code);
+	if (code == NULL) {
+		return NULL;
+	}
+
+	code->data = malloc(DEFAULT_SIZE);
+	if (code->data == NULL) {
+		free(code);
+		return NULL;
+	}
+
+	code->capacity = DEFAULT_SIZE;
+	code->size = 0;
+
+	return code;
 }
 
-bx_int8 bx_cgco_add_instruction(bx_uint8 instruction) {
-	return -1; //TODO: Stub
+void bx_cgco_destroy(struct bx_comp_code *code) {
+
+	if (code == NULL) {
+		return;
+	}
+
+	free(code->data);
+	free(code);
 }
 
-bx_int8 bx_cgco_add_identifier(char *identifier) {
-	return -1; //TODO: Stub
+bx_int8 bx_cgco_add_instruction(struct bx_comp_code *code, bx_uint8 instruction) {
+	return add_to_code(code, (void *) &instruction, sizeof instruction);
 }
 
-bx_int8 bx_cgco_add_int_constant(bx_int32 value) {
-	return -1; //TODO: Stub
+bx_int8 bx_cgco_add_identifier(struct bx_comp_code *code, char *identifier) {
+	return add_to_code(code, (void *) identifier, DM_FIELD_IDENTIFIER_LENGTH);
 }
 
-bx_int8 bx_cgco_add_float_constant(bx_float32 value) {
-	return -1; //TODO: Stub
+bx_int8 bx_cgco_add_int_constant(struct bx_comp_code *code, bx_int32 value) {
+	return add_to_code(code, (void *) &value, sizeof value);
+}
+
+bx_int8 bx_cgco_add_float_constant(struct bx_comp_code *code, bx_float32 value) {
+	return add_to_code(code, (void *) &value, sizeof value);
+}
+
+bx_int8 bx_cgco_append_code(struct bx_comp_code *code, struct bx_comp_code *append) {
+	return add_to_code(code, append->data, append->size);
+}
+
+static bx_int8 add_to_code(struct bx_comp_code *code, void *data, bx_size data_length) {
+
+	if (code == NULL || data == NULL) {
+		return -1;
+	}
+
+	if (code->size + data_length > code->capacity) {
+		code->data = realloc(code->data, code->capacity + DEFAULT_SIZE);
+		if (code->data == NULL) {
+			return -1;
+		}
+		code->capacity += DEFAULT_SIZE;
+	}
+
+	memcpy(code->data, data, data_length);
+	code->size += data_length;
+
+	return 0;
 }

@@ -50,7 +50,6 @@ enum bx_comp_operation {
 
 enum bx_comp_qualifier {
 	BX_COMP_CONSTANT,	// Constant value
-	BX_COMP_VARIABLE,	// Variable corresponding to the identifier
 	BX_COMP_BINARY		// An expression in binary form
 };
 
@@ -60,8 +59,7 @@ struct bx_comp_expr {
 	union bx_value {
 		bx_int32 int_value;
 		bx_float32 float_value;
-		char identifier[DM_FIELD_IDENTIFIER_LENGTH];
-		struct bx_comp_code code;
+		struct bx_comp_code *code;
 	} bx_value;
 };
 
