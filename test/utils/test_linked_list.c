@@ -30,7 +30,7 @@
  */
 
 #include "types.h"
-#include "compiler/linked_list.h"
+#include "utils/linked_list.h"
 #include "test_linked_list.h"
 
 struct bx_linked_list *linked_list = NULL;

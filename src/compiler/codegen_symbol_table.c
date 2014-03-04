@@ -33,8 +33,8 @@
 #include <errno.h>
 #include <string.h>
 #include "logging.h"
-#include "compiler/memory_utils.h"
-#include "compiler/linked_list.h"
+#include "utils/memory_utils.h"
+#include "utils/linked_list.h"
 #include "compiler/codegen_symbol_table.h"
 
 static struct bx_linked_list *symbol_list;

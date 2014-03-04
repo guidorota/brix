@@ -30,8 +30,10 @@
  */
 
 #include <string.h>
-#include "compiler/memory_utils.h"
+#include "logging.h"
+#include "memory_utils.h"
 #include "compiler/codegen_expression.h"
+#include "compiler/codegen_symbol_table.h"
 
 struct bx_comp_expr *bx_cgex_create_int_constant(bx_int32 value) {
 	struct bx_comp_expr *expression;
@@ -64,9 +66,16 @@ struct bx_comp_expr *bx_cgex_create_float_constant(bx_float32 value) {
 }
 
 struct bx_comp_expr *bx_cgex_create_variable(char *identifier) {
+	struct bx_comp_symbol *symbol;
 	struct bx_comp_expr *expression;
 
 	if (identifier == NULL) {
+		return NULL;
+	}
+
+	symbol = bx_cgsy_get(identifier);
+	if (symbol == NULL) {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Variable %s has not been declared", identifier);
 		return NULL;
 	}
 
@@ -75,8 +84,8 @@ struct bx_comp_expr *bx_cgex_create_variable(char *identifier) {
 		return NULL;
 	}
 
-	//TODO: Lookup in symbol table
 	expression->qualifier = BX_COMP_VARIABLE;
+	expression->data_type = symbol->data_type;
 	strncpy((void *) expression->bx_value.identifier, (void *) identifier, DM_FIELD_IDENTIFIER_LENGTH);
 
 	return expression;
@@ -96,8 +105,6 @@ struct bx_comp_expr *bx_cgex_arithmetic_expression(struct bx_comp_expr *operand1
 	}
 
 	//TODO: Some additional checks on the data type (avoid int and string, etc)
-	//TODO: For the time being the compiler will not perform any computation, even when there's static data
-	// (e.g., 5 + 4 * 3 will not be substituted by 17)
 
 	return NULL;
 }

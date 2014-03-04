@@ -35,9 +35,9 @@
 #include "utils/test_list.h"
 #include "utils/test_mixed_list.h"
 #include "utils/test_byte_buffer.h"
+#include "utils/test_linked_list.h"
 #include "document_manager/test_document_manager.h"
 #include "virtual_machine/test_virtual_machine.h"
-#include "compiler/test_linked_list.h"
 #include "compiler/test_codegen_symbol_table.h"
 
 int main(void) {
