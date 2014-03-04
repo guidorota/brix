@@ -84,11 +84,11 @@ START_TEST (add_symbols) {
 START_TEST (reject_duplicate) {
 	bx_int8 error;
 
-	error = bx_cgsy_add(SYMBOL_ID_1, BX_INT, BX_COMP_VARIABLE);
+	error = bx_cgsy_add(SYMBOL_ID_1, BX_INT, BX_COMP_EXISTING);
 	ck_assert_int_ne(error, 0);
-	error = bx_cgsy_add(SYMBOL_ID_2, BX_FLOAT, BX_COMP_VARIABLE);
+	error = bx_cgsy_add(SYMBOL_ID_2, BX_FLOAT, BX_COMP_EXISTING);
 	ck_assert_int_ne(error, 0);
-	error = bx_cgsy_add(SYMBOL_ID_3, BX_BOOL, BX_COMP_VARIABLE);
+	error = bx_cgsy_add(SYMBOL_ID_3, BX_BOOL, BX_COMP_EXISTING);
 	ck_assert_int_ne(error, 0);
 } END_TEST
 

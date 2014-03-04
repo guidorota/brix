@@ -397,6 +397,42 @@ static bx_int8 bx_nop_function(struct bx_vm_status *vm_status) {
 	return 0;
 }
 
+static bx_int8 bx_i2f_function(struct bx_vm_status *vm_status) {
+	bx_int8 error;
+	bx_int32 int_value;
+	bx_float32 float_value;
+
+	error = BX_STACK_POP_VARIABLE(&vm_status->execution_stack, int_value);
+	if (error == -1) {
+		return -1;
+	}
+	float_value = int_value;
+	error = BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, float_value);
+	if (error == -1) {
+		return -1;
+	}
+
+	return 0;
+}
+
+static bx_int8 bx_f2i_function(struct bx_vm_status *vm_status) {
+	bx_int8 error;
+	bx_int32 int_value;
+	bx_float32 float_value;
+
+	error = BX_STACK_POP_VARIABLE(&vm_status->execution_stack, float_value);
+	if (error == -1) {
+		return -1;
+	}
+	int_value = float_value;
+	error = BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, int_value);
+	if (error == -1) {
+		return -1;
+	}
+
+	return 0;
+}
+
 bx_int8 bx_vm_virtual_machine_init() {
 
 	BX_LOG(LOG_INFO, "virtual_machine", "Initializing virtual machine data structures...");
@@ -427,6 +463,8 @@ bx_int8 bx_vm_virtual_machine_init() {
 	instruction_array[BX_INSTR_JLTZ] = &bx_jltz_function;
 	instruction_array[BX_INSTR_JLEZ] = &bx_jlez_function;
 	instruction_array[BX_INSTR_NOP] = &bx_nop_function;
+	instruction_array[BX_INSTR_I2F] = &bx_i2f_function;
+	instruction_array[BX_INSTR_F2I] = &bx_f2i_function;
 
 	return 0;
 }

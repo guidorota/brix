@@ -58,6 +58,8 @@
 #define BX_INSTR_JLTZ 0x15
 #define BX_INSTR_JLEZ 0x16
 #define BX_INSTR_NOP 0x20
+#define BX_INSTR_I2F 0x21
+#define BX_INSTR_F2I 0x22
 
 //TODO: Type conversion
 //TODO: Stop instruction
