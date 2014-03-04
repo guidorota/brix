@@ -34,6 +34,7 @@
 #include "types.h"
 #include "codegen_symbol_table.h"
 #include "codegen_expression.h"
+#include "codegen_code.h"
 
 #define YYDEBUG 1
 int yylex(void);
@@ -50,6 +51,15 @@ int yyerror(char *);
 %token <string_val> IDENTIFIER
 %token <string_val> STRING_LITERAL
 
+%type <expression> expression
+%type <expression> conditional_expression
+%type <expression> logical_or_expression
+%type <expression> logical_and_expression
+%type <expression> equality_expression
+%type <expression> relational_expression
+%type <expression> additive_expression
+%type <expression> multiplicative_expression
+%type <expression> postfix_expression
 %type <expression> primary_expression
 %type <data_type> type_specifier
 %type <creation_modifier> creation_modifier
@@ -86,23 +96,53 @@ statement
 	;
 	
 declaration_statement
-	: creation_modifier type_specifier IDENTIFIER ';' { bx_cgsy_add($3, $2, $1); }
+	: creation_modifier type_specifier IDENTIFIER ';'
+	{
+		bx_cgsy_add($3, $2, $1);
+	}
 	| creation_modifier type_specifier IDENTIFIER '=' expression ';'
 	;
 	
 type_specifier
-	: INT 		{ $$ = BX_INT; }
-	| FLOAT		{ $$ = BX_FLOAT; }
-	| BOOL		{ $$ = BX_BOOL; }
-	| STRING	{ $$ = BX_STRING; }
-	| STREAM	{ $$ = BX_STREAM; }
-	| SUBNET	{ $$ = BX_SUBNET; }
+	: INT
+	{
+		$$ = BX_INT;
+	}
+	| FLOAT
+	{
+		$$ = BX_FLOAT;
+	}
+	| BOOL
+	{
+		$$ = BX_BOOL;
+	}
+	| STRING
+	{
+		$$ = BX_STRING;
+	}
+	| STREAM
+	{
+		$$ = BX_STREAM;
+	}
+	| SUBNET
+	{
+		$$ = BX_SUBNET;
+	}
 	;
 	
 creation_modifier
-	:			{ $$ = BX_COMP_NEW; }
-	| NEW		{ $$ = BX_COMP_NEW; }
-	| EXISTING	{ $$ = BX_COMP_EXISTING; }
+	:
+	{
+		$$ = BX_COMP_NEW;
+	}
+	| NEW
+	{
+		$$ = BX_COMP_NEW;
+	}
+	| EXISTING
+	{
+		$$ = BX_COMP_EXISTING;
+	}
 	;
 	
 iteration_statement
@@ -207,41 +247,72 @@ assignment_expression
 	
 postfix_expression
 	: primary_expression
+		{ $$ = $1; }
 	| postfix_expression '[' expression ']'
 	| postfix_expression '.' IDENTIFIER
 	;
 	
 primary_expression
-	: IDENTIFIER	 		{ $$ = bx_cgex_create_variable($1); }
-	| INT_CONSTANT 			{ $$ = bx_cgex_create_int_constant($1); }
-	| FLOAT_CONSTANT 		{ $$ = bx_cgex_create_float_constant($1); }
-	| STRING_LITERAL 		{ }
-	| '(' expression ')' 	{ }
+	: IDENTIFIER
+	{
+		$$ = bx_cgex_create_variable($1);
+	}
+	| INT_CONSTANT 			
+	{
+		$$ = bx_cgex_create_int_constant($1);
+	}
+	| FLOAT_CONSTANT 		
+	{
+		$$ = bx_cgex_create_float_constant($1);
+	}
+	| STRING_LITERAL
+	{
+	
+	}
+	| '(' expression ')'
+	{
+	
+	}
 	;
 
 conditional_expression
 	: logical_or_expression
+	{
+		$$ = $1;
+	}
 	| logical_or_expression '?' expression ':' conditional_expression
 	;
 	
 logical_or_expression
 	: logical_and_expression
+	{
+		$$ = $1;
+	}
 	| logical_or_expression 'OR_OP' logical_and_expression
 	;
 	
 logical_and_expression
 	: equality_expression
+	{
+		$$ = $1;
+	}
 	| logical_and_expression 'AND_OP' equality_expression
 	;
 	
 equality_expression
 	: relational_expression
+	{
+		$$ = $1;
+	}
 	| equality_expression 'EQ_OP' relational_expression
 	| equality_expression 'NEQ_OP' relational_expression
 	;
 	
 relational_expression
 	: additive_expression
+	{
+		$$ = $1;
+	}
 	| relational_expression '>' additive_expression
 	| relational_expression '<' additive_expression
 	| relational_expression 'GE_OP' additive_expression
@@ -250,12 +321,18 @@ relational_expression
 	
 additive_expression
 	: multiplicative_expression
+	{
+		$$ = $1;
+	}
 	| additive_expression '+' multiplicative_expression
 	| additive_expression '-' multiplicative_expression
 	;
 	
 multiplicative_expression
 	: postfix_expression
+	{
+		$$ = $1;
+	}
 	| multiplicative_expression '*' postfix_expression
 	| multiplicative_expression '/' postfix_expression
 	| multiplicative_expression '%' postfix_expression

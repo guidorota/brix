@@ -39,6 +39,7 @@ LETTER		[a-zA-Z_]
 	#include "types.h"
 	#include "codegen_symbol_table.h"
 	#include "codegen_expression.h"
+	#include "codegen_code.h"
 	#include "y.tab.h"
 }
 

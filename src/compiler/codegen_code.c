@@ -1,6 +1,6 @@
 /*
- * codegen_expression.h
- * Created on: Mar 3, 2014
+ * codegen_program.c
+ * Created on: Mar 4, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,51 +29,24 @@
  *
  */
 
-#ifndef CODEGEN_EXPRESSION_H_
-#define CODEGEN_EXPRESSION_H_
-
-#include "types.h"
-#include "configuration.h"
 #include "compiler/codegen_code.h"
 
-enum bx_comp_operation {
-	ADD,
-	SUB,
-	MUL,
-	DIV,
-	MOD,
-	NOT,
-	AND,
-	OR,
-	XOR
-};
+struct bx_comp_program *bx_cgpr_init() {
+	return NULL; //TODO: Stub
+}
 
-enum bx_comp_qualifier {
-	BX_COMP_CONSTANT,	// Constant value
-	BX_COMP_VARIABLE,	// Variable corresponding to the identifier
-	BX_COMP_BINARY		// An expression in binary form
-};
+bx_int8 bx_cgco_add_instruction(bx_uint8 instruction) {
+	return -1; //TODO: Stub
+}
 
-struct bx_comp_expr {
-	enum bx_builtin_type data_type;
-	enum bx_comp_qualifier qualifier;
-	union bx_value {
-		bx_int32 int_value;
-		bx_float32 float_value;
-		char identifier[DM_FIELD_IDENTIFIER_LENGTH];
-		struct bx_comp_code code;
-	} bx_value;
-};
+bx_int8 bx_cgco_add_identifier(char *identifier) {
+	return -1; //TODO: Stub
+}
 
-struct bx_comp_expr *bx_cgex_create_int_constant(bx_int32 value);
+bx_int8 bx_cgco_add_int_constant(bx_int32 value) {
+	return -1; //TODO: Stub
+}
 
-struct bx_comp_expr *bx_cgex_create_float_constant(bx_float32 value);
-
-struct bx_comp_expr *bx_cgex_create_variable(char *identifier);
-
-struct bx_comp_expr *bx_cgex_arithmetic_expression(struct bx_comp_expr *operand1,
-		struct bx_comp_expr *operand2, enum bx_comp_operation operation);
-
-void bx_cgex_free_expression(struct bx_comp_expr *expression);
-
-#endif /* CODEGEN_EXPRESSION_H_ */
+bx_int8 bx_cgco_add_float_constant(bx_float32 value) {
+	return -1; //TODO: Stub
+}
