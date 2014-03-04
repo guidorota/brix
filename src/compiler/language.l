@@ -36,6 +36,7 @@ LETTER		[a-zA-Z_]
 
 %top{
 	#include <stdio.h>
+	#include "types.h"
 	#include "y.tab.h"
 }
 

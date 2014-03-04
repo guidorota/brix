@@ -31,6 +31,7 @@
  */
 
 %{
+#include "types.h"
 #include "bx_codegen_expression.h"
 
 #define YYDEBUG 1
@@ -51,8 +52,8 @@ int yyerror(char *);
 %type <expression> primary_expression
 
 %union {
-   int int_val;
-   float float_val;
+   bx_int32 int_val;
+   bx_float32 float_val;
    char *string_val;
    struct bx_comp_expr *expression;
 }
