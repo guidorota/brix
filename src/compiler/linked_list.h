@@ -1,8 +1,7 @@
 /*
- * test_language.c
- *
- * Created on: Feb 15, 2014
- * Author: sidewinder
+ * linked_list.h
+ * Created on: Mar 4, 2014
+ * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
  * All rights reserved.
@@ -30,29 +29,35 @@
  *
  */
 
-#include <check.h>
-#include "utils/test_stack.h"
-#include "utils/test_list.h"
-#include "utils/test_mixed_list.h"
-#include "utils/test_byte_buffer.h"
-#include "document_manager/test_document_manager.h"
-#include "virtual_machine/test_virtual_machine.h"
-#include "compiler/test_bx_linked_list.h"
 
-int main(void) {
-	int number_failed = 0;
-	SRunner *runner = srunner_create(NULL);
+#ifndef LINKED_LIST_H_
+#define LINKED_LIST_H_
 
-	srunner_set_fork_status(runner, CK_NOFORK);
-	srunner_add_suite(runner, test_stack_create_suite());
-	srunner_add_suite(runner, test_list_create_suite());
-	srunner_add_suite(runner, test_mixed_list_create_suite());
-	srunner_add_suite(runner, test_byte_buffer_create_suite());
-	srunner_add_suite(runner, test_document_manager_create_suite());
-	srunner_add_suite(runner, test_virtual_machine_create_suite());
-	srunner_add_suite(runner, test_linked_list_create_suite());
+#include "types.h"
 
-	srunner_run_all(runner, CK_VERBOSE);
-	number_failed = srunner_ntests_failed(runner);
-	return (number_failed == 0) ? 0 : -1;
-}
+#define BX_LLIST_ELEMENT(node, type) (type *)node->element
+
+typedef bx_int8 (*bx_llist_equals)(void *list_value, void *template);
+
+struct bx_linked_list {
+	void *element;
+	struct bx_linked_list *next;
+};
+
+struct bx_linked_list *bx_llist_add(struct bx_linked_list **linked_list, void *element);
+
+void *bx_llist_remove(struct bx_linked_list **linked_list, void *element);
+
+void *bx_llist_remove_equals(struct bx_linked_list **linked_list, void *element, bx_llist_equals equals);
+
+bx_int8 bx_llist_contains(struct bx_linked_list *linked_list, void *element);
+
+bx_int8 bx_llist_contains_equals(struct bx_linked_list *linked_list, void *element, bx_llist_equals equals);
+
+bx_ssize bx_llist_size(struct bx_linked_list *linked_list);
+
+void *bx_llist_find(struct bx_linked_list *linked_list, void *element);
+
+void *bx_llist_find_equals(struct bx_linked_list *linked_list, void *element, bx_llist_equals equals);
+
+#endif /* LINKED_LIST_H_ */

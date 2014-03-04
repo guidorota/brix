@@ -1,5 +1,5 @@
 /*
- * bx_memory_utils.h
+ * codegen_expression.h
  * Created on: Mar 3, 2014
  * Author: Guido Rota
  *
@@ -29,11 +29,49 @@
  *
  */
 
-#ifndef BX_MEMORY_UTILS_H_
-#define BX_MEMORY_UTILS_H_
+#ifndef CODEGEN_EXPRESSION_H_
+#define CODEGEN_EXPRESSION_H_
 
-#include <stdlib.h>
+#include "types.h"
+#include "configuration.h"
 
-#define BX_MALLOC(type) (type *) malloc(sizeof (type))
+enum bx_comp_operation {
+	ADD,
+	SUB,
+	MUL,
+	DIV,
+	MOD,
+	NOT,
+	AND,
+	OR,
+	XOR
+};
 
-#endif /* BX_MEMORY_UTILS_H_ */
+enum bx_comp_qualifier {
+	BX_COMP_CONSTANT,	// Constant value
+	BX_COMP_VARIABLE,	// Variable corresponding to the identifier
+	BX_COMP_EXPRESSION	// An expression in binary form
+};
+
+struct bx_comp_expr {
+	enum bx_builtin_type data_type;
+	enum bx_comp_qualifier qualifier;
+	union bx_value {
+		bx_int32 int_value;
+		bx_float32 float_value;
+		char identifier[DM_FIELD_IDENTIFIER_LENGTH];
+	} bx_value;
+};
+
+struct bx_comp_expr *bx_cgen_create_int_constant(bx_int32 value);
+
+struct bx_comp_expr *bx_cgen_create_float_constant(bx_float32 value);
+
+struct bx_comp_expr *bx_cgen_create_variable(char *identifier);
+
+struct bx_comp_expr *bx_cgen_arithmetic_expression(struct bx_comp_expr *operand1,
+		struct bx_comp_expr *operand2, enum bx_comp_operation operation);
+
+void bx_cgen_free_expression(struct bx_comp_expr *expression);
+
+#endif /* CODEGEN_EXPRESSION_H_ */

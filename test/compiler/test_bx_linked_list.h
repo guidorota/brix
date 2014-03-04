@@ -1,8 +1,7 @@
 /*
- * test_language.c
- *
- * Created on: Feb 15, 2014
- * Author: sidewinder
+ * test_bx_linked_list.h
+ * Created on: Mar 4, 2014
+ * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
  * All rights reserved.
@@ -30,29 +29,11 @@
  *
  */
 
+#ifndef TEST_BX_LINKED_LIST_H_
+#define TEST_BX_LINKED_LIST_H_
+
 #include <check.h>
-#include "utils/test_stack.h"
-#include "utils/test_list.h"
-#include "utils/test_mixed_list.h"
-#include "utils/test_byte_buffer.h"
-#include "document_manager/test_document_manager.h"
-#include "virtual_machine/test_virtual_machine.h"
-#include "compiler/test_bx_linked_list.h"
 
-int main(void) {
-	int number_failed = 0;
-	SRunner *runner = srunner_create(NULL);
+Suite *test_linked_list_create_suite(void);
 
-	srunner_set_fork_status(runner, CK_NOFORK);
-	srunner_add_suite(runner, test_stack_create_suite());
-	srunner_add_suite(runner, test_list_create_suite());
-	srunner_add_suite(runner, test_mixed_list_create_suite());
-	srunner_add_suite(runner, test_byte_buffer_create_suite());
-	srunner_add_suite(runner, test_document_manager_create_suite());
-	srunner_add_suite(runner, test_virtual_machine_create_suite());
-	srunner_add_suite(runner, test_linked_list_create_suite());
-
-	srunner_run_all(runner, CK_VERBOSE);
-	number_failed = srunner_ntests_failed(runner);
-	return (number_failed == 0) ? 0 : -1;
-}
+#endif /* TEST_BX_LINKED_LIST_H_ */

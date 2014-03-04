@@ -1,5 +1,5 @@
 /*
- * bx_codegen_expression.c
+ * codegen_expression.c
  * Created on: Mar 3, 2014
  * Author: Guido Rota
  *
@@ -30,8 +30,8 @@
  */
 
 #include <string.h>
-#include "compiler/bx_memory_utils.h"
-#include "compiler/bx_codegen_expression.h"
+#include "compiler/memory_utils.h"
+#include "compiler/codegen_expression.h"
 
 struct bx_comp_expr *bx_cgen_create_int_constant(bx_int32 value) {
 	struct bx_comp_expr *expression;

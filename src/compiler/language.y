@@ -32,7 +32,7 @@
 
 %{
 #include "types.h"
-#include "bx_codegen_expression.h"
+#include "codegen_expression.h"
 
 #define YYDEBUG 1
 int yylex(void);
@@ -50,8 +50,10 @@ int yyerror(char *);
 %token <string_val> STRING_LITERAL
 
 %type <expression> primary_expression
+%type <data_type> type_specifier
 
 %union {
+   enum bx_builtin_type data_type;
    bx_int32 int_val;
    bx_float32 float_val;
    char *string_val;
@@ -86,12 +88,12 @@ declaration_statement
 	;
 	
 type_specifier
-	: INT
-	| FLOAT
-	| BOOL
-	| STRING
-	| STREAM
-	| SUBNET
+	: INT 		{ $$ = BX_INT; }
+	| FLOAT		{ $$ = BX_FLOAT; }
+	| BOOL		{ $$ = BX_BOOL; }
+	| STRING	{ $$ = BX_STRING; }
+	| STREAM	{ $$ = BX_STREAM; }
+	| SUBNET	{ $$ = BX_SUBNET; }
 	;
 	
 field_source
