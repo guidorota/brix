@@ -1,5 +1,5 @@
 /*
- * codegen_program.c
+ * codegen_code.c
  * Created on: Mar 4, 2014
  * Author: Guido Rota
  *

@@ -1,5 +1,5 @@
 /*
- * codegen_program.h
+ * codegen_code.h
  * Created on: Mar 4, 2014
  * Author: Guido Rota
  *
@@ -29,8 +29,8 @@
  *
  */
 
-#ifndef CODEGEN_PROGRAM_H_
-#define CODEGEN_PROGRAM_H_
+#ifndef CODEGEN_CODE_H_
+#define CODEGEN_CODE_H_
 
 #include "types.h"
 
@@ -49,4 +49,4 @@ bx_int8 bx_cgco_add_int_constant(bx_int32 value);
 
 bx_int8 bx_cgco_add_float_constant(bx_float32 value);
 
-#endif /* CODEGEN_PROGRAM_H_ */
+#endif /* CODEGEN_CODE_H_ */
