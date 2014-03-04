@@ -29,6 +29,7 @@
  *
  */
 
+#include <stdio.h>
 #include <string.h>
 #include "types.h"
 #include "test_codegen_symbol_table.h"
@@ -77,17 +78,28 @@ START_TEST (add_symbols) {
 	ck_assert_ptr_eq(symbol, NULL);
 } END_TEST
 
+START_TEST (reject_duplicate) {
+	bx_int8 error;
+
+	error = bx_cgsy_add(SYMBOL_ID_1, BX_INT, BX_COMP_VARIABLE);
+	ck_assert_int_ne(error, 0);
+	error = bx_cgsy_add(SYMBOL_ID_2, BX_FLOAT, BX_COMP_VARIABLE);
+	ck_assert_int_ne(error, 0);
+	error = bx_cgsy_add(SYMBOL_ID_3, BX_BOOL, BX_COMP_VARIABLE);
+	ck_assert_int_ne(error, 0);
+} END_TEST
+
 START_TEST (reset) {
 	bx_int8 error;
 	struct bx_comp_symbol *symbol;
 
 	error = bx_cgsy_reset();
 	symbol = bx_cgsy_get(SYMBOL_ID_1);
-	ck_assert_ptr_ne(symbol, NULL);
+	ck_assert_ptr_eq(symbol, NULL);
 	symbol = bx_cgsy_get(SYMBOL_ID_2);
-	ck_assert_ptr_ne(symbol, NULL);
+	ck_assert_ptr_eq(symbol, NULL);
 	symbol = bx_cgsy_get(SYMBOL_ID_3);
-	ck_assert_ptr_ne(symbol, NULL);
+	ck_assert_ptr_eq(symbol, NULL);
 } END_TEST
 
 Suite *test_codegen_symbol_table_create_suite(void) {
@@ -101,7 +113,11 @@ Suite *test_codegen_symbol_table_create_suite(void) {
 	tcase = tcase_create("add_symbols");
 	tcase_add_test(tcase, add_symbols);
 	suite_add_tcase(suite, tcase);
-//TODO: Test for duplicate insertion
+
+	tcase = tcase_create("reject_duplicate");
+	tcase_add_test(tcase, reject_duplicate);
+	suite_add_tcase(suite, tcase);
+
 	tcase = tcase_create("reset");
 	tcase_add_test(tcase, reset);
 	suite_add_tcase(suite, tcase);

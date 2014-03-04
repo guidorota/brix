@@ -39,7 +39,7 @@
 struct bx_comp_symbol {
 	enum bx_builtin_type data_type;
 	enum bx_comp_qualifier qualifier;
-	char *identifier[DM_FIELD_IDENTIFIER_LENGTH];
+	char identifier[DM_FIELD_IDENTIFIER_LENGTH];
 };
 
 bx_int8 bx_cgsy_init();

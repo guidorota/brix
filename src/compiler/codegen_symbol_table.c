@@ -29,6 +29,8 @@
  *
  */
 
+#include <stdio.h>
+#include <errno.h>
 #include <string.h>
 #include "compiler/memory_utils.h"
 #include "compiler/linked_list.h"
@@ -37,7 +39,7 @@
 static struct bx_linked_list *symbol_list;
 
 static bx_int8 identifier_equals(struct bx_comp_symbol *symbol, char *identifier) {
-	return strncmp((char *) symbol->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH) == 0 ? 1 : 0;
+	return strncmp(symbol->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH) == 0 ? 1 : 0;
 }
 
 bx_int8 bx_cgsy_init() {
@@ -57,7 +59,7 @@ bx_int8 bx_cgsy_add(char *identifier, enum bx_builtin_type data_type, enum bx_co
 		return -1;
 	}
 
-	if (bx_llist_contains_equals(symbol_list, identifier, (bx_llist_equals) &identifier_equals) == 0) {
+	if (bx_llist_contains_equals(symbol_list, identifier, (bx_llist_equals) &identifier_equals) == 1) {
 		return -1;
 	}
 
@@ -68,7 +70,7 @@ bx_int8 bx_cgsy_add(char *identifier, enum bx_builtin_type data_type, enum bx_co
 
 	symbol->data_type = data_type;
 	symbol->qualifier = qualifier;
-	strncpy((void *) symbol->identifier, (void *) identifier, DM_FIELD_IDENTIFIER_LENGTH);
+	strncpy(symbol->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH);
 
 	node = bx_llist_add(&symbol_list, (void *) symbol);
 	if (node == NULL) {
@@ -90,9 +92,8 @@ struct bx_comp_symbol *bx_cgsy_get(char *identifier) {
 bx_int8 bx_cgsy_reset() {
 	struct bx_linked_list *node;
 
-	//TODO: Fix
 	while (symbol_list != NULL) {
-		free(node->element);
+		free(symbol_list->element);
 		node = symbol_list;
 		symbol_list = symbol_list->next;
 		free(node);
