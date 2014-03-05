@@ -55,6 +55,9 @@ int yyerror(char *);
 %type <expression> conditional_expression
 %type <expression> logical_or_expression
 %type <expression> logical_and_expression
+%type <expression> inclusive_or_expression
+%type <expression> exclusive_or_expression
+%type <expression> and_expression
 %type <expression> equality_expression
 %type <expression> relational_expression
 %type <expression> additive_expression
@@ -292,11 +295,35 @@ logical_or_expression
 	;
 	
 logical_and_expression
-	: equality_expression
+	: inclusive_or_expression
 	{
 		$$ = $1;
 	}
 	| logical_and_expression 'AND_OP' equality_expression
+	;
+	
+inclusive_or_expression
+	: exclusive_or_expression
+	{
+		$$ = $1;
+	}
+	| inclusive_or_expression '|' exclusive_or_expression
+	;
+	
+exclusive_or_expression
+	: and_expression
+	{
+		$$ = $1;
+	}
+	| exclusive_or_expression '^' and_expression
+	;
+	
+and_expression
+	: equality_expression
+	{
+		$$ = $1;
+	}
+	| and_expression '&' equality_expression
 	;
 	
 equality_expression

@@ -61,7 +61,6 @@
 #define BX_INSTR_I2F 0x21
 #define BX_INSTR_F2I 0x22
 
-//TODO: Type conversion
 //TODO: Stop instruction
 
 bx_int8 bx_vm_virtual_machine_init();

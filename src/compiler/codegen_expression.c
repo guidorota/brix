@@ -123,7 +123,7 @@ struct bx_comp_expr *bx_cgex_arithmetic_expression(struct bx_comp_expr *operand1
 	}
 
 
-	//TODO: Some additional checks on the data type (avoid int and string, etc)
+	//TODO: Stub
 
 	return NULL;
 }
