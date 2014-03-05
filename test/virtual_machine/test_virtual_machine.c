@@ -711,6 +711,34 @@ START_TEST (jump_le_zero) {
 	ck_assert_int_eq(bx_test_field_get_int(), value2);
 } END_TEST
 
+START_TEST (cast_test) {
+	bx_int8 error;
+	bx_int32 int_value = 14;
+	bx_float32 float_value = 17.890;
+
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, int_value);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_I2F);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_float(), (bx_float32) int_value);
+
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_float(&buffer, float_value);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_F2I);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), (bx_int32) float_value);
+} END_TEST
+
 Suite *test_virtual_machine_create_suite() {
 	Suite *suite = suite_create("test_virtual_machine");
 	TCase *tcase;
@@ -773,6 +801,10 @@ Suite *test_virtual_machine_create_suite() {
 
 	tcase = tcase_create("jump_le_zero");
 	tcase_add_test(tcase, jump_le_zero);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("cast_test");
+	tcase_add_test(tcase, cast_test);
 	suite_add_tcase(suite, tcase);
 
 	return suite;
