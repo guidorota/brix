@@ -44,6 +44,7 @@ static struct bx_comp_expr *concat_strings(struct bx_comp_expr *operand1, struct
 
 static struct bx_comp_expr *int_to_float(struct bx_comp_expr *value);
 static struct bx_comp_expr *float_to_int(struct bx_comp_expr *value);
+static struct bx_comp_expr *constant_to_binary(struct bx_comp_expr *value);
 
 struct bx_comp_expr *bx_cgex_create_int_constant(bx_int32 value) {
 	struct bx_comp_expr *expression;
@@ -170,11 +171,11 @@ static struct bx_comp_expr *add_int(struct bx_comp_expr *operand1, struct bx_com
 	}
 
 	if (operand1->type == BX_COMP_CONSTANT) {
-
+		operand1 = constant_to_binary(operand1);
 	}
 
 	if (operand2->type == BX_COMP_CONSTANT) {
-
+		operand2 = constant_to_binary(operand2);
 	}
 
 	return NULL; //TODO: Stub
@@ -232,6 +233,34 @@ static struct bx_comp_expr *float_to_int(struct bx_comp_expr *value) {
 
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected expression type.");
+		return NULL;
+	}
+}
+
+static struct bx_comp_expr *constant_to_binary(struct bx_comp_expr *value) {
+
+	value->bx_value.code = bx_cgco_create();
+	value->type = BX_COMP_BINARY;
+
+	switch(value->data_type) {
+	case BX_INT:
+		bx_cgco_add_instruction(value->bx_value.code, BX_INSTR_PUSH32);
+		bx_cgco_add_int_constant(value->bx_value.code, value->bx_value.int_value);
+		return value;
+
+	case BX_FLOAT:
+		bx_cgco_add_instruction(value->bx_value.code, BX_INSTR_PUSH32);
+		bx_cgco_add_float_constant(value->bx_value.code, value->bx_value.float_value);
+		return value;
+
+	case BX_BOOL:
+		BX_LOG(LOG_WARNING, "codegen_expression",
+				"Boolean constant_to_binary conversion not implemented yet.");
+		return NULL;
+
+	default:
+		BX_LOG(LOG_WARNING, "codegen_expression",
+				"Unexpected data type encountered in constant_to_binary conversion.");
 		return NULL;
 	}
 }
