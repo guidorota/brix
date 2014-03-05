@@ -37,8 +37,13 @@
 #include "compiler/codegen_code.h"
 #include "virtual_machine/virtual_machine.h"
 
-static bx_int8 type_check_and_conversion(struct bx_comp_expr *operand1,
-		struct bx_comp_expr *operand2, enum bx_comp_operation operation);
+static struct bx_comp_expr *plus_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+static struct bx_comp_expr *add_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+static struct bx_comp_expr *add_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+static struct bx_comp_expr *concat_strings(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+
+static struct bx_comp_expr *int_to_float(struct bx_comp_expr *value);
+static struct bx_comp_expr *float_to_int(struct bx_comp_expr *value);
 
 struct bx_comp_expr *bx_cgex_create_int_constant(bx_int32 value) {
 	struct bx_comp_expr *expression;
@@ -103,7 +108,7 @@ struct bx_comp_expr *bx_cgex_create_variable(char *identifier) {
 	return expression;
 }
 
-struct bx_comp_expr *bx_cgex_arithmetic_expression(struct bx_comp_expr *operand1,
+struct bx_comp_expr *bx_cgex_expression(struct bx_comp_expr *operand1,
 		struct bx_comp_expr *operand2, enum bx_comp_operation operation) {
 	bx_int8 error;
 	struct bx_comp_expr *result;
@@ -112,32 +117,123 @@ struct bx_comp_expr *bx_cgex_arithmetic_expression(struct bx_comp_expr *operand1
 		return NULL;
 	}
 
-	result = BX_MALLOC(struct bx_comp_expr);
-	if (result == NULL) {
+	switch(operation) {
+	case BX_COMP_ADD:
+		return plus_operator(operand1, operand2);
+		break;
+	default:
 		return NULL;
 	}
-
-	error = type_check_and_conversion(operand1, operand2, operation);
-	if (error != 0) {
-		return NULL;
-	}
-
-
-	//TODO: Stub
-
-	return NULL;
 }
 
-static bx_int8 type_check_and_conversion(struct bx_comp_expr *operand1,
-		struct bx_comp_expr *operand2, enum bx_comp_operation operation) {
+///////////////////
+// PLUS OPERATOR //
+///////////////////
 
-	if (operand1->data_type == operand2->data_type) {
-		return 0;
+static struct bx_comp_expr *plus_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	struct bx_comp_expr *result;
+
+	if (operand1->data_type == BX_BOOL || operand2->data_type == BX_BOOL ||
+			operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
+			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM) {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '+'.");
+		return -1;
+
+	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
+		return add_int(operand1, operand2);
+
+	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
+		return add_float(operand1, operand2);
+
+	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_FLOAT) {
+		operand1 = int_to_float(operand1);
+		return add_float(operand1, operand2);
+
+	} else if (operand2->data_type == BX_INT && operand1->data_type == BX_FLOAT) {
+		operand2 = int_to_float(operand2);
+		return add_float(operand1, operand2);
+
+	} else if (operand1->data_type == BX_STRING || operand2->data_type == BX_STRING) {
+		return concat_strings(operand1, operand2);
+
+	} else {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in function plus_operator.");
+		return NULL;
+	}
+}
+
+static struct bx_comp_expr *add_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	struct bx_comp_expr *result;
+
+	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+		bx_cgex_create_int_constant(operand1->bx_value.int_value + operand2->bx_value.int_value);
 	}
 
-	//TODO: Stub
+	if (operand1->type == BX_COMP_CONSTANT) {
 
-	return -1;
+	}
+
+	if (operand2->type == BX_COMP_CONSTANT) {
+
+	}
+
+	return NULL; //TODO: Stub
+}
+
+static struct bx_comp_expr *add_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	struct bx_comp_expr *result;
+
+	return NULL; //TODO: Stub
+}
+
+static struct bx_comp_expr *concat_strings(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	struct bx_comp_expr *result;
+
+	return NULL; //TODO: Stub
+}
+
+////////////////
+// CONVERSION //
+////////////////
+
+static struct bx_comp_expr *int_to_float(struct bx_comp_expr *value) {
+	bx_float32 float_value;
+
+	switch(value->type) {
+	case BX_COMP_BINARY:
+		bx_cgco_add_instruction(value->bx_value.code, BX_INSTR_I2F);
+		value->data_type = BX_FLOAT;
+		return value;
+
+	case BX_COMP_CONSTANT:
+		value->bx_value.float_value = (bx_float32) value->bx_value.int_value;
+		value->data_type = BX_FLOAT;
+		return value;
+
+	default:
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected expression type.");
+		return NULL;
+	}
+}
+
+static struct bx_comp_expr *float_to_int(struct bx_comp_expr *value) {
+	bx_float32 float_value;
+
+	switch(value->type) {
+	case BX_COMP_BINARY:
+		bx_cgco_add_instruction(value->bx_value.code, BX_INSTR_F2I);
+		value->data_type = BX_INT;
+		return value;
+
+	case BX_COMP_CONSTANT:
+		value->bx_value.int_value = (bx_int32) value->bx_value.float_value;
+		value->data_type = BX_INT;
+		return value;
+
+	default:
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected expression type.");
+		return NULL;
+	}
 }
 
 void bx_cgex_free_expression(struct bx_comp_expr *expression) {

@@ -45,7 +45,10 @@ enum bx_comp_operation {
 	BX_COMP_NOT,
 	BX_COMP_AND,
 	BX_COMP_OR,
-	BX_COMP_XOR
+	BX_COMP_XOR,
+	BX_COMP_BTIWISE_AND,
+	BX_COMP_BTIWISE_OR,
+	BX_COMP_BTIWISE_XOR
 };
 
 enum bx_comp_exp_type {
@@ -69,7 +72,7 @@ struct bx_comp_expr *bx_cgex_create_float_constant(bx_float32 value);
 
 struct bx_comp_expr *bx_cgex_create_variable(char *identifier);
 
-struct bx_comp_expr *bx_cgex_arithmetic_expression(struct bx_comp_expr *operand1,
+struct bx_comp_expr *bx_cgex_expression(struct bx_comp_expr *operand1,
 		struct bx_comp_expr *operand2, enum bx_comp_operation operation);
 
 void bx_cgex_free_expression(struct bx_comp_expr *expression);
