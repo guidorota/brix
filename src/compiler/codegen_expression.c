@@ -37,6 +37,9 @@
 #include "compiler/codegen_code.h"
 #include "virtual_machine/virtual_machine.h"
 
+static bx_int8 type_check_and_conversion(struct bx_comp_expr *operand1,
+		struct bx_comp_expr *operand2, enum bx_comp_operation operation);
+
 struct bx_comp_expr *bx_cgex_create_int_constant(bx_int32 value) {
 	struct bx_comp_expr *expression;
 
@@ -46,7 +49,7 @@ struct bx_comp_expr *bx_cgex_create_int_constant(bx_int32 value) {
 	}
 
 	expression->data_type = BX_INT;
-	expression->qualifier = BX_COMP_CONSTANT;
+	expression->type = BX_COMP_CONSTANT;
 	expression->bx_value.int_value = value;
 
 	return expression;
@@ -61,7 +64,7 @@ struct bx_comp_expr *bx_cgex_create_float_constant(bx_float32 value) {
 	}
 
 	expression->data_type = BX_FLOAT;
-	expression->qualifier = BX_COMP_CONSTANT;
+	expression->type = BX_COMP_CONSTANT;
 	expression->bx_value.float_value = value;
 
 	return expression;
@@ -94,7 +97,7 @@ struct bx_comp_expr *bx_cgex_create_variable(char *identifier) {
 	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
 	bx_cgco_add_identifier(code, identifier);
 
-	expression->qualifier = BX_COMP_BINARY;
+	expression->type = BX_COMP_BINARY;
 	expression->data_type = symbol->data_type;
 
 	return expression;
@@ -102,6 +105,7 @@ struct bx_comp_expr *bx_cgex_create_variable(char *identifier) {
 
 struct bx_comp_expr *bx_cgex_arithmetic_expression(struct bx_comp_expr *operand1,
 		struct bx_comp_expr *operand2, enum bx_comp_operation operation) {
+	bx_int8 error;
 	struct bx_comp_expr *result;
 
 	if (operand1 == NULL || operand2 == NULL) {
@@ -113,9 +117,27 @@ struct bx_comp_expr *bx_cgex_arithmetic_expression(struct bx_comp_expr *operand1
 		return NULL;
 	}
 
+	error = type_check_and_conversion(operand1, operand2, operation);
+	if (error != 0) {
+		return NULL;
+	}
+
+
 	//TODO: Some additional checks on the data type (avoid int and string, etc)
 
 	return NULL;
+}
+
+static bx_int8 type_check_and_conversion(struct bx_comp_expr *operand1,
+		struct bx_comp_expr *operand2, enum bx_comp_operation operation) {
+
+	if (operand1->data_type == operand2->data_type) {
+		return 0;
+	}
+
+	//TODO: Stub
+
+	return -1;
 }
 
 void bx_cgex_free_expression(struct bx_comp_expr *expression) {

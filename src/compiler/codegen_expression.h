@@ -37,25 +37,25 @@
 #include "compiler/codegen_code.h"
 
 enum bx_comp_operation {
-	ADD,
-	SUB,
-	MUL,
-	DIV,
-	MOD,
-	NOT,
-	AND,
-	OR,
-	XOR
+	BX_COMP_ADD,
+	BX_COMP_SUB,
+	BX_COMP_MUL,
+	BX_COMP_DIV,
+	BX_COMP_MOD,
+	BX_COMP_NOT,
+	BX_COMP_AND,
+	BX_COMP_OR,
+	BX_COMP_XOR
 };
 
-enum bx_comp_qualifier {
+enum bx_comp_exp_type {
 	BX_COMP_CONSTANT,	// Constant value
 	BX_COMP_BINARY		// An expression in binary form
 };
 
 struct bx_comp_expr {
 	enum bx_builtin_type data_type;
-	enum bx_comp_qualifier qualifier;
+	enum bx_comp_exp_type type;
 	union bx_value {
 		bx_int32 int_value;
 		bx_float32 float_value;
