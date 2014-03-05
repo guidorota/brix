@@ -62,6 +62,7 @@ struct bx_comp_expr {
 	union bx_value {
 		bx_int32 int_value;
 		bx_float32 float_value;
+		bx_uint32 bool_value;
 		struct bx_comp_code *code;
 	} bx_value;
 };
@@ -75,6 +76,6 @@ struct bx_comp_expr *bx_cgex_create_variable(char *identifier);
 struct bx_comp_expr *bx_cgex_expression(struct bx_comp_expr *operand1,
 		struct bx_comp_expr *operand2, enum bx_comp_operation operation);
 
-void bx_cgex_free_expression(struct bx_comp_expr *expression);
+void bx_cgex_destroy_expression(struct bx_comp_expr *expression);
 
 #endif /* CODEGEN_EXPRESSION_H_ */

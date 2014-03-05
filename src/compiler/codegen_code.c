@@ -84,6 +84,13 @@ bx_int8 bx_cgco_add_float_constant(struct bx_comp_code *code, bx_float32 value) 
 	return add_to_code(code, (void *) &value, sizeof value);
 }
 
+bx_int8 bx_cgco_add_bool_constant(struct bx_comp_code *code, bx_uint32 value) {
+	if (value > 0) {
+		value = 1;
+	}
+	return add_to_code(code, (void *) &value, sizeof value);
+}
+
 bx_int8 bx_cgco_append_code(struct bx_comp_code *code, struct bx_comp_code *append) {
 	return add_to_code(code, append->data, append->size);
 }

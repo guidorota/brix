@@ -46,6 +46,8 @@ static struct bx_comp_expr *int_to_float(struct bx_comp_expr *value);
 static struct bx_comp_expr *float_to_int(struct bx_comp_expr *value);
 static struct bx_comp_expr *constant_to_binary(struct bx_comp_expr *value);
 
+struct bx_comp_expr *create_code_expression();
+
 struct bx_comp_expr *bx_cgex_create_int_constant(bx_int32 value) {
 	struct bx_comp_expr *expression;
 
@@ -138,7 +140,7 @@ static struct bx_comp_expr *plus_operator(struct bx_comp_expr *operand1, struct 
 			operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
 			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM) {
 		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '+'.");
-		return -1;
+		return NULL;
 
 	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
 		return add_int(operand1, operand2);
@@ -167,7 +169,7 @@ static struct bx_comp_expr *add_int(struct bx_comp_expr *operand1, struct bx_com
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
-		bx_cgex_create_int_constant(operand1->bx_value.int_value + operand2->bx_value.int_value);
+		return bx_cgex_create_int_constant(operand1->bx_value.int_value + operand2->bx_value.int_value);
 	}
 
 	if (operand1->type == BX_COMP_CONSTANT) {
@@ -178,7 +180,15 @@ static struct bx_comp_expr *add_int(struct bx_comp_expr *operand1, struct bx_com
 		operand2 = constant_to_binary(operand2);
 	}
 
-	return NULL; //TODO: Stub
+	result = create_code_expression();
+	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
+	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IADD);
+
+	bx_cgex_destroy_expression(operand1);
+	bx_cgex_destroy_expression(operand2);
+
+	return result;
 }
 
 static struct bx_comp_expr *add_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
@@ -254,8 +264,8 @@ static struct bx_comp_expr *constant_to_binary(struct bx_comp_expr *value) {
 		return value;
 
 	case BX_BOOL:
-		BX_LOG(LOG_WARNING, "codegen_expression",
-				"Boolean constant_to_binary conversion not implemented yet.");
+		bx_cgco_add_instruction(value->bx_value.code, BX_INSTR_PUSH32);
+		bx_cgco_add_bool_constant(value->bx_value.code, value->bx_value.bool_value);
 		return NULL;
 
 	default:
@@ -265,10 +275,35 @@ static struct bx_comp_expr *constant_to_binary(struct bx_comp_expr *value) {
 	}
 }
 
-void bx_cgex_free_expression(struct bx_comp_expr *expression) {
+///////////
+// UTILS //
+///////////
+
+struct bx_comp_expr *create_code_expression() {
+	struct bx_comp_expr *expression;
+
+	expression = BX_MALLOC(struct bx_comp_expr);
+	if (expression == NULL) {
+		return NULL;
+	}
+	expression->bx_value.code = bx_cgco_create();
+	if (expression->bx_value.code == NULL) {
+		free(expression);
+		return NULL;
+	}
+	expression->type = BX_COMP_BINARY;
+
+	return expression;
+}
+
+void bx_cgex_destroy_expression(struct bx_comp_expr *expression) {
 
 	if (expression == NULL) {
 		return;
+	}
+
+	if (expression->type == BX_COMP_BINARY) {
+		bx_cgco_destroy(expression->bx_value.code);
 	}
 
 	free(expression);
