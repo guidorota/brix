@@ -35,14 +35,18 @@
 #include "types.h"
 #include "document_manager/document_manager.h"
 
-bx_int8 bx_test_field_init(struct bx_document_field *document_field);
+struct bx_test_field_data {
+	bx_uint8 internal_value[4];
+};
 
-void bx_test_field_set_int(bx_int32 value);
+bx_int8 bx_test_field_init(struct bx_document_field *instance, struct bx_test_field_data *data);
 
-void bx_test_field_set_float(bx_float32 value);
+void bx_test_field_set_int(struct bx_document_field *instance, bx_int32 value);
 
-bx_int32 bx_test_field_get_int(void);
+void bx_test_field_set_float(struct bx_document_field *instance, bx_float32 value);
 
-bx_float32 bx_test_field_get_float(void);
+bx_int32 bx_test_field_get_int(struct bx_document_field *instance);
+
+bx_float32 bx_test_field_get_float(struct bx_document_field *instance);
 
 #endif /* TEST_FIELD_H_ */

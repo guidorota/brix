@@ -43,6 +43,7 @@
 #define TEST_FIELD_ID "test_field"
 
 static struct bx_document_field test_field;
+static struct bx_test_field_data test_field_data;
 
 static struct bx_byte_buffer buffer;
 static bx_uint8 buffer_storage[CODE_BUFFER_LENGTH];
@@ -54,7 +55,7 @@ START_TEST (test_init) {
 	ck_assert_int_eq(error, 0);
 	error = bx_dm_document_manager_init();
 	ck_assert_int_eq(error, 0);
-	error = bx_test_field_init(&test_field);
+	error = bx_test_field_init(&test_field, &test_field_data);
 	ck_assert_int_eq(error, 0);
 	error = bx_dm_add_field(&test_field, TEST_FIELD_ID);
 	ck_assert_int_eq(error, 0);
@@ -73,7 +74,7 @@ START_TEST (store32_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), test_data);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), test_data);
 } END_TEST
 
 START_TEST (load32_test) {
@@ -81,7 +82,7 @@ START_TEST (load32_test) {
 	bx_int32 operand1 = 87;
 	bx_int32 operand2 = 69;
 
-	bx_test_field_set_int(operand2);
+	bx_test_field_set_int(&test_field, operand2);
 	bx_bbuf_reset(&buffer);
 	bx_vmutils_add_instruction(&buffer, BX_INSTR_LOAD32);
 	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
@@ -93,7 +94,7 @@ START_TEST (load32_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), operand1 + operand2);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), operand1 + operand2);
 } END_TEST
 
 START_TEST (integer_arithmetics_test) {
@@ -113,7 +114,7 @@ START_TEST (integer_arithmetics_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), operand1 + operand2);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), operand1 + operand2);
 
 	// SUBTRACTION
 	bx_bbuf_reset(&buffer);
@@ -127,7 +128,7 @@ START_TEST (integer_arithmetics_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), operand1 - operand2);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), operand1 - operand2);
 
 	// MULTIPLICATION
 	bx_bbuf_reset(&buffer);
@@ -141,7 +142,7 @@ START_TEST (integer_arithmetics_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), operand1 * operand2);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), operand1 * operand2);
 
 	// DIVISION
 	bx_bbuf_reset(&buffer);
@@ -155,7 +156,7 @@ START_TEST (integer_arithmetics_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), operand1 / operand2);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), operand1 / operand2);
 
 	// MODULO
 	bx_bbuf_reset(&buffer);
@@ -169,7 +170,7 @@ START_TEST (integer_arithmetics_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), operand1 % operand2);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), operand1 % operand2);
 } END_TEST
 
 START_TEST (integer_boolean_test) {
@@ -189,7 +190,7 @@ START_TEST (integer_boolean_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), operand1 & operand2);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), operand1 & operand2);
 
 	// OR
 	bx_bbuf_reset(&buffer);
@@ -203,7 +204,7 @@ START_TEST (integer_boolean_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), operand1 | operand2);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), operand1 | operand2);
 
 	// XOR
 	bx_bbuf_reset(&buffer);
@@ -217,7 +218,7 @@ START_TEST (integer_boolean_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), operand1 ^ operand2);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), operand1 ^ operand2);
 
 	// NOT
 	bx_bbuf_reset(&buffer);
@@ -229,7 +230,7 @@ START_TEST (integer_boolean_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), ~operand1);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), ~operand1);
 } END_TEST
 
 START_TEST (float_arithmetics_test) {
@@ -249,7 +250,7 @@ START_TEST (float_arithmetics_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(), operand1 + operand2);
+	ck_assert_int_eq(bx_test_field_get_float(&test_field), operand1 + operand2);
 
 	// SUBTRACTION
 	bx_bbuf_reset(&buffer);
@@ -263,7 +264,7 @@ START_TEST (float_arithmetics_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(), operand1 - operand2);
+	ck_assert_int_eq(bx_test_field_get_float(&test_field), operand1 - operand2);
 
 	// MULTIPLICATION
 	bx_bbuf_reset(&buffer);
@@ -277,7 +278,7 @@ START_TEST (float_arithmetics_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(), operand1 * operand2);
+	ck_assert_int_eq(bx_test_field_get_float(&test_field), operand1 * operand2);
 
 	// DIVISION
 	bx_bbuf_reset(&buffer);
@@ -291,7 +292,7 @@ START_TEST (float_arithmetics_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(), operand1 / operand2);
+	ck_assert_int_eq(bx_test_field_get_float(&test_field), operand1 / operand2);
 } END_TEST
 
 START_TEST (int_expression) {
@@ -318,7 +319,7 @@ START_TEST (int_expression) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), (operand1 + operand2) * operand3 - operand4);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), (operand1 + operand2) * operand3 - operand4);
 } END_TEST
 
 START_TEST (float_expression) {
@@ -345,7 +346,7 @@ START_TEST (float_expression) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(), (operand1 + operand2) * operand3 - operand4);
+	ck_assert_int_eq(bx_test_field_get_float(&test_field), (operand1 + operand2) * operand3 - operand4);
 } END_TEST
 
 START_TEST (unconditional_jump) {
@@ -368,7 +369,7 @@ START_TEST (unconditional_jump) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), value1);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), value1);
 } END_TEST
 
 START_TEST (jump_eq_zero) {
@@ -393,7 +394,7 @@ START_TEST (jump_eq_zero) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), value1);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), value1);
 
 	// Jump not taken
 	bx_bbuf_reset(&buffer);
@@ -412,7 +413,7 @@ START_TEST (jump_eq_zero) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), value2);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), value2);
 } END_TEST
 
 START_TEST (jump_ne_zero) {
@@ -437,7 +438,7 @@ START_TEST (jump_ne_zero) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), value1);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), value1);
 
 	// Jump not taken
 	bx_bbuf_reset(&buffer);
@@ -456,7 +457,7 @@ START_TEST (jump_ne_zero) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), value2);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), value2);
 } END_TEST
 
 START_TEST (jump_gt_zero) {
@@ -481,7 +482,7 @@ START_TEST (jump_gt_zero) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), value1);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), value1);
 
 	// Jump not taken
 	bx_bbuf_reset(&buffer);
@@ -500,7 +501,7 @@ START_TEST (jump_gt_zero) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), value2);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), value2);
 
 	// Jump not taken
 	bx_bbuf_reset(&buffer);
@@ -519,7 +520,7 @@ START_TEST (jump_gt_zero) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), value2);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), value2);
 } END_TEST
 
 START_TEST (jump_ge_zero) {
@@ -544,7 +545,7 @@ START_TEST (jump_ge_zero) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), value1);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), value1);
 
 	// Jump taken
 	bx_bbuf_reset(&buffer);
@@ -563,7 +564,7 @@ START_TEST (jump_ge_zero) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), value1);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), value1);
 
 	// Jump not taken
 	bx_bbuf_reset(&buffer);
@@ -582,7 +583,7 @@ START_TEST (jump_ge_zero) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), value2);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), value2);
 } END_TEST
 
 START_TEST (jump_lt_zero) {
@@ -607,7 +608,7 @@ START_TEST (jump_lt_zero) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), value1);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), value1);
 
 	// Jump not taken
 	bx_bbuf_reset(&buffer);
@@ -626,7 +627,7 @@ START_TEST (jump_lt_zero) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), value2);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), value2);
 
 	// Jump not taken
 	bx_bbuf_reset(&buffer);
@@ -645,7 +646,7 @@ START_TEST (jump_lt_zero) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), value2);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), value2);
 } END_TEST
 
 START_TEST (jump_le_zero) {
@@ -670,7 +671,7 @@ START_TEST (jump_le_zero) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), value1);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), value1);
 
 	// Jump taken
 	bx_bbuf_reset(&buffer);
@@ -689,7 +690,7 @@ START_TEST (jump_le_zero) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), value1);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), value1);
 
 	// Jump not taken
 	bx_bbuf_reset(&buffer);
@@ -708,7 +709,7 @@ START_TEST (jump_le_zero) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), value2);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), value2);
 } END_TEST
 
 START_TEST (cast_test) {
@@ -725,7 +726,7 @@ START_TEST (cast_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(), (bx_float32) int_value);
+	ck_assert_int_eq(bx_test_field_get_float(&test_field), (bx_float32) int_value);
 
 	bx_bbuf_reset(&buffer);
 	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
@@ -736,7 +737,7 @@ START_TEST (cast_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), (bx_int32) float_value);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), (bx_int32) float_value);
 } END_TEST
 
 Suite *test_virtual_machine_create_suite() {

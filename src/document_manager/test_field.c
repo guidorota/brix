@@ -32,39 +32,39 @@
 #include "test_field.h"
 #include <string.h>
 
+#define GET_DATA(document_field_ptr) ((struct bx_test_field_data *) document_field_ptr->private_data)
+
 static bx_int8 test_field_get(struct bx_document_field *instance, void *data);
 static bx_int8 test_field_set(struct bx_document_field *instance, void *data);
 
-static bx_uint8 internal_value[4];
+bx_int8 bx_test_field_init(struct bx_document_field *instance, struct bx_test_field_data *data) {
 
-bx_int8 bx_test_field_init(struct bx_document_field *field) {
-
-	if (field == NULL) {
+	if (instance == NULL || data == NULL) {
 		return -1;
 	}
 
-	field->get = &test_field_get;
-	field->set = &test_field_set;
-	field->private_data = &internal_value;
-	field->type = BX_INT;
+	instance->get = &test_field_get;
+	instance->set = &test_field_set;
+	instance->private_data = data;
+	instance->type = BX_INT;
 
 	return 0;
 }
 
-void bx_test_field_set_int(bx_int32 value) {
-	*(bx_int32 *) internal_value = value;
+void bx_test_field_set_int(struct bx_document_field *instance, bx_int32 value) {
+	*(bx_int32 *) GET_DATA(instance)->internal_value = value;
 }
 
-void bx_test_field_set_float(bx_float32 value) {
-	*(bx_float32 *) internal_value = value;
+void bx_test_field_set_float(struct bx_document_field *instance, bx_float32 value) {
+	*(bx_float32 *) GET_DATA(instance)->internal_value = value;
 }
 
-bx_int32 bx_test_field_get_int() {
-	return *(bx_int32 *) internal_value;
+bx_int32 bx_test_field_get_int(struct bx_document_field *instance) {
+	return *(bx_int32 *) GET_DATA(instance)->internal_value;
 }
 
-bx_float32 bx_test_field_get_float() {
-	return *(bx_float32 *) internal_value;
+bx_float32 bx_test_field_get_float(struct bx_document_field *instance) {
+	return *(bx_float32 *) GET_DATA(instance)->internal_value;
 }
 
 bx_int8 test_field_get(struct bx_document_field *instance, void *data) {
@@ -73,7 +73,7 @@ bx_int8 test_field_get(struct bx_document_field *instance, void *data) {
 		return -1;
 	}
 
-	memcpy(data, (void *) internal_value, 4);
+	memcpy(data, (void *) GET_DATA(instance)->internal_value, 4);
 	return 0;
 }
 
@@ -82,6 +82,6 @@ bx_int8 test_field_set(struct bx_document_field *instance, void *data) {
 		return -1;
 	}
 
-	memcpy((void *) internal_value, data, 4);
+	memcpy((void *) GET_DATA(instance)->internal_value, data, 4);
 	return 0;
 }

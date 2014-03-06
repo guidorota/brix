@@ -40,7 +40,11 @@
 #define INT_TEST_FIELD "int_test_field"
 #define FLOAT_TEST_FIELD "float_test_field"
 
-static struct bx_document_field test_field;
+static struct bx_document_field int_test_field;
+static struct bx_test_field_data int_test_field_data;
+
+static struct bx_document_field float_test_field;
+static struct bx_test_field_data float_test_field_data;
 
 START_TEST (init_test) {
 	bx_int8 error;
@@ -52,11 +56,13 @@ START_TEST (init_test) {
 	// Init document manager
 	error = bx_dm_document_manager_init();
 	ck_assert_int_eq(error, 0);
-	error = bx_test_field_init(&test_field);
+	error = bx_test_field_init(&int_test_field, &int_test_field_data);
 	ck_assert_int_eq(error, 0);
-	error = bx_dm_add_field(&test_field, INT_TEST_FIELD);
+	error = bx_test_field_init(&float_test_field, &float_test_field_data);
 	ck_assert_int_eq(error, 0);
-	error = bx_dm_add_field(&test_field, FLOAT_TEST_FIELD);
+	error = bx_dm_add_field(&int_test_field, INT_TEST_FIELD);
+	ck_assert_int_eq(error, 0);
+	error = bx_dm_add_field(&float_test_field, FLOAT_TEST_FIELD);
 	ck_assert_int_eq(error, 0);
 
 	// Setup compiler symbol table
@@ -102,7 +108,7 @@ START_TEST (create_variable) {
 	struct bx_comp_code *code;
 	bx_int32 int_value = 90;
 
-	bx_test_field_set_int(int_value);
+	bx_test_field_set_int(&int_test_field, int_value);
 	expression = bx_cgex_create_variable(INT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
 	ck_assert_int_eq(expression->type, BX_COMP_BINARY);
@@ -113,7 +119,7 @@ START_TEST (create_variable) {
 	bx_cgco_add_identifier(code, INT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(), int_value);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), int_value);
 	bx_cgex_destroy_expression(expression);
 } END_TEST
 
