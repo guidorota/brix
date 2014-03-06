@@ -30,7 +30,43 @@
  */
 
 #include "test_codegen_expression.h"
+#include "virtual_machine/virtual_machine.h"
+#include "document_manager/document_manager.h"
+#include "document_manager/test_field.h"
 #include "compiler/codegen_expression.h"
+#include "compiler/codegen_symbol_table.h"
+
+#define CODE_BUFFER_LENGTH 128
+#define INT_TEST_FIELD "int_test_field"
+#define FLOAT_TEST_FIELD "float_test_field"
+
+static struct bx_document_field test_field;
+
+START_TEST (init_test) {
+	bx_int8 error;
+
+	// Init virtual machine
+	error = bx_vm_virtual_machine_init();
+	ck_assert_int_eq(error, 0);
+
+	// Init document manager
+	error = bx_dm_document_manager_init();
+	ck_assert_int_eq(error, 0);
+	error = bx_test_field_init(&test_field);
+	ck_assert_int_eq(error, 0);
+	error = bx_dm_add_field(&test_field, INT_TEST_FIELD);
+	ck_assert_int_eq(error, 0);
+	error = bx_dm_add_field(&test_field, FLOAT_TEST_FIELD);
+	ck_assert_int_eq(error, 0);
+
+	// Setup compiler symbol table
+	error = bx_cgsy_init();
+	ck_assert_int_eq(error, 0);
+	error = bx_cgsy_add(INT_TEST_FIELD, BX_INT, BX_COMP_EXISTING);
+	ck_assert_int_eq(error, 0);
+	bx_cgsy_add(FLOAT_TEST_FIELD, BX_FLOAT, BX_COMP_EXISTING);
+	ck_assert_int_eq(error, 0);
+} END_TEST
 
 START_TEST (create_constant) {
 	struct bx_comp_expr *expression;
@@ -60,12 +96,86 @@ START_TEST (create_constant) {
 	bx_cgex_destroy_expression(expression);
 } END_TEST
 
+START_TEST (plus_operator) {
+	struct bx_comp_expr *operand1;
+	struct bx_comp_expr *operand2;
+	struct bx_comp_expr *result;
+	bx_int32 int_operand1 = 87;
+	bx_int32 int_operand2 = -12;
+	bx_float32 float_operand1 = 87.0029;
+	bx_float32 float_operand2 = 23.877;
+
+	// Int operand, constant
+	operand1 = bx_cgex_create_int_constant(int_operand1);
+	ck_assert_ptr_ne(operand1, NULL);
+	operand2 = bx_cgex_create_int_constant(int_operand2);
+	ck_assert_ptr_ne(operand1, NULL);
+	result = bx_cgex_expression(operand1, operand2, BX_COMP_ADD);
+	ck_assert_ptr_ne(result, NULL);
+	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->data_type, BX_INT);
+	ck_assert_int_eq(result->bx_value.int_value, int_operand1 + int_operand2);
+	bx_cgex_destroy_expression(operand1);
+	bx_cgex_destroy_expression(operand2);
+	bx_cgex_destroy_expression(result);
+
+	// Float operand, constant
+	operand1 = bx_cgex_create_float_constant(float_operand1);
+	ck_assert_ptr_ne(operand1, NULL);
+	operand2 = bx_cgex_create_float_constant(float_operand2);
+	ck_assert_ptr_ne(operand1, NULL);
+	result = bx_cgex_expression(operand1, operand2, BX_COMP_ADD);
+	ck_assert_ptr_ne(result, NULL);
+	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->data_type, BX_FLOAT);
+	ck_assert_int_eq(result->bx_value.float_value, float_operand1 + float_operand2);
+	bx_cgex_destroy_expression(operand1);
+	bx_cgex_destroy_expression(operand2);
+	bx_cgex_destroy_expression(result);
+
+	// Operand1 Int, Operand2 Float, constant
+	operand1 = bx_cgex_create_int_constant(int_operand1);
+	ck_assert_ptr_ne(operand1, NULL);
+	operand2 = bx_cgex_create_float_constant(float_operand2);
+	ck_assert_ptr_ne(operand1, NULL);
+	result = bx_cgex_expression(operand1, operand2, BX_COMP_ADD);
+	ck_assert_ptr_ne(result, NULL);
+	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->data_type, BX_FLOAT);
+	ck_assert_int_eq(result->bx_value.float_value, int_operand1 + float_operand2);
+	bx_cgex_destroy_expression(operand1);
+	bx_cgex_destroy_expression(operand2);
+	bx_cgex_destroy_expression(result);
+
+	// Operand1 Float, Operand2 Int, constant
+	operand1 = bx_cgex_create_float_constant(float_operand1);
+	ck_assert_ptr_ne(operand1, NULL);
+	operand2 = bx_cgex_create_int_constant(int_operand2);
+	ck_assert_ptr_ne(operand1, NULL);
+	result = bx_cgex_expression(operand1, operand2, BX_COMP_ADD);
+	ck_assert_ptr_ne(result, NULL);
+	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->data_type, BX_FLOAT);
+	ck_assert_int_eq(result->bx_value.float_value, float_operand1 + int_operand2);
+	bx_cgex_destroy_expression(operand1);
+	bx_cgex_destroy_expression(operand2);
+	bx_cgex_destroy_expression(result);
+} END_TEST
+
 Suite *test_codegen_expression_create_suite(void) {
 	Suite *suite = suite_create("bx_linked_list");
 	TCase *tcase;
 
+	tcase = tcase_create("init_test");
+	tcase_add_test(tcase, init_test);
+	suite_add_tcase(suite, tcase);
+
 	tcase = tcase_create("create_constant");
 	tcase_add_test(tcase, create_constant);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("plus_operator");
+	tcase_add_test(tcase, plus_operator);
 	suite_add_tcase(suite, tcase);
 
 	return suite;

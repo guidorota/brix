@@ -160,7 +160,7 @@ static struct bx_comp_expr *plus_operator(struct bx_comp_expr *operand1, struct 
 	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
 		return add_int(operand1, operand2);
 
-	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
+	} else if (operand1->data_type == BX_FLOAT && operand2->data_type == BX_FLOAT) {
 		return add_float(operand1, operand2);
 
 	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_FLOAT) {
@@ -200,16 +200,30 @@ static struct bx_comp_expr *add_int(struct bx_comp_expr *operand1, struct bx_com
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IADD);
 
-	bx_cgex_destroy_expression(operand1);
-	bx_cgex_destroy_expression(operand2);
-
 	return result;
 }
 
 static struct bx_comp_expr *add_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
 	struct bx_comp_expr *result;
 
-	return NULL; //TODO: Stub
+	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+		return bx_cgex_create_float_constant(operand1->bx_value.float_value + operand2->bx_value.float_value);
+	}
+
+	if (operand1->type == BX_COMP_CONSTANT) {
+		operand1 = constant_to_binary(operand1);
+	}
+
+	if (operand2->type == BX_COMP_CONSTANT) {
+		operand2 = constant_to_binary(operand2);
+	}
+
+	result = create_code_expression();
+	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
+	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_FADD);
+
+	return result;
 }
 
 static struct bx_comp_expr *concat_strings(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
