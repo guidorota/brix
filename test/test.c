@@ -56,7 +56,7 @@ int main(void) {
 	srunner_add_suite(runner, test_linked_list_create_suite());
 	srunner_add_suite(runner, test_codegen_symbol_table_create_suite());
 	srunner_add_suite(runner, test_codegen_code_create_suite());
-	//srunner_add_suite(runner, test_codegen_expression_create_suite());
+	srunner_add_suite(runner, test_codegen_expression_create_suite());
 
 	srunner_run_all(runner, CK_VERBOSE);
 	number_failed = srunner_ntests_failed(runner);

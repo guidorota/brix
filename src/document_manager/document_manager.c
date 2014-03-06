@@ -47,7 +47,7 @@ bx_boolean compare_by_id(struct internal_field *field, char *identifier);
 bx_int8 bx_dm_document_manager_init() {
 	BX_LOG(LOG_INFO, "document_manager", "Initializing document manager...");
 
-	bx_list_init(&field_list, field_list_storage, DM_MAX_FIELD_NUMBER, sizeof (struct bx_document_field));
+	bx_list_init(&field_list, field_list_storage, DM_MAX_FIELD_NUMBER, sizeof (struct internal_field));
 
 	return 0;
 }
