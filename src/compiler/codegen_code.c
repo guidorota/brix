@@ -109,7 +109,7 @@ static bx_int8 add_to_code(struct bx_comp_code *code, void *data, bx_size data_l
 		code->capacity += DEFAULT_SIZE;
 	}
 
-	memcpy(code->data, data, data_length);
+	memcpy((bx_uint8 *) code->data + code->size, data, data_length);
 	code->size += data_length;
 
 	return 0;

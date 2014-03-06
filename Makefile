@@ -41,7 +41,7 @@ test: $(TEST_TARGETS)
 .SECONDEXPANSION:
 $(TEST_TARGETS): $(TEST_OBJECTS) $(OBJECTS) $$(@).o
 	$(CC) $(TEST_CFLAGS) -o $@ $(TEST_OBJECTS) $(OBJECTS) $(@).o `pkg-config --cflags --libs check`
-	./$(@)
+	#./$(@)
 	
 include $(SOURCES:.c=.d)
 include $(TEST_SOURCES:.c=.d)

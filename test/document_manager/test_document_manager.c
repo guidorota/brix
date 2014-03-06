@@ -33,7 +33,8 @@
 #include "document_manager/document_manager.h"
 #include "document_manager/test_field.h"
 
-#define TEST_FIELD_ID "test_field_id"
+#define FIELD_ID1 "test_field_1"
+#define FIELD_ID2 "test_field_2"
 
 static struct bx_document_field test_field;
 static bx_int32 value = 52;
@@ -55,14 +56,18 @@ START_TEST (document_manager_init) {
 START_TEST (add_test_field) {
 	bx_int8 error;
 
-	error = bx_dm_add_field(&test_field, TEST_FIELD_ID);
+	error = bx_dm_add_field(&test_field, FIELD_ID1);
+	ck_assert_int_eq(error, 0);
+	error = bx_dm_add_field(&test_field, FIELD_ID2);
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
 START_TEST (reject_duplicate_id) {
 	bx_int8 error;
 
-	error = bx_dm_add_field(&test_field, TEST_FIELD_ID);
+	error = bx_dm_add_field(&test_field, FIELD_ID1);
+	ck_assert_int_ne(error, 0);
+	error = bx_dm_add_field(&test_field, FIELD_ID2);
 	ck_assert_int_ne(error, 0);
 } END_TEST
 
@@ -71,7 +76,13 @@ START_TEST (set_field_value) {
 
 	bx_test_field_set_int(0);
 	ck_assert_int_ne(bx_test_field_get_int(), value);
-	error = bx_dm_invoke_set(TEST_FIELD_ID, &value);
+	error = bx_dm_invoke_set(FIELD_ID1, &value);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), value);
+
+	bx_test_field_set_int(0);
+	ck_assert_int_ne(bx_test_field_get_int(), value);
+	error = bx_dm_invoke_set(FIELD_ID2, &value);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_int(), value);
 } END_TEST
@@ -82,7 +93,13 @@ START_TEST (get_field_value) {
 
 	bx_test_field_set_int(value);
 	ck_assert_int_eq(bx_test_field_get_int(), value);
-	error = bx_dm_invoke_get(TEST_FIELD_ID, &out_value);
+	error = bx_dm_invoke_get(FIELD_ID1, &out_value);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(out_value, bx_test_field_get_int());
+
+	bx_test_field_set_int(value);
+	ck_assert_int_eq(bx_test_field_get_int(), value);
+	error = bx_dm_invoke_get(FIELD_ID2, &out_value);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(out_value, bx_test_field_get_int());
 } END_TEST

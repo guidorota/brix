@@ -122,6 +122,7 @@ struct bx_comp_expr *bx_cgex_create_variable(char *identifier) {
 
 	expression->type = BX_COMP_BINARY;
 	expression->data_type = symbol->data_type;
+	expression->bx_value.code = code;
 
 	return expression;
 }

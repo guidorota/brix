@@ -56,16 +56,16 @@ START_TEST (init_test) {
 	ck_assert_int_eq(error, 0);
 	error = bx_dm_add_field(&test_field, INT_TEST_FIELD);
 	ck_assert_int_eq(error, 0);
-	error = bx_dm_add_field(&test_field, FLOAT_TEST_FIELD);
-	ck_assert_int_eq(error, 0);
+//	error = bx_dm_add_field(&test_field, FLOAT_TEST_FIELD);
+//	ck_assert_int_eq(error, 0);
 
 	// Setup compiler symbol table
 	error = bx_cgsy_init();
 	ck_assert_int_eq(error, 0);
 	error = bx_cgsy_add(INT_TEST_FIELD, BX_INT, BX_COMP_EXISTING);
 	ck_assert_int_eq(error, 0);
-	bx_cgsy_add(FLOAT_TEST_FIELD, BX_FLOAT, BX_COMP_EXISTING);
-	ck_assert_int_eq(error, 0);
+//	bx_cgsy_add(FLOAT_TEST_FIELD, BX_FLOAT, BX_COMP_EXISTING);
+//	ck_assert_int_eq(error, 0);
 } END_TEST
 
 START_TEST (create_constant) {
@@ -93,6 +93,27 @@ START_TEST (create_constant) {
 	ck_assert_int_eq(expression->type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
 	ck_assert_int_eq(expression->bx_value.bool_value, bool_value);
+	bx_cgex_destroy_expression(expression);
+} END_TEST
+
+START_TEST (create_variable) {
+	bx_int8 error;
+	struct bx_comp_expr *expression;
+	struct bx_comp_code *code;
+	bx_int32 int_value = 90;
+
+	bx_test_field_set_int(int_value);
+	expression = bx_cgex_create_variable(INT_TEST_FIELD);
+	ck_assert_ptr_ne(expression, NULL);
+	ck_assert_int_eq(expression->type, BX_COMP_BINARY);
+	ck_assert_int_eq(expression->data_type, BX_INT);
+	ck_assert_ptr_ne(expression->bx_value.code, NULL);
+	code = expression->bx_value.code;
+	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_identifier(code, INT_TEST_FIELD);
+	error = bx_vm_execute(code->data, code->size);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(), int_value);
 	bx_cgex_destroy_expression(expression);
 } END_TEST
 
@@ -172,6 +193,10 @@ Suite *test_codegen_expression_create_suite(void) {
 
 	tcase = tcase_create("create_constant");
 	tcase_add_test(tcase, create_constant);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("create_variable");
+	tcase_add_test(tcase, create_variable);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("plus_operator");
