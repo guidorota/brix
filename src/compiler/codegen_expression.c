@@ -78,6 +78,21 @@ struct bx_comp_expr *bx_cgex_create_float_constant(bx_float32 value) {
 	return expression;
 }
 
+struct bx_comp_expr *bx_cgex_create_bool_constant(bx_boolean value) {
+	struct bx_comp_expr *expression;
+
+	expression = BX_MALLOC(struct bx_comp_expr);
+	if (expression == NULL) {
+		return NULL;
+	}
+
+	expression->data_type = BX_BOOL;
+	expression->type = BX_COMP_CONSTANT;
+	expression->bx_value.bool_value = value;
+
+	return expression;
+}
+
 struct bx_comp_expr *bx_cgex_create_variable(char *identifier) {
 	struct bx_comp_symbol *symbol;
 	struct bx_comp_expr *expression;
@@ -265,7 +280,7 @@ static struct bx_comp_expr *constant_to_binary(struct bx_comp_expr *value) {
 
 	case BX_BOOL:
 		bx_cgco_add_instruction(value->bx_value.code, BX_INSTR_PUSH32);
-		bx_cgco_add_bool_constant(value->bx_value.code, value->bx_value.bool_value);
+		bx_cgco_add_bool_constant(value->bx_value.code, (bx_uint32) value->bx_value.bool_value);
 		return NULL;
 
 	default:
