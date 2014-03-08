@@ -353,11 +353,11 @@ additive_expression
 	}
 	| additive_expression '+' multiplicative_expression
 	{
-		$$ = bx_cgex_expression($1, $1, BX_COMP_ADD);
+		$$ = bx_cgex_expression($1, $1, BX_COMP_OP_ADD);
 	}
 	| additive_expression '-' multiplicative_expression
 	{
-		$$ = bx_cgex_expression($1, $1, BX_COMP_SUB);
+		$$ = bx_cgex_expression($1, $1, BX_COMP_OP_SUB);
 	}
 	;
 	
@@ -368,15 +368,15 @@ multiplicative_expression
 	}
 	| multiplicative_expression '*' postfix_expression
 	{
-		$$ = bx_cgex_expression($1, $1, BX_COMP_MUL);
+		$$ = bx_cgex_expression($1, $1, BX_COMP_OP_MUL);
 	}
 	| multiplicative_expression '/' postfix_expression
 	{
-		$$ = bx_cgex_expression($1, $1, BX_COMP_DIV);
+		$$ = bx_cgex_expression($1, $1, BX_COMP_OP_DIV);
 	}
 	| multiplicative_expression '%' postfix_expression
 	{
-		$$ = bx_cgex_expression($1, $1, BX_COMP_MOD);
+		$$ = bx_cgex_expression($1, $1, BX_COMP_OP_MOD);
 	}
 	;
 

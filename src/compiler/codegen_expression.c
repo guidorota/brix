@@ -150,19 +150,19 @@ struct bx_comp_expr *bx_cgex_expression(struct bx_comp_expr *operand1,
 	}
 
 	switch(operation) {
-	case BX_COMP_ADD:
+	case BX_COMP_OP_ADD:
 		return addition_operator(operand1, operand2);
 		break;
-	case BX_COMP_SUB:
+	case BX_COMP_OP_SUB:
 		return subtraction_operator(operand1, operand2);
 		break;
-	case BX_COMP_MUL:
+	case BX_COMP_OP_MUL:
 		return multiplication_operator(operand1, operand2);
 		break;
-	case BX_COMP_DIV:
+	case BX_COMP_OP_DIV:
 		return division_operator(operand1, operand2);
 		break;
-	case BX_COMP_MOD:
+	case BX_COMP_OP_MOD:
 		return modulo_operator(operand1, operand2);
 		break;
 	default:
