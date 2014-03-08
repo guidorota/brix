@@ -740,6 +740,28 @@ START_TEST (cast_test) {
 	ck_assert_int_eq(bx_test_field_get_int(&test_field), (bx_int32) float_value);
 } END_TEST
 
+START_TEST (test_halt) {
+	bx_int8 error;
+	bx_int32 operand1 = 12;
+	bx_int32 operand2 = 24;
+
+	// ADDITION
+	bx_test_field_set_int(&test_field, 0);
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, operand1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, operand2);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_HALT);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_IADD);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_ne(bx_test_field_get_int(&test_field), operand1 + operand2);
+} END_TEST
+
 Suite *test_virtual_machine_create_suite() {
 	Suite *suite = suite_create("test_virtual_machine");
 	TCase *tcase;
@@ -806,6 +828,10 @@ Suite *test_virtual_machine_create_suite() {
 
 	tcase = tcase_create("cast_test");
 	tcase_add_test(tcase, cast_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("test_halt");
+	tcase_add_test(tcase, test_halt);
 	suite_add_tcase(suite, tcase);
 
 	return suite;

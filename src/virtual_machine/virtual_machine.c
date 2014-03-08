@@ -433,6 +433,13 @@ static bx_int8 bx_f2i_function(struct bx_vm_status *vm_status) {
 	return 0;
 }
 
+static bx_int8 bx_halt_function(struct bx_vm_status *vm_status) {
+
+	vm_status->stop = BX_BOOLEAN_TRUE;
+
+	return 0;
+}
+
 bx_int8 bx_vm_virtual_machine_init() {
 
 	BX_LOG(LOG_INFO, "virtual_machine", "Initializing virtual machine data structures...");
@@ -465,6 +472,7 @@ bx_int8 bx_vm_virtual_machine_init() {
 	instruction_array[BX_INSTR_NOP] = &bx_nop_function;
 	instruction_array[BX_INSTR_I2F] = &bx_i2f_function;
 	instruction_array[BX_INSTR_F2I] = &bx_f2i_function;
+	instruction_array[BX_INSTR_HALT] = &bx_halt_function;
 
 	return 0;
 }

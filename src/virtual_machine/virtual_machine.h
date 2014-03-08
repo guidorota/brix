@@ -57,11 +57,10 @@
 #define BX_INSTR_JGEZ 0x14
 #define BX_INSTR_JLTZ 0x15
 #define BX_INSTR_JLEZ 0x16
-#define BX_INSTR_NOP 0x20
-#define BX_INSTR_I2F 0x21
-#define BX_INSTR_F2I 0x22
-
-//TODO: Stop instruction
+#define BX_INSTR_NOP 0x17
+#define BX_INSTR_I2F 0x18
+#define BX_INSTR_F2I 0x19
+#define BX_INSTR_HALT 0X1A
 
 bx_int8 bx_vm_virtual_machine_init();
 
