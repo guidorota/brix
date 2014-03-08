@@ -52,6 +52,8 @@ bx_int8 bx_cgco_add_int_constant(struct bx_comp_code *code, bx_int32 value);
 
 bx_int8 bx_cgco_add_float_constant(struct bx_comp_code *code, bx_float32 value);
 
+bx_int8 bx_cgco_add_bool_constant(struct bx_comp_code *code, bx_uint32 value);
+
 bx_int8 bx_cgco_append_code(struct bx_comp_code *code, struct bx_comp_code *append);
 
 #endif /* CODEGEN_CODE_H_ */

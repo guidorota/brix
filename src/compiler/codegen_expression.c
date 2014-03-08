@@ -42,6 +42,10 @@ static struct bx_comp_expr *add_int(struct bx_comp_expr *operand1, struct bx_com
 static struct bx_comp_expr *add_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 static struct bx_comp_expr *concat_strings(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
+static struct bx_comp_expr *minus_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+static struct bx_comp_expr *sub_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+static struct bx_comp_expr *sub_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+
 static struct bx_comp_expr *int_to_float(struct bx_comp_expr *value);
 static struct bx_comp_expr *float_to_int(struct bx_comp_expr *value);
 static struct bx_comp_expr *constant_to_binary(struct bx_comp_expr *value);
@@ -129,8 +133,6 @@ struct bx_comp_expr *bx_cgex_create_variable(char *identifier) {
 
 struct bx_comp_expr *bx_cgex_expression(struct bx_comp_expr *operand1,
 		struct bx_comp_expr *operand2, enum bx_comp_operation operation) {
-	bx_int8 error;
-	struct bx_comp_expr *result;
 
 	if (operand1 == NULL || operand2 == NULL) {
 		return NULL;
@@ -139,6 +141,9 @@ struct bx_comp_expr *bx_cgex_expression(struct bx_comp_expr *operand1,
 	switch(operation) {
 	case BX_COMP_ADD:
 		return plus_operator(operand1, operand2);
+		break;
+	case BX_COMP_SUB:
+		return minus_operator(operand1, operand2);
 		break;
 	default:
 		return NULL;
@@ -150,7 +155,6 @@ struct bx_comp_expr *bx_cgex_expression(struct bx_comp_expr *operand1,
 ///////////////////
 
 static struct bx_comp_expr *plus_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
-	struct bx_comp_expr *result;
 
 	if (operand1->data_type == BX_BOOL || operand2->data_type == BX_BOOL ||
 			operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
@@ -230,9 +234,89 @@ static struct bx_comp_expr *add_float(struct bx_comp_expr *operand1, struct bx_c
 }
 
 static struct bx_comp_expr *concat_strings(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
-	struct bx_comp_expr *result;
 
 	return NULL; //TODO: Stub
+}
+
+///////////////////
+// PLUS OPERATOR //
+///////////////////
+
+static struct bx_comp_expr *minus_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+
+	if (operand1->data_type == BX_BOOL || operand2->data_type == BX_BOOL ||
+			operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
+			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM ||
+			operand1->data_type == BX_STRING || operand2->data_type == BX_STRING) {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '-'.");
+		return NULL;
+
+	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
+		return sub_int(operand1, operand2);
+
+	} else if (operand1->data_type == BX_FLOAT && operand2->data_type == BX_FLOAT) {
+		return sub_float(operand1, operand2);
+
+	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_FLOAT) {
+		operand1 = int_to_float(operand1);
+		return sub_float(operand1, operand2);
+
+	} else if (operand2->data_type == BX_INT && operand1->data_type == BX_FLOAT) {
+		operand2 = int_to_float(operand2);
+		return sub_float(operand1, operand2);
+
+	} else {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in function plus_operator.");
+		return NULL;
+	}
+}
+
+static struct bx_comp_expr *sub_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	struct bx_comp_expr *result;
+
+	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+		return bx_cgex_create_int_constant(operand1->bx_value.int_value - operand2->bx_value.int_value);
+	}
+
+	if (operand1->type == BX_COMP_CONSTANT) {
+		operand1 = constant_to_binary(operand1);
+	}
+
+	if (operand2->type == BX_COMP_CONSTANT) {
+		operand2 = constant_to_binary(operand2);
+	}
+
+	result = create_code_expression();
+	result->data_type = BX_INT;
+	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
+	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_ISUB);
+
+	return result;
+}
+
+static struct bx_comp_expr *sub_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	struct bx_comp_expr *result;
+
+	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+		return bx_cgex_create_float_constant(operand1->bx_value.float_value - operand2->bx_value.float_value);
+	}
+
+	if (operand1->type == BX_COMP_CONSTANT) {
+		operand1 = constant_to_binary(operand1);
+	}
+
+	if (operand2->type == BX_COMP_CONSTANT) {
+		operand2 = constant_to_binary(operand2);
+	}
+
+	result = create_code_expression();
+	result->data_type = BX_FLOAT;
+	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
+	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_FSUB);
+
+	return result;
 }
 
 ////////////////
@@ -240,7 +324,6 @@ static struct bx_comp_expr *concat_strings(struct bx_comp_expr *operand1, struct
 ////////////////
 
 static struct bx_comp_expr *int_to_float(struct bx_comp_expr *value) {
-	bx_float32 float_value;
 
 	switch(value->type) {
 	case BX_COMP_BINARY:
@@ -260,7 +343,6 @@ static struct bx_comp_expr *int_to_float(struct bx_comp_expr *value) {
 }
 
 static struct bx_comp_expr *float_to_int(struct bx_comp_expr *value) {
-	bx_float32 float_value;
 
 	switch(value->type) {
 	case BX_COMP_BINARY:
