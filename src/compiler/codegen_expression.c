@@ -197,6 +197,7 @@ static struct bx_comp_expr *add_int(struct bx_comp_expr *operand1, struct bx_com
 	}
 
 	result = create_code_expression();
+	result->data_type = BX_INT;
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IADD);
@@ -220,6 +221,7 @@ static struct bx_comp_expr *add_float(struct bx_comp_expr *operand1, struct bx_c
 	}
 
 	result = create_code_expression();
+	result->data_type = BX_FLOAT;
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_FADD);
@@ -278,31 +280,35 @@ static struct bx_comp_expr *float_to_int(struct bx_comp_expr *value) {
 }
 
 static struct bx_comp_expr *constant_to_binary(struct bx_comp_expr *value) {
+	struct bx_comp_code *code;
 
-	value->bx_value.code = bx_cgco_create();
-	value->type = BX_COMP_BINARY;
+	code = bx_cgco_create();
 
 	switch(value->data_type) {
 	case BX_INT:
-		bx_cgco_add_instruction(value->bx_value.code, BX_INSTR_PUSH32);
-		bx_cgco_add_int_constant(value->bx_value.code, value->bx_value.int_value);
-		return value;
+		bx_cgco_add_instruction(code, BX_INSTR_PUSH32);
+		bx_cgco_add_int_constant(code, value->bx_value.int_value);
+		break;
 
 	case BX_FLOAT:
-		bx_cgco_add_instruction(value->bx_value.code, BX_INSTR_PUSH32);
-		bx_cgco_add_float_constant(value->bx_value.code, value->bx_value.float_value);
-		return value;
+		bx_cgco_add_instruction(code, BX_INSTR_PUSH32);
+		bx_cgco_add_float_constant(code, value->bx_value.float_value);
+		break;
 
 	case BX_BOOL:
-		bx_cgco_add_instruction(value->bx_value.code, BX_INSTR_PUSH32);
-		bx_cgco_add_bool_constant(value->bx_value.code, (bx_uint32) value->bx_value.bool_value);
-		return NULL;
+		bx_cgco_add_instruction(code, BX_INSTR_PUSH32);
+		bx_cgco_add_bool_constant(code, (bx_uint32) value->bx_value.bool_value);
+		break;
 
 	default:
 		BX_LOG(LOG_WARNING, "codegen_expression",
 				"Unexpected data type encountered in constant_to_binary conversion.");
 		return NULL;
 	}
+
+	value->type = BX_COMP_BINARY;
+	value->bx_value.code = code;
+	return value;
 }
 
 ///////////
