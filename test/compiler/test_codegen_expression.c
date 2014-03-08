@@ -881,6 +881,69 @@ START_TEST (division_operator) {
 	bx_cgex_destroy_expression(result);
 } END_TEST
 
+START_TEST (modulo_operator) {
+	bx_int8 error;
+	struct bx_comp_expr *operand1;
+	struct bx_comp_expr *operand2;
+	struct bx_comp_expr *result;
+	bx_int32 int_operand1 = 34;
+	bx_int32 int_operand2 = -7;
+
+	// Int operand, constant
+	operand1 = bx_cgex_create_int_constant(int_operand1);
+	ck_assert_ptr_ne(operand1, NULL);
+	operand2 = bx_cgex_create_int_constant(int_operand2);
+	ck_assert_ptr_ne(operand1, NULL);
+	result = bx_cgex_expression(operand1, operand2, BX_COMP_MOD);
+	ck_assert_ptr_ne(result, NULL);
+	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->data_type, BX_INT);
+	ck_assert_int_eq(result->bx_value.int_value, int_operand1 % int_operand2);
+	bx_cgex_destroy_expression(operand1);
+	bx_cgex_destroy_expression(operand2);
+	bx_cgex_destroy_expression(result);
+
+	// Operand1 Int, Operand2 Int, binary
+	bx_test_field_set_int(&int_test_field, int_operand1);
+	operand1 = bx_cgex_create_variable(INT_TEST_FIELD);
+	ck_assert_ptr_ne(operand1, NULL);
+	operand2 = bx_cgex_create_variable(INT_TEST_FIELD);
+	ck_assert_ptr_ne(operand2, NULL);
+	result = bx_cgex_expression(operand1, operand2, BX_COMP_MOD);
+	ck_assert_ptr_ne(result, NULL);
+	ck_assert_int_eq(result->data_type, BX_INT);
+	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_ptr_ne(result->bx_value.code, NULL);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_STORE32);
+	bx_cgco_add_identifier(result->bx_value.code, INT_TEST_FIELD);
+	error = bx_vm_execute(result->bx_value.code->data, result->bx_value.code->size);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), int_operand1 % int_operand1);
+	bx_cgex_destroy_expression(operand1);
+	bx_cgex_destroy_expression(operand2);
+	bx_cgex_destroy_expression(result);
+
+	// Operand1 Int constant, Operand2 Int binary
+	operand1 = bx_cgex_create_int_constant(int_operand1);
+	ck_assert_ptr_ne(operand1, NULL);
+	bx_test_field_set_int(&int_test_field, int_operand2);
+	operand2 = bx_cgex_create_variable(INT_TEST_FIELD);
+	ck_assert_ptr_ne(operand2, NULL);
+	result = bx_cgex_expression(operand1, operand2, BX_COMP_MOD);
+	ck_assert_ptr_ne(result, NULL);
+	ck_assert_int_eq(result->data_type, BX_INT);
+	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_ptr_ne(result->bx_value.code, NULL);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_STORE32);
+	bx_cgco_add_identifier(result->bx_value.code, INT_TEST_FIELD);
+	error = bx_vm_execute(result->bx_value.code->data, result->bx_value.code->size);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), int_operand1 % int_operand2);
+	bx_cgex_destroy_expression(operand1);
+	bx_cgex_destroy_expression(operand2);
+	bx_cgex_destroy_expression(result);
+} END_TEST
+
 Suite *test_codegen_expression_create_suite(void) {
 	Suite *suite = suite_create("bx_linked_list");
 	TCase *tcase;
@@ -911,6 +974,10 @@ Suite *test_codegen_expression_create_suite(void) {
 
 	tcase = tcase_create("division_operator");
 	tcase_add_test(tcase, division_operator);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("modulo_operator");
+	tcase_add_test(tcase, modulo_operator);
 	suite_add_tcase(suite, tcase);
 
 	return suite;
