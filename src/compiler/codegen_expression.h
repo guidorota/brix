@@ -48,7 +48,7 @@ enum bx_comp_operation {
 	BX_COMP_OP_XOR,
 	BX_COMP_OP_BTIWISE_AND,
 	BX_COMP_OP_BTIWISE_OR,
-	BX_COMP_OP_BTIWISE_XOR
+	BX_COMP_BTIWISE_XOR
 };
 
 enum bx_comp_exp_type {

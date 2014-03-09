@@ -60,6 +60,7 @@ static struct bx_comp_expr *mod_int(struct bx_comp_expr *operand1, struct bx_com
 static struct bx_comp_expr *int_to_float(struct bx_comp_expr *value);
 static struct bx_comp_expr *float_to_int(struct bx_comp_expr *value);
 static struct bx_comp_expr *constant_to_binary(struct bx_comp_expr *value);
+static void constant_int_to_binary(struct bx_comp_code *code, bx_int32 int_value);
 
 struct bx_comp_expr *create_code_expression();
 
@@ -596,8 +597,7 @@ static struct bx_comp_expr *constant_to_binary(struct bx_comp_expr *value) {
 
 	switch(value->data_type) {
 	case BX_INT:
-		bx_cgco_add_instruction(code, BX_INSTR_PUSH32);
-		bx_cgco_add_int_constant(code, value->bx_value.int_value);
+		constant_int_to_binary(code, value->bx_value.int_value);
 		break;
 
 	case BX_FLOAT:
@@ -619,6 +619,22 @@ static struct bx_comp_expr *constant_to_binary(struct bx_comp_expr *value) {
 	value->type = BX_COMP_BINARY;
 	value->bx_value.code = code;
 	return value;
+}
+
+static void constant_int_to_binary(struct bx_comp_code *code, bx_int32 int_value) {
+
+	switch (int_value) {
+	case 0:
+		bx_cgco_add_instruction(code, BX_INSTR_IPUSH_0);
+		break;
+	case 1:
+		bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
+		break;
+	default:
+		bx_cgco_add_instruction(code, BX_INSTR_PUSH32);
+		bx_cgco_add_int_constant(code, int_value);
+		break;
+	}
 }
 
 ///////////

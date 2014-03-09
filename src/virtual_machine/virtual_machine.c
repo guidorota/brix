@@ -72,10 +72,8 @@ typedef bx_int8 (*bx_instruction)(struct bx_vm_status *);
 static struct bx_vm_status vm_status;
 static bx_int8 stack_byte_array[VM_STACK_SIZE];
 
-static bx_instruction instruction_array[256];
-
-static const bx_int32 int_const_0 = 0;
-static const bx_int32 int_const_1 = 1;
+static bx_int32 int_const_0 = 0;
+static bx_int32 int_const_1 = 1;
 
 static inline bx_int8 bx_integer_arithmetic_function(struct bx_stack *execution_stack, enum operations operation);
 static inline bx_int8 bx_float_arithmetic_function(struct bx_stack *execution_stack, enum operations operation);
@@ -261,19 +259,13 @@ static bx_int8 bx_push32_function(struct bx_vm_status *vm_status) {
 }
 
 static bx_int8 bx_ipush_0_function(struct bx_vm_status *vm_status) {
-	bx_int8 error;
 
-	error = BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, int_const_0);
-
-	return error;
+	return BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, int_const_0);
 }
 
 static bx_int8 bx_ipush_1_function(struct bx_vm_status *vm_status) {
-	bx_int8 error;
 
-	error = BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, int_const_1);
-
-	return error;
+	return BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, int_const_1);
 }
 
 static bx_int8 bx_load32_function(struct bx_vm_status *vm_status) {
@@ -459,41 +451,42 @@ static bx_int8 bx_halt_function(struct bx_vm_status *vm_status) {
 	return 0;
 }
 
+static const bx_instruction instruction_array[256] = {
+	&bx_iadd_function,
+	&bx_isub_function,
+	&bx_imul_function,
+	&bx_idiv_function,
+	&bx_imod_function,
+	&bx_iand_function,
+	&bx_ior_function,
+	&bx_ixor_function,
+	&bx_inot_function,
+	&bx_fadd_function,
+	&bx_fsub_function,
+	&bx_fmul_function,
+	&bx_fdiv_function,
+	&bx_push32_function,
+	&bx_ipush_0_function,
+	&bx_ipush_1_function,
+	&bx_load32_function,
+	&bx_store32_function,
+	&bx_jump_function,
+	&bx_jeqz_function,
+	&bx_jnez_function,
+	&bx_jgtz_function,
+	&bx_jgez_function,
+	&bx_jltz_function,
+	&bx_jlez_function,
+	&bx_nop_function,
+	&bx_i2f_function,
+	&bx_f2i_function,
+	&bx_halt_function
+};
+
 bx_int8 bx_vm_virtual_machine_init() {
 
 	BX_LOG(LOG_INFO, "virtual_machine", "Initializing virtual machine data structures...");
 	bx_stack_init(&vm_status.execution_stack, stack_byte_array, VM_STACK_SIZE);
-
-	BX_LOG(LOG_INFO, "virtual_machine", "Initializing instructions...");
-	instruction_array[BX_INSTR_IADD] = &bx_iadd_function;
-	instruction_array[BX_INSTR_ISUB] = &bx_isub_function;
-	instruction_array[BX_INSTR_IMUL] = &bx_imul_function;
-	instruction_array[BX_INSTR_IDIV] = &bx_idiv_function;
-	instruction_array[BX_INSTR_IMOD] = &bx_imod_function;
-	instruction_array[BX_INSTR_IAND] = &bx_iand_function;
-	instruction_array[BX_INSTR_IOR] = &bx_ior_function;
-	instruction_array[BX_INSTR_IXOR] = &bx_ixor_function;
-	instruction_array[BX_INSTR_INOT] = &bx_inot_function;
-	instruction_array[BX_INSTR_FADD] = &bx_fadd_function;
-	instruction_array[BX_INSTR_FSUB] = &bx_fsub_function;
-	instruction_array[BX_INSTR_FMUL] = &bx_fmul_function;
-	instruction_array[BX_INSTR_FDIV] = &bx_fdiv_function;
-	instruction_array[BX_INSTR_PUSH32] = &bx_push32_function;
-	instruction_array[BX_INSTR_IPUSH_0] = &bx_ipush_0_function;
-	instruction_array[BX_INSTR_IPUSH_1] = &bx_ipush_1_function;
-	instruction_array[BX_INSTR_LOAD32] = &bx_load32_function;
-	instruction_array[BX_INSTR_STORE32] = &bx_store32_function;
-	instruction_array[BX_INSTR_JUMP] = &bx_jump_function;
-	instruction_array[BX_INSTR_JEQZ] = &bx_jeqz_function;
-	instruction_array[BX_INSTR_JNEZ] = &bx_jnez_function;
-	instruction_array[BX_INSTR_JGTZ] = &bx_jgtz_function;
-	instruction_array[BX_INSTR_JGEZ] = &bx_jgez_function;
-	instruction_array[BX_INSTR_JLTZ] = &bx_jltz_function;
-	instruction_array[BX_INSTR_JLEZ] = &bx_jlez_function;
-	instruction_array[BX_INSTR_NOP] = &bx_nop_function;
-	instruction_array[BX_INSTR_I2F] = &bx_i2f_function;
-	instruction_array[BX_INSTR_F2I] = &bx_f2i_function;
-	instruction_array[BX_INSTR_HALT] = &bx_halt_function;
 
 	return 0;
 }
