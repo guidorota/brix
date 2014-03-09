@@ -48,19 +48,21 @@
 #define BX_INSTR_FMUL 0xB
 #define BX_INSTR_FDIV 0xC
 #define BX_INSTR_PUSH32 0xD
-#define BX_INSTR_LOAD32 0xE
-#define BX_INSTR_STORE32 0xF
-#define BX_INSTR_JUMP 0x10
-#define BX_INSTR_JEQZ 0x11
-#define BX_INSTR_JNEZ 0x12
-#define BX_INSTR_JGTZ 0x13
-#define BX_INSTR_JGEZ 0x14
-#define BX_INSTR_JLTZ 0x15
-#define BX_INSTR_JLEZ 0x16
-#define BX_INSTR_NOP 0x17
-#define BX_INSTR_I2F 0x18
-#define BX_INSTR_F2I 0x19
-#define BX_INSTR_HALT 0X1A
+#define BX_INSTR_IPUSH_0 0xE
+#define BX_INSTR_IPUSH_1 0xF
+#define BX_INSTR_LOAD32 0x10
+#define BX_INSTR_STORE32 0x11
+#define BX_INSTR_JUMP 0x12
+#define BX_INSTR_JEQZ 0x13
+#define BX_INSTR_JNEZ 0x14
+#define BX_INSTR_JGTZ 0x15
+#define BX_INSTR_JGEZ 0x16
+#define BX_INSTR_JLTZ 0x17
+#define BX_INSTR_JLEZ 0x18
+#define BX_INSTR_NOP 0x19
+#define BX_INSTR_I2F 0x1A
+#define BX_INSTR_F2I 0x1B
+#define BX_INSTR_HALT 0X1C
 
 bx_int8 bx_vm_virtual_machine_init();
 

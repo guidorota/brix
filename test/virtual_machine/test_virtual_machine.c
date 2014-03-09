@@ -97,6 +97,32 @@ START_TEST (load32_test) {
 	ck_assert_int_eq(bx_test_field_get_int(&test_field), operand1 + operand2);
 } END_TEST
 
+START_TEST (test_ipush_0) {
+	bx_int8 error;
+
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_IPUSH_0);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), 0);
+} END_TEST
+
+START_TEST (test_ipush_1) {
+	bx_int8 error;
+
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_IPUSH_1);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), 1);
+} END_TEST
+
 START_TEST (integer_arithmetics_test) {
 	bx_int8 error;
 	bx_int32 operand1 = 12;
@@ -776,6 +802,14 @@ Suite *test_virtual_machine_create_suite() {
 
 	tcase = tcase_create("load32_test");
 	tcase_add_test(tcase, load32_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("test_ipush_0");
+	tcase_add_test(tcase, test_ipush_0);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("test_ipush_1");
+	tcase_add_test(tcase, test_ipush_1);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("integer_arithmetics_test");

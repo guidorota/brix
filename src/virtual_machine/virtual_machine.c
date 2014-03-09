@@ -74,6 +74,9 @@ static bx_int8 stack_byte_array[VM_STACK_SIZE];
 
 static bx_instruction instruction_array[256];
 
+static const bx_int32 int_const_0 = 0;
+static const bx_int32 int_const_1 = 1;
+
 static inline bx_int8 bx_integer_arithmetic_function(struct bx_stack *execution_stack, enum operations operation);
 static inline bx_int8 bx_float_arithmetic_function(struct bx_stack *execution_stack, enum operations operation);
 static inline bx_int8 bx_fetch_instruction(struct bx_vm_status *vm_status, bx_uint8 *instruction_id);
@@ -255,6 +258,22 @@ static bx_int8 bx_push32_function(struct bx_vm_status *vm_status) {
 	}
 
 	return 0;
+}
+
+static bx_int8 bx_ipush_0_function(struct bx_vm_status *vm_status) {
+	bx_int8 error;
+
+	error = BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, int_const_0);
+
+	return error;
+}
+
+static bx_int8 bx_ipush_1_function(struct bx_vm_status *vm_status) {
+	bx_int8 error;
+
+	error = BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, int_const_1);
+
+	return error;
 }
 
 static bx_int8 bx_load32_function(struct bx_vm_status *vm_status) {
@@ -460,6 +479,8 @@ bx_int8 bx_vm_virtual_machine_init() {
 	instruction_array[BX_INSTR_FMUL] = &bx_fmul_function;
 	instruction_array[BX_INSTR_FDIV] = &bx_fdiv_function;
 	instruction_array[BX_INSTR_PUSH32] = &bx_push32_function;
+	instruction_array[BX_INSTR_IPUSH_0] = &bx_ipush_0_function;
+	instruction_array[BX_INSTR_IPUSH_1] = &bx_ipush_1_function;
 	instruction_array[BX_INSTR_LOAD32] = &bx_load32_function;
 	instruction_array[BX_INSTR_STORE32] = &bx_store32_function;
 	instruction_array[BX_INSTR_JUMP] = &bx_jump_function;
