@@ -36,25 +36,22 @@
 #include "logging.h"
 #include "document_manager/document_manager.h"
 
-enum operations {
-	ADD,
-	SUB,
-	MUL,
-	DIV,
-	MOD,
-	NOT,
-	AND,
-	OR,
-	XOR
-};
-
-enum comparison_type {
-	EQ,
-	NE,
-	GT,
-	GE,
-	LT,
-	LE
+enum vm_operand {
+	BX_VMOP_ADD,
+	BX_VMOP_SUB,
+	BX_VMOP_MUL,
+	BX_VMOP_DIV,
+	BX_VMOP_MOD,
+	BX_VMOP_NOT,
+	BX_VMOP_AND,
+	BX_VMOP_OR,
+	BX_VMOP_XOR,
+	BX_VMOP_EQ,
+	BX_VMOP_NE,
+	BX_VMOP_LT,
+	BX_VMOP_LE,
+	BX_VMOP_GT,
+	BX_VMOP_GE
 };
 
 #define BYTE_AT_PC(vm_status_pointer) (vm_status_pointer->code + vm_status_pointer->program_counter)
@@ -75,49 +72,73 @@ static bx_int8 stack_byte_array[VM_STACK_SIZE];
 static bx_int32 int_const_0 = 0;
 static bx_int32 int_const_1 = 1;
 
-static inline bx_int8 bx_integer_arithmetic_function(struct bx_stack *execution_stack, enum operations operation);
-static inline bx_int8 bx_float_arithmetic_function(struct bx_stack *execution_stack, enum operations operation);
+static inline bx_int8 bx_integer_functions(struct bx_stack *execution_stack, enum vm_operand operation);
+static inline bx_int8 bx_float_functions(struct bx_stack *execution_stack, enum vm_operand operation);
 static inline bx_int8 bx_fetch_instruction(struct bx_vm_status *vm_status, bx_uint8 *instruction_id);
 static inline bx_int8 bx_fetch(struct bx_vm_status *vm_status, void *data, bx_size data_length);
-static inline bx_int8 bx_general_jump_function(struct bx_vm_status *vm_status, enum comparison_type comparison);
+static inline bx_int8 bx_jump_functions(struct bx_vm_status *vm_status, enum vm_operand comparison);
 
 //////////////////
 // Instructions //
 //////////////////
 
 static bx_int8 bx_iadd_function(struct bx_vm_status *vm_status) {
-	return bx_integer_arithmetic_function(&vm_status->execution_stack, ADD);
+	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_ADD);
 }
 
 static bx_int8 bx_isub_function(struct bx_vm_status *vm_status) {
-	return bx_integer_arithmetic_function(&vm_status->execution_stack, SUB);
+	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_SUB);
 }
 
 static bx_int8 bx_imul_function(struct bx_vm_status *vm_status) {
-	return bx_integer_arithmetic_function(&vm_status->execution_stack, MUL);
+	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_MUL);
 }
 
 static bx_int8 bx_idiv_function(struct bx_vm_status *vm_status) {
-	return bx_integer_arithmetic_function(&vm_status->execution_stack, DIV);
+	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_DIV);
 }
 
 static bx_int8 bx_imod_function(struct bx_vm_status *vm_status) {
-	return bx_integer_arithmetic_function(&vm_status->execution_stack, MOD);
+	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_MOD);
 }
 
 static bx_int8 bx_iand_function(struct bx_vm_status *vm_status) {
-	return bx_integer_arithmetic_function(&vm_status->execution_stack, AND);
+	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_AND);
 }
 
 static bx_int8 bx_ior_function(struct bx_vm_status *vm_status) {
-	return bx_integer_arithmetic_function(&vm_status->execution_stack, OR);
+	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_OR);
 }
 
 static bx_int8 bx_ixor_function(struct bx_vm_status *vm_status) {
-	return bx_integer_arithmetic_function(&vm_status->execution_stack, XOR);
+	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_XOR);
 }
 
-static inline bx_int8 bx_integer_arithmetic_function(struct bx_stack *execution_stack, enum operations operation) {
+static bx_int8 bx_ieq_function(struct bx_vm_status *vm_status) {
+	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_EQ);
+}
+
+static bx_int8 bx_ine_function(struct bx_vm_status *vm_status) {
+	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_NE);
+}
+
+static bx_int8 bx_igt_function(struct bx_vm_status *vm_status) {
+	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_GT);
+}
+
+static bx_int8 bx_ige_function(struct bx_vm_status *vm_status) {
+	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_GE);
+}
+
+static bx_int8 bx_ilt_function(struct bx_vm_status *vm_status) {
+	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_LT);
+}
+
+static bx_int8 bx_ile_function(struct bx_vm_status *vm_status) {
+	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_LE);
+}
+
+static inline bx_int8 bx_integer_functions(struct bx_stack *execution_stack, enum vm_operand operation) {
 	bx_int32 operand1;
 	bx_int32 operand2;
 	bx_int32 result;
@@ -133,29 +154,47 @@ static inline bx_int8 bx_integer_arithmetic_function(struct bx_stack *execution_
 	}
 
 	switch (operation) {
-		case ADD:
+		case BX_VMOP_ADD:
 			result = operand1 + operand2;
 			break;
-		case SUB:
+		case BX_VMOP_SUB:
 			result = operand1 - operand2;
 			break;
-		case MUL:
+		case BX_VMOP_MUL:
 			result = operand1 * operand2;
 			break;
-		case DIV:
+		case BX_VMOP_DIV:
 			result = operand1 / operand2;
 			break;
-		case MOD:
+		case BX_VMOP_MOD:
 			result = operand1 % operand2;
 			break;
-		case AND:
+		case BX_VMOP_AND:
 			result = operand1 & operand2;
 			break;
-		case OR:
+		case BX_VMOP_OR:
 			result = operand1 | operand2;
 			break;
-		case XOR:
+		case BX_VMOP_XOR:
 			result = operand1 ^ operand2;
+			break;
+		case BX_VMOP_EQ:
+			result = operand1 == operand2;
+			break;
+		case BX_VMOP_NE:
+			result = operand1 != operand2;
+			break;
+		case BX_VMOP_GT:
+			result = operand1 > operand2;
+			break;
+		case BX_VMOP_GE:
+			result = operand1 >= operand2;
+			break;
+		case BX_VMOP_LT:
+			result = operand1 < operand2;
+			break;
+		case BX_VMOP_LE:
+			result = operand1 <= operand2;
 			break;
 		default:
 			return -1;
@@ -188,22 +227,46 @@ static bx_int8 bx_inot_function(struct bx_vm_status *vm_status) {
 }
 
 static bx_int8 bx_fadd_function(struct bx_vm_status *vm_status) {
-	return bx_float_arithmetic_function(&vm_status->execution_stack, ADD);
+	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_ADD);
 }
 
 static bx_int8 bx_fsub_function(struct bx_vm_status *vm_status) {
-	return bx_float_arithmetic_function(&vm_status->execution_stack, SUB);
+	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_SUB);
 }
 
 static bx_int8 bx_fmul_function(struct bx_vm_status *vm_status) {
-	return bx_float_arithmetic_function(&vm_status->execution_stack, MUL);
+	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_MUL);
 }
 
 static bx_int8 bx_fdiv_function(struct bx_vm_status *vm_status) {
-	return bx_float_arithmetic_function(&vm_status->execution_stack, DIV);
+	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_DIV);
 }
 
-static inline bx_int8 bx_float_arithmetic_function(struct bx_stack *execution_stack, enum operations operation) {
+static bx_int8 bx_feq_function(struct bx_vm_status *vm_status) {
+	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_EQ);
+}
+
+static bx_int8 bx_fne_function(struct bx_vm_status *vm_status) {
+	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_NE);
+}
+
+static bx_int8 bx_fgt_function(struct bx_vm_status *vm_status) {
+	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_GT);
+}
+
+static bx_int8 bx_fge_function(struct bx_vm_status *vm_status) {
+	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_GE);
+}
+
+static bx_int8 bx_flt_function(struct bx_vm_status *vm_status) {
+	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_LT);
+}
+
+static bx_int8 bx_fle_function(struct bx_vm_status *vm_status) {
+	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_LE);
+}
+
+static inline bx_int8 bx_float_functions(struct bx_stack *execution_stack, enum vm_operand operation) {
 	bx_float32 operand1;
 	bx_float32 operand2;
 	bx_float32 result;
@@ -219,17 +282,35 @@ static inline bx_int8 bx_float_arithmetic_function(struct bx_stack *execution_st
 	}
 
 	switch (operation) {
-		case ADD:
+		case BX_VMOP_ADD:
 			result = operand1 + operand2;
 			break;
-		case SUB:
+		case BX_VMOP_SUB:
 			result = operand1 - operand2;
 			break;
-		case MUL:
+		case BX_VMOP_MUL:
 			result = operand1 * operand2;
 			break;
-		case DIV:
+		case BX_VMOP_DIV:
 			result = operand1 / operand2;
+			break;
+		case BX_VMOP_EQ:
+			result = operand1 == operand2;
+			break;
+		case BX_VMOP_NE:
+			result = operand1 != operand2;
+			break;
+		case BX_VMOP_GT:
+			result = operand1 > operand2;
+			break;
+		case BX_VMOP_GE:
+			result = operand1 >= operand2;
+			break;
+		case BX_VMOP_LT:
+			result = operand1 < operand2;
+			break;
+		case BX_VMOP_LE:
+			result = operand1 <= operand2;
 			break;
 		default:
 			return -1;
@@ -327,30 +408,30 @@ static bx_int8 bx_jump_function(struct bx_vm_status *vm_status) {
 }
 
 static bx_int8 bx_jeqz_function(struct bx_vm_status *vm_status) {
-	return bx_general_jump_function(vm_status, EQ);
+	return bx_jump_functions(vm_status, BX_VMOP_EQ);
 }
 
 static bx_int8 bx_jnez_function(struct bx_vm_status *vm_status) {
-	return bx_general_jump_function(vm_status, NE);
+	return bx_jump_functions(vm_status, BX_VMOP_NE);
 }
 
 static bx_int8 bx_jgez_function(struct bx_vm_status *vm_status) {
-	return bx_general_jump_function(vm_status, GE);
+	return bx_jump_functions(vm_status, BX_VMOP_GE);
 }
 
 static bx_int8 bx_jgtz_function(struct bx_vm_status *vm_status) {
-	return bx_general_jump_function(vm_status, GT);
+	return bx_jump_functions(vm_status, BX_VMOP_GT);
 }
 
 static bx_int8 bx_jlez_function(struct bx_vm_status *vm_status) {
-	return bx_general_jump_function(vm_status, LE);
+	return bx_jump_functions(vm_status, BX_VMOP_LE);
 }
 
 static bx_int8 bx_jltz_function(struct bx_vm_status *vm_status) {
-	return bx_general_jump_function(vm_status, LT);
+	return bx_jump_functions(vm_status, BX_VMOP_LT);
 }
 
-static inline bx_int8 bx_general_jump_function(struct bx_vm_status *vm_status, enum comparison_type comparison) {
+static inline bx_int8 bx_jump_functions(struct bx_vm_status *vm_status, enum vm_operand operand) {
 	bx_int8 error;
 	bx_uint16 address;
 	bx_int32 data;
@@ -366,33 +447,33 @@ static inline bx_int8 bx_general_jump_function(struct bx_vm_status *vm_status, e
 	if (address >= vm_status->code_size) {
 		return -1;
 	}
-	switch(comparison) {
-	case EQ:
+	switch(operand) {
+	case BX_VMOP_EQ:
 		if (data == 0) {
 			vm_status->program_counter = address;
 		}
 		break;
-	case NE:
+	case BX_VMOP_NE:
 		if (data != 0) {
 			vm_status->program_counter = address;
 		}
 		break;
-	case LT:
+	case BX_VMOP_LT:
 		if (data < 0) {
 			vm_status->program_counter = address;
 		}
 		break;
-	case LE:
+	case BX_VMOP_LE:
 		if (data <= 0) {
 			vm_status->program_counter = address;
 		}
 		break;
-	case GT:
+	case BX_VMOP_GT:
 		if (data > 0) {
 			vm_status->program_counter = address;
 		}
 		break;
-	case GE:
+	case BX_VMOP_GE:
 		if (data >= 0) {
 			vm_status->program_counter = address;
 		}
@@ -461,10 +542,22 @@ static const bx_instruction instruction_array[256] = {
 	&bx_ior_function,
 	&bx_ixor_function,
 	&bx_inot_function,
+	&bx_ieq_function,
+	&bx_ine_function,
+	&bx_igt_function,
+	&bx_ige_function,
+	&bx_ilt_function,
+	&bx_ile_function,
 	&bx_fadd_function,
 	&bx_fsub_function,
 	&bx_fmul_function,
 	&bx_fdiv_function,
+	&bx_feq_function,
+	&bx_fne_function,
+	&bx_fgt_function,
+	&bx_fge_function,
+	&bx_flt_function,
+	&bx_fle_function,
 	&bx_push32_function,
 	&bx_ipush_0_function,
 	&bx_ipush_1_function,
