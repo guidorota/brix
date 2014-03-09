@@ -33,6 +33,7 @@
 #define CODEGEN_CODE_H_
 
 #include "types.h"
+#include "virtual_machine/virtual_machine.h"
 
 struct bx_comp_code {
 	void *data;
@@ -44,7 +45,7 @@ struct bx_comp_code *bx_cgco_create();
 
 void bx_cgco_destroy(struct bx_comp_code *code);
 
-bx_int8 bx_cgco_add_instruction(struct bx_comp_code *code, bx_uint8 instruction);
+bx_int8 bx_cgco_add_instruction(struct bx_comp_code *code, enum bx_instruction instruction);
 
 bx_int8 bx_cgco_add_identifier(struct bx_comp_code *code, char *identifier);
 

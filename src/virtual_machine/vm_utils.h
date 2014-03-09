@@ -33,8 +33,9 @@
 #define VM_UTILS_H_
 
 #include "utils/byte_buffer.h"
+#include "virtual_machine/virtual_machine.h"
 
-bx_int8 bx_vmutils_add_instruction(struct bx_byte_buffer *buffer, bx_uint8 instruction);
+bx_int8 bx_vmutils_add_instruction(struct bx_byte_buffer *buffer, enum bx_instruction instruction);
 
 bx_int8 bx_vmutils_add_int(struct bx_byte_buffer *buffer, bx_int32 data);
 

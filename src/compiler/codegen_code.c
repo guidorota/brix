@@ -68,8 +68,9 @@ void bx_cgco_destroy(struct bx_comp_code *code) {
 	free(code);
 }
 
-bx_int8 bx_cgco_add_instruction(struct bx_comp_code *code, bx_uint8 instruction) {
-	return add_to_code(code, (void *) &instruction, sizeof instruction);
+bx_int8 bx_cgco_add_instruction(struct bx_comp_code *code, enum bx_instruction instruction) {
+	bx_uint8 uint8_instruction = (bx_uint8) instruction;
+	return add_to_code(code, (void *) &uint8_instruction, sizeof uint8_instruction);
 }
 
 bx_int8 bx_cgco_add_identifier(struct bx_comp_code *code, char *identifier) {

@@ -32,13 +32,15 @@
 #include "vm_utils.h"
 #include "configuration.h"
 
-bx_int8 bx_vmutils_add_instruction(struct bx_byte_buffer *buffer, bx_uint8 instruction) {
+bx_int8 bx_vmutils_add_instruction(struct bx_byte_buffer *buffer, enum bx_instruction instruction) {
+	bx_uint8 uint8_instruction;
 
 	if (buffer == NULL) {
 		return -1;
 	}
 
-	return bx_bbuf_append(buffer, &instruction, sizeof instruction);
+	uint8_instruction = (bx_uint8) instruction;
+	return bx_bbuf_append(buffer, &uint8_instruction, sizeof uint8_instruction);
 }
 
 bx_int8 bx_vmutils_add_int(struct bx_byte_buffer *buffer, bx_int32 data) {
