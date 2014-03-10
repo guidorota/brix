@@ -1,5 +1,5 @@
 /*
- * codegen_cast.c
+ * codegen_expression_cast.c
  * Created on: Mar 10, 2014
  * Author: Guido Rota
  *
@@ -31,52 +31,20 @@
 
 #include <stdlib.h>
 #include "logging.h"
-#include "compiler/codegen_cast.h"
+#include "compiler/codegen_expression_cast.h"
 
-static struct bx_comp_expr *cast_to_int(struct bx_comp_expr *expression);
-static struct bx_comp_expr *cast_to_float(struct bx_comp_expr *expression);
-static struct bx_comp_expr *cast_to_bool(struct bx_comp_expr *expression);
-static struct bx_comp_expr *cast_to_string(struct bx_comp_expr *expression);
-
-struct bx_comp_expr *bx_cgca_cast(struct bx_comp_expr *expression, enum bx_builtin_type type) {
-
-	if (expression == NULL) {
-		return NULL;
-	}
-
-	switch (type) {
-	case BX_INT:
-		return cast_to_int(expression);
-	case BX_FLOAT:
-		return cast_to_float(expression);
-	case BX_BOOL:
-		return cast_to_bool(expression);
-	case BX_STRING:
-		return cast_to_string(expression);
-	case BX_SUBNET:
-		BX_LOG(LOG_ERROR, "compiler", "Cast to type 'subnet' is not allowed.");
-		return NULL;
-	case BX_STREAM:
-		BX_LOG(LOG_ERROR, "compiler", "Cast to type 'subnet' is not allowed.");
-		return NULL;
-	default:
-		BX_LOG(LOG_ERROR, "codegen_cast", "Unknown type encountered in function bx_cgca_cast.");
-		return NULL;
-	}
-}
-
-static struct bx_comp_expr *cast_to_int(struct bx_comp_expr *expression) {
+struct bx_comp_expr *bx_cgex_cast_to_int(struct bx_comp_expr *expression) {
 	return NULL; //TODO: Stub
 }
 
-static struct bx_comp_expr *cast_to_float(struct bx_comp_expr *expression) {
+struct bx_comp_expr *bx_cgex_cast_to_float(struct bx_comp_expr *expression) {
 	return NULL; //TODO: Stub
 }
 
-static struct bx_comp_expr *cast_to_bool(struct bx_comp_expr *expression) {
+struct bx_comp_expr *bx_cgex_cast_to_bool(struct bx_comp_expr *expression) {
 	return NULL; //TODO: Stub
 }
 
-static struct bx_comp_expr *cast_to_string(struct bx_comp_expr *expression) {
+struct bx_comp_expr *bx_cgex_cast_to_string(struct bx_comp_expr *expression) {
 	return NULL; //TODO: Stub
 }

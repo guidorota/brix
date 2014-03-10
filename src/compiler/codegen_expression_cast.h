@@ -1,5 +1,5 @@
 /*
- * codegen_cast.h
+ * codegen_expression_cast.h
  * Created on: Mar 10, 2014
  * Author: Guido Rota
  *
@@ -29,11 +29,17 @@
  *
  */
 
-#ifndef CODEGEN_CAST_H_
-#define CODEGEN_CAST_H_
+#ifndef CODEGEN_EXPRESSION_CAST_H_
+#define CODEGEN_EXPRESSION_CAST_H_
 
 #include "compiler/codegen_expression.h"
 
-struct bx_comp_expr *bx_cgca_cast(struct bx_comp_expr *expression, enum bx_builtin_type type);
+struct bx_comp_expr *bx_cgex_cast_to_int(struct bx_comp_expr *expression);
 
-#endif /* CODEGEN_CAST_H_ */
+struct bx_comp_expr *bx_cgex_cast_to_float(struct bx_comp_expr *expression);
+
+struct bx_comp_expr *bx_cgex_cast_to_bool(struct bx_comp_expr *expression);
+
+struct bx_comp_expr *bx_cgex_cast_to_string(struct bx_comp_expr *expression);
+
+#endif /* CODEGEN_EXPRESSION_CAST_H_ */

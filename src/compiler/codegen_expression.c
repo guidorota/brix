@@ -37,6 +37,7 @@
 #include "compiler/codegen_expression_comparison.h"
 #include "compiler/codegen_expression_bitwise.h"
 #include "compiler/codegen_expression_logical.h"
+#include "compiler/codegen_expression_cast.h"
 #include "compiler/codegen_symbol_table.h"
 #include "compiler/codegen_code.h"
 #include "virtual_machine/virtual_machine.h"
@@ -121,6 +122,33 @@ struct bx_comp_expr *bx_cgex_create_variable(char *identifier) {
 	expression->bx_value.code = code;
 
 	return expression;
+}
+
+struct bx_comp_expr *bx_cgex_cast(struct bx_comp_expr *expression, enum bx_builtin_type type) {
+
+	if (expression == NULL) {
+		return NULL;
+	}
+
+	switch (type) {
+	case BX_INT:
+		return bx_cgex_cast_to_int(expression);
+	case BX_FLOAT:
+		return bx_cgex_cast_to_float(expression);
+	case BX_BOOL:
+		return bx_cgex_cast_to_bool(expression);
+	case BX_STRING:
+		return bx_cgex_cast_to_string(expression);
+	case BX_SUBNET:
+		BX_LOG(LOG_ERROR, "compiler", "Cast to type 'subnet' is not allowed.");
+		return NULL;
+	case BX_STREAM:
+		BX_LOG(LOG_ERROR, "compiler", "Cast to type 'subnet' is not allowed.");
+		return NULL;
+	default:
+		BX_LOG(LOG_ERROR, "codegen_cast", "Unknown type encountered in function bx_cgca_cast.");
+		return NULL;
+	}
 }
 
 struct bx_comp_expr *bx_cgex_expression(struct bx_comp_expr *operand1,

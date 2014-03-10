@@ -330,7 +330,7 @@ cast_expression
 	}
 	| '(' type_name ')' cast_expression
 	{
-	
+		$$ = bx_cgex_cast($4, $2);
 	}
 	;
 	

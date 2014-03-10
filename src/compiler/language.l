@@ -43,6 +43,9 @@ LETTER		[a-zA-Z_]
 	#include "y.tab.h"
 }
 
+%option nounput
+%option noinput
+
 %{
 	void count_column();
 %}

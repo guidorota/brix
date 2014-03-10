@@ -80,6 +80,8 @@ struct bx_comp_expr *bx_cgex_create_bool_constant(bx_boolean value);
 
 struct bx_comp_expr *bx_cgex_create_variable(char *identifier);
 
+struct bx_comp_expr *bx_cgex_cast(struct bx_comp_expr *expression, enum bx_builtin_type type);
+
 struct bx_comp_expr *bx_cgex_expression(struct bx_comp_expr *operand1,
 		struct bx_comp_expr *operand2, enum bx_comp_operation operation);
 
