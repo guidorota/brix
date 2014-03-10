@@ -55,11 +55,19 @@ void bx_test_field_set_int(struct bx_document_field *instance, bx_int32 value) {
 	*(bx_int32 *) GET_DATA(instance)->internal_value = value;
 }
 
+void bx_test_field_set_bool(struct bx_document_field *instance, bx_int32 value) {
+	*(bx_int32 *) GET_DATA(instance)->internal_value = value;
+}
+
 void bx_test_field_set_float(struct bx_document_field *instance, bx_float32 value) {
 	*(bx_float32 *) GET_DATA(instance)->internal_value = value;
 }
 
 bx_int32 bx_test_field_get_int(struct bx_document_field *instance) {
+	return *(bx_int32 *) GET_DATA(instance)->internal_value;
+}
+
+bx_int32 bx_test_field_get_bool(struct bx_document_field *instance) {
 	return *(bx_int32 *) GET_DATA(instance)->internal_value;
 }
 

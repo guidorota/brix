@@ -1,6 +1,6 @@
 /*
- * test_codegen_expression.h
- * Created on: Mar 6, 2014
+ * test_codegen_expression_comparison.h
+ * Created on: Mar 9, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,11 +29,11 @@
  *
  */
 
-#ifndef TEST_CODEGEN_EXPRESSION_H_
-#define TEST_CODEGEN_EXPRESSION_H_
+#ifndef TEST_CODEGEN_EXPRESSION_COMPARISON_H_
+#define TEST_CODEGEN_EXPRESSION_COMPARISON_H_
 
 #include <check.h>
 
-Suite *test_codegen_expression_create_suite(void);
+Suite *test_codegen_expression_comparison_create_suite(void);
 
-#endif /* TEST_CODEGEN_EXPRESSION_H_ */
+#endif /* TEST_CODEGEN_EXPRESSION_COMPARISON_H_ */

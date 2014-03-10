@@ -1,6 +1,6 @@
 /*
- * test_field.h
- * Created on: Feb 28, 2014
+ * test_codegen_expression.h
+ * Created on: Mar 6, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,28 +29,11 @@
  *
  */
 
-#ifndef TEST_FIELD_H_
-#define TEST_FIELD_H_
+#ifndef TEST_CODEGEN_EXPRESSION_H_
+#define TEST_CODEGEN_EXPRESSION_H_
 
-#include "types.h"
-#include "document_manager/document_manager.h"
+#include <check.h>
 
-struct bx_test_field_data {
-	bx_uint8 internal_value[4];
-};
+Suite *test_codegen_expression_arithmetics_create_suite(void);
 
-bx_int8 bx_test_field_init(struct bx_document_field *instance, struct bx_test_field_data *data);
-
-void bx_test_field_set_int(struct bx_document_field *instance, bx_int32 value);
-
-void bx_test_field_set_bool(struct bx_document_field *instance, bx_int32 value);
-
-void bx_test_field_set_float(struct bx_document_field *instance, bx_float32 value);
-
-bx_int32 bx_test_field_get_int(struct bx_document_field *instance);
-
-bx_int32 bx_test_field_get_bool(struct bx_document_field *instance);
-
-bx_float32 bx_test_field_get_float(struct bx_document_field *instance);
-
-#endif /* TEST_FIELD_H_ */
+#endif /* TEST_CODEGEN_EXPRESSION_H_ */

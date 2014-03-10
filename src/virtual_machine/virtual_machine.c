@@ -269,7 +269,8 @@ static bx_int8 bx_fle_function(struct bx_vm_status *vm_status) {
 static inline bx_int8 bx_float_functions(struct bx_stack *execution_stack, enum vm_operand operation) {
 	bx_float32 operand1;
 	bx_float32 operand2;
-	bx_float32 result;
+	bx_float32 float_result;
+	bx_int32 int_result;
 	bx_int8 error;
 
 	error = BX_STACK_POP_VARIABLE(execution_stack, operand2);
@@ -283,39 +284,48 @@ static inline bx_int8 bx_float_functions(struct bx_stack *execution_stack, enum 
 
 	switch (operation) {
 		case BX_VMOP_ADD:
-			result = operand1 + operand2;
+			float_result = operand1 + operand2;
+			error = BX_STACK_PUSH_VARIABLE(execution_stack, float_result);
 			break;
 		case BX_VMOP_SUB:
-			result = operand1 - operand2;
+			float_result = operand1 - operand2;
+			error = BX_STACK_PUSH_VARIABLE(execution_stack, float_result);
 			break;
 		case BX_VMOP_MUL:
-			result = operand1 * operand2;
+			float_result = operand1 * operand2;
+			error = BX_STACK_PUSH_VARIABLE(execution_stack, float_result);
 			break;
 		case BX_VMOP_DIV:
-			result = operand1 / operand2;
+			float_result = operand1 / operand2;
+			error = BX_STACK_PUSH_VARIABLE(execution_stack, float_result);
 			break;
 		case BX_VMOP_EQ:
-			result = operand1 == operand2;
+			int_result = operand1 == operand2;
+			error = BX_STACK_PUSH_VARIABLE(execution_stack, int_result);
 			break;
 		case BX_VMOP_NE:
-			result = operand1 != operand2;
+			int_result = operand1 != operand2;
+			error = BX_STACK_PUSH_VARIABLE(execution_stack, int_result);
 			break;
 		case BX_VMOP_GT:
-			result = operand1 > operand2;
+			int_result = operand1 > operand2;
+			error = BX_STACK_PUSH_VARIABLE(execution_stack, int_result);
 			break;
 		case BX_VMOP_GE:
-			result = operand1 >= operand2;
+			int_result = operand1 >= operand2;
+			error = BX_STACK_PUSH_VARIABLE(execution_stack, int_result);
 			break;
 		case BX_VMOP_LT:
-			result = operand1 < operand2;
+			int_result = operand1 < operand2;
+			error = BX_STACK_PUSH_VARIABLE(execution_stack, int_result);
 			break;
 		case BX_VMOP_LE:
-			result = operand1 <= operand2;
+			int_result = operand1 <= operand2;
+			error = BX_STACK_PUSH_VARIABLE(execution_stack, int_result);
 			break;
 		default:
 			return -1;
 		}
-	error = BX_STACK_PUSH_VARIABLE(execution_stack, result);
 	if (error != 0) {
 		return -1;
 	}

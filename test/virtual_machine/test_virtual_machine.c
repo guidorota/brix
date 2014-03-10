@@ -532,7 +532,7 @@ START_TEST (float_comparison_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(&test_field), BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(bx_test_field_get_bool(&test_field), BX_BOOLEAN_TRUE);
 
 	bx_bbuf_reset(&buffer);
 	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
@@ -545,7 +545,7 @@ START_TEST (float_comparison_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(&test_field), BX_BOOLEAN_FALSE);
+	ck_assert_int_eq(bx_test_field_get_bool(&test_field), BX_BOOLEAN_FALSE);
 
 	// INEQUALITY
 	bx_bbuf_reset(&buffer);
@@ -559,7 +559,7 @@ START_TEST (float_comparison_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(&test_field), BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(bx_test_field_get_bool(&test_field), BX_BOOLEAN_TRUE);
 
 	bx_bbuf_reset(&buffer);
 	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
@@ -572,7 +572,7 @@ START_TEST (float_comparison_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(&test_field), BX_BOOLEAN_FALSE);
+	ck_assert_int_eq(bx_test_field_get_bool(&test_field), BX_BOOLEAN_FALSE);
 
 	// GREATER THAN
 	bx_bbuf_reset(&buffer);
@@ -586,7 +586,7 @@ START_TEST (float_comparison_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(&test_field), BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(bx_test_field_get_bool(&test_field), BX_BOOLEAN_TRUE);
 
 	bx_bbuf_reset(&buffer);
 	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
@@ -599,7 +599,7 @@ START_TEST (float_comparison_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(&test_field), BX_BOOLEAN_FALSE);
+	ck_assert_int_eq(bx_test_field_get_bool(&test_field), BX_BOOLEAN_FALSE);
 
 	// GREATER OR EQUAL
 	bx_bbuf_reset(&buffer);
@@ -613,7 +613,7 @@ START_TEST (float_comparison_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(&test_field), BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(bx_test_field_get_bool(&test_field), BX_BOOLEAN_TRUE);
 
 	bx_bbuf_reset(&buffer);
 	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
@@ -626,7 +626,7 @@ START_TEST (float_comparison_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(&test_field), BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(bx_test_field_get_bool(&test_field), BX_BOOLEAN_TRUE);
 
 	bx_bbuf_reset(&buffer);
 	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
@@ -639,7 +639,7 @@ START_TEST (float_comparison_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(&test_field), BX_BOOLEAN_FALSE);
+	ck_assert_int_eq(bx_test_field_get_bool(&test_field), BX_BOOLEAN_FALSE);
 
 	// LESS THAN
 	bx_bbuf_reset(&buffer);
@@ -653,7 +653,7 @@ START_TEST (float_comparison_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(&test_field), BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(bx_test_field_get_bool(&test_field), BX_BOOLEAN_TRUE);
 
 	bx_bbuf_reset(&buffer);
 	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
@@ -666,7 +666,7 @@ START_TEST (float_comparison_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(&test_field), BX_BOOLEAN_FALSE);
+	ck_assert_int_eq(bx_test_field_get_bool(&test_field), BX_BOOLEAN_FALSE);
 
 	// GREATER OR EQUAL
 	bx_bbuf_reset(&buffer);
@@ -680,7 +680,7 @@ START_TEST (float_comparison_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(&test_field), BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(bx_test_field_get_bool(&test_field), BX_BOOLEAN_TRUE);
 
 	bx_bbuf_reset(&buffer);
 	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
@@ -693,7 +693,7 @@ START_TEST (float_comparison_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(&test_field), BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(bx_test_field_get_bool(&test_field), BX_BOOLEAN_TRUE);
 
 	bx_bbuf_reset(&buffer);
 	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
@@ -706,7 +706,7 @@ START_TEST (float_comparison_test) {
 
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(&test_field), BX_BOOLEAN_FALSE);
+	ck_assert_int_eq(bx_test_field_get_bool(&test_field), BX_BOOLEAN_FALSE);
 } END_TEST
 
 START_TEST (int_expression) {

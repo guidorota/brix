@@ -57,6 +57,23 @@ static struct bx_comp_expr *div_float(struct bx_comp_expr *operand1, struct bx_c
 static struct bx_comp_expr *modulo_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 static struct bx_comp_expr *mod_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
+static struct bx_comp_expr *equality_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+static struct bx_comp_expr *equals_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+static struct bx_comp_expr *equals_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+static struct bx_comp_expr *equals_bool(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+static struct bx_comp_expr *equals_strings(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+
+static struct bx_comp_expr *inequality_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+static struct bx_comp_expr *not_equals_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+static struct bx_comp_expr *not_equals_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+static struct bx_comp_expr *not_equals_bool(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+static struct bx_comp_expr *not_equals_strings(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+
+static struct bx_comp_expr *greater_than_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+static struct bx_comp_expr *greater_than_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+static struct bx_comp_expr *greater_than_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+static struct bx_comp_expr *greater_than_strings(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+
 static struct bx_comp_expr *int_to_float(struct bx_comp_expr *value);
 static struct bx_comp_expr *float_to_int(struct bx_comp_expr *value);
 static struct bx_comp_expr *constant_to_binary(struct bx_comp_expr *value);
@@ -166,14 +183,23 @@ struct bx_comp_expr *bx_cgex_expression(struct bx_comp_expr *operand1,
 	case BX_COMP_OP_MOD:
 		return modulo_operator(operand1, operand2);
 		break;
+	case BX_COMP_OP_EQ:
+		return equality_operator(operand1, operand2);
+		break;
+	case BX_COMP_OP_NE:
+		return inequality_operator(operand1, operand2);
+		break;
+	case BX_COMP_OP_GT:
+		return greater_than_operator(operand1, operand2);
+		break;
 	default:
 		return NULL;
 	}
 }
 
-//////////////////////////
-// SUBTRACTION OPERATOR //
-//////////////////////////
+///////////////////////
+// ADDITION OPERATOR //
+///////////////////////
 
 static struct bx_comp_expr *addition_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
 
@@ -201,7 +227,7 @@ static struct bx_comp_expr *addition_operator(struct bx_comp_expr *operand1, str
 		return concat_strings(operand1, operand2);
 
 	} else {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in function plus_operator.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '+'.");
 		return NULL;
 	}
 }
@@ -287,7 +313,7 @@ static struct bx_comp_expr *subtraction_operator(struct bx_comp_expr *operand1, 
 		return sub_float(operand1, operand2);
 
 	} else {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in function plus_operator.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '-'.");
 		return NULL;
 	}
 }
@@ -350,7 +376,7 @@ static struct bx_comp_expr *multiplication_operator(struct bx_comp_expr *operand
 			operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
 			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM ||
 			operand1->data_type == BX_STRING || operand2->data_type == BX_STRING) {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '-'.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '*'.");
 		return NULL;
 
 	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
@@ -368,7 +394,7 @@ static struct bx_comp_expr *multiplication_operator(struct bx_comp_expr *operand
 		return mul_float(operand1, operand2);
 
 	} else {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in function plus_operator.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '*'.");
 		return NULL;
 	}
 }
@@ -431,7 +457,7 @@ static struct bx_comp_expr *division_operator(struct bx_comp_expr *operand1, str
 			operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
 			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM ||
 			operand1->data_type == BX_STRING || operand2->data_type == BX_STRING) {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '-'.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '/'.");
 		return NULL;
 
 	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
@@ -449,7 +475,7 @@ static struct bx_comp_expr *division_operator(struct bx_comp_expr *operand1, str
 		return div_float(operand1, operand2);
 
 	} else {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in function plus_operator.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '/'.");
 		return NULL;
 	}
 }
@@ -512,14 +538,14 @@ static struct bx_comp_expr *modulo_operator(struct bx_comp_expr *operand1, struc
 			operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
 			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM ||
 			operand1->data_type == BX_STRING || operand2->data_type == BX_STRING) {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '-'.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '%'.");
 		return NULL;
 
 	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
 		return mod_int(operand1, operand2);
 
 	} else {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in function plus_operator.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '%'.");
 		return NULL;
 	}
 }
@@ -546,6 +572,322 @@ static struct bx_comp_expr *mod_int(struct bx_comp_expr *operand1, struct bx_com
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IMOD);
 
 	return result;
+}
+
+///////////////////////
+// EQUALITY OPERATOR //
+///////////////////////
+
+static struct bx_comp_expr *equality_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+
+	if (operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
+			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM) {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '+'.");
+		return NULL;
+
+	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
+		return equals_int(operand1, operand2);
+
+	} else if (operand1->data_type == BX_FLOAT && operand2->data_type == BX_FLOAT) {
+		return equals_float(operand1, operand2);
+
+	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_FLOAT) {
+		operand1 = int_to_float(operand1);
+		return equals_float(operand1, operand2);
+
+	} else if (operand2->data_type == BX_INT && operand1->data_type == BX_FLOAT) {
+		operand2 = int_to_float(operand2);
+		return equals_float(operand1, operand2);
+
+	} else if (operand1->data_type == BX_STRING || operand2->data_type == BX_STRING) {
+		return equals_strings(operand1, operand2);
+
+	} else if (operand1->data_type == BX_BOOL && operand2->data_type == BX_BOOL) {
+		return equals_bool(operand1, operand2);
+
+	} else {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '+'.");
+		return NULL;
+	}
+}
+
+static struct bx_comp_expr *equals_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	struct bx_comp_expr *result;
+
+	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+		return bx_cgex_create_bool_constant(operand1->bx_value.int_value == operand2->bx_value.int_value);
+	}
+
+	if (operand1->type == BX_COMP_CONSTANT) {
+		operand1 = constant_to_binary(operand1);
+	}
+
+	if (operand2->type == BX_COMP_CONSTANT) {
+		operand2 = constant_to_binary(operand2);
+	}
+
+	result = create_code_expression();
+	result->data_type = BX_BOOL;
+	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
+	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IEQ);
+
+	return result;
+}
+
+static struct bx_comp_expr *equals_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	struct bx_comp_expr *result;
+
+	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+		return bx_cgex_create_bool_constant(operand1->bx_value.float_value == operand2->bx_value.float_value);
+	}
+
+	if (operand1->type == BX_COMP_CONSTANT) {
+		operand1 = constant_to_binary(operand1);
+	}
+
+	if (operand2->type == BX_COMP_CONSTANT) {
+		operand2 = constant_to_binary(operand2);
+	}
+
+	result = create_code_expression();
+	result->data_type = BX_BOOL;
+	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
+	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_FEQ);
+
+	return result;
+}
+
+static struct bx_comp_expr *equals_bool(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	struct bx_comp_expr *result;
+
+	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+		return bx_cgex_create_float_constant(operand1->bx_value.bool_value == operand2->bx_value.bool_value);
+	}
+
+	if (operand1->type == BX_COMP_CONSTANT) {
+		operand1 = constant_to_binary(operand1);
+	}
+
+	if (operand2->type == BX_COMP_CONSTANT) {
+		operand2 = constant_to_binary(operand2);
+	}
+
+	result = create_code_expression();
+	result->data_type = BX_BOOL;
+	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
+	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IEQ);
+
+	return result;
+}
+
+static struct bx_comp_expr *equals_strings(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+
+	return NULL; //TODO: Stub
+}
+
+/////////////////////////
+// INEQUALITY OPERATOR //
+/////////////////////////
+
+static struct bx_comp_expr *inequality_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+
+	if (operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
+			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM) {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '+'.");
+		return NULL;
+
+	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
+		return not_equals_int(operand1, operand2);
+
+	} else if (operand1->data_type == BX_FLOAT && operand2->data_type == BX_FLOAT) {
+		return not_equals_float(operand1, operand2);
+
+	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_FLOAT) {
+		operand1 = int_to_float(operand1);
+		return not_equals_float(operand1, operand2);
+
+	} else if (operand2->data_type == BX_INT && operand1->data_type == BX_FLOAT) {
+		operand2 = int_to_float(operand2);
+		return not_equals_float(operand1, operand2);
+
+	} else if (operand1->data_type == BX_STRING || operand2->data_type == BX_STRING) {
+		return not_equals_strings(operand1, operand2);
+
+	} else if (operand1->data_type == BX_BOOL && operand2->data_type == BX_BOOL) {
+		return not_equals_bool(operand1, operand2);
+
+	} else {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '+'.");
+		return NULL;
+	}
+}
+
+static struct bx_comp_expr *not_equals_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	struct bx_comp_expr *result;
+
+	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+		return bx_cgex_create_bool_constant(operand1->bx_value.int_value != operand2->bx_value.int_value);
+	}
+
+	if (operand1->type == BX_COMP_CONSTANT) {
+		operand1 = constant_to_binary(operand1);
+	}
+
+	if (operand2->type == BX_COMP_CONSTANT) {
+		operand2 = constant_to_binary(operand2);
+	}
+
+	result = create_code_expression();
+	result->data_type = BX_BOOL;
+	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
+	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_INE);
+
+	return result;
+}
+
+static struct bx_comp_expr *not_equals_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	struct bx_comp_expr *result;
+
+	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+		return bx_cgex_create_bool_constant(operand1->bx_value.float_value != operand2->bx_value.float_value);
+	}
+
+	if (operand1->type == BX_COMP_CONSTANT) {
+		operand1 = constant_to_binary(operand1);
+	}
+
+	if (operand2->type == BX_COMP_CONSTANT) {
+		operand2 = constant_to_binary(operand2);
+	}
+
+	result = create_code_expression();
+	result->data_type = BX_BOOL;
+	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
+	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_FNE);
+
+	return result;
+}
+
+static struct bx_comp_expr *not_equals_bool(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	struct bx_comp_expr *result;
+
+	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+		return bx_cgex_create_float_constant(operand1->bx_value.bool_value != operand2->bx_value.bool_value);
+	}
+
+	if (operand1->type == BX_COMP_CONSTANT) {
+		operand1 = constant_to_binary(operand1);
+	}
+
+	if (operand2->type == BX_COMP_CONSTANT) {
+		operand2 = constant_to_binary(operand2);
+	}
+
+	result = create_code_expression();
+	result->data_type = BX_BOOL;
+	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
+	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_INE);
+
+	return result;
+}
+
+static struct bx_comp_expr *not_equals_strings(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+
+	return NULL; //TODO: Stub
+}
+
+///////////////////////////
+// GREATER THAN OPERATOR //
+///////////////////////////
+
+static struct bx_comp_expr *greater_than_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+
+	if (operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
+			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM ||
+			operand1->data_type == BX_BOOL || operand2->data_type == BX_BOOL) {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '+'.");
+		return NULL;
+
+	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
+		return greater_than_int(operand1, operand2);
+
+	} else if (operand1->data_type == BX_FLOAT && operand2->data_type == BX_FLOAT) {
+		return greater_than_float(operand1, operand2);
+
+	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_FLOAT) {
+		operand1 = int_to_float(operand1);
+		return greater_than_float(operand1, operand2);
+
+	} else if (operand2->data_type == BX_INT && operand1->data_type == BX_FLOAT) {
+		operand2 = int_to_float(operand2);
+		return greater_than_float(operand1, operand2);
+
+	} else if (operand1->data_type == BX_STRING || operand2->data_type == BX_STRING) {
+		return greater_than_strings(operand1, operand2);
+
+	} else {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '+'.");
+		return NULL;
+	}
+}
+
+static struct bx_comp_expr *greater_than_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	struct bx_comp_expr *result;
+
+	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+		return bx_cgex_create_bool_constant(operand1->bx_value.int_value > operand2->bx_value.int_value);
+	}
+
+	if (operand1->type == BX_COMP_CONSTANT) {
+		operand1 = constant_to_binary(operand1);
+	}
+
+	if (operand2->type == BX_COMP_CONSTANT) {
+		operand2 = constant_to_binary(operand2);
+	}
+
+	result = create_code_expression();
+	result->data_type = BX_BOOL;
+	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
+	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IGT);
+
+	return result;
+}
+
+static struct bx_comp_expr *greater_than_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	struct bx_comp_expr *result;
+
+	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+		return bx_cgex_create_bool_constant(operand1->bx_value.float_value > operand2->bx_value.float_value);
+	}
+
+	if (operand1->type == BX_COMP_CONSTANT) {
+		operand1 = constant_to_binary(operand1);
+	}
+
+	if (operand2->type == BX_COMP_CONSTANT) {
+		operand2 = constant_to_binary(operand2);
+	}
+
+	result = create_code_expression();
+	result->data_type = BX_BOOL;
+	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
+	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_FGT);
+
+	return result;
+}
+
+static struct bx_comp_expr *greater_than_strings(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+
+	return NULL; //TODO: Stub
 }
 
 ////////////////

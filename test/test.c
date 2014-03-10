@@ -40,7 +40,8 @@
 #include "virtual_machine/test_virtual_machine.h"
 #include "compiler/test_codegen_symbol_table.h"
 #include "compiler/test_codegen_code.h"
-#include "compiler/test_codegen_expression.h"
+#include "compiler/test_codegen_expression_arithmetics.h"
+#include "compiler/test_codegen_expression_comparison.h"
 
 int main(void) {
 	int number_failed = 0;
@@ -56,7 +57,8 @@ int main(void) {
 	srunner_add_suite(runner, test_linked_list_create_suite());
 	srunner_add_suite(runner, test_codegen_symbol_table_create_suite());
 	srunner_add_suite(runner, test_codegen_code_create_suite());
-	srunner_add_suite(runner, test_codegen_expression_create_suite());
+	srunner_add_suite(runner, test_codegen_expression_arithmetics_create_suite());
+	srunner_add_suite(runner, test_codegen_expression_comparison_create_suite());
 
 	srunner_run_all(runner, CK_VERBOSE);
 	number_failed = srunner_ntests_failed(runner);
