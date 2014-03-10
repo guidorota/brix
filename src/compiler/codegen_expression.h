@@ -51,7 +51,10 @@ enum bx_comp_operation {
 	BX_COMP_OP_BTIWISE_XOR,
 	BX_COMP_OP_EQ,
 	BX_COMP_OP_NE,
-	BX_COMP_OP_GT
+	BX_COMP_OP_GT,
+	BX_COMP_OP_GE,
+	BX_COMP_OP_LT,
+	BX_COMP_OP_LE
 };
 
 enum bx_comp_exp_type {
