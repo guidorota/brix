@@ -101,6 +101,9 @@ static struct bx_comp_expr *bitwise_and_int(struct bx_comp_expr *operand1, struc
 static struct bx_comp_expr *logical_or_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 static struct bx_comp_expr *logical_or_bool(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
+static struct bx_comp_expr *logical_and_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+static struct bx_comp_expr *logical_and_bool(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+
 static struct bx_comp_expr *int_to_float(struct bx_comp_expr *value);
 static struct bx_comp_expr *float_to_int(struct bx_comp_expr *value);
 static struct bx_comp_expr *constant_to_binary(struct bx_comp_expr *value);
@@ -239,6 +242,9 @@ struct bx_comp_expr *bx_cgex_expression(struct bx_comp_expr *operand1,
 		break;
 	case BX_COMP_OP_OR:
 		return logical_or_operator(operand1, operand2);
+		break;
+	case BX_COMP_OP_AND:
+		return logical_and_operator(operand1, operand2);
 		break;
 	default:
 		return NULL;
@@ -1350,11 +1356,57 @@ static struct bx_comp_expr *logical_or_operator(struct bx_comp_expr *operand1, s
 			operand1->data_type == BX_FLOAT || operand2->data_type == BX_FLOAT ||
 			operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
 			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM) {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '&&'.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '||'.");
 		return NULL;
 
 	} else if (operand1->data_type == BX_BOOL && operand2->data_type == BX_BOOL) {
 		return logical_or_bool(operand1, operand2);
+
+	} else {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '||'.");
+		return NULL;
+	}
+}
+
+static struct bx_comp_expr *logical_or_bool(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	struct bx_comp_expr *result;
+
+	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+		return bx_cgex_create_bool_constant(operand1->bx_value.bool_value || operand2->bx_value.bool_value);
+	}
+
+	if (operand1->type == BX_COMP_CONSTANT) {
+		operand1 = constant_to_binary(operand1);
+	}
+
+	if (operand2->type == BX_COMP_CONSTANT) {
+		operand2 = constant_to_binary(operand2);
+	}
+
+	result = create_code_expression();
+	result->data_type = BX_BOOL;
+	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
+	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IOR);
+
+	return result;
+}
+
+//////////////////////////
+// LOGICAL AND OPERATOR //
+//////////////////////////
+
+static struct bx_comp_expr *logical_and_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+
+	if (operand1->data_type == BX_INT || operand2->data_type == BX_INT ||
+			operand1->data_type == BX_FLOAT || operand2->data_type == BX_FLOAT ||
+			operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
+			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM) {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '&&'.");
+		return NULL;
+
+	} else if (operand1->data_type == BX_BOOL && operand2->data_type == BX_BOOL) {
+		return logical_and_bool(operand1, operand2);
 
 	} else {
 		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '&&'.");
@@ -1362,7 +1414,7 @@ static struct bx_comp_expr *logical_or_operator(struct bx_comp_expr *operand1, s
 	}
 }
 
-static struct bx_comp_expr *logical_or_bool(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+static struct bx_comp_expr *logical_and_bool(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
@@ -1381,7 +1433,7 @@ static struct bx_comp_expr *logical_or_bool(struct bx_comp_expr *operand1, struc
 	result->data_type = BX_BOOL;
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IOR);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IAND);
 
 	return result;
 }
