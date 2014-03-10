@@ -92,6 +92,12 @@ static struct bx_comp_expr *less_or_equal_strings(struct bx_comp_expr *operand1,
 static struct bx_comp_expr *bitwise_or_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 static struct bx_comp_expr *bitwise_or_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
+static struct bx_comp_expr *bitwise_xor_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+static struct bx_comp_expr *bitwise_xor_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+
+static struct bx_comp_expr *bitwise_and_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+static struct bx_comp_expr *bitwise_and_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+
 static struct bx_comp_expr *int_to_float(struct bx_comp_expr *value);
 static struct bx_comp_expr *float_to_int(struct bx_comp_expr *value);
 static struct bx_comp_expr *constant_to_binary(struct bx_comp_expr *value);
@@ -221,6 +227,12 @@ struct bx_comp_expr *bx_cgex_expression(struct bx_comp_expr *operand1,
 		break;
 	case BX_COMP_OP_BITWISE_OR:
 		return bitwise_or_operator(operand1, operand2);
+		break;
+	case BX_COMP_OP_BITWISE_XOR:
+		return bitwise_xor_operator(operand1, operand2);
+		break;
+	case BX_COMP_OP_BITWISE_AND:
+		return bitwise_and_operator(operand1, operand2);
 		break;
 	default:
 		return NULL;
@@ -612,7 +624,7 @@ static struct bx_comp_expr *equality_operator(struct bx_comp_expr *operand1, str
 
 	if (operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
 			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM) {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '+'.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '=='.");
 		return NULL;
 
 	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
@@ -636,7 +648,7 @@ static struct bx_comp_expr *equality_operator(struct bx_comp_expr *operand1, str
 		return equals_bool(operand1, operand2);
 
 	} else {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '+'.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '=='.");
 		return NULL;
 	}
 }
@@ -719,52 +731,6 @@ static struct bx_comp_expr *equals_strings(struct bx_comp_expr *operand1, struct
 }
 
 /////////////////////////
-// BITWISE OR OPERATOR //
-/////////////////////////
-
-static struct bx_comp_expr *bitwise_or_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
-
-	if (operand1->data_type == BX_BOOL || operand2->data_type == BX_BOOL ||
-			operand1->data_type == BX_FLOAT || operand2->data_type == BX_FLOAT ||
-			operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
-			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM) {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '+'.");
-		return NULL;
-
-	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
-		return bitwise_or_int(operand1, operand2);
-
-	} else {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '+'.");
-		return NULL;
-	}
-}
-
-static struct bx_comp_expr *bitwise_or_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
-	struct bx_comp_expr *result;
-
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_int_constant(operand1->bx_value.int_value | operand2->bx_value.int_value);
-	}
-
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = constant_to_binary(operand1);
-	}
-
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = constant_to_binary(operand2);
-	}
-
-	result = create_code_expression();
-	result->data_type = BX_INT;
-	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
-	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IOR);
-
-	return result;
-}
-
-/////////////////////////
 // INEQUALITY OPERATOR //
 /////////////////////////
 
@@ -772,7 +738,7 @@ static struct bx_comp_expr *inequality_operator(struct bx_comp_expr *operand1, s
 
 	if (operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
 			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM) {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '+'.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '!='.");
 		return NULL;
 
 	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
@@ -796,7 +762,7 @@ static struct bx_comp_expr *inequality_operator(struct bx_comp_expr *operand1, s
 		return not_equals_bool(operand1, operand2);
 
 	} else {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '+'.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '!='.");
 		return NULL;
 	}
 }
@@ -887,7 +853,7 @@ static struct bx_comp_expr *greater_than_operator(struct bx_comp_expr *operand1,
 	if (operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
 			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM ||
 			operand1->data_type == BX_BOOL || operand2->data_type == BX_BOOL) {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '+'.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '>'.");
 		return NULL;
 
 	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
@@ -908,7 +874,7 @@ static struct bx_comp_expr *greater_than_operator(struct bx_comp_expr *operand1,
 		return greater_than_strings(operand1, operand2);
 
 	} else {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '+'.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '>'.");
 		return NULL;
 	}
 }
@@ -975,7 +941,7 @@ static struct bx_comp_expr *greater_or_equal_operator(struct bx_comp_expr *opera
 	if (operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
 			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM ||
 			operand1->data_type == BX_BOOL || operand2->data_type == BX_BOOL) {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '+'.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '>='.");
 		return NULL;
 
 	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
@@ -996,7 +962,7 @@ static struct bx_comp_expr *greater_or_equal_operator(struct bx_comp_expr *opera
 		return greater_or_equal_strings(operand1, operand2);
 
 	} else {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '+'.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '>='.");
 		return NULL;
 	}
 }
@@ -1063,7 +1029,7 @@ static struct bx_comp_expr *less_than_operator(struct bx_comp_expr *operand1, st
 	if (operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
 			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM ||
 			operand1->data_type == BX_BOOL || operand2->data_type == BX_BOOL) {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '+'.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '<'.");
 		return NULL;
 
 	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
@@ -1084,7 +1050,7 @@ static struct bx_comp_expr *less_than_operator(struct bx_comp_expr *operand1, st
 		return less_than_strings(operand1, operand2);
 
 	} else {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '+'.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '<'.");
 		return NULL;
 	}
 }
@@ -1151,7 +1117,7 @@ static struct bx_comp_expr *less_or_equal_operator(struct bx_comp_expr *operand1
 	if (operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
 			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM ||
 			operand1->data_type == BX_BOOL || operand2->data_type == BX_BOOL) {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '+'.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '<='.");
 		return NULL;
 
 	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
@@ -1172,7 +1138,7 @@ static struct bx_comp_expr *less_or_equal_operator(struct bx_comp_expr *operand1
 		return less_or_equal_strings(operand1, operand2);
 
 	} else {
-		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '+'.");
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '<='.");
 		return NULL;
 	}
 }
@@ -1228,6 +1194,144 @@ static struct bx_comp_expr *less_or_equal_float(struct bx_comp_expr *operand1, s
 static struct bx_comp_expr *less_or_equal_strings(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
 
 	return NULL; //TODO: Stub
+}
+
+/////////////////////////
+// BITWISE OR OPERATOR //
+/////////////////////////
+
+static struct bx_comp_expr *bitwise_or_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+
+	if (operand1->data_type == BX_BOOL || operand2->data_type == BX_BOOL ||
+			operand1->data_type == BX_FLOAT || operand2->data_type == BX_FLOAT ||
+			operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
+			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM) {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '|'.");
+		return NULL;
+
+	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
+		return bitwise_or_int(operand1, operand2);
+
+	} else {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '|'.");
+		return NULL;
+	}
+}
+
+static struct bx_comp_expr *bitwise_or_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	struct bx_comp_expr *result;
+
+	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+		return bx_cgex_create_int_constant(operand1->bx_value.int_value | operand2->bx_value.int_value);
+	}
+
+	if (operand1->type == BX_COMP_CONSTANT) {
+		operand1 = constant_to_binary(operand1);
+	}
+
+	if (operand2->type == BX_COMP_CONSTANT) {
+		operand2 = constant_to_binary(operand2);
+	}
+
+	result = create_code_expression();
+	result->data_type = BX_INT;
+	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
+	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IOR);
+
+	return result;
+}
+
+/////////////////////////
+// BITWISE XOR OPERATOR //
+/////////////////////////
+
+static struct bx_comp_expr *bitwise_xor_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+
+	if (operand1->data_type == BX_BOOL || operand2->data_type == BX_BOOL ||
+			operand1->data_type == BX_FLOAT || operand2->data_type == BX_FLOAT ||
+			operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
+			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM) {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '^'.");
+		return NULL;
+
+	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
+		return bitwise_xor_int(operand1, operand2);
+
+	} else {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '^'.");
+		return NULL;
+	}
+}
+
+static struct bx_comp_expr *bitwise_xor_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	struct bx_comp_expr *result;
+
+	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+		return bx_cgex_create_int_constant(operand1->bx_value.int_value ^ operand2->bx_value.int_value);
+	}
+
+	if (operand1->type == BX_COMP_CONSTANT) {
+		operand1 = constant_to_binary(operand1);
+	}
+
+	if (operand2->type == BX_COMP_CONSTANT) {
+		operand2 = constant_to_binary(operand2);
+	}
+
+	result = create_code_expression();
+	result->data_type = BX_INT;
+	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
+	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IXOR);
+
+	return result;
+}
+
+/////////////////////////
+// BITWISE AND OPERATOR //
+/////////////////////////
+
+static struct bx_comp_expr *bitwise_and_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+
+	if (operand1->data_type == BX_BOOL || operand2->data_type == BX_BOOL ||
+			operand1->data_type == BX_FLOAT || operand2->data_type == BX_FLOAT ||
+			operand1->data_type == BX_SUBNET || operand2->data_type == BX_SUBNET ||
+			operand1->data_type == BX_STREAM || operand2->data_type == BX_STREAM) {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '&'.");
+		return NULL;
+
+	} else if (operand1->data_type == BX_INT && operand2->data_type == BX_INT) {
+		return bitwise_and_int(operand1, operand2);
+
+	} else {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '&'.");
+		return NULL;
+	}
+}
+
+static struct bx_comp_expr *bitwise_and_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	struct bx_comp_expr *result;
+
+	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+		return bx_cgex_create_int_constant(operand1->bx_value.int_value & operand2->bx_value.int_value);
+	}
+
+	if (operand1->type == BX_COMP_CONSTANT) {
+		operand1 = constant_to_binary(operand1);
+	}
+
+	if (operand2->type == BX_COMP_CONSTANT) {
+		operand2 = constant_to_binary(operand2);
+	}
+
+	result = create_code_expression();
+	result->data_type = BX_INT;
+	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
+	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IAND);
+
+	return result;
 }
 
 ////////////////
