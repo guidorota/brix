@@ -47,7 +47,7 @@ struct bx_comp_expr *bx_cgex_cast_to_int(struct bx_comp_expr *expression) {
 	case BX_INT:
 		return expression;
 	case BX_FLOAT:
-		return NULL; //TODO: Stub
+		return bx_cgex_float_to_int(expression);
 	case BX_BOOL:
 		return NULL; //TODO: Stub
 	default:
@@ -68,7 +68,7 @@ struct bx_comp_expr *bx_cgex_cast_to_float(struct bx_comp_expr *expression) {
 
 	switch (expression_type) {
 	case BX_INT:
-		return NULL; //TODO: Stub
+		return bx_cgex_int_to_float(expression);
 	case BX_FLOAT:
 		return expression;
 	case BX_BOOL:
