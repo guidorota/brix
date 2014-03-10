@@ -34,17 +34,94 @@
 #include "compiler/codegen_expression_cast.h"
 
 struct bx_comp_expr *bx_cgex_cast_to_int(struct bx_comp_expr *expression) {
-	return NULL; //TODO: Stub
+	enum bx_builtin_type expression_type;
+
+	expression_type = expression->data_type;
+	if (expression_type == BX_STREAM || expression_type == BX_SUBNET ||
+			expression_type == BX_STRING) {
+		BX_LOG(LOG_ERROR, "compiler", "Type '%s' cannot be converted to 'int'.",
+						bx_cgex_get_type_name(expression_type));
+	}
+
+	switch (expression_type) {
+	case BX_INT:
+		return expression;
+	case BX_FLOAT:
+		return NULL; //TODO: Stub
+	case BX_BOOL:
+		return NULL; //TODO: Stub
+	default:
+		BX_LOG(LOG_ERROR, "codegen_expression_cast", "Unrecognized type in function bx_cgex_cast_to_int.");
+		return NULL;
+	}
 }
 
 struct bx_comp_expr *bx_cgex_cast_to_float(struct bx_comp_expr *expression) {
-	return NULL; //TODO: Stub
+	enum bx_builtin_type expression_type;
+
+	expression_type = expression->data_type;
+	if (expression_type == BX_STREAM || expression_type == BX_SUBNET ||
+			expression_type == BX_STRING) {
+		BX_LOG(LOG_ERROR, "compiler", "Type '%s' cannot be converted to 'float'.",
+				bx_cgex_get_type_name(expression_type));
+	}
+
+	switch (expression_type) {
+	case BX_INT:
+		return NULL; //TODO: Stub
+	case BX_FLOAT:
+		return expression;
+	case BX_BOOL:
+		return NULL; //TODO: Stub
+	default:
+		BX_LOG(LOG_ERROR, "codegen_expression_cast", "Unrecognized type in function bx_cgex_cast_to_int.");
+		return NULL;
+	}
 }
 
 struct bx_comp_expr *bx_cgex_cast_to_bool(struct bx_comp_expr *expression) {
-	return NULL; //TODO: Stub
+	enum bx_builtin_type expression_type;
+
+	expression_type = expression->data_type;
+	if (expression_type == BX_STREAM || expression_type == BX_SUBNET ||
+			expression_type == BX_STRING) {
+		BX_LOG(LOG_ERROR, "compiler", "Type '%s' cannot be converted to 'bool'.",
+						bx_cgex_get_type_name(expression_type));
+	}
+
+	switch (expression_type) {
+	case BX_INT:
+		return NULL; //TODO: Stub
+	case BX_FLOAT:
+		return NULL; //TODO: Stub
+	case BX_BOOL:
+		return expression;
+	default:
+		BX_LOG(LOG_ERROR, "codegen_expression_cast", "Unrecognized type in function bx_cgex_cast_to_int.");
+		return NULL;
+	}
 }
 
 struct bx_comp_expr *bx_cgex_cast_to_string(struct bx_comp_expr *expression) {
-	return NULL; //TODO: Stub
+	enum bx_builtin_type expression_type;
+
+	expression_type = expression->data_type;
+	if (expression_type == BX_STREAM || expression_type == BX_SUBNET) {
+		BX_LOG(LOG_ERROR, "compiler", "Type '%s' cannot be converted to 'string'.",
+						bx_cgex_get_type_name(expression_type));
+	}
+
+	switch (expression_type) {
+	case BX_INT:
+		return NULL; //TODO: Stub
+	case BX_FLOAT:
+		return NULL; //TODO: Stub
+	case BX_BOOL:
+		return NULL; //TODO: Stub
+	case BX_STRING:
+		return expression;
+	default:
+		BX_LOG(LOG_ERROR, "codegen_expression_cast", "Unrecognized type in function bx_cgex_cast_to_int.");
+		return NULL;
+	}
 }

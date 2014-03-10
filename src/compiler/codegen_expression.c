@@ -322,6 +322,27 @@ struct bx_comp_expr *bx_cgex_create_code_expression() {
 	return expression;
 }
 
+char *bx_cgex_get_type_name(enum bx_builtin_type type) {
+
+	switch (type) {
+	case BX_INT:
+		return "int";
+	case BX_FLOAT:
+		return "float";
+	case BX_STRING:
+		return "string";
+	case BX_BOOL:
+		return "boolean";
+	case BX_SUBNET:
+		return "subnet";
+	case BX_STREAM:
+		return "stream";
+	default:
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unrecognized type in function bx_cgex_get_type_name");
+		return NULL;
+	}
+}
+
 void bx_cgex_destroy_expression(struct bx_comp_expr *expression) {
 
 	if (expression == NULL) {

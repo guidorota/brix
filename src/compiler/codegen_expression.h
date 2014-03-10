@@ -93,6 +93,8 @@ struct bx_comp_expr *bx_cgex_constant_to_binary(struct bx_comp_expr *value);
 
 struct bx_comp_expr *bx_cgex_create_code_expression();
 
+char *bx_cgex_get_type_name(enum bx_builtin_type type);
+
 void bx_cgex_destroy_expression(struct bx_comp_expr *expression);
 
 #endif /* CODEGEN_EXPRESSION_H_ */
