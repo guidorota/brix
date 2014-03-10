@@ -1,6 +1,6 @@
 /*
- * codegen_expression.h
- * Created on: Mar 3, 2014
+ * test_codegen_expression_bitwise.h
+ * Created on: Mar 10, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,61 +29,11 @@
  *
  */
 
-#ifndef CODEGEN_EXPRESSION_H_
-#define CODEGEN_EXPRESSION_H_
+#ifndef TEST_CODEGEN_EXPRESSION_BITWISE_H_
+#define TEST_CODEGEN_EXPRESSION_BITWISE_H_
 
-#include "types.h"
-#include "configuration.h"
-#include "compiler/codegen_code.h"
+#include <check.h>
 
-enum bx_comp_operation {
-	BX_COMP_OP_ADD,
-	BX_COMP_OP_SUB,
-	BX_COMP_OP_MUL,
-	BX_COMP_OP_DIV,
-	BX_COMP_OP_MOD,
-	BX_COMP_OP_NOT,
-	BX_COMP_OP_AND,
-	BX_COMP_OP_OR,
-	BX_COMP_OP_XOR,
-	BX_COMP_OP_BITWISE_AND,
-	BX_COMP_OP_BITWISE_OR,
-	BX_COMP_OP_BITWISE_XOR,
-	BX_COMP_OP_EQ,
-	BX_COMP_OP_NE,
-	BX_COMP_OP_GT,
-	BX_COMP_OP_GE,
-	BX_COMP_OP_LT,
-	BX_COMP_OP_LE
-};
+Suite *test_codegen_expression_bitwise_create_suite(void);
 
-enum bx_comp_exp_type {
-	BX_COMP_CONSTANT,	// Constant value
-	BX_COMP_BINARY		// An expression in binary form
-};
-
-struct bx_comp_expr {
-	enum bx_builtin_type data_type;
-	enum bx_comp_exp_type type;
-	union bx_value {
-		bx_int32 int_value;
-		bx_float32 float_value;
-		bx_boolean bool_value;
-		struct bx_comp_code *code;
-	} bx_value;
-};
-
-struct bx_comp_expr *bx_cgex_create_int_constant(bx_int32 value);
-
-struct bx_comp_expr *bx_cgex_create_float_constant(bx_float32 value);
-
-struct bx_comp_expr *bx_cgex_create_bool_constant(bx_boolean value);
-
-struct bx_comp_expr *bx_cgex_create_variable(char *identifier);
-
-struct bx_comp_expr *bx_cgex_expression(struct bx_comp_expr *operand1,
-		struct bx_comp_expr *operand2, enum bx_comp_operation operation);
-
-void bx_cgex_destroy_expression(struct bx_comp_expr *expression);
-
-#endif /* CODEGEN_EXPRESSION_H_ */
+#endif /* TEST_CODEGEN_EXPRESSION_BITWISE_H_ */
