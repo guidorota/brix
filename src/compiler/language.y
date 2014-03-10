@@ -288,7 +288,9 @@ primary_expression
 	
 postfix_expression
 	: primary_expression
-		{ $$ = $1; }
+	{
+		$$ = $1;
+	}
 	| postfix_expression '[' expression ']'
 	| postfix_expression '.' IDENTIFIER
 	| postfix_expression INC_OP
