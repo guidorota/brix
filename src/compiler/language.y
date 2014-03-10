@@ -42,7 +42,7 @@ int yyerror(char *);
 %}
 
 %token FROM NETWORK FILTER GET EVERY QUEUE WINDOW EACH LOCAL PARENT AT DOCUMENT
-%token ON CHANGE IF ELSE ALLOW RESAMPLE EXISTING NEW
+%token ON CHANGE IF ELSE ALLOW RESAMPLE EXISTING NEW INC_OP DEC_OP
 %token DO WHILE FOR AND_OP OR_OP EQ_OP NEQ_OP LE_OP GE_OP
 %token INT FLOAT BOOL STRING STREAM SUBNET
 
@@ -64,6 +64,8 @@ int yyerror(char *);
 %type <expression> multiplicative_expression
 %type <expression> postfix_expression
 %type <expression> primary_expression
+%type <expression> cast_expression
+%type <expression> unary_expression
 %type <data_type> type_name
 %type <creation_modifier> creation_modifier
 
@@ -161,9 +163,9 @@ selection_statement
 	;
 	
 conditional_execution_statement
-	: AT expression code_block
-	| ON event_descriptor code_block
-	| EVERY expression code_block
+	: AT '(' expression ')' code_block
+	| ON '(' event_descriptor ')' code_block
+	| EVERY '(' expression ')' code_block
 	;
 	
 event_descriptor
@@ -276,10 +278,31 @@ postfix_expression
 		{ $$ = $1; }
 	| postfix_expression '[' expression ']'
 	| postfix_expression '.' IDENTIFIER
+	| postfix_expression INC_OP
+	| postfix_expression DEC_OP
+	;
+	
+unary_expression
+	: postfix_expression
+	| INC_OP unary_expression
+	| DEC_OP unary_expression
+	| unary_operator cast_expression
+	;
+
+unary_operator
+	: '-'
+	| '+'
+	| '~'
+	| '!'
+	;
+	
+cast_expression
+	: unary_expression
+	| '(' type_name ')' cast_expression
 	;
 	
 multiplicative_expression
-	: postfix_expression
+	: cast_expression
 	{
 		$$ = $1;
 	}

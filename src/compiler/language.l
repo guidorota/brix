@@ -78,6 +78,8 @@ LETTER		[a-zA-Z_]
 "stream"		{ count_column(); return STREAM; }
 "subnet"		{ count_column(); return SUBNET; }
 
+"++"			{ count_column(); return INC_OP; }
+"--"			{ count_column(); return DEC_OP; }
 "&&"			{ count_column(); return AND_OP; }
 "||"			{ count_column(); return OR_OP; }
 "=="			{ count_column(); return EQ_OP; }
