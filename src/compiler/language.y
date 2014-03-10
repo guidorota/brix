@@ -292,6 +292,9 @@ logical_or_expression
 		$$ = $1;
 	}
 	| logical_or_expression 'OR_OP' logical_and_expression
+	{
+		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_OR);
+	}
 	;
 	
 logical_and_expression
@@ -300,6 +303,9 @@ logical_and_expression
 		$$ = $1;
 	}
 	| logical_and_expression 'AND_OP' equality_expression
+	{
+		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_AND);
+	}
 	;
 	
 inclusive_or_expression
