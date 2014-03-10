@@ -107,6 +107,7 @@ static struct bx_comp_expr *logical_and_bool(struct bx_comp_expr *operand1, stru
 static struct bx_comp_expr *int_to_float(struct bx_comp_expr *value);
 static struct bx_comp_expr *float_to_int(struct bx_comp_expr *value);
 static struct bx_comp_expr *constant_to_binary(struct bx_comp_expr *value);
+static void constant_bool_to_binary(struct bx_comp_code *code, bx_int32 bool_value);
 static void constant_int_to_binary(struct bx_comp_code *code, bx_int32 int_value);
 
 struct bx_comp_expr *create_code_expression();
@@ -1496,8 +1497,7 @@ static struct bx_comp_expr *constant_to_binary(struct bx_comp_expr *value) {
 		break;
 
 	case BX_BOOL:
-		bx_cgco_add_instruction(code, BX_INSTR_PUSH32);
-		bx_cgco_add_bool_constant(code, (bx_uint32) value->bx_value.bool_value);
+		constant_bool_to_binary(code, value->bx_value.bool_value);
 		break;
 
 	default:
@@ -1509,6 +1509,15 @@ static struct bx_comp_expr *constant_to_binary(struct bx_comp_expr *value) {
 	value->type = BX_COMP_BINARY;
 	value->bx_value.code = code;
 	return value;
+}
+
+static void constant_bool_to_binary(struct bx_comp_code *code, bx_int32 bool_value) {
+
+	if (bool_value == 0) {
+		bx_cgco_add_instruction(code, BX_INSTR_IPUSH_0);
+	} else {
+		bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
+	}
 }
 
 static void constant_int_to_binary(struct bx_comp_code *code, bx_int32 int_value) {

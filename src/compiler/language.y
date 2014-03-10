@@ -66,6 +66,7 @@ int yyerror(char *);
 %type <expression> primary_expression
 %type <expression> cast_expression
 %type <expression> unary_expression
+%type <expression> assignment_expression
 %type <data_type> type_name
 %type <creation_modifier> creation_modifier
 
@@ -190,9 +191,21 @@ expression_statement
 	
 expression
 	: conditional_expression
+	{
+		$$ = $1;
+	}
 	| assignment_expression
+	{
+		$$ = $1;
+	}
 	| query_expression
+	{
+	
+	}
 	| resample_expression
+	{
+	
+	}
 	;
 	
 resample_expression
@@ -284,9 +297,21 @@ postfix_expression
 	
 unary_expression
 	: postfix_expression
+	{
+		$$ = $1;
+	}
 	| INC_OP unary_expression
+	{
+	
+	}
 	| DEC_OP unary_expression
+	{
+	
+	}
 	| unary_operator cast_expression
+	{
+	
+	}
 	;
 
 unary_operator
@@ -298,7 +323,13 @@ unary_operator
 	
 cast_expression
 	: unary_expression
+	{
+		$$ = $1;
+	}
 	| '(' type_name ')' cast_expression
+	{
+	
+	}
 	;
 	
 multiplicative_expression
