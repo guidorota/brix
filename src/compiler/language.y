@@ -64,7 +64,7 @@ int yyerror(char *);
 %type <expression> multiplicative_expression
 %type <expression> postfix_expression
 %type <expression> primary_expression
-%type <data_type> type_specifier
+%type <data_type> type_name
 %type <creation_modifier> creation_modifier
 
 %union {
@@ -99,14 +99,14 @@ statement
 	;
 	
 declaration_statement
-	: creation_modifier type_specifier IDENTIFIER ';'
+	: creation_modifier type_name IDENTIFIER ';'
 	{
 		bx_cgsy_add($3, $2, $1);
 	}
-	| creation_modifier type_specifier IDENTIFIER '=' expression ';'
+	| creation_modifier type_name IDENTIFIER '=' expression ';'
 	;
 	
-type_specifier
+type_name
 	: INT
 	{
 		$$ = BX_INT;
@@ -239,20 +239,13 @@ document_field_list
 	;
 	
 document_field
-	: type_specifier IDENTIFIER
-	| type_specifier IDENTIFIER ':' expression
-	| type_specifier IDENTIFIER ':' document_structure_definition
+	: type_name IDENTIFIER
+	| type_name IDENTIFIER ':' expression
+	| type_name IDENTIFIER ':' document_structure_definition
 	;
 
 assignment_expression
 	: postfix_expression '=' expression
-	;
-	
-postfix_expression
-	: primary_expression
-		{ $$ = $1; }
-	| postfix_expression '[' expression ']'
-	| postfix_expression '.' IDENTIFIER
 	;
 	
 primary_expression
@@ -277,85 +270,48 @@ primary_expression
 	
 	}
 	;
+	
+postfix_expression
+	: primary_expression
+		{ $$ = $1; }
+	| postfix_expression '[' expression ']'
+	| postfix_expression '.' IDENTIFIER
+	;
+	
+multiplicative_expression
+	: postfix_expression
+	{
+		$$ = $1;
+	}
+	| multiplicative_expression '*' postfix_expression
+	{
+		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_MUL);
+	}
+	| multiplicative_expression '/' postfix_expression
+	{
+		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_DIV);
+	}
+	| multiplicative_expression '%' postfix_expression
+	{
+		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_MOD);
+	}
+	;
+	
+additive_expression
+	: multiplicative_expression
+	{
+		$$ = $1;
+	}
+	| additive_expression '+' multiplicative_expression
+	{
+		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_ADD);
+	}
+	| additive_expression '-' multiplicative_expression
+	{
+		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_SUB);
+	}
+	;
 
-conditional_expression
-	: logical_or_expression
-	{
-		$$ = $1;
-	}
-	| logical_or_expression '?' expression ':' conditional_expression
-	;
-	
-logical_or_expression
-	: logical_and_expression
-	{
-		$$ = $1;
-	}
-	| logical_or_expression 'OR_OP' logical_and_expression
-	{
-		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_OR);
-	}
-	;
-	
-logical_and_expression
-	: inclusive_or_expression
-	{
-		$$ = $1;
-	}
-	| logical_and_expression 'AND_OP' equality_expression
-	{
-		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_AND);
-	}
-	;
-	
-inclusive_or_expression
-	: exclusive_or_expression
-	{
-		$$ = $1;
-	}
-	| inclusive_or_expression '|' exclusive_or_expression
-	{
-		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_BITWISE_OR);
-	}
-	;
-	
-exclusive_or_expression
-	: and_expression
-	{
-		$$ = $1;
-	}
-	| exclusive_or_expression '^' and_expression
-	{
-		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_BITWISE_XOR);
-	}
-	;
-	
-and_expression
-	: equality_expression
-	{
-		$$ = $1;
-	}
-	| and_expression '&' equality_expression
-	{
-		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_BITWISE_AND);
-	}
-	;
-	
-equality_expression
-	: relational_expression
-	{
-		$$ = $1;
-	}
-	| equality_expression 'EQ_OP' relational_expression
-	{
-		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_EQ);
-	}
-	| equality_expression 'NEQ_OP' relational_expression
-	{
-		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_NE);
-	}
-	;
-	
 relational_expression
 	: additive_expression
 	{
@@ -379,38 +335,82 @@ relational_expression
 	}
 	;
 	
-additive_expression
-	: multiplicative_expression
+equality_expression
+	: relational_expression
 	{
 		$$ = $1;
 	}
-	| additive_expression '+' multiplicative_expression
+	| equality_expression 'EQ_OP' relational_expression
 	{
-		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_ADD);
+		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_EQ);
 	}
-	| additive_expression '-' multiplicative_expression
+	| equality_expression 'NEQ_OP' relational_expression
 	{
-		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_SUB);
+		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_NE);
 	}
 	;
 	
-multiplicative_expression
-	: postfix_expression
+and_expression
+	: equality_expression
 	{
 		$$ = $1;
 	}
-	| multiplicative_expression '*' postfix_expression
+	| and_expression '&' equality_expression
 	{
-		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_MUL);
+		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_BITWISE_AND);
 	}
-	| multiplicative_expression '/' postfix_expression
+	;
+	
+exclusive_or_expression
+	: and_expression
 	{
-		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_DIV);
+		$$ = $1;
 	}
-	| multiplicative_expression '%' postfix_expression
+	| exclusive_or_expression '^' and_expression
 	{
-		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_MOD);
+		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_BITWISE_XOR);
 	}
+	;
+	
+inclusive_or_expression
+	: exclusive_or_expression
+	{
+		$$ = $1;
+	}
+	| inclusive_or_expression '|' exclusive_or_expression
+	{
+		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_BITWISE_OR);
+	}
+	;
+	
+logical_and_expression
+	: inclusive_or_expression
+	{
+		$$ = $1;
+	}
+	| logical_and_expression 'AND_OP' equality_expression
+	{
+		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_AND);
+	}
+	;
+	
+logical_or_expression
+	: logical_and_expression
+	{
+		$$ = $1;
+	}
+	| logical_or_expression 'OR_OP' logical_and_expression
+	{
+		$$ = bx_cgex_expression($1, $3, BX_COMP_OP_OR);
+	}
+	;
+	
+conditional_expression
+	: logical_or_expression
+	{
+		$$ = $1;
+	}
+	| logical_or_expression '?' expression ':' conditional_expression
 	;
 
 %%
