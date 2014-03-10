@@ -43,6 +43,7 @@
 #include "compiler/test_codegen_expression_arithmetics.h"
 #include "compiler/test_codegen_expression_comparison.h"
 #include "compiler/test_codegen_expression_bitwise.h"
+#include "compiler/test_codegen_expression_logical.h"
 
 int main(void) {
 	int number_failed = 0;
@@ -61,6 +62,7 @@ int main(void) {
 	srunner_add_suite(runner, test_codegen_expression_arithmetics_create_suite());
 	srunner_add_suite(runner, test_codegen_expression_comparison_create_suite());
 	srunner_add_suite(runner, test_codegen_expression_bitwise_create_suite());
+	srunner_add_suite(runner, test_codegen_expression_logical_create_suite());
 
 	srunner_run_all(runner, CK_VERBOSE);
 	number_failed = srunner_ntests_failed(runner);
