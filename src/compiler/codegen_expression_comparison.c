@@ -147,7 +147,7 @@ static struct bx_comp_expr *equals_bool(struct bx_comp_expr *operand1, struct bx
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_float_constant(operand1->bx_value.bool_value == operand2->bx_value.bool_value);
+		return bx_cgex_create_bool_constant(operand1->bx_value.bool_value == operand2->bx_value.bool_value);
 	}
 
 	if (operand1->type == BX_COMP_CONSTANT) {
@@ -258,7 +258,7 @@ static struct bx_comp_expr *not_equals_bool(struct bx_comp_expr *operand1, struc
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_float_constant(operand1->bx_value.bool_value != operand2->bx_value.bool_value);
+		return bx_cgex_create_bool_constant(operand1->bx_value.bool_value != operand2->bx_value.bool_value);
 	}
 
 	if (operand1->type == BX_COMP_CONSTANT) {
