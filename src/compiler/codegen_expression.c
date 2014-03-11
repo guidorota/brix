@@ -212,44 +212,6 @@ struct bx_comp_expr *bx_cgex_expression(struct bx_comp_expr *operand1,
 	}
 }
 
-struct bx_comp_expr *bx_cgex_int_to_float(struct bx_comp_expr *value) {
-
-	switch(value->type) {
-	case BX_COMP_BINARY:
-		bx_cgco_add_instruction(value->bx_value.code, BX_INSTR_I2F);
-		value->data_type = BX_FLOAT;
-		return value;
-
-	case BX_COMP_CONSTANT:
-		value->bx_value.float_value = (bx_float32) value->bx_value.int_value;
-		value->data_type = BX_FLOAT;
-		return value;
-
-	default:
-		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected expression type.");
-		return NULL;
-	}
-}
-
-struct bx_comp_expr *bx_cgex_float_to_int(struct bx_comp_expr *value) {
-
-	switch(value->type) {
-	case BX_COMP_BINARY:
-		bx_cgco_add_instruction(value->bx_value.code, BX_INSTR_F2I);
-		value->data_type = BX_INT;
-		return value;
-
-	case BX_COMP_CONSTANT:
-		value->bx_value.int_value = (bx_int32) value->bx_value.float_value;
-		value->data_type = BX_INT;
-		return value;
-
-	default:
-		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected expression type.");
-		return NULL;
-	}
-}
-
 struct bx_comp_expr *bx_cgex_constant_to_binary(struct bx_comp_expr *value) {
 	struct bx_comp_code *code;
 
@@ -339,7 +301,7 @@ char *bx_cgex_get_type_name(enum bx_builtin_type type) {
 		return "stream";
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression", "Unrecognized type in function bx_cgex_get_type_name");
-		return NULL;
+		return "unknown type";
 	}
 }
 

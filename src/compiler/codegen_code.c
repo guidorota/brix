@@ -36,7 +36,7 @@
 
 #define DEFAULT_SIZE 256
 
-static bx_int8 add_to_code(struct bx_comp_code *code, void *data, bx_size data_length);
+static bx_ssize add_to_code(struct bx_comp_code *code, void *data, bx_size data_length);
 
 struct bx_comp_code *bx_cgco_create() {
 	struct bx_comp_code *code;
@@ -68,35 +68,40 @@ void bx_cgco_destroy(struct bx_comp_code *code) {
 	free(code);
 }
 
-bx_int8 bx_cgco_add_instruction(struct bx_comp_code *code, enum bx_instruction instruction) {
+bx_ssize bx_cgco_add_instruction(struct bx_comp_code *code, enum bx_instruction instruction) {
 	bx_uint8 uint8_instruction = (bx_uint8) instruction;
 	return add_to_code(code, (void *) &uint8_instruction, sizeof uint8_instruction);
 }
 
-bx_int8 bx_cgco_add_identifier(struct bx_comp_code *code, char *identifier) {
+bx_ssize bx_cgco_add_identifier(struct bx_comp_code *code, char *identifier) {
 	return add_to_code(code, (void *) identifier, DM_FIELD_IDENTIFIER_LENGTH);
 }
 
-bx_int8 bx_cgco_add_int_constant(struct bx_comp_code *code, bx_int32 value) {
+bx_ssize bx_cgco_add_int_constant(struct bx_comp_code *code, bx_int32 value) {
 	return add_to_code(code, (void *) &value, sizeof value);
 }
 
-bx_int8 bx_cgco_add_float_constant(struct bx_comp_code *code, bx_float32 value) {
+bx_ssize bx_cgco_add_address(struct bx_comp_code *code, bx_int16 address) {
+	return add_to_code(code, (void *) &address, sizeof address);
+}
+
+bx_ssize bx_cgco_add_float_constant(struct bx_comp_code *code, bx_float32 value) {
 	return add_to_code(code, (void *) &value, sizeof value);
 }
 
-bx_int8 bx_cgco_add_bool_constant(struct bx_comp_code *code, bx_uint32 value) {
-	if (value > 0) {
+bx_ssize bx_cgco_add_bool_constant(struct bx_comp_code *code, bx_uint32 value) {
+	if (value != 0) {
 		value = 1;
 	}
 	return add_to_code(code, (void *) &value, sizeof value);
 }
 
-bx_int8 bx_cgco_append_code(struct bx_comp_code *code, struct bx_comp_code *append) {
+bx_ssize bx_cgco_append_code(struct bx_comp_code *code, struct bx_comp_code *append) {
 	return add_to_code(code, append->data, append->size);
 }
 
-static bx_int8 add_to_code(struct bx_comp_code *code, void *data, bx_size data_length) {
+static bx_ssize add_to_code(struct bx_comp_code *code, void *data, bx_size data_length) {
+	bx_ssize address;
 
 	if (code == NULL || data == NULL) {
 		return -1;
@@ -110,8 +115,24 @@ static bx_int8 add_to_code(struct bx_comp_code *code, void *data, bx_size data_l
 		code->capacity += DEFAULT_SIZE;
 	}
 
+	address = code->size;
 	memcpy((bx_uint8 *) code->data + code->size, data, data_length);
 	code->size += data_length;
 
-	return 0;
+	return address;
+}
+
+bx_comp_label bx_cgco_create_address_label(struct bx_comp_code *code) {
+	bx_uint16 null_data = 0;
+	bx_comp_label label;
+
+	label = code->size;
+	add_to_code(code, (void *) &null_data, sizeof null_data);
+
+	return label;
+}
+
+void bx_cgco_set_address_label(struct bx_comp_code *code, bx_comp_label label, bx_uint16 address) {
+
+	memcpy((bx_uint8 *) code->data + (bx_size) label, &address, sizeof address);
 }

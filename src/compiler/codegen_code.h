@@ -41,20 +41,28 @@ struct bx_comp_code {
 	bx_size capacity;
 };
 
+typedef bx_size bx_comp_label;
+
 struct bx_comp_code *bx_cgco_create();
 
 void bx_cgco_destroy(struct bx_comp_code *code);
 
-bx_int8 bx_cgco_add_instruction(struct bx_comp_code *code, enum bx_instruction instruction);
+bx_ssize bx_cgco_add_instruction(struct bx_comp_code *code, enum bx_instruction instruction);
 
-bx_int8 bx_cgco_add_identifier(struct bx_comp_code *code, char *identifier);
+bx_ssize bx_cgco_add_identifier(struct bx_comp_code *code, char *identifier);
 
-bx_int8 bx_cgco_add_int_constant(struct bx_comp_code *code, bx_int32 value);
+bx_ssize bx_cgco_add_int_constant(struct bx_comp_code *code, bx_int32 value);
 
-bx_int8 bx_cgco_add_float_constant(struct bx_comp_code *code, bx_float32 value);
+bx_ssize bx_cgco_add_address(struct bx_comp_code *code, bx_int16 address);
 
-bx_int8 bx_cgco_add_bool_constant(struct bx_comp_code *code, bx_uint32 value);
+bx_ssize bx_cgco_add_float_constant(struct bx_comp_code *code, bx_float32 value);
 
-bx_int8 bx_cgco_append_code(struct bx_comp_code *code, struct bx_comp_code *append);
+bx_ssize bx_cgco_add_bool_constant(struct bx_comp_code *code, bx_uint32 value);
+
+bx_ssize bx_cgco_append_code(struct bx_comp_code *code, struct bx_comp_code *append);
+
+bx_comp_label bx_cgco_create_address_label(struct bx_comp_code *code);
+
+void bx_cgco_set_address_label(struct bx_comp_code *code, bx_comp_label label, bx_uint16 address);
 
 #endif /* CODEGEN_CODE_H_ */

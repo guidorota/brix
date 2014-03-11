@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include "logging.h"
 #include "compiler/codegen_expression_comparison.h"
+#include "compiler/codegen_expression_cast.h"
 
 static struct bx_comp_expr *equals_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 static struct bx_comp_expr *equals_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);

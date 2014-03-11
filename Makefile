@@ -4,7 +4,7 @@ ARCH := linux
 
 TARGETS := $(EXECUTABLES:%=src/%)
 SRC_DIRS := src src/arch/$(ARCH) $(MODULES:%=src/%) $(MODULES:%=src/arch/$(ARCH)/%)
-CFLAGS := $(SRC_DIRS:%=-I%) -g -Wall -pedantic -Wno-variadic-macros
+CFLAGS := $(SRC_DIRS:%=-I%) -g -Wall -pedantic -Wno-variadic-macros -Werror
 SOURCES := $(wildcard $(SRC_DIRS:%=%/*.c))
 OBJECTS := $(filter-out $(TARGETS:%=%.o), $(SOURCES:.c=.o))
 

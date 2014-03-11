@@ -85,10 +85,6 @@ struct bx_comp_expr *bx_cgex_cast(struct bx_comp_expr *expression, enum bx_built
 struct bx_comp_expr *bx_cgex_expression(struct bx_comp_expr *operand1,
 		struct bx_comp_expr *operand2, enum bx_comp_operation operation);
 
-struct bx_comp_expr *bx_cgex_int_to_float(struct bx_comp_expr *value);
-
-struct bx_comp_expr *bx_cgex_float_to_int(struct bx_comp_expr *value);
-
 struct bx_comp_expr *bx_cgex_constant_to_binary(struct bx_comp_expr *value);
 
 struct bx_comp_expr *bx_cgex_create_code_expression();

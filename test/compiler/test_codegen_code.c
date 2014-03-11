@@ -54,7 +54,7 @@ START_TEST (data_addition) {
 	bx_int32 i;
 	for (i = 0; i < 10; i++) {
 		error = bx_cgco_add_int_constant(code, i);
-		ck_assert_int_eq(error, 0);
+		ck_assert_int_ne(error, -1);
 	}
 
 	for (i = 0; i < 10; i++) {
@@ -81,6 +81,29 @@ START_TEST (expand_size) {
 	bx_cgco_destroy(code);
 } END_TEST
 
+START_TEST (address_label) {
+	struct bx_comp_code *code;
+	bx_comp_label false_label, true_label;
+	bx_ssize false_jump_address, true_jump_address;
+
+	code = bx_cgco_create();
+	ck_assert_ptr_ne(code, NULL);
+
+	bx_cgco_add_instruction(code, BX_INSTR_JEQZ);
+	false_label = bx_cgco_create_address_label(code);
+	bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
+	bx_cgco_add_instruction(code, BX_INSTR_JUMP);
+	true_label = bx_cgco_create_address_label(code);
+	false_jump_address = bx_cgco_add_instruction(code, BX_INSTR_IPUSH_0);
+	true_jump_address = bx_cgco_add_instruction(code, BX_INSTR_NOP);
+	bx_cgco_set_address_label(code, false_label, false_jump_address);
+	bx_cgco_set_address_label(code, true_label, true_jump_address);
+
+	ck_assert_int_eq(*(bx_uint16 *) ((bx_uint8 *) code->data + false_label), (bx_uint16) false_jump_address);
+	ck_assert_int_eq(*(bx_uint16 *) ((bx_uint8 *) code->data + true_label), (bx_uint16) true_jump_address);
+	bx_cgco_destroy(code);
+} END_TEST
+
 Suite *test_codegen_code_create_suite(void) {
 	Suite *suite = suite_create("bx_linked_list");
 	TCase *tcase;
@@ -95,6 +118,10 @@ Suite *test_codegen_code_create_suite(void) {
 
 	tcase = tcase_create("expand_size");
 	tcase_add_test(tcase, expand_size);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("address_label");
+	tcase_add_test(tcase, address_label);
 	suite_add_tcase(suite, tcase);
 
 	return suite;
