@@ -459,11 +459,11 @@ static inline bx_int8 bx_jump_functions(struct bx_vm_status *vm_status, enum vm_
 	bx_uint16 address;
 	bx_int32 data;
 
-	error = bx_fetch(vm_status, &data, sizeof data);
+	error = bx_fetch(vm_status, &address, sizeof address);
 	if (error == -1) {
 		return -1;
 	}
-	error = bx_fetch(vm_status, &address, sizeof address);
+	error = BX_STACK_POP_VARIABLE(&vm_status->execution_stack, data);
 	if (error == -1) {
 		return -1;
 	}
