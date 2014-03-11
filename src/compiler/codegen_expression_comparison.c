@@ -112,8 +112,7 @@ static struct bx_comp_expr *equals_int(struct bx_comp_expr *operand1, struct bx_
 		operand2 = bx_cgex_constant_to_binary(operand2);
 	}
 
-	result = bx_cgex_create_code_expression();
-	result->data_type = BX_BOOL;
+	result = bx_cgex_create_code_expression(BX_BOOL);
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IEQ);
@@ -136,8 +135,7 @@ static struct bx_comp_expr *equals_float(struct bx_comp_expr *operand1, struct b
 		operand2 = bx_cgex_constant_to_binary(operand2);
 	}
 
-	result = bx_cgex_create_code_expression();
-	result->data_type = BX_BOOL;
+	result = bx_cgex_create_code_expression(BX_BOOL);
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_FEQ);
@@ -160,8 +158,7 @@ static struct bx_comp_expr *equals_bool(struct bx_comp_expr *operand1, struct bx
 		operand2 = bx_cgex_constant_to_binary(operand2);
 	}
 
-	result = bx_cgex_create_code_expression();
-	result->data_type = BX_BOOL;
+	result = bx_cgex_create_code_expression(BX_BOOL);
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IEQ);
@@ -226,8 +223,7 @@ static struct bx_comp_expr *not_equals_int(struct bx_comp_expr *operand1, struct
 		operand2 = bx_cgex_constant_to_binary(operand2);
 	}
 
-	result = bx_cgex_create_code_expression();
-	result->data_type = BX_BOOL;
+	result = bx_cgex_create_code_expression(BX_BOOL);
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_INE);
@@ -250,8 +246,7 @@ static struct bx_comp_expr *not_equals_float(struct bx_comp_expr *operand1, stru
 		operand2 = bx_cgex_constant_to_binary(operand2);
 	}
 
-	result = bx_cgex_create_code_expression();
-	result->data_type = BX_BOOL;
+	result = bx_cgex_create_code_expression(BX_BOOL);
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_FNE);
@@ -274,8 +269,7 @@ static struct bx_comp_expr *not_equals_bool(struct bx_comp_expr *operand1, struc
 		operand2 = bx_cgex_constant_to_binary(operand2);
 	}
 
-	result = bx_cgex_create_code_expression();
-	result->data_type = BX_BOOL;
+	result = bx_cgex_create_code_expression(BX_BOOL);
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_INE);
@@ -338,8 +332,7 @@ static struct bx_comp_expr *greater_than_int(struct bx_comp_expr *operand1, stru
 		operand2 = bx_cgex_constant_to_binary(operand2);
 	}
 
-	result = bx_cgex_create_code_expression();
-	result->data_type = BX_BOOL;
+	result = bx_cgex_create_code_expression(BX_BOOL);
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IGT);
@@ -362,8 +355,7 @@ static struct bx_comp_expr *greater_than_float(struct bx_comp_expr *operand1, st
 		operand2 = bx_cgex_constant_to_binary(operand2);
 	}
 
-	result = bx_cgex_create_code_expression();
-	result->data_type = BX_BOOL;
+	result = bx_cgex_create_code_expression(BX_BOOL);
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_FGT);
@@ -426,8 +418,7 @@ static struct bx_comp_expr *greater_or_equal_int(struct bx_comp_expr *operand1, 
 		operand2 = bx_cgex_constant_to_binary(operand2);
 	}
 
-	result = bx_cgex_create_code_expression();
-	result->data_type = BX_BOOL;
+	result = bx_cgex_create_code_expression(BX_BOOL);
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IGE);
@@ -450,8 +441,7 @@ static struct bx_comp_expr *greater_or_equal_float(struct bx_comp_expr *operand1
 		operand2 = bx_cgex_constant_to_binary(operand2);
 	}
 
-	result = bx_cgex_create_code_expression();
-	result->data_type = BX_BOOL;
+	result = bx_cgex_create_code_expression(BX_BOOL);
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_FGE);
@@ -514,8 +504,7 @@ static struct bx_comp_expr *less_than_int(struct bx_comp_expr *operand1, struct 
 		operand2 = bx_cgex_constant_to_binary(operand2);
 	}
 
-	result = bx_cgex_create_code_expression();
-	result->data_type = BX_BOOL;
+	result = bx_cgex_create_code_expression(BX_BOOL);
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_ILT);
@@ -538,8 +527,7 @@ static struct bx_comp_expr *less_than_float(struct bx_comp_expr *operand1, struc
 		operand2 = bx_cgex_constant_to_binary(operand2);
 	}
 
-	result = bx_cgex_create_code_expression();
-	result->data_type = BX_BOOL;
+	result = bx_cgex_create_code_expression(BX_BOOL);
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_FLT);
@@ -602,8 +590,7 @@ static struct bx_comp_expr *less_or_equal_int(struct bx_comp_expr *operand1, str
 		operand2 = bx_cgex_constant_to_binary(operand2);
 	}
 
-	result = bx_cgex_create_code_expression();
-	result->data_type = BX_BOOL;
+	result = bx_cgex_create_code_expression(BX_BOOL);
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_ILE);
@@ -626,8 +613,7 @@ static struct bx_comp_expr *less_or_equal_float(struct bx_comp_expr *operand1, s
 		operand2 = bx_cgex_constant_to_binary(operand2);
 	}
 
-	result = bx_cgex_create_code_expression();
-	result->data_type = BX_BOOL;
+	result = bx_cgex_create_code_expression(BX_BOOL);
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_FLE);

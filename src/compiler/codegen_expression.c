@@ -305,7 +305,7 @@ static void constant_float_to_binary(struct bx_comp_code *code, bx_float32 float
 	}
 }
 
-struct bx_comp_expr *bx_cgex_create_code_expression() {
+struct bx_comp_expr *bx_cgex_create_code_expression(enum bx_builtin_type data_type) {
 	struct bx_comp_expr *expression;
 
 	expression = BX_MALLOC(struct bx_comp_expr);
@@ -318,6 +318,7 @@ struct bx_comp_expr *bx_cgex_create_code_expression() {
 		return NULL;
 	}
 	expression->type = BX_COMP_BINARY;
+	expression->data_type = data_type;
 
 	return expression;
 }
