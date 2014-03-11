@@ -342,14 +342,20 @@ multiplicative_expression
 	| multiplicative_expression '*' postfix_expression
 	{
 		$$ = bx_cgex_binary_expression($1, $3, BX_COMP_OP_MUL);
+		bx_cgex_destroy_expression($1);
+		bx_cgex_destroy_expression($3);
 	}
 	| multiplicative_expression '/' postfix_expression
 	{
 		$$ = bx_cgex_binary_expression($1, $3, BX_COMP_OP_DIV);
+		bx_cgex_destroy_expression($1);
+		bx_cgex_destroy_expression($3);
 	}
 	| multiplicative_expression '%' postfix_expression
 	{
 		$$ = bx_cgex_binary_expression($1, $3, BX_COMP_OP_MOD);
+		bx_cgex_destroy_expression($1);
+		bx_cgex_destroy_expression($3);
 	}
 	;
 	
@@ -361,10 +367,14 @@ additive_expression
 	| additive_expression '+' multiplicative_expression
 	{
 		$$ = bx_cgex_binary_expression($1, $3, BX_COMP_OP_ADD);
+		bx_cgex_destroy_expression($1);
+		bx_cgex_destroy_expression($3);
 	}
 	| additive_expression '-' multiplicative_expression
 	{
 		$$ = bx_cgex_binary_expression($1, $3, BX_COMP_OP_SUB);
+		bx_cgex_destroy_expression($1);
+		bx_cgex_destroy_expression($3);
 	}
 	;
 
@@ -376,18 +386,26 @@ relational_expression
 	| relational_expression '>' additive_expression
 	{
 		$$ = bx_cgex_binary_expression($1, $3, BX_COMP_OP_GT);
+		bx_cgex_destroy_expression($1);
+		bx_cgex_destroy_expression($3);
 	}
 	| relational_expression '<' additive_expression
 	{
 		$$ = bx_cgex_binary_expression($1, $3, BX_COMP_OP_LT);
+		bx_cgex_destroy_expression($1);
+		bx_cgex_destroy_expression($3);
 	}
 	| relational_expression 'GE_OP' additive_expression
 	{
 		$$ = bx_cgex_binary_expression($1, $3, BX_COMP_OP_GE);
+		bx_cgex_destroy_expression($1);
+		bx_cgex_destroy_expression($3);
 	}
 	| relational_expression 'LE_OP' additive_expression
 	{
 		$$ = bx_cgex_binary_expression($1, $3, BX_COMP_OP_LE);
+		bx_cgex_destroy_expression($1);
+		bx_cgex_destroy_expression($3);
 	}
 	;
 	
@@ -399,10 +417,14 @@ equality_expression
 	| equality_expression 'EQ_OP' relational_expression
 	{
 		$$ = bx_cgex_binary_expression($1, $3, BX_COMP_OP_EQ);
+		bx_cgex_destroy_expression($1);
+		bx_cgex_destroy_expression($3);
 	}
 	| equality_expression 'NEQ_OP' relational_expression
 	{
 		$$ = bx_cgex_binary_expression($1, $3, BX_COMP_OP_NE);
+		bx_cgex_destroy_expression($1);
+		bx_cgex_destroy_expression($3);
 	}
 	;
 	
@@ -414,6 +436,8 @@ and_expression
 	| and_expression '&' equality_expression
 	{
 		$$ = bx_cgex_binary_expression($1, $3, BX_COMP_OP_BITWISE_AND);
+		bx_cgex_destroy_expression($1);
+		bx_cgex_destroy_expression($3);
 	}
 	;
 	
@@ -425,6 +449,8 @@ exclusive_or_expression
 	| exclusive_or_expression '^' and_expression
 	{
 		$$ = bx_cgex_binary_expression($1, $3, BX_COMP_OP_BITWISE_XOR);
+		bx_cgex_destroy_expression($1);
+		bx_cgex_destroy_expression($3);
 	}
 	;
 	
@@ -436,6 +462,8 @@ inclusive_or_expression
 	| inclusive_or_expression '|' exclusive_or_expression
 	{
 		$$ = bx_cgex_binary_expression($1, $3, BX_COMP_OP_BITWISE_OR);
+		bx_cgex_destroy_expression($1);
+		bx_cgex_destroy_expression($3);
 	}
 	;
 	
@@ -447,6 +475,8 @@ logical_and_expression
 	| logical_and_expression 'AND_OP' equality_expression
 	{
 		$$ = bx_cgex_binary_expression($1, $3, BX_COMP_OP_AND);
+		bx_cgex_destroy_expression($1);
+		bx_cgex_destroy_expression($3);
 	}
 	;
 	
@@ -458,6 +488,8 @@ logical_or_expression
 	| logical_or_expression 'OR_OP' logical_and_expression
 	{
 		$$ = bx_cgex_binary_expression($1, $3, BX_COMP_OP_OR);
+		bx_cgex_destroy_expression($1);
+		bx_cgex_destroy_expression($3);
 	}
 	;
 	
