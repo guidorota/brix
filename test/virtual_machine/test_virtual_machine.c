@@ -789,6 +789,76 @@ START_TEST (float_expression) {
 	ck_assert_int_eq(bx_test_field_get_float(&test_field), (operand1 + operand2) * operand3 - operand4);
 } END_TEST
 
+START_TEST (negation_test) {
+	bx_int8 error;
+	bx_int32 positive_int = 43;
+	bx_int32 negative_int = -12;
+	bx_int32 zero_int = 0;
+	bx_float32 positive_float = 12.398;
+	bx_float32 negative_float = -98.1;
+	bx_float32 zero_float = 0.0;
+
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, positive_int);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_INEG);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), - positive_int);
+
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, negative_int);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_INEG);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), - negative_int);
+
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, zero_int);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_INEG);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), zero_int);
+
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_float(&buffer, positive_float);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_FNEG);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_float(&test_field), - positive_float);
+
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_float(&buffer, negative_float);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_FNEG);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_float(&test_field), - negative_float);
+
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_float(&buffer, zero_float);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_FNEG);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_float(&test_field), zero_float);
+} END_TEST
+
 START_TEST (unconditional_jump) {
 	bx_int8 error;
 	bx_int32 value1 = 12;
@@ -1276,6 +1346,10 @@ Suite *test_virtual_machine_create_suite() {
 
 	tcase = tcase_create("float_expression");
 	tcase_add_test(tcase, float_expression);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("negation_test");
+	tcase_add_test(tcase, negation_test);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("unconditional_jump");
