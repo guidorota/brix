@@ -133,6 +133,7 @@ struct bx_comp_expr *bx_cgex_int_to_bool(struct bx_comp_expr *value) {
 
 	switch(value->type) {
 	case BX_COMP_BINARY:
+		value->data_type = BX_BOOL;
 		code = value->bx_value.code;
 		bx_cgco_add_instruction(code, BX_INSTR_JEQZ);
 		false_label = bx_cgco_create_address_label(code);
@@ -164,6 +165,7 @@ struct bx_comp_expr *bx_cgex_float_to_bool(struct bx_comp_expr *value) {
 
 	switch(value->type) {
 	case BX_COMP_BINARY:
+		value->data_type = BX_BOOL;
 		code = value->bx_value.code;
 		bx_cgco_add_instruction(code, BX_INSTR_FPUSH_0);
 		bx_cgco_add_instruction(code, BX_INSTR_FSUB);
