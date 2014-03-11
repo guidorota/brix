@@ -152,7 +152,7 @@ struct bx_comp_expr *bx_cgex_cast(struct bx_comp_expr *expression, enum bx_built
 	}
 }
 
-struct bx_comp_expr *bx_cgex_expression(struct bx_comp_expr *operand1,
+struct bx_comp_expr *bx_cgex_binary_expression(struct bx_comp_expr *operand1,
 		struct bx_comp_expr *operand2, enum bx_comp_operation operation) {
 
 	if (operand1 == NULL || operand2 == NULL) {
