@@ -210,6 +210,25 @@ static inline bx_int8 bx_integer_functions(struct bx_stack *execution_stack, enu
 	return 0;
 }
 
+static bx_int8 bx_ineg_function(struct bx_vm_status *vm_status) {
+	bx_int32 operand;
+	bx_int32 result;
+	bx_int8 error;
+
+	error = BX_STACK_POP_VARIABLE(&vm_status->execution_stack, operand);
+	if (error != 0) {
+		return -1;
+	}
+	result = - operand;
+
+	error = BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, result);
+	if (error != 0) {
+		return -1;
+	}
+
+	return 0;
+}
+
 static bx_int8 bx_inot_function(struct bx_vm_status *vm_status) {
 	bx_int32 operand;
 	bx_int32 result;
@@ -329,6 +348,25 @@ static inline bx_int8 bx_float_functions(struct bx_stack *execution_stack, enum 
 		default:
 			return -1;
 		}
+	if (error != 0) {
+		return -1;
+	}
+
+	return 0;
+}
+
+static bx_int8 bx_fneg_function(struct bx_vm_status *vm_status) {
+	bx_float32 operand;
+	bx_float32 result;
+	bx_int8 error;
+
+	error = BX_STACK_POP_VARIABLE(&vm_status->execution_stack, operand);
+	if (error != 0) {
+		return -1;
+	}
+	result = - operand;
+
+	error = BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, result);
 	if (error != 0) {
 		return -1;
 	}
@@ -561,6 +599,7 @@ static const bx_instruction instruction_array[256] = {
 	&bx_imul_function,
 	&bx_idiv_function,
 	&bx_imod_function,
+	&bx_ineg_function,
 	&bx_iand_function,
 	&bx_ior_function,
 	&bx_ixor_function,
@@ -575,6 +614,7 @@ static const bx_instruction instruction_array[256] = {
 	&bx_fsub_function,
 	&bx_fmul_function,
 	&bx_fdiv_function,
+	&bx_fneg_function,
 	&bx_feq_function,
 	&bx_fne_function,
 	&bx_fgt_function,
