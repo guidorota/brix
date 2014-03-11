@@ -69,8 +69,11 @@ typedef bx_int8 (*bx_instruction)(struct bx_vm_status *);
 static struct bx_vm_status vm_status;
 static bx_int8 stack_byte_array[VM_STACK_SIZE];
 
-static bx_int32 int_const_0 = 0;
-static bx_int32 int_const_1 = 1;
+static const bx_int32 int_const_0 = 0;
+static const bx_int32 int_const_1 = 1;
+
+static const bx_float32 float_const_0 = 0.0;
+static const bx_float32 float_const_1 = 1.0;
 
 static inline bx_int8 bx_integer_functions(struct bx_stack *execution_stack, enum vm_operand operation);
 static inline bx_int8 bx_float_functions(struct bx_stack *execution_stack, enum vm_operand operation);
@@ -359,6 +362,16 @@ static bx_int8 bx_ipush_1_function(struct bx_vm_status *vm_status) {
 	return BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, int_const_1);
 }
 
+static bx_int8 bx_fpush_0_function(struct bx_vm_status *vm_status) {
+
+	return BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, float_const_0);
+}
+
+static bx_int8 bx_fpush_1_function(struct bx_vm_status *vm_status) {
+
+	return BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, float_const_1);
+}
+
 static bx_int8 bx_load32_function(struct bx_vm_status *vm_status) {
 	bx_int8 error;
 	char identifier[DM_FIELD_IDENTIFIER_LENGTH];
@@ -571,6 +584,8 @@ static const bx_instruction instruction_array[256] = {
 	&bx_push32_function,
 	&bx_ipush_0_function,
 	&bx_ipush_1_function,
+	&bx_fpush_0_function,
+	&bx_fpush_1_function,
 	&bx_load32_function,
 	&bx_store32_function,
 	&bx_jump_function,

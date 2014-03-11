@@ -72,7 +72,7 @@ struct bx_comp_expr *bx_cgex_cast_to_float(struct bx_comp_expr *expression) {
 	case BX_FLOAT:
 		return expression;
 	case BX_BOOL:
-		return bx_cgex_int_to_bool(expression);
+		return NULL; //TODO: Stub
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression_cast", "Unrecognized type in function bx_cgex_cast_to_int.");
 		return NULL;
@@ -91,9 +91,9 @@ struct bx_comp_expr *bx_cgex_cast_to_bool(struct bx_comp_expr *expression) {
 
 	switch (expression_type) {
 	case BX_INT:
-		return NULL; //TODO: Stub
+		return bx_cgex_int_to_bool(expression);
 	case BX_FLOAT:
-		return NULL; //TODO: Stub
+		return bx_cgex_float_to_bool(expression);
 	case BX_BOOL:
 		return expression;
 	default:
@@ -127,6 +127,37 @@ struct bx_comp_expr *bx_cgex_cast_to_string(struct bx_comp_expr *expression) {
 }
 
 struct bx_comp_expr *bx_cgex_int_to_bool(struct bx_comp_expr *value) {
+	bx_comp_label false_label, true_label;
+	bx_ssize false_jump_address, true_jump_address;
+	struct bx_comp_code *code;
+
+	switch(value->type) {
+	case BX_COMP_BINARY:
+		code = value->bx_value.code;
+		bx_cgco_add_instruction(code, BX_INSTR_JEQZ);
+		false_label = bx_cgco_create_address_label(code);
+		bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
+		bx_cgco_add_instruction(code, BX_INSTR_JUMP);
+		true_label = bx_cgco_create_address_label(code);
+		false_jump_address = bx_cgco_add_instruction(code, BX_INSTR_IPUSH_0);
+		true_jump_address = bx_cgco_add_instruction(code, BX_INSTR_NOP);
+		bx_cgco_set_address_label(code, false_label, false_jump_address);
+		bx_cgco_set_address_label(code, true_label, true_jump_address);
+		return value;
+
+	case BX_COMP_CONSTANT:
+		value->bx_value.bool_value =
+				value->bx_value.int_value == 0 ? BX_BOOLEAN_FALSE : BX_BOOLEAN_TRUE;
+		value->data_type = BX_BOOL;
+		return value;
+
+	default:
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected expression type in function bx_cgex_int_to_bool.");
+		return NULL;
+	}
+}
+
+struct bx_comp_expr *bx_cgex_float_to_bool(struct bx_comp_expr *value) {
 	bx_comp_label false_label, true_label;
 	bx_ssize false_jump_address, true_jump_address;
 	struct bx_comp_code *code;

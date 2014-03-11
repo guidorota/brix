@@ -47,7 +47,7 @@ bx_int8 bx_stack_init(struct bx_stack *stack, void *storage, bx_size storage_siz
 	return 0;
 }
 
-bx_int8 bx_stack_push(struct bx_stack *stack, void *from, bx_size size) {
+bx_int8 bx_stack_push(struct bx_stack *stack, const void *from, bx_size size) {
 
 	if (stack == NULL || from == NULL) {
 		return -1;

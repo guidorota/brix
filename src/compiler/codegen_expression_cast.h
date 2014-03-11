@@ -44,6 +44,8 @@ struct bx_comp_expr *bx_cgex_cast_to_string(struct bx_comp_expr *expression);
 
 struct bx_comp_expr *bx_cgex_int_to_bool(struct bx_comp_expr *value);
 
+struct bx_comp_expr *bx_cgex_float_to_bool(struct bx_comp_expr *value);
+
 struct bx_comp_expr *bx_cgex_int_to_float(struct bx_comp_expr *value);
 
 struct bx_comp_expr *bx_cgex_float_to_int(struct bx_comp_expr *value);

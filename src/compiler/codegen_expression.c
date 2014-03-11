@@ -44,6 +44,7 @@
 
 static void constant_bool_to_binary(struct bx_comp_code *code, bx_int32 bool_value);
 static void constant_int_to_binary(struct bx_comp_code *code, bx_int32 int_value);
+static void constant_float_to_binary(struct bx_comp_code *code, bx_float32 float_value);
 
 struct bx_comp_expr *bx_cgex_create_int_constant(bx_int32 value) {
 	struct bx_comp_expr *expression;
@@ -223,8 +224,7 @@ struct bx_comp_expr *bx_cgex_constant_to_binary(struct bx_comp_expr *value) {
 		break;
 
 	case BX_FLOAT:
-		bx_cgco_add_instruction(code, BX_INSTR_PUSH32);
-		bx_cgco_add_float_constant(code, value->bx_value.float_value);
+		constant_float_to_binary(code, value->bx_value.float_value);
 		break;
 
 	case BX_BOOL:
@@ -264,6 +264,20 @@ static void constant_int_to_binary(struct bx_comp_code *code, bx_int32 int_value
 		bx_cgco_add_instruction(code, BX_INSTR_PUSH32);
 		bx_cgco_add_int_constant(code, int_value);
 		break;
+	}
+}
+
+static void constant_float_to_binary(struct bx_comp_code *code, bx_float32 float_value) {
+
+	if (float_value == 0.0) {
+		bx_cgco_add_instruction(code, BX_INSTR_FPUSH_0);
+
+	} else if (float_value == 1.0) {
+		bx_cgco_add_instruction(code, BX_INSTR_FPUSH_1);
+
+	} else {
+		bx_cgco_add_instruction(code, BX_INSTR_PUSH32);
+		bx_cgco_add_float_constant(code, float_value);
 	}
 }
 
