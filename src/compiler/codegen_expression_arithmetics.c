@@ -61,7 +61,7 @@ struct bx_comp_expr *bx_cgex_unary_plus_operator(struct bx_comp_expr *operand1) 
 	switch (operand1->data_type) {
 	case BX_INT:
 	case BX_FLOAT:
-		return operand1;
+		return bx_cgex_copy_expression(operand1);
 	case BX_BOOL:
 	case BX_SUBNET:
 	case BX_STREAM:
@@ -98,22 +98,31 @@ struct bx_comp_expr *bx_cgex_unary_minus_operator(struct bx_comp_expr *operand1)
 }
 
 static struct bx_comp_expr *unary_minus_int(struct bx_comp_expr *operand1) {
-	struct bx_comp_code *code;
+	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1->bx_value.int_value = - operand1->bx_value.int_value;
-
-	} else {
-		code = operand1->bx_value.code;
-		//TODO: Stub
+		return bx_cgex_create_int_constant(- operand1->bx_value.int_value);
 	}
 
-	return operand1;
+	result = bx_cgex_create_code_expression(BX_INT);
+	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_INEG);
+
+	return result;
 }
 
 static struct bx_comp_expr *unary_minus_float(struct bx_comp_expr *operand1) {
+	struct bx_comp_expr *result;
 
-	return NULL; //TODO: Stub
+	if (operand1->type == BX_COMP_CONSTANT) {
+		return bx_cgex_create_float_constant(- operand1->bx_value.float_value);
+	}
+
+	result = bx_cgex_create_code_expression(BX_FLOAT);
+	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_FNEG);
+
+	return result;
 }
 
 ///////////////////////
