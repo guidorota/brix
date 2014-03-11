@@ -34,6 +34,10 @@
 
 #include "compiler/codegen_expression.h"
 
+struct bx_comp_expr *bx_cgex_unary_plus_operator(struct bx_comp_expr *operand1);
+
+struct bx_comp_expr *bx_cgex_unary_minus_operator(struct bx_comp_expr *operand1);
+
 struct bx_comp_expr *bx_cgex_addition_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
 struct bx_comp_expr *bx_cgex_subtraction_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);

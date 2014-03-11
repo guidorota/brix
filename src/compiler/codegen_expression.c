@@ -153,13 +153,13 @@ struct bx_comp_expr *bx_cgex_cast(struct bx_comp_expr *expression, enum bx_built
 }
 
 struct bx_comp_expr *bx_cgex_binary_expression(struct bx_comp_expr *operand1,
-		struct bx_comp_expr *operand2, enum bx_comp_operation operation) {
+		struct bx_comp_expr *operand2, enum bx_comp_operator operator) {
 
 	if (operand1 == NULL || operand2 == NULL) {
 		return NULL;
 	}
 
-	switch(operation) {
+	switch(operator) {
 	case BX_COMP_OP_ADD:
 		return bx_cgex_addition_operator(operand1, operand2);
 		break;
@@ -209,6 +209,30 @@ struct bx_comp_expr *bx_cgex_binary_expression(struct bx_comp_expr *operand1,
 		return bx_cgex_logical_and_operator(operand1, operand2);
 		break;
 	default:
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operator "
+				"encountered in function 'bx_cgex_binary_expression'");
+		return NULL;
+	}
+}
+
+struct bx_comp_expr *bx_cgex_unary_expression(struct bx_comp_expr *operand1, enum bx_comp_operator operator) {
+
+	if (operand1 == NULL) {
+		return NULL;
+	}
+
+	switch (operator) {
+	case BX_COMP_OP_UNARY_PLUS:
+		return bx_cgex_unary_plus_operator(operand1);
+	case BX_COMP_OP_UNARY_MINUS:
+		return bx_cgex_unary_minus_operator(operand1);
+	case BX_COMP_OP_UNARY_NOT:
+		return NULL; //TODO: Stub
+	case BX_COMP_OP_UNARY_BITWISE_COMPLEMENT:
+		return NULL; //TODO: Stub
+	default:
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operator "
+						"encountered in function 'bx_cgex_unary_expression'");
 		return NULL;
 	}
 }

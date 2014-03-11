@@ -36,18 +36,21 @@
 #include "configuration.h"
 #include "compiler/codegen_code.h"
 
-enum bx_comp_operation {
+enum bx_comp_operator {
 	BX_COMP_OP_ADD,
 	BX_COMP_OP_SUB,
 	BX_COMP_OP_MUL,
 	BX_COMP_OP_DIV,
 	BX_COMP_OP_MOD,
-	BX_COMP_OP_NOT,
+	BX_COMP_OP_UNARY_PLUS,
+	BX_COMP_OP_UNARY_MINUS,
 	BX_COMP_OP_AND,
 	BX_COMP_OP_OR,
+	BX_COMP_OP_UNARY_NOT,
 	BX_COMP_OP_BITWISE_AND,
 	BX_COMP_OP_BITWISE_OR,
 	BX_COMP_OP_BITWISE_XOR,
+	BX_COMP_OP_UNARY_BITWISE_COMPLEMENT,
 	BX_COMP_OP_EQ,
 	BX_COMP_OP_NE,
 	BX_COMP_OP_GT,
@@ -83,7 +86,9 @@ struct bx_comp_expr *bx_cgex_create_variable(char *identifier);
 struct bx_comp_expr *bx_cgex_cast(struct bx_comp_expr *expression, enum bx_builtin_type type);
 
 struct bx_comp_expr *bx_cgex_binary_expression(struct bx_comp_expr *operand1,
-		struct bx_comp_expr *operand2, enum bx_comp_operation operation);
+		struct bx_comp_expr *operand2, enum bx_comp_operator operator);
+
+struct bx_comp_expr *bx_cgex_unary_expression(struct bx_comp_expr *operand1, enum bx_comp_operator operator);
 
 struct bx_comp_expr *bx_cgex_constant_to_binary(struct bx_comp_expr *value);
 
