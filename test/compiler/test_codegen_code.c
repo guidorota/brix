@@ -81,6 +81,34 @@ START_TEST (expand_size) {
 	bx_cgco_destroy(code);
 } END_TEST
 
+START_TEST (copy_test) {
+	struct bx_comp_code *code;
+	struct bx_comp_code *copy;
+	bx_int32 data = 12;
+	bx_size initial_capacity;
+
+	code = bx_cgco_create();
+	ck_assert_ptr_ne(code, NULL);
+	initial_capacity = code->capacity;
+
+	bx_size i;
+	for (i = 0; i < initial_capacity; i++) {
+		bx_cgco_add_int_constant(code, data);
+	}
+
+	ck_assert_int_gt(code->capacity, initial_capacity);
+	ck_assert_int_ge(code->size, initial_capacity);
+
+	copy = bx_cgco_copy(code);
+	ck_assert_ptr_ne(code, copy);
+	ck_assert_ptr_ne(code->data, copy->data);
+	ck_assert_int_eq(code->capacity, copy->capacity);
+	ck_assert_int_eq(code->size, copy->size);
+	ck_assert_int_eq(memcmp(code->data, copy->data, copy->capacity), 0);
+
+	bx_cgco_destroy(code);
+} END_TEST
+
 START_TEST (address_label) {
 	struct bx_comp_code *code;
 	bx_comp_label false_label, true_label;
@@ -118,6 +146,10 @@ Suite *test_codegen_code_create_suite(void) {
 
 	tcase = tcase_create("expand_size");
 	tcase_add_test(tcase, expand_size);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("copy_test");
+	tcase_add_test(tcase, copy_test);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("address_label");

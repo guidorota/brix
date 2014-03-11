@@ -35,5 +35,6 @@
 #include <stdlib.h>
 
 #define BX_MALLOC(type) (type *) malloc(sizeof (type))
+#define BX_CALLOC(count, type) (type *) calloc(count, sizeof (type))
 
 #endif /* MEMORY_UTILS_H_ */

@@ -58,6 +58,31 @@ struct bx_comp_code *bx_cgco_create() {
 	return code;
 }
 
+struct bx_comp_code *bx_cgco_copy(struct bx_comp_code *code) {
+	struct bx_comp_code *copy;
+
+	if (code == NULL) {
+		return NULL;
+	}
+
+	copy = BX_MALLOC(struct bx_comp_code);
+	if (code == NULL) {
+		return NULL;
+	}
+
+	copy->data = malloc(code->capacity);
+	if (code->data == NULL) {
+		free(code);
+		return NULL;
+	}
+
+	copy->capacity = code->capacity;
+	copy->size = code->size;
+	memcpy(copy->data, code->data, code->capacity);
+
+	return copy;
+}
+
 void bx_cgco_destroy(struct bx_comp_code *code) {
 
 	if (code == NULL) {

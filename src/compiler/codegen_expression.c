@@ -344,6 +344,34 @@ char *bx_cgex_get_type_name(enum bx_builtin_type type) {
 	}
 }
 
+struct bx_comp_expr *bx_cgex_copy_expression(struct bx_comp_expr *expression) {
+	struct bx_comp_expr *copy;
+
+	if (expression == NULL) {
+		return NULL;
+	}
+
+	copy = BX_MALLOC(struct bx_comp_expr);
+	if (copy == NULL) {
+		return NULL;
+	}
+
+	copy->data_type = expression->data_type;
+	copy->type = expression->type;
+	if (expression->type == BX_COMP_BINARY) {
+		copy->bx_value.code = bx_cgco_copy(expression->bx_value.code);
+		if (copy->bx_value.code == NULL) {
+			free(copy);
+			return NULL;
+		}
+
+	} else {
+		copy->bx_value = expression->bx_value;
+	}
+
+	return copy;
+}
+
 void bx_cgex_destroy_expression(struct bx_comp_expr *expression) {
 
 	if (expression == NULL) {

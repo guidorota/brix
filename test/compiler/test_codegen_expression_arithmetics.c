@@ -123,6 +123,62 @@ START_TEST (create_variable) {
 	bx_cgex_destroy_expression(expression);
 } END_TEST
 
+START_TEST (copy_expression) {
+	struct bx_comp_expr *expression;
+	struct bx_comp_expr *copy;
+	bx_int32 int_value = 93;
+	bx_float32 float_value = 78.349;
+	bx_boolean bool_value = BX_BOOLEAN_TRUE;
+
+	expression = bx_cgex_create_int_constant(int_value);
+	copy = bx_cgex_copy_expression(expression);
+	ck_assert_ptr_ne(copy, NULL);
+	ck_assert_ptr_ne(copy, expression);
+	ck_assert_int_eq(copy->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(copy->data_type, BX_INT);
+	ck_assert_int_eq(copy->bx_value.int_value, int_value);
+	bx_cgex_destroy_expression(expression);
+	bx_cgex_destroy_expression(copy);
+
+	expression = bx_cgex_create_float_constant(float_value);
+	copy = bx_cgex_copy_expression(expression);
+	ck_assert_ptr_ne(copy, NULL);
+	ck_assert_ptr_ne(copy, expression);
+	ck_assert_int_eq(copy->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(copy->data_type, BX_FLOAT);
+	ck_assert_int_eq(copy->bx_value.float_value, float_value);
+	bx_cgex_destroy_expression(expression);
+	bx_cgex_destroy_expression(copy);
+
+	expression = bx_cgex_create_bool_constant(bool_value);
+	copy = bx_cgex_copy_expression(expression);
+	ck_assert_ptr_ne(copy, NULL);
+	ck_assert_ptr_ne(copy, expression);
+	ck_assert_int_eq(copy->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(copy->data_type, BX_BOOL);
+	ck_assert_int_eq(copy->bx_value.bool_value, bool_value);
+	bx_cgex_destroy_expression(expression);
+	bx_cgex_destroy_expression(copy);
+
+	bx_test_field_set_int(&int_test_field, int_value);
+	expression = bx_cgex_create_variable(INT_TEST_FIELD);
+	ck_assert_ptr_ne(expression, NULL);
+	ck_assert_int_eq(expression->type, BX_COMP_BINARY);
+	ck_assert_int_eq(expression->data_type, BX_INT);
+	ck_assert_ptr_ne(expression->bx_value.code, NULL);
+	copy = bx_cgex_copy_expression(expression);
+	ck_assert_ptr_ne(copy, NULL);
+	ck_assert_ptr_ne(copy, expression);
+	ck_assert_int_eq(copy->type, BX_COMP_BINARY);
+	ck_assert_int_eq(copy->data_type, BX_INT);
+	ck_assert_int_eq(copy->bx_value.code->capacity, expression->bx_value.code->capacity);
+	ck_assert_int_eq(copy->bx_value.code->size, expression->bx_value.code->size);
+	ck_assert_int_eq(memcmp(expression->bx_value.code->data,
+			copy->bx_value.code->data, copy->bx_value.code->capacity), 0);
+	bx_cgex_destroy_expression(expression);
+	bx_cgex_destroy_expression(copy);
+} END_TEST
+
 START_TEST (addition_operator) {
 	bx_int8 error;
 	struct bx_comp_expr *operand1;
@@ -958,6 +1014,10 @@ Suite *test_codegen_expression_arithmetics_create_suite(void) {
 
 	tcase = tcase_create("create_variable");
 	tcase_add_test(tcase, create_variable);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("copy_expression");
+	tcase_add_test(tcase, copy_expression);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("addition_operator");

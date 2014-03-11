@@ -45,6 +45,8 @@ typedef bx_size bx_comp_label;
 
 struct bx_comp_code *bx_cgco_create();
 
+struct bx_comp_code *bx_cgco_copy(struct bx_comp_code *code);
+
 void bx_cgco_destroy(struct bx_comp_code *code);
 
 bx_ssize bx_cgco_add_instruction(struct bx_comp_code *code, enum bx_instruction instruction);

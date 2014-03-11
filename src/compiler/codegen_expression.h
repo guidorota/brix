@@ -96,6 +96,8 @@ struct bx_comp_expr *bx_cgex_create_code_expression(enum bx_builtin_type data_ty
 
 char *bx_cgex_get_type_name(enum bx_builtin_type type);
 
+struct bx_comp_expr *bx_cgex_copy_expression(struct bx_comp_expr *expression);
+
 void bx_cgex_destroy_expression(struct bx_comp_expr *expression);
 
 #endif /* CODEGEN_EXPRESSION_H_ */
