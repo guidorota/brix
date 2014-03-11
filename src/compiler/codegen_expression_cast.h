@@ -50,4 +50,8 @@ struct bx_comp_expr *bx_cgex_int_to_float(struct bx_comp_expr *value);
 
 struct bx_comp_expr *bx_cgex_float_to_int(struct bx_comp_expr *value);
 
+struct bx_comp_expr *bx_cgex_bool_to_int(struct bx_comp_expr *value);
+
+struct bx_comp_expr *bx_cgex_bool_to_float(struct bx_comp_expr *value);
+
 #endif /* CODEGEN_EXPRESSION_CAST_H_ */
