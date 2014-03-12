@@ -41,9 +41,9 @@ static struct bx_comp_expr *bitwise_xor_int(struct bx_comp_expr *operand1, struc
 
 static struct bx_comp_expr *bitwise_and_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
-//////////////////////////
-// BITWISE NOT OPERATOR //
-//////////////////////////
+/////////////////////////////////
+// BITWISE COMPLEMENT OPERATOR //
+////////////////////////////////
 
 struct bx_comp_expr *bx_cgex_bitwise_complement_operator(struct bx_comp_expr *operand1) {
 

@@ -67,12 +67,14 @@ int yyerror(char *);
 %type <expression> cast_expression
 %type <expression> unary_expression
 %type <expression> assignment_expression
+%type <operator> unary_operator
 %type <data_type> type_name
 %type <creation_modifier> creation_modifier
 
 %union {
 	enum bx_comp_creation_modifier creation_modifier;
 	enum bx_builtin_type data_type;
+	enum bx_comp_operator operator;
 	bx_int32 int_val;
 	bx_float32 float_val;
 	char *string_val;
@@ -312,15 +314,28 @@ unary_expression
 	}
 	| unary_operator cast_expression
 	{
-	
+		$$ = bx_cgex_unary_expression($2, $1);
+		bx_cgex_destroy_expression($2);
 	}
 	;
 
 unary_operator
 	: '-'
+	{
+		$$ = BX_COMP_OP_UNARY_MINUS;
+	}
 	| '+'
+	{
+		$$ = BX_COMP_OP_UNARY_PLUS;
+	}
 	| '~'
+	{
+		$$ = BX_COMP_OP_UNARY_BITWISE_COMPLEMENT;
+	}
 	| '!'
+	{
+		$$ = BX_COMP_OP_UNARY_NOT;
+	}
 	;
 	
 cast_expression
