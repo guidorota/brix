@@ -34,6 +34,8 @@
 
 #include "compiler/codegen_expression.h"
 
+struct bx_comp_expr *bx_cgex_bitwise_complement_operator(struct bx_comp_expr *operand1);
+
 struct bx_comp_expr *bx_cgex_bitwise_or_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
 struct bx_comp_expr *bx_cgex_bitwise_xor_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);

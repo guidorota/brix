@@ -33,11 +33,47 @@
 #include "logging.h"
 #include "compiler/codegen_expression_bitwise.h"
 
+struct bx_comp_expr *bitwise_complement_int(struct bx_comp_expr *operand1);
+
 static struct bx_comp_expr *bitwise_or_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
 static struct bx_comp_expr *bitwise_xor_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
 static struct bx_comp_expr *bitwise_and_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+
+//////////////////////////
+// BITWISE NOT OPERATOR //
+//////////////////////////
+
+struct bx_comp_expr *bx_cgex_bitwise_complement_operator(struct bx_comp_expr *operand1) {
+
+	if (operand1->data_type == BX_BOOL || operand1->data_type == BX_FLOAT ||
+			operand1->data_type == BX_STRING || operand1->data_type == BX_SUBNET ||
+			operand1->data_type == BX_STREAM) {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operands not compatible with operator '~'.");
+		return NULL;
+
+	} else if (operand1->data_type == BX_INT) {
+		return bitwise_complement_int(operand1);
+
+	} else {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '~'.");
+		return NULL;
+	}
+}
+
+struct bx_comp_expr *bitwise_complement_int(struct bx_comp_expr *operand1) {
+	struct bx_comp_expr *result;
+
+	if (operand1->type == BX_COMP_CONSTANT) {
+		return bx_cgex_create_int_constant(~operand1->bx_value.int_value);
+	}
+
+	result = bx_cgex_copy_expression(operand1);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_INOT);
+
+	return result;
+}
 
 /////////////////////////
 // BITWISE OR OPERATOR //
