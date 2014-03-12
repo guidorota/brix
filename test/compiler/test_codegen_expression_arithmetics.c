@@ -111,8 +111,10 @@ START_TEST (create_variable) {
 	bx_test_field_set_int(&int_test_field, int_value);
 	expression = bx_cgex_create_variable(INT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_BINARY);
+	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_INT);
+	error = bx_cgex_convert_to_binary(expression);
+	ck_assert_int_eq(error, 0);
 	ck_assert_ptr_ne(expression->bx_value.code, NULL);
 	code = expression->bx_value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
@@ -124,6 +126,7 @@ START_TEST (create_variable) {
 } END_TEST
 
 START_TEST (copy_expression) {
+	bx_int8 error;
 	struct bx_comp_expr *expression;
 	struct bx_comp_expr *copy;
 	bx_int32 int_value = 93;
@@ -163,6 +166,11 @@ START_TEST (copy_expression) {
 	bx_test_field_set_int(&int_test_field, int_value);
 	expression = bx_cgex_create_variable(INT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
+	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(expression->data_type, BX_INT);
+	ck_assert_ptr_ne(expression->bx_value.code, NULL);
+	error = bx_cgex_convert_to_binary(expression);
+	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(expression->type, BX_COMP_BINARY);
 	ck_assert_int_eq(expression->data_type, BX_INT);
 	ck_assert_ptr_ne(expression->bx_value.code, NULL);
