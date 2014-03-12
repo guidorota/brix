@@ -225,6 +225,68 @@ START_TEST (logical_and_test) {
 	bx_cgex_destroy_expression(result);
 } END_TEST
 
+START_TEST (logical_not_test) {
+	bx_int8 error;
+	struct bx_comp_expr *operand1;
+	struct bx_comp_expr *result;
+
+	// FALSE constant
+	operand1 = bx_cgex_create_bool_constant(BX_BOOLEAN_FALSE);
+	ck_assert_ptr_ne(operand1, NULL);
+	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_UNARY_NOT);
+	ck_assert_ptr_ne(result, NULL);
+	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->data_type, BX_BOOL);
+	ck_assert_int_eq(result->bx_value.bool_value, BX_BOOLEAN_TRUE);
+	bx_cgex_destroy_expression(operand1);
+	bx_cgex_destroy_expression(result);
+
+	// TRUE constant
+	operand1 = bx_cgex_create_bool_constant(BX_BOOLEAN_TRUE);
+	ck_assert_ptr_ne(operand1, NULL);
+	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_UNARY_NOT);
+	ck_assert_ptr_ne(result, NULL);
+	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->data_type, BX_BOOL);
+	ck_assert_int_eq(result->bx_value.bool_value, BX_BOOLEAN_FALSE);
+	bx_cgex_destroy_expression(operand1);
+	bx_cgex_destroy_expression(result);
+
+	// FALSE binary
+	bx_test_field_set_bool(&bool_test_field, BX_BOOLEAN_FALSE);
+	operand1 = bx_cgex_create_variable(BOOL_TEST_FIELD);
+	ck_assert_ptr_ne(operand1, NULL);
+	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_UNARY_NOT);
+	ck_assert_ptr_ne(result, NULL);
+	ck_assert_int_eq(result->data_type, BX_BOOL);
+	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_ptr_ne(result->bx_value.code, NULL);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_STORE32);
+	bx_cgco_add_identifier(result->bx_value.code, BOOL_TEST_FIELD);
+	error = bx_vm_execute(result->bx_value.code->data, result->bx_value.code->size);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_bool(&bool_test_field), BX_BOOLEAN_TRUE);
+	bx_cgex_destroy_expression(operand1);
+	bx_cgex_destroy_expression(result);
+
+	// TRUE binary
+	bx_test_field_set_bool(&bool_test_field, BX_BOOLEAN_TRUE);
+	operand1 = bx_cgex_create_variable(BOOL_TEST_FIELD);
+	ck_assert_ptr_ne(operand1, NULL);
+	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_UNARY_NOT);
+	ck_assert_ptr_ne(result, NULL);
+	ck_assert_int_eq(result->data_type, BX_BOOL);
+	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_ptr_ne(result->bx_value.code, NULL);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_STORE32);
+	bx_cgco_add_identifier(result->bx_value.code, BOOL_TEST_FIELD);
+	error = bx_vm_execute(result->bx_value.code->data, result->bx_value.code->size);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_bool(&bool_test_field), BX_BOOLEAN_FALSE);
+	bx_cgex_destroy_expression(operand1);
+	bx_cgex_destroy_expression(result);
+} END_TEST
+
 Suite *test_codegen_expression_logical_create_suite(void) {
 	Suite *suite = suite_create("bx_linked_list");
 	TCase *tcase;
@@ -239,6 +301,10 @@ Suite *test_codegen_expression_logical_create_suite(void) {
 
 	tcase = tcase_create("logical_and_test");
 	tcase_add_test(tcase, logical_and_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("logical_not_test");
+	tcase_add_test(tcase, logical_not_test);
 	suite_add_tcase(suite, tcase);
 
 	return suite;

@@ -227,7 +227,7 @@ struct bx_comp_expr *bx_cgex_unary_expression(struct bx_comp_expr *operand1, enu
 	case BX_COMP_OP_UNARY_MINUS:
 		return bx_cgex_unary_minus_operator(operand1);
 	case BX_COMP_OP_UNARY_NOT:
-		return NULL; //TODO: Stub
+		return bx_cgex_logical_not_operator(operand1);
 	case BX_COMP_OP_UNARY_BITWISE_COMPLEMENT:
 		return NULL; //TODO: Stub
 	default:

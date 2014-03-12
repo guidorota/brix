@@ -33,9 +33,46 @@
 #include "logging.h"
 #include "compiler/codegen_expression_logical.h"
 
+static struct bx_comp_expr *logical_not_bool(struct bx_comp_expr *operand1);
+
 static struct bx_comp_expr *logical_or_bool(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
 static struct bx_comp_expr *logical_and_bool(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+
+//////////////////////////
+// LOGICAL NOT OPERATOR //
+//////////////////////////
+
+struct bx_comp_expr *bx_cgex_logical_not_operator(struct bx_comp_expr *operand1) {
+
+	if (operand1->data_type == BX_INT || operand1->data_type == BX_FLOAT ||
+			operand1->data_type == BX_STRING || operand1->data_type == BX_SUBNET ||
+			operand1->data_type == BX_STREAM) {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Operand not compatible with operator '!'.");
+		return NULL;
+
+	} else if (operand1->data_type == BX_BOOL) {
+		return logical_not_bool(operand1);
+
+	} else {
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operand type in expression '||'.");
+		return NULL;
+	}
+}
+
+static struct bx_comp_expr *logical_not_bool(struct bx_comp_expr *operand1) {
+	struct bx_comp_expr *result;
+
+	if (operand1->type == BX_COMP_CONSTANT) {
+		return bx_cgex_create_bool_constant(!operand1->bx_value.bool_value);
+	}
+
+	result = bx_cgex_copy_expression(operand1);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IPUSH_1);
+	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IXOR);
+
+	return result;
+}
 
 /////////////////////////
 // LOGICAL OR OPERATOR //
