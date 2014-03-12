@@ -330,11 +330,11 @@ unary_operator
 	}
 	| '~'
 	{
-		$$ = BX_COMP_OP_UNARY_BITWISE_COMPLEMENT;
+		$$ = BX_COMP_OP_BITWISE_COMPLEMENT;
 	}
 	| '!'
 	{
-		$$ = BX_COMP_OP_UNARY_NOT;
+		$$ = BX_COMP_OP_NOT;
 	}
 	;
 	

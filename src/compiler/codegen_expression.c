@@ -226,10 +226,18 @@ struct bx_comp_expr *bx_cgex_unary_expression(struct bx_comp_expr *operand1, enu
 		return bx_cgex_unary_plus_operator(operand1);
 	case BX_COMP_OP_UNARY_MINUS:
 		return bx_cgex_unary_minus_operator(operand1);
-	case BX_COMP_OP_UNARY_NOT:
+	case BX_COMP_OP_NOT:
 		return bx_cgex_logical_not_operator(operand1);
-	case BX_COMP_OP_UNARY_BITWISE_COMPLEMENT:
+	case BX_COMP_OP_BITWISE_COMPLEMENT:
 		return bx_cgex_bitwise_complement_operator(operand1);
+	case BX_COMP_OP_PREFIX_INC:
+		return NULL; //TODO; Stub
+	case BX_COMP_OP_PREFIX_DEC:
+		return NULL; //TODO; Stub
+	case BX_COMP_OP_POSTFIX_INC:
+		return NULL; //TODO; Stub
+	case BX_COMP_OP_POSTFIX_DEC:
+		return NULL; //TODO; Stub
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operator "
 						"encountered in function 'bx_cgex_unary_expression'");

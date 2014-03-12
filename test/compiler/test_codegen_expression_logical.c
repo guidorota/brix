@@ -233,7 +233,7 @@ START_TEST (logical_not_test) {
 	// FALSE constant
 	operand1 = bx_cgex_create_bool_constant(BX_BOOLEAN_FALSE);
 	ck_assert_ptr_ne(operand1, NULL);
-	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_UNARY_NOT);
+	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_NOT);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_BOOL);
@@ -244,7 +244,7 @@ START_TEST (logical_not_test) {
 	// TRUE constant
 	operand1 = bx_cgex_create_bool_constant(BX_BOOLEAN_TRUE);
 	ck_assert_ptr_ne(operand1, NULL);
-	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_UNARY_NOT);
+	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_NOT);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_BOOL);
@@ -256,7 +256,7 @@ START_TEST (logical_not_test) {
 	bx_test_field_set_bool(&bool_test_field, BX_BOOLEAN_FALSE);
 	operand1 = bx_cgex_create_variable(BOOL_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
-	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_UNARY_NOT);
+	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_NOT);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
@@ -273,7 +273,7 @@ START_TEST (logical_not_test) {
 	bx_test_field_set_bool(&bool_test_field, BX_BOOLEAN_TRUE);
 	operand1 = bx_cgex_create_variable(BOOL_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
-	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_UNARY_NOT);
+	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_NOT);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
