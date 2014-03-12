@@ -70,6 +70,10 @@ struct bx_comp_expr *bitwise_complement_int(struct bx_comp_expr *operand1) {
 	}
 
 	result = bx_cgex_copy_expression(operand1);
+	if (result->type == BX_COMP_VARIABLE) {
+		bx_cgex_convert_to_binary(result);
+	}
+
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_INOT);
 
 	return result;

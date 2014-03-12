@@ -37,6 +37,8 @@
 struct bx_comp_expr *prefix_inc_int(struct bx_comp_expr *operand1);
 struct bx_comp_expr *prefix_inc_float(struct bx_comp_expr *operand1);
 
+static struct bx_comp_expr *unary_plus(struct bx_comp_expr *operand1);
+
 static struct bx_comp_expr *unary_minus_int(struct bx_comp_expr *operand1);
 static struct bx_comp_expr *unary_minus_float(struct bx_comp_expr *operand1);
 
@@ -95,7 +97,7 @@ struct bx_comp_expr *bx_cgex_unary_plus_operator(struct bx_comp_expr *operand1) 
 	switch (operand1->data_type) {
 	case BX_INT:
 	case BX_FLOAT:
-		return bx_cgex_copy_expression(operand1);
+		return unary_plus(operand1);
 	case BX_BOOL:
 	case BX_SUBNET:
 	case BX_STREAM:
@@ -106,6 +108,17 @@ struct bx_comp_expr *bx_cgex_unary_plus_operator(struct bx_comp_expr *operand1) 
 				"in funciton bx_cgex_unary_plus_operator.");
 		return NULL;
 	}
+}
+
+static struct bx_comp_expr *unary_plus(struct bx_comp_expr *operand1) {
+	struct bx_comp_expr *result;
+
+	result = bx_cgex_copy_expression(operand1);
+	if (operand1->type == BX_COMP_VARIABLE) {
+		bx_cgex_convert_to_binary(result);
+	}
+
+	return result;
 }
 
 //////////////////////////
@@ -138,6 +151,10 @@ static struct bx_comp_expr *unary_minus_int(struct bx_comp_expr *operand1) {
 		return bx_cgex_create_int_constant(- operand1->bx_value.int_value);
 	}
 
+	if (operand1->type == BX_COMP_VARIABLE) {
+		bx_cgex_convert_to_binary(operand1);
+	}
+
 	result = bx_cgex_create_code_expression(BX_INT);
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_INEG);
@@ -150,6 +167,10 @@ static struct bx_comp_expr *unary_minus_float(struct bx_comp_expr *operand1) {
 
 	if (operand1->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_float_constant(- operand1->bx_value.float_value);
+	}
+
+	if (operand1->type == BX_COMP_VARIABLE) {
+		bx_cgex_convert_to_binary(operand1);
 	}
 
 	result = bx_cgex_create_code_expression(BX_FLOAT);
@@ -300,11 +321,11 @@ static struct bx_comp_expr *sub_int(struct bx_comp_expr *operand1, struct bx_com
 		return bx_cgex_create_int_constant(operand1->bx_value.int_value - operand2->bx_value.int_value);
 	}
 
-	if (operand1->type == BX_COMP_BINARY) {
+	if (operand1->type != BX_COMP_BINARY) {
 		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_BINARY) {
+	if (operand2->type != BX_COMP_BINARY) {
 		error += bx_cgex_convert_to_binary(operand2);
 	}
 
@@ -330,11 +351,11 @@ static struct bx_comp_expr *sub_float(struct bx_comp_expr *operand1, struct bx_c
 		return bx_cgex_create_float_constant(operand1->bx_value.float_value - operand2->bx_value.float_value);
 	}
 
-	if (operand1->type == BX_COMP_BINARY) {
+	if (operand1->type != BX_COMP_BINARY) {
 		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_BINARY) {
+	if (operand2->type != BX_COMP_BINARY) {
 		error += bx_cgex_convert_to_binary(operand2);
 	}
 
@@ -393,11 +414,11 @@ static struct bx_comp_expr *mul_int(struct bx_comp_expr *operand1, struct bx_com
 		return bx_cgex_create_int_constant(operand1->bx_value.int_value * operand2->bx_value.int_value);
 	}
 
-	if (operand1->type == BX_COMP_BINARY) {
+	if (operand1->type != BX_COMP_BINARY) {
 		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_BINARY) {
+	if (operand2->type != BX_COMP_BINARY) {
 		error += bx_cgex_convert_to_binary(operand2);
 	}
 
@@ -423,11 +444,11 @@ static struct bx_comp_expr *mul_float(struct bx_comp_expr *operand1, struct bx_c
 		return bx_cgex_create_float_constant(operand1->bx_value.float_value * operand2->bx_value.float_value);
 	}
 
-	if (operand1->type == BX_COMP_BINARY) {
+	if (operand1->type != BX_COMP_BINARY) {
 		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_BINARY) {
+	if (operand2->type != BX_COMP_BINARY) {
 		error += bx_cgex_convert_to_binary(operand2);
 	}
 
@@ -486,11 +507,11 @@ static struct bx_comp_expr *div_int(struct bx_comp_expr *operand1, struct bx_com
 		return bx_cgex_create_int_constant(operand1->bx_value.int_value / operand2->bx_value.int_value);
 	}
 
-	if (operand1->type == BX_COMP_BINARY) {
+	if (operand1->type != BX_COMP_BINARY) {
 		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_BINARY) {
+	if (operand2->type != BX_COMP_BINARY) {
 		error += bx_cgex_convert_to_binary(operand2);
 	}
 
@@ -516,11 +537,11 @@ static struct bx_comp_expr *div_float(struct bx_comp_expr *operand1, struct bx_c
 		return bx_cgex_create_float_constant(operand1->bx_value.float_value / operand2->bx_value.float_value);
 	}
 
-	if (operand1->type == BX_COMP_BINARY) {
+	if (operand1->type != BX_COMP_BINARY) {
 		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_BINARY) {
+	if (operand2->type != BX_COMP_BINARY) {
 		error += bx_cgex_convert_to_binary(operand2);
 	}
 
@@ -568,11 +589,11 @@ static struct bx_comp_expr *mod_int(struct bx_comp_expr *operand1, struct bx_com
 		return bx_cgex_create_int_constant(operand1->bx_value.int_value % operand2->bx_value.int_value);
 	}
 
-	if (operand1->type == BX_COMP_BINARY) {
+	if (operand1->type != BX_COMP_BINARY) {
 		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_BINARY) {
+	if (operand2->type != BX_COMP_BINARY) {
 		error += bx_cgex_convert_to_binary(operand2);
 	}
 

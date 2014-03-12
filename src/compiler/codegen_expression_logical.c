@@ -68,6 +68,10 @@ static struct bx_comp_expr *logical_not_bool(struct bx_comp_expr *operand1) {
 	}
 
 	result = bx_cgex_copy_expression(operand1);
+	if (result->type == BX_COMP_VARIABLE) {
+		bx_cgex_convert_to_binary(result);
+	}
+
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IPUSH_1);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IXOR);
 

@@ -182,7 +182,7 @@ START_TEST (copy_expression) {
 	ck_assert_int_eq(copy->bx_value.code->capacity, expression->bx_value.code->capacity);
 	ck_assert_int_eq(copy->bx_value.code->size, expression->bx_value.code->size);
 	ck_assert_int_eq(memcmp(expression->bx_value.code->data,
-			copy->bx_value.code->data, copy->bx_value.code->capacity), 0);
+	copy->bx_value.code->data, copy->bx_value.code->capacity), 0);
 	bx_cgex_destroy_expression(expression);
 	bx_cgex_destroy_expression(copy);
 } END_TEST
