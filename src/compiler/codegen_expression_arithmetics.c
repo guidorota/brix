@@ -195,18 +195,25 @@ struct bx_comp_expr *bx_cgex_addition_operator(struct bx_comp_expr *operand1, st
 }
 
 static struct bx_comp_expr *add_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_int_constant(operand1->bx_value.int_value + operand2->bx_value.int_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type != BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type != BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'add_int'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_INT);
@@ -218,18 +225,25 @@ static struct bx_comp_expr *add_int(struct bx_comp_expr *operand1, struct bx_com
 }
 
 static struct bx_comp_expr *add_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_float_constant(operand1->bx_value.float_value + operand2->bx_value.float_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type != BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type != BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'add_float'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_FLOAT);
@@ -279,18 +293,25 @@ struct bx_comp_expr *bx_cgex_subtraction_operator(struct bx_comp_expr *operand1,
 }
 
 static struct bx_comp_expr *sub_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_int_constant(operand1->bx_value.int_value - operand2->bx_value.int_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type == BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type == BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'sub_int'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_INT);
@@ -302,18 +323,25 @@ static struct bx_comp_expr *sub_int(struct bx_comp_expr *operand1, struct bx_com
 }
 
 static struct bx_comp_expr *sub_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_float_constant(operand1->bx_value.float_value - operand2->bx_value.float_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type == BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type == BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'sub_float'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_FLOAT);
@@ -358,18 +386,25 @@ struct bx_comp_expr *bx_cgex_multiplication_operator(struct bx_comp_expr *operan
 }
 
 static struct bx_comp_expr *mul_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_int_constant(operand1->bx_value.int_value * operand2->bx_value.int_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type == BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type == BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'mul_int'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_INT);
@@ -381,18 +416,25 @@ static struct bx_comp_expr *mul_int(struct bx_comp_expr *operand1, struct bx_com
 }
 
 static struct bx_comp_expr *mul_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_float_constant(operand1->bx_value.float_value * operand2->bx_value.float_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type == BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type == BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'mul_float'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_FLOAT);
@@ -437,18 +479,25 @@ struct bx_comp_expr *bx_cgex_division_operator(struct bx_comp_expr *operand1, st
 }
 
 static struct bx_comp_expr *div_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_int_constant(operand1->bx_value.int_value / operand2->bx_value.int_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type == BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type == BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'div_int'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_INT);
@@ -460,18 +509,25 @@ static struct bx_comp_expr *div_int(struct bx_comp_expr *operand1, struct bx_com
 }
 
 static struct bx_comp_expr *div_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_float_constant(operand1->bx_value.float_value / operand2->bx_value.float_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type == BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type == BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'div_float'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_FLOAT);
@@ -505,18 +561,25 @@ struct bx_comp_expr *bx_cgex_modulo_operator(struct bx_comp_expr *operand1, stru
 }
 
 static struct bx_comp_expr *mod_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_int_constant(operand1->bx_value.int_value % operand2->bx_value.int_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type == BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type == BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'div_float'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_INT);

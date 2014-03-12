@@ -98,18 +98,25 @@ struct bx_comp_expr *bx_cgex_equality_operator(struct bx_comp_expr *operand1, st
 }
 
 static struct bx_comp_expr *equals_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->bx_value.int_value == operand2->bx_value.int_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type != BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type != BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'equals_int'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_BOOL);
@@ -121,18 +128,25 @@ static struct bx_comp_expr *equals_int(struct bx_comp_expr *operand1, struct bx_
 }
 
 static struct bx_comp_expr *equals_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->bx_value.float_value == operand2->bx_value.float_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type != BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type != BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'equals_float'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_BOOL);
@@ -144,18 +158,25 @@ static struct bx_comp_expr *equals_float(struct bx_comp_expr *operand1, struct b
 }
 
 static struct bx_comp_expr *equals_bool(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->bx_value.bool_value == operand2->bx_value.bool_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type != BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type != BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'equals_bool'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_BOOL);
@@ -209,18 +230,25 @@ struct bx_comp_expr *bx_cgex_inequality_operator(struct bx_comp_expr *operand1, 
 }
 
 static struct bx_comp_expr *not_equals_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->bx_value.int_value != operand2->bx_value.int_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type != BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type != BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'not_equals_int'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_BOOL);
@@ -232,18 +260,25 @@ static struct bx_comp_expr *not_equals_int(struct bx_comp_expr *operand1, struct
 }
 
 static struct bx_comp_expr *not_equals_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->bx_value.float_value != operand2->bx_value.float_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type != BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type != BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'not_equals_float'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_BOOL);
@@ -255,18 +290,25 @@ static struct bx_comp_expr *not_equals_float(struct bx_comp_expr *operand1, stru
 }
 
 static struct bx_comp_expr *not_equals_bool(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->bx_value.bool_value != operand2->bx_value.bool_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type != BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type != BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'not_equals_bool'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_BOOL);
@@ -318,18 +360,25 @@ struct bx_comp_expr *bx_cgex_greater_than_operator(struct bx_comp_expr *operand1
 }
 
 static struct bx_comp_expr *greater_than_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->bx_value.int_value > operand2->bx_value.int_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type != BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type != BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'greater_than_int'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_BOOL);
@@ -341,18 +390,25 @@ static struct bx_comp_expr *greater_than_int(struct bx_comp_expr *operand1, stru
 }
 
 static struct bx_comp_expr *greater_than_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->bx_value.float_value > operand2->bx_value.float_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type != BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type != BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'greater_than_float'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_BOOL);
@@ -404,18 +460,25 @@ struct bx_comp_expr *bx_cgex_greater_or_equal_operator(struct bx_comp_expr *oper
 }
 
 static struct bx_comp_expr *greater_or_equal_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->bx_value.int_value >= operand2->bx_value.int_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type != BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type != BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'greater_or_equal_int'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_BOOL);
@@ -427,18 +490,25 @@ static struct bx_comp_expr *greater_or_equal_int(struct bx_comp_expr *operand1, 
 }
 
 static struct bx_comp_expr *greater_or_equal_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->bx_value.float_value >= operand2->bx_value.float_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type != BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type != BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'greater_or_equal_float'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_BOOL);
@@ -490,18 +560,25 @@ struct bx_comp_expr *bx_cgex_less_than_operator(struct bx_comp_expr *operand1, s
 }
 
 static struct bx_comp_expr *less_than_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->bx_value.int_value < operand2->bx_value.int_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type != BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type != BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'less_than_int'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_BOOL);
@@ -513,18 +590,25 @@ static struct bx_comp_expr *less_than_int(struct bx_comp_expr *operand1, struct 
 }
 
 static struct bx_comp_expr *less_than_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->bx_value.float_value < operand2->bx_value.float_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type != BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type != BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'less_than_float'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_BOOL);
@@ -576,18 +660,25 @@ struct bx_comp_expr *bx_cgex_less_or_equal_operator(struct bx_comp_expr *operand
 }
 
 static struct bx_comp_expr *less_or_equal_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->bx_value.int_value <= operand2->bx_value.int_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type != BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type != BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'less_or_equal_int'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_BOOL);
@@ -599,18 +690,25 @@ static struct bx_comp_expr *less_or_equal_int(struct bx_comp_expr *operand1, str
 }
 
 static struct bx_comp_expr *less_or_equal_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->bx_value.float_value <= operand2->bx_value.float_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type != BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type != BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'less_or_equal_float'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_BOOL);

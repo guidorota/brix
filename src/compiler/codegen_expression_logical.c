@@ -98,18 +98,25 @@ struct bx_comp_expr *bx_cgex_logical_or_operator(struct bx_comp_expr *operand1, 
 }
 
 static struct bx_comp_expr *logical_or_bool(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->bx_value.bool_value || operand2->bx_value.bool_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type != BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type != BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'logical_or_bool'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_BOOL);
@@ -144,18 +151,25 @@ struct bx_comp_expr *bx_cgex_logical_and_operator(struct bx_comp_expr *operand1,
 }
 
 static struct bx_comp_expr *logical_and_bool(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2) {
+	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->bx_value.bool_value && operand2->bx_value.bool_value);
 	}
 
-	if (operand1->type == BX_COMP_CONSTANT) {
-		operand1 = bx_cgex_constant_to_binary(operand1);
+	if (operand1->type != BX_COMP_BINARY) {
+		error = bx_cgex_convert_to_binary(operand1);
 	}
 
-	if (operand2->type == BX_COMP_CONSTANT) {
-		operand2 = bx_cgex_constant_to_binary(operand2);
+	if (operand2->type != BX_COMP_BINARY) {
+		error += bx_cgex_convert_to_binary(operand2);
+	}
+
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'logical_and_bool'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_BOOL);
