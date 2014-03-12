@@ -144,7 +144,7 @@ struct bx_comp_expr *bx_cgex_cast(struct bx_comp_expr *expression, enum bx_built
 		BX_LOG(LOG_ERROR, "compiler", "Cast to type 'subnet' is not allowed.");
 		return NULL;
 	case BX_STREAM:
-		BX_LOG(LOG_ERROR, "compiler", "Cast to type 'subnet' is not allowed.");
+		BX_LOG(LOG_ERROR, "compiler", "Cast to type 'stream' is not allowed.");
 		return NULL;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_cast", "Unknown type encountered in function bx_cgca_cast.");

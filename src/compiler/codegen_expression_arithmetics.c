@@ -34,6 +34,9 @@
 #include "compiler/codegen_expression_arithmetics.h"
 #include "compiler/codegen_expression_cast.h"
 
+struct bx_comp_expr *prefix_inc_int(struct bx_comp_expr *operand1);
+struct bx_comp_expr *prefix_inc_float(struct bx_comp_expr *operand1);
+
 static struct bx_comp_expr *unary_minus_int(struct bx_comp_expr *operand1);
 static struct bx_comp_expr *unary_minus_float(struct bx_comp_expr *operand1);
 
@@ -51,6 +54,37 @@ static struct bx_comp_expr *div_int(struct bx_comp_expr *operand1, struct bx_com
 static struct bx_comp_expr *div_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
 static struct bx_comp_expr *mod_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+
+///////////////////////////////
+// PREFIX INCREMENT OPERATOR //
+///////////////////////////////
+
+struct bx_comp_expr *bx_cgex_prefix_inc_operator(struct bx_comp_expr *operand1) {
+
+	switch (operand1->data_type) {
+	case BX_INT:
+		return prefix_inc_int(operand1);
+	case BX_FLOAT:
+		return prefix_inc_float(operand1);
+	case BX_BOOL:
+	case BX_SUBNET:
+	case BX_STREAM:
+		BX_LOG(LOG_ERROR, "compiler", "Operand not compatible with operator '++'.");
+		return NULL;
+	default:
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected data type encountered "
+				"in funciton bx_cgex_prefix_inc_operator.");
+		return NULL;
+	}
+}
+
+struct bx_comp_expr *prefix_inc_int(struct bx_comp_expr *operand1) {
+	return NULL; //TODO: Stub
+}
+
+struct bx_comp_expr *prefix_inc_float(struct bx_comp_expr *operand1) {
+	return NULL; //TODO: Stub
+}
 
 /////////////////////////
 // UNARY PLUS OPERATOR //
@@ -92,7 +126,7 @@ struct bx_comp_expr *bx_cgex_unary_minus_operator(struct bx_comp_expr *operand1)
 		return NULL;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected data type encountered "
-				"in funciton bx_cgex_unary_plus_operator.");
+				"in funciton bx_cgex_unary_minus_operator.");
 		return NULL;
 	}
 }
