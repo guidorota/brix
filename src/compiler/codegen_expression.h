@@ -65,6 +65,7 @@ enum bx_comp_operator {
 
 enum bx_comp_exp_type {
 	BX_COMP_CONSTANT,	// Constant value
+	BX_COMP_VARIABLE,	// A variable
 	BX_COMP_BINARY		// An expression in binary form
 };
 
@@ -75,33 +76,154 @@ struct bx_comp_expr {
 		bx_int32 int_value;
 		bx_float32 float_value;
 		bx_boolean bool_value;
+		char identifier[DM_FIELD_IDENTIFIER_LENGTH];
 		struct bx_comp_code *code;
 	} bx_value;
 };
 
+
+/**
+ * Creates a new constant int expression
+ *
+ * @parameter value Integer value of the constant
+ *
+ * @return Constant int expression, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_create_int_constant(bx_int32 value);
 
+/**
+ * Creates a new constant flaot expression
+ *
+ * @parameter value Float value of the constant
+ *
+ * @return Constant float expression, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_create_float_constant(bx_float32 value);
 
+/**
+ * Creates a new constant boolean expression
+ *
+ * @parameter value Boolean value of the constant
+ *
+ * @return Constant boolean expression, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_create_bool_constant(bx_boolean value);
 
+/**
+ * Creates a new variable expression.
+ * This function checks if the identifier passed as parameter has been declared
+ * by performing a lookup on the symbol table. The variable data type is inherited
+ * by the expression.
+ *
+ * @parameter identifier Name of the variable
+ *
+ * @return Constant int expression, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_create_variable(char *identifier);
 
+/**
+ * Casts the expression passed as a parameter to the specified type.
+ * This function creates a new bx_comp_expr struct. The original
+ * expression passed as a parameter must be deallocated manually.
+ *
+ * @param expression Expression to cast
+ * @param type Cast data type
+ *
+ * @return Casted expression, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_cast(struct bx_comp_expr *expression, enum bx_builtin_type type);
 
+/**
+ * Performs a binary operation.
+ * This function creates a new bx_comp-expr struct. The original operands
+ * passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ * @param operand2 Second operand
+ * @param operator Arithmetic operator
+ *
+ * @return Expression corresponding to the binary operation, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_binary_expression(struct bx_comp_expr *operand1,
 		struct bx_comp_expr *operand2, enum bx_comp_operator operator);
 
+/**
+ * Performs a unary operation.
+ * This function creates a new bx_comp-expr struct. The original operand
+ * passed as parameter must be deallocated manually.
+ *
+ * @param operand1 Operand
+ * @param operator Arithmetic operator
+ *
+ * @return Expression corresponding to the unary operation, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_unary_expression(struct bx_comp_expr *operand1, enum bx_comp_operator operator);
 
-struct bx_comp_expr *bx_cgex_constant_to_binary(struct bx_comp_expr *value);
+/**
+ * Converts the expression passed as a parameter into a binary expression.
+ * This function is for INTERNAL USE ONLY. No sanity checks are performed on the parameter.
+ *
+ * @param expression The constant expression to convert
+ *
+ * @return 0 if successful, -1 otherwise
+ */
+bx_int8 bx_cgex_convert_to_binary(struct bx_comp_expr *expression);
 
+/**
+ * Changes the constant expression passed as a parameter into a binary expression.
+ * This function is for INTERNAL USE ONLY. No sanity checks are performed on the parameter.
+ *
+ * @param expression The constant expression to convert
+ *
+ * @return 0 if successful, -1 otherwise
+ */
+bx_int8 bx_cgex_constant_to_binary(struct bx_comp_expr *expression);
+
+/**
+ * Changes the variable expression passed as a parameter into a binary expression.
+ * This function is for INTERNAL USE ONLY. No sanity checks are performed on the parameter.
+ *
+ * @param expression The variable expression to convert
+ *
+ * @return 0 if successful, -1 otherwise
+ */
+bx_int8 bx_cgex_variable_to_binary(struct bx_comp_expr *expression);
+
+/**
+ * Creates an empty code expression.
+ * This function is for INTERNAL USE ONLY.
+ *
+ * @param data_type Data type of the code expression
+ *
+ * @return Empty code expression, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_create_code_expression(enum bx_builtin_type data_type);
 
+/**
+ * Returns a descriptive name of the type passed as parameter.
+ * This function is for INTERNAL USE ONLY.
+ *
+ * @parameter type Type name
+ *
+ * @return Name of the type passed as parameter, 'Unknown type' if the type is not known
+ */
 char *bx_cgex_get_type_name(enum bx_builtin_type type);
 
+/**
+ * Creates a copy of the expression passed as parameter
+ * This function is for INTERNAL USE ONLY.
+ *
+ * @param expression Expression to copy
+ *
+ * @return Copy of the expression passed as parameter, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_copy_expression(struct bx_comp_expr *expression);
 
+/**
+ * Destoys an expression, reclaiming memory.
+ *
+ * @param expression Expression to destroy
+ */
 void bx_cgex_destroy_expression(struct bx_comp_expr *expression);
 
 #endif /* CODEGEN_EXPRESSION_H_ */
