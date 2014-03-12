@@ -61,6 +61,7 @@ struct bx_comp_expr *bx_cgex_logical_not_operator(struct bx_comp_expr *operand1)
 }
 
 static struct bx_comp_expr *logical_not_bool(struct bx_comp_expr *operand1) {
+	bx_int8 error;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT) {
@@ -68,8 +69,9 @@ static struct bx_comp_expr *logical_not_bool(struct bx_comp_expr *operand1) {
 	}
 
 	result = bx_cgex_copy_expression(operand1);
-	if (result->type == BX_COMP_VARIABLE) {
-		bx_cgex_convert_to_binary(result);
+	error = bx_cgex_convert_to_binary(result);
+	if (error != 0) {
+		return NULL;
 	}
 
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IPUSH_1);
@@ -109,14 +111,8 @@ static struct bx_comp_expr *logical_or_bool(struct bx_comp_expr *operand1, struc
 		return bx_cgex_create_bool_constant(operand1->bx_value.bool_value || operand2->bx_value.bool_value);
 	}
 
-	if (operand1->type != BX_COMP_BINARY) {
-		error = bx_cgex_convert_to_binary(operand1);
-	}
-
-	if (operand2->type != BX_COMP_BINARY) {
-		error += bx_cgex_convert_to_binary(operand2);
-	}
-
+	error = bx_cgex_convert_to_binary(operand1);
+	error += bx_cgex_convert_to_binary(operand2);
 	if (error != 0) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error converting expression to binary in function 'logical_or_bool'");
@@ -162,14 +158,8 @@ static struct bx_comp_expr *logical_and_bool(struct bx_comp_expr *operand1, stru
 		return bx_cgex_create_bool_constant(operand1->bx_value.bool_value && operand2->bx_value.bool_value);
 	}
 
-	if (operand1->type != BX_COMP_BINARY) {
-		error = bx_cgex_convert_to_binary(operand1);
-	}
-
-	if (operand2->type != BX_COMP_BINARY) {
-		error += bx_cgex_convert_to_binary(operand2);
-	}
-
+	error = bx_cgex_convert_to_binary(operand1);
+	error += bx_cgex_convert_to_binary(operand2);
 	if (error != 0) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error converting expression to binary in function 'logical_and_bool'");

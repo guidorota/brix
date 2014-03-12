@@ -63,6 +63,7 @@ struct bx_comp_expr *bx_cgex_bitwise_complement_operator(struct bx_comp_expr *op
 }
 
 struct bx_comp_expr *bitwise_complement_int(struct bx_comp_expr *operand1) {
+	bx_int8 error;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT) {
@@ -70,8 +71,11 @@ struct bx_comp_expr *bitwise_complement_int(struct bx_comp_expr *operand1) {
 	}
 
 	result = bx_cgex_copy_expression(operand1);
-	if (result->type == BX_COMP_VARIABLE) {
-		bx_cgex_convert_to_binary(result);
+	error = bx_cgex_convert_to_binary(result);
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'bitwise_complement_int'");
+		return NULL;
 	}
 
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_INOT);
@@ -110,14 +114,8 @@ static struct bx_comp_expr *bitwise_or_int(struct bx_comp_expr *operand1, struct
 		return bx_cgex_create_int_constant(operand1->bx_value.int_value | operand2->bx_value.int_value);
 	}
 
-	if (operand1->type != BX_COMP_BINARY) {
-		error = bx_cgex_convert_to_binary(operand1);
-	}
-
-	if (operand2->type != BX_COMP_BINARY) {
-		error += bx_cgex_convert_to_binary(operand2);
-	}
-
+	error = bx_cgex_convert_to_binary(operand1);
+	error += bx_cgex_convert_to_binary(operand2);
 	if (error != 0) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error converting expression to binary in function 'bitwise_or_int'");
@@ -163,14 +161,8 @@ static struct bx_comp_expr *bitwise_xor_int(struct bx_comp_expr *operand1, struc
 		return bx_cgex_create_int_constant(operand1->bx_value.int_value ^ operand2->bx_value.int_value);
 	}
 
-	if (operand1->type != BX_COMP_BINARY) {
-		error = bx_cgex_convert_to_binary(operand1);
-	}
-
-	if (operand2->type != BX_COMP_BINARY) {
-		error += bx_cgex_convert_to_binary(operand2);
-	}
-
+	error = bx_cgex_convert_to_binary(operand1);
+	error += bx_cgex_convert_to_binary(operand2);
 	if (error != 0) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error converting expression to binary in function 'bitwise_xor_int'");
@@ -216,14 +208,8 @@ static struct bx_comp_expr *bitwise_and_int(struct bx_comp_expr *operand1, struc
 		return bx_cgex_create_int_constant(operand1->bx_value.int_value & operand2->bx_value.int_value);
 	}
 
-	if (operand1->type != BX_COMP_BINARY) {
-		error = bx_cgex_convert_to_binary(operand1);
-	}
-
-	if (operand2->type != BX_COMP_BINARY) {
-		error += bx_cgex_convert_to_binary(operand2);
-	}
-
+	error = bx_cgex_convert_to_binary(operand1);
+	error += bx_cgex_convert_to_binary(operand2);
 	if (error != 0) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error converting expression to binary in function 'bitwise_and_int'");

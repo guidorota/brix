@@ -61,6 +61,7 @@ struct bx_comp_expr *bx_cgex_cast_to_int(struct bx_comp_expr *expression) {
 }
 
 struct bx_comp_expr *bx_cgex_float_to_int(struct bx_comp_expr *expression) {
+	bx_int8 error;
 	struct bx_comp_expr *result;
 
 	if (expression->type == BX_COMP_CONSTANT) {
@@ -68,8 +69,11 @@ struct bx_comp_expr *bx_cgex_float_to_int(struct bx_comp_expr *expression) {
 	}
 
 	result = bx_cgex_copy_expression(expression);
-	if (result->type == BX_COMP_VARIABLE) {
-		bx_cgex_convert_to_binary(result);
+	error = bx_cgex_convert_to_binary(result);
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'bx_cgex_float_to_int'");
+		return NULL;
 	}
 
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_F2I);
@@ -78,6 +82,7 @@ struct bx_comp_expr *bx_cgex_float_to_int(struct bx_comp_expr *expression) {
 }
 
 struct bx_comp_expr *bx_cgex_bool_to_int(struct bx_comp_expr *expression) {
+	bx_int8 error;
 	struct bx_comp_expr *result;
 
 	if (expression->type == BX_COMP_CONSTANT) {
@@ -85,8 +90,11 @@ struct bx_comp_expr *bx_cgex_bool_to_int(struct bx_comp_expr *expression) {
 	}
 
 	result = bx_cgex_copy_expression(expression);
-	if (result->type == BX_COMP_VARIABLE) {
-		bx_cgex_convert_to_binary(result);
+	error = bx_cgex_convert_to_binary(result);
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'bx_cgex_bool_to_int'");
+		return NULL;
 	}
 
 	result->data_type = BX_INT;
@@ -121,6 +129,7 @@ struct bx_comp_expr *bx_cgex_cast_to_float(struct bx_comp_expr *expression) {
 }
 
 struct bx_comp_expr *bx_cgex_int_to_float(struct bx_comp_expr *expression) {
+	bx_int8 error;
 	struct bx_comp_expr *result;
 
 	if (expression->type == BX_COMP_CONSTANT) {
@@ -128,8 +137,11 @@ struct bx_comp_expr *bx_cgex_int_to_float(struct bx_comp_expr *expression) {
 	}
 
 	result = bx_cgex_copy_expression(expression);
-	if (result->type == BX_COMP_VARIABLE) {
-		bx_cgex_convert_to_binary(result);
+	error = bx_cgex_convert_to_binary(result);
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'bx_cgex_int_to_float'");
+		return NULL;
 	}
 
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_I2F);
@@ -138,6 +150,7 @@ struct bx_comp_expr *bx_cgex_int_to_float(struct bx_comp_expr *expression) {
 }
 
 struct bx_comp_expr *bx_cgex_bool_to_float(struct bx_comp_expr *expression) {
+	bx_int8 error;
 	struct bx_comp_expr *result;
 
 	if (expression->type == BX_COMP_CONSTANT) {
@@ -145,8 +158,11 @@ struct bx_comp_expr *bx_cgex_bool_to_float(struct bx_comp_expr *expression) {
 	}
 
 	result = bx_cgex_copy_expression(expression);
-	if (result->type == BX_COMP_VARIABLE) {
-		bx_cgex_convert_to_binary(result);
+	error = bx_cgex_convert_to_binary(result);
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'bx_cgex_bool_to_float'");
+		return NULL;
 	}
 
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_I2F);
@@ -182,6 +198,7 @@ struct bx_comp_expr *bx_cgex_cast_to_bool(struct bx_comp_expr *expression) {
 }
 
 struct bx_comp_expr *bx_cgex_int_to_bool(struct bx_comp_expr *expression) {
+	bx_int8 error;
 	struct bx_comp_expr *result;
 	bx_comp_label false_label, true_label;
 	bx_ssize false_jump_address, true_jump_address;
@@ -193,8 +210,11 @@ struct bx_comp_expr *bx_cgex_int_to_bool(struct bx_comp_expr *expression) {
 	}
 
 	result = bx_cgex_copy_expression(expression);
-	if (result->type == BX_COMP_VARIABLE) {
-		bx_cgex_convert_to_binary(result);
+	error = bx_cgex_convert_to_binary(result);
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'bx_cgex_int_to_bool'");
+		return NULL;
 	}
 
 	result->data_type = BX_BOOL;
@@ -212,6 +232,7 @@ struct bx_comp_expr *bx_cgex_int_to_bool(struct bx_comp_expr *expression) {
 }
 
 struct bx_comp_expr *bx_cgex_float_to_bool(struct bx_comp_expr *expression) {
+	bx_int8 error;
 	struct bx_comp_expr *result;
 	bx_comp_label false_label, true_label;
 	bx_ssize false_jump_address, true_jump_address;
@@ -223,8 +244,11 @@ struct bx_comp_expr *bx_cgex_float_to_bool(struct bx_comp_expr *expression) {
 	}
 
 	result = bx_cgex_copy_expression(expression);
-	if (result->type == BX_COMP_VARIABLE) {
-		bx_cgex_convert_to_binary(result);
+	error = bx_cgex_convert_to_binary(result);
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'bx_cgex_float_to_bool'");
+		return NULL;
 	}
 
 	result->data_type = BX_BOOL;
@@ -274,11 +298,20 @@ struct bx_comp_expr *bx_cgex_cast_to_string(struct bx_comp_expr *expression) {
 ////////////////////////////
 
 struct bx_comp_expr *bx_cgex_same_type_cast(struct bx_comp_expr *expression) {
+	bx_int8 error;
 	struct bx_comp_expr *result;
 
 	result = bx_cgex_copy_expression(expression);
-	if (result->type == BX_COMP_VARIABLE) {
-		bx_cgex_convert_to_binary(result);
+
+	if (result->type != BX_COMP_VARIABLE) {
+		return result;
+	}
+
+	error = bx_cgex_convert_to_binary(result);
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'bx_cgex_same_type_cast'");
+		return NULL;
 	}
 
 	return result;

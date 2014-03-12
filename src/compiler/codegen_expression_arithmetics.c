@@ -111,11 +111,20 @@ struct bx_comp_expr *bx_cgex_unary_plus_operator(struct bx_comp_expr *operand1) 
 }
 
 static struct bx_comp_expr *unary_plus(struct bx_comp_expr *operand1) {
+	bx_int8 error;
 	struct bx_comp_expr *result;
 
 	result = bx_cgex_copy_expression(operand1);
-	if (operand1->type == BX_COMP_VARIABLE) {
-		bx_cgex_convert_to_binary(result);
+
+	if (result->type == BX_COMP_CONSTANT) {
+		return result;
+	}
+
+	error = bx_cgex_convert_to_binary(result);
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'unary_plus'");
+		return NULL;
 	}
 
 	return result;
@@ -145,14 +154,18 @@ struct bx_comp_expr *bx_cgex_unary_minus_operator(struct bx_comp_expr *operand1)
 }
 
 static struct bx_comp_expr *unary_minus_int(struct bx_comp_expr *operand1) {
+	bx_int8 error;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_int_constant(- operand1->bx_value.int_value);
 	}
 
-	if (operand1->type == BX_COMP_VARIABLE) {
-		bx_cgex_convert_to_binary(operand1);
+	error = bx_cgex_convert_to_binary(operand1);
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'unary_minus_int'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_INT);
@@ -163,14 +176,18 @@ static struct bx_comp_expr *unary_minus_int(struct bx_comp_expr *operand1) {
 }
 
 static struct bx_comp_expr *unary_minus_float(struct bx_comp_expr *operand1) {
+	bx_int8 error;
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_float_constant(- operand1->bx_value.float_value);
 	}
 
-	if (operand1->type == BX_COMP_VARIABLE) {
-		bx_cgex_convert_to_binary(operand1);
+	error = bx_cgex_convert_to_binary(operand1);
+	if (error != 0) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error converting expression to binary in function 'unary_minus_float'");
+		return NULL;
 	}
 
 	result = bx_cgex_create_code_expression(BX_FLOAT);
@@ -223,14 +240,8 @@ static struct bx_comp_expr *add_int(struct bx_comp_expr *operand1, struct bx_com
 		return bx_cgex_create_int_constant(operand1->bx_value.int_value + operand2->bx_value.int_value);
 	}
 
-	if (operand1->type != BX_COMP_BINARY) {
-		error = bx_cgex_convert_to_binary(operand1);
-	}
-
-	if (operand2->type != BX_COMP_BINARY) {
-		error += bx_cgex_convert_to_binary(operand2);
-	}
-
+	error = bx_cgex_convert_to_binary(operand1);
+	error += bx_cgex_convert_to_binary(operand2);
 	if (error != 0) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error converting expression to binary in function 'add_int'");
@@ -253,14 +264,8 @@ static struct bx_comp_expr *add_float(struct bx_comp_expr *operand1, struct bx_c
 		return bx_cgex_create_float_constant(operand1->bx_value.float_value + operand2->bx_value.float_value);
 	}
 
-	if (operand1->type != BX_COMP_BINARY) {
-		error = bx_cgex_convert_to_binary(operand1);
-	}
-
-	if (operand2->type != BX_COMP_BINARY) {
-		error += bx_cgex_convert_to_binary(operand2);
-	}
-
+	error = bx_cgex_convert_to_binary(operand1);
+	error += bx_cgex_convert_to_binary(operand2);
 	if (error != 0) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error converting expression to binary in function 'add_float'");
@@ -321,14 +326,8 @@ static struct bx_comp_expr *sub_int(struct bx_comp_expr *operand1, struct bx_com
 		return bx_cgex_create_int_constant(operand1->bx_value.int_value - operand2->bx_value.int_value);
 	}
 
-	if (operand1->type != BX_COMP_BINARY) {
-		error = bx_cgex_convert_to_binary(operand1);
-	}
-
-	if (operand2->type != BX_COMP_BINARY) {
-		error += bx_cgex_convert_to_binary(operand2);
-	}
-
+	error = bx_cgex_convert_to_binary(operand1);
+	error += bx_cgex_convert_to_binary(operand2);
 	if (error != 0) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error converting expression to binary in function 'sub_int'");
@@ -351,14 +350,8 @@ static struct bx_comp_expr *sub_float(struct bx_comp_expr *operand1, struct bx_c
 		return bx_cgex_create_float_constant(operand1->bx_value.float_value - operand2->bx_value.float_value);
 	}
 
-	if (operand1->type != BX_COMP_BINARY) {
-		error = bx_cgex_convert_to_binary(operand1);
-	}
-
-	if (operand2->type != BX_COMP_BINARY) {
-		error += bx_cgex_convert_to_binary(operand2);
-	}
-
+	error = bx_cgex_convert_to_binary(operand1);
+	error += bx_cgex_convert_to_binary(operand2);
 	if (error != 0) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error converting expression to binary in function 'sub_float'");
@@ -414,14 +407,8 @@ static struct bx_comp_expr *mul_int(struct bx_comp_expr *operand1, struct bx_com
 		return bx_cgex_create_int_constant(operand1->bx_value.int_value * operand2->bx_value.int_value);
 	}
 
-	if (operand1->type != BX_COMP_BINARY) {
-		error = bx_cgex_convert_to_binary(operand1);
-	}
-
-	if (operand2->type != BX_COMP_BINARY) {
-		error += bx_cgex_convert_to_binary(operand2);
-	}
-
+	error = bx_cgex_convert_to_binary(operand1);
+	error += bx_cgex_convert_to_binary(operand2);
 	if (error != 0) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error converting expression to binary in function 'mul_int'");
@@ -444,14 +431,8 @@ static struct bx_comp_expr *mul_float(struct bx_comp_expr *operand1, struct bx_c
 		return bx_cgex_create_float_constant(operand1->bx_value.float_value * operand2->bx_value.float_value);
 	}
 
-	if (operand1->type != BX_COMP_BINARY) {
-		error = bx_cgex_convert_to_binary(operand1);
-	}
-
-	if (operand2->type != BX_COMP_BINARY) {
-		error += bx_cgex_convert_to_binary(operand2);
-	}
-
+	error = bx_cgex_convert_to_binary(operand1);
+	error += bx_cgex_convert_to_binary(operand2);
 	if (error != 0) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error converting expression to binary in function 'mul_float'");
@@ -507,14 +488,8 @@ static struct bx_comp_expr *div_int(struct bx_comp_expr *operand1, struct bx_com
 		return bx_cgex_create_int_constant(operand1->bx_value.int_value / operand2->bx_value.int_value);
 	}
 
-	if (operand1->type != BX_COMP_BINARY) {
-		error = bx_cgex_convert_to_binary(operand1);
-	}
-
-	if (operand2->type != BX_COMP_BINARY) {
-		error += bx_cgex_convert_to_binary(operand2);
-	}
-
+	error = bx_cgex_convert_to_binary(operand1);
+	error += bx_cgex_convert_to_binary(operand2);
 	if (error != 0) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error converting expression to binary in function 'div_int'");
@@ -537,14 +512,8 @@ static struct bx_comp_expr *div_float(struct bx_comp_expr *operand1, struct bx_c
 		return bx_cgex_create_float_constant(operand1->bx_value.float_value / operand2->bx_value.float_value);
 	}
 
-	if (operand1->type != BX_COMP_BINARY) {
-		error = bx_cgex_convert_to_binary(operand1);
-	}
-
-	if (operand2->type != BX_COMP_BINARY) {
-		error += bx_cgex_convert_to_binary(operand2);
-	}
-
+	error = bx_cgex_convert_to_binary(operand1);
+	error += bx_cgex_convert_to_binary(operand2);
 	if (error != 0) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error converting expression to binary in function 'div_float'");
@@ -589,14 +558,8 @@ static struct bx_comp_expr *mod_int(struct bx_comp_expr *operand1, struct bx_com
 		return bx_cgex_create_int_constant(operand1->bx_value.int_value % operand2->bx_value.int_value);
 	}
 
-	if (operand1->type != BX_COMP_BINARY) {
-		error = bx_cgex_convert_to_binary(operand1);
-	}
-
-	if (operand2->type != BX_COMP_BINARY) {
-		error += bx_cgex_convert_to_binary(operand2);
-	}
-
+	error = bx_cgex_convert_to_binary(operand1);
+	error += bx_cgex_convert_to_binary(operand2);
 	if (error != 0) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error converting expression to binary in function 'div_float'");
