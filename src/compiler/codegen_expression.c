@@ -45,6 +45,8 @@
 static void constant_bool_to_binary(struct bx_comp_code *code, bx_int32 bool_value);
 static void constant_int_to_binary(struct bx_comp_code *code, bx_int32 int_value);
 static void constant_float_to_binary(struct bx_comp_code *code, bx_float32 float_value);
+static bx_int8 constant_to_binary(struct bx_comp_expr *expression);
+static bx_int8 variable_to_binary(struct bx_comp_expr *expression);
 
 struct bx_comp_expr *bx_cgex_create_int_constant(bx_int32 value) {
 	struct bx_comp_expr *expression;
@@ -243,9 +245,9 @@ bx_int8 bx_cgex_convert_to_binary(struct bx_comp_expr *expression) {
 	case BX_COMP_BINARY:
 		return 0;
 	case BX_COMP_CONSTANT:
-		return bx_cgex_constant_to_binary(expression);
+		return constant_to_binary(expression);
 	case BX_COMP_VARIABLE:
-		return bx_cgex_variable_to_binary(expression);
+		return variable_to_binary(expression);
 	default:
 			BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected expression type "
 					"encountered in functino 'bx_cgex_convert_to_binary'");
@@ -253,7 +255,7 @@ bx_int8 bx_cgex_convert_to_binary(struct bx_comp_expr *expression) {
 	}
 }
 
-bx_int8 bx_cgex_constant_to_binary(struct bx_comp_expr *expression) {
+static bx_int8 constant_to_binary(struct bx_comp_expr *expression) {
 	struct bx_comp_code *code;
 
 	code = bx_cgco_create();
@@ -321,7 +323,7 @@ static void constant_float_to_binary(struct bx_comp_code *code, bx_float32 float
 	}
 }
 
-bx_int8 bx_cgex_variable_to_binary(struct bx_comp_expr *expression) {
+static bx_int8 variable_to_binary(struct bx_comp_expr *expression) {
 	struct bx_comp_code *code;
 
 	code = bx_cgco_create();
@@ -396,6 +398,10 @@ struct bx_comp_expr *bx_cgex_copy_expression(struct bx_comp_expr *expression) {
 			free(copy);
 			return NULL;
 		}
+
+	} else if (expression->type == BX_COMP_VARIABLE) {
+		memcpy(copy->bx_value.identifier,
+				expression->bx_value.identifier, DM_FIELD_IDENTIFIER_LENGTH);
 
 	} else {
 		copy->bx_value = expression->bx_value;

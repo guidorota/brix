@@ -170,26 +170,6 @@ struct bx_comp_expr *bx_cgex_unary_expression(struct bx_comp_expr *operand1, enu
 bx_int8 bx_cgex_convert_to_binary(struct bx_comp_expr *expression);
 
 /**
- * Changes the constant expression passed as a parameter into a binary expression.
- * This function is for INTERNAL USE ONLY. No sanity checks are performed on the parameter.
- *
- * @param expression The constant expression to convert
- *
- * @return 0 if successful, -1 otherwise
- */
-bx_int8 bx_cgex_constant_to_binary(struct bx_comp_expr *expression);
-
-/**
- * Changes the variable expression passed as a parameter into a binary expression.
- * This function is for INTERNAL USE ONLY. No sanity checks are performed on the parameter.
- *
- * @param expression The variable expression to convert
- *
- * @return 0 if successful, -1 otherwise
- */
-bx_int8 bx_cgex_variable_to_binary(struct bx_comp_expr *expression);
-
-/**
  * Creates an empty code expression.
  * This function is for INTERNAL USE ONLY.
  *
