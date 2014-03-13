@@ -33,6 +33,7 @@
 #include "logging.h"
 #include "memory_utils.h"
 #include "compiler/codegen_expression.h"
+#include "compiler/codegen_expression_assignment.h"
 #include "compiler/codegen_expression_arithmetics.h"
 #include "compiler/codegen_expression_comparison.h"
 #include "compiler/codegen_expression_bitwise.h"
@@ -162,52 +163,38 @@ struct bx_comp_expr *bx_cgex_binary_expression(struct bx_comp_expr *operand1,
 	switch(operator) {
 	case BX_COMP_OP_ADD:
 		return bx_cgex_addition_operator(operand1, operand2);
-		break;
 	case BX_COMP_OP_SUB:
 		return bx_cgex_subtraction_operator(operand1, operand2);
-		break;
 	case BX_COMP_OP_MUL:
 		return bx_cgex_multiplication_operator(operand1, operand2);
-		break;
 	case BX_COMP_OP_DIV:
 		return bx_cgex_division_operator(operand1, operand2);
-		break;
 	case BX_COMP_OP_MOD:
 		return bx_cgex_modulo_operator(operand1, operand2);
-		break;
 	case BX_COMP_OP_EQ:
 		return bx_cgex_equality_operator(operand1, operand2);
-		break;
 	case BX_COMP_OP_NE:
 		return bx_cgex_inequality_operator(operand1, operand2);
-		break;
 	case BX_COMP_OP_GT:
 		return bx_cgex_greater_than_operator(operand1, operand2);
-		break;
 	case BX_COMP_OP_GE:
 		return bx_cgex_greater_or_equal_operator(operand1, operand2);
-		break;
 	case BX_COMP_OP_LT:
 		return bx_cgex_less_than_operator(operand1, operand2);
-		break;
 	case BX_COMP_OP_LE:
 		return bx_cgex_less_or_equal_operator(operand1, operand2);
-		break;
 	case BX_COMP_OP_BITWISE_OR:
 		return bx_cgex_bitwise_or_operator(operand1, operand2);
-		break;
 	case BX_COMP_OP_BITWISE_XOR:
 		return bx_cgex_bitwise_xor_operator(operand1, operand2);
-		break;
 	case BX_COMP_OP_BITWISE_AND:
 		return bx_cgex_bitwise_and_operator(operand1, operand2);
-		break;
 	case BX_COMP_OP_OR:
 		return bx_cgex_logical_or_operator(operand1, operand2);
-		break;
 	case BX_COMP_OP_AND:
 		return bx_cgex_logical_and_operator(operand1, operand2);
-		break;
+	case BX_COMP_OP_ASSIGNMENT:
+		return bx_cgex_assignment_expression(operand1, operand2);
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operator "
 				"encountered in function 'bx_cgex_binary_expression'");

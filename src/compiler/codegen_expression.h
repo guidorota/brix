@@ -60,7 +60,8 @@ enum bx_comp_operator {
 	BX_COMP_OP_GT,
 	BX_COMP_OP_GE,
 	BX_COMP_OP_LT,
-	BX_COMP_OP_LE
+	BX_COMP_OP_LE,
+	BX_COMP_OP_ASSIGNMENT
 };
 
 enum bx_comp_exp_type {

@@ -284,7 +284,7 @@ primary_expression
 	}
 	| '(' expression ')'
 	{
-	
+		$$ = $2;
 	}
 	;
 	
