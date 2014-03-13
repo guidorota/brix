@@ -34,6 +34,9 @@
 #include "compiler/codegen_expression_arithmetics.h"
 #include "compiler/codegen_expression_cast.h"
 
+struct bx_comp_expr *prefix_dec_int(struct bx_comp_expr *operand1);
+struct bx_comp_expr *prefix_dec_float(struct bx_comp_expr *operand1);
+
 struct bx_comp_expr *prefix_inc_int(struct bx_comp_expr *operand1);
 struct bx_comp_expr *prefix_inc_float(struct bx_comp_expr *operand1);
 
@@ -56,6 +59,81 @@ static struct bx_comp_expr *div_int(struct bx_comp_expr *operand1, struct bx_com
 static struct bx_comp_expr *div_float(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
 static struct bx_comp_expr *mod_int(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
+
+/////////////////////////////////
+// PREFIXED DECREMENT OPERATOR //
+/////////////////////////////////
+
+struct bx_comp_expr *bx_cgex_prefix_dec_operator(struct bx_comp_expr *operand1) {
+
+	if (operand1->type != BX_COMP_VARIABLE) {
+		BX_LOG(LOG_ERROR, "compiler",
+				"Unable to apply prefixed decrement operator to non-assignable expression");
+		return NULL;
+	}
+
+	switch (operand1->data_type) {
+	case BX_INT:
+		return prefix_dec_int(operand1);
+	case BX_FLOAT:
+		return prefix_dec_float(operand1);
+	case BX_BOOL:
+	case BX_SUBNET:
+	case BX_STREAM:
+		BX_LOG(LOG_ERROR, "compiler", "Operand not compatible with operator '--'.");
+		return NULL;
+	default:
+		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected data type encountered "
+				"in funciton bx_cgex_prefix_dec_operator.");
+		return NULL;
+	}
+}
+
+struct bx_comp_expr *prefix_dec_int(struct bx_comp_expr *operand1) {
+	struct bx_comp_expr *result;
+	struct bx_comp_code *code;
+
+	result = bx_cgex_create_binary_expression(BX_INT);
+	if (result == NULL) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error creating binary expression in functin 'prefix_inc_int'");
+		return NULL;
+	}
+	code = result->bx_value.code;
+	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
+	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
+	bx_cgco_add_instruction(code, BX_INSTR_ISUB);
+	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
+	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+
+	return result;
+}
+
+struct bx_comp_expr *prefix_dec_float(struct bx_comp_expr *operand1) {
+	struct bx_comp_expr *result;
+	struct bx_comp_code *code;
+
+	result = bx_cgex_create_binary_expression(BX_FLOAT);
+	if (result == NULL) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error creating binary expression in functin 'prefix_inc_int'");
+		return NULL;
+	}
+	code = result->bx_value.code;
+	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
+	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_instruction(code, BX_INSTR_FPUSH_1);
+	bx_cgco_add_instruction(code, BX_INSTR_FSUB);
+	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
+	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+
+	return result;
+}
 
 /////////////////////////////////
 // PREFIXED INCREMENT OPERATOR //
