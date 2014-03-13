@@ -263,6 +263,10 @@ document_field
 
 assignment_expression
 	: postfix_expression '=' expression
+	{
+		$$ = bx_cgex_binary_expression($1, $3, BX_COMP_OP_ASSIGNMENT);
+		bx_cgex_destroy_expression($1);
+	}
 	;
 	
 primary_expression
