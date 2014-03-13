@@ -122,7 +122,7 @@ static struct bx_comp_expr *bitwise_or_int(struct bx_comp_expr *operand1, struct
 		return NULL;
 	}
 
-	result = bx_cgex_create_code_expression(BX_INT);
+	result = bx_cgex_create_binary_expression(BX_INT);
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IOR);
@@ -169,7 +169,7 @@ static struct bx_comp_expr *bitwise_xor_int(struct bx_comp_expr *operand1, struc
 		return NULL;
 	}
 
-	result = bx_cgex_create_code_expression(BX_INT);
+	result = bx_cgex_create_binary_expression(BX_INT);
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IXOR);
@@ -216,7 +216,7 @@ static struct bx_comp_expr *bitwise_and_int(struct bx_comp_expr *operand1, struc
 		return NULL;
 	}
 
-	result = bx_cgex_create_code_expression(BX_INT);
+	result = bx_cgex_create_binary_expression(BX_INT);
 	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
 	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
 	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IAND);

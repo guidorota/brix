@@ -34,12 +34,55 @@
 
 #include "compiler/codegen_expression.h"
 
+/**
+ * Bitwise complement
+ * This function returns the bitwise complement of the integer expression
+ * passed as parameter.
+ * The original operand passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ *
+ * return ~operand1, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_bitwise_complement_operator(struct bx_comp_expr *operand1);
 
+/**
+ * Bitwise or
+ * This function returns the bitwise or of the integer expressions
+ * passed as parameter.
+ * The original operand passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ * @param operand2 Second operand
+ *
+ * return operand1 | operand2, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_bitwise_or_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
+/**
+ * Bitwise xor
+ * This function returns the bitwise xor of the integer expressions
+ * passed as parameter.
+ * The original operand passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ * @param operand2 Second operand
+ *
+ * return operand1 ^ operand2, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_bitwise_xor_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
+/**
+ * Bitwise and
+ * This function returns the bitwise and of the integer expressions
+ * passed as parameter.
+ * The original operand passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ * @param operand2 Second operand
+ *
+ * return operand1 & operand2, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_bitwise_and_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
 #endif /* CODEGEN_EXPRESSION_BITWISE_H_ */

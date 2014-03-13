@@ -34,16 +34,82 @@
 
 #include "compiler/codegen_expression.h"
 
+/**
+ * Equality comparison
+ * This function returns a new boolean expression whose value is TRUE
+ * if operand1 == operand2, FALSE otherwise.
+ * The original operands passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ * @param operand2 Second operand
+ *
+ * return New boolean expression with value operand1 == opernad2, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_equality_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
+/**
+ * Inequality comparison
+ * This function returns a new boolean expression whose value is TRUE
+ * if operand1 != operand2, FALSE otherwise.
+ * The original operands passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ * @param operand2 Second operand
+ *
+ * return New boolean expression with value operand1 != opernad2, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_inequality_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
+/**
+ * Greater than comparison
+ * This function returns a new boolean expression whose value is TRUE
+ * if operand1 > operand2, FALSE otherwise.
+ * The original operands passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ * @param operand2 Second operand
+ *
+ * return New boolean expression with value operand1 > opernad2, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_greater_than_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
+/**
+ * Greater or equal comparison
+ * This function returns a new boolean expression whose value is TRUE
+ * if operand1 >= operand2, FALSE otherwise.
+ * The original operands passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ * @param operand2 Second operand
+ *
+ * return New boolean expression with value operand1 >= opernad2, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_greater_or_equal_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
+/**
+ * Less than comparison
+ * This function returns a new boolean expression whose value is TRUE
+ * if operand1 < operand2, FALSE otherwise.
+ * The original operands passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ * @param operand2 Second operand
+ *
+ * return New boolean expression with value operand1 < opernad2, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_less_than_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
+/**
+ * Less than or equal comparison
+ * This function returns a new boolean expression whose value is TRUE
+ * if operand1 <= operand2, FALSE otherwise.
+ * The original operands passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ * @param operand2 Second operand
+ *
+ * return New boolean expression with value operand1 <= opernad2, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_less_or_equal_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
 #endif /* CODEGEN_EXPRESSION_COMPARISON_H_ */

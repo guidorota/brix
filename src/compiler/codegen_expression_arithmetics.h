@@ -34,18 +34,92 @@
 
 #include "compiler/codegen_expression.h"
 
+/**
+ * Unary plus
+ * This function basically returns a copy of the expression passed as parameter.
+ * The original operand passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ *
+ * return operand1 copy, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_unary_plus_operator(struct bx_comp_expr *operand1);
 
+/**
+ * Unary minus
+ * This function returns a new expression corresponding to the negation
+ * of the operand passed as parameter
+ * The original operand passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ *
+ * return Negation of operand1, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_unary_minus_operator(struct bx_comp_expr *operand1);
 
+/**
+ * Addition
+ * This function returns a new expression corresponding to the arithmetic
+ * addition of the operands.
+ * The original operands passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ * @param operand2 Second operand
+ *
+ * return operand1 + operand2, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_addition_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
+/**
+ * Subtraction
+ * This function returns a new expression corresponding to the arithmetic
+ * subtraction of the operands.
+ * The original operands passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ * @param operand2 Second operand
+ *
+ * return operand1 - operand2, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_subtraction_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
+/**
+ * Multiplication
+ * This function returns a new expression corresponding to the arithmetic
+ * multiplication of the operands.
+ * The original operands passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ * @param operand2 Second operand
+ *
+ * return operand1 * operand2, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_multiplication_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
+/**
+ * Division
+ * This function returns a new expression corresponding to the arithmetic
+ * division of the operands.
+ * The original operands passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ * @param operand2 Second operand
+ *
+ * return operand1 / operand2, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_division_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
+/**
+ * Modulo
+ * This function returns a new expression corresponding to the integer
+ * remainder of the division operation between the operands.
+ * The original operands passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ * @param operand2 Second operand
+ *
+ * return operand1 % operand2, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_modulo_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
 #endif /* CODEGEN_EXPRESSION_ARITHMETICS_H_ */

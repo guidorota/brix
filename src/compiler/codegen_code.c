@@ -121,8 +121,8 @@ bx_ssize bx_cgco_add_bool_constant(struct bx_comp_code *code, bx_uint32 value) {
 	return add_to_code(code, (void *) &value, sizeof value);
 }
 
-bx_ssize bx_cgco_append_code(struct bx_comp_code *code, struct bx_comp_code *append) {
-	return add_to_code(code, append->data, append->size);
+bx_ssize bx_cgco_append_code(struct bx_comp_code *destination, struct bx_comp_code *source) {
+	return add_to_code(destination, source->data, source->size);
 }
 
 static bx_ssize add_to_code(struct bx_comp_code *code, void *data, bx_size data_length) {

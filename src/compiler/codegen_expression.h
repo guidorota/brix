@@ -177,7 +177,7 @@ bx_int8 bx_cgex_convert_to_binary(struct bx_comp_expr *expression);
  *
  * @return Empty code expression, NULL on failure
  */
-struct bx_comp_expr *bx_cgex_create_code_expression(enum bx_builtin_type data_type);
+struct bx_comp_expr *bx_cgex_create_binary_expression(enum bx_builtin_type data_type);
 
 /**
  * Returns a descriptive name of the type passed as parameter.

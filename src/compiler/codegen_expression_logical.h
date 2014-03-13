@@ -34,10 +34,42 @@
 
 #include "compiler/codegen_expression.h"
 
+/**
+ * Logical negation.
+ * This function creates a new expression corresponding to the negation
+ * of the expression passed as a parameter. The original operand
+ * passed as parameter must be deallocated manually.
+ *
+ * @param operand1 Operand to negate
+ *
+ * return Logical not of the operand, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_logical_not_operator(struct bx_comp_expr *operand1);
 
+/**
+ * Logical or.
+ * This function creates a new expression corresponding to the or
+ * of the two expression operands passed as a parameter. The original operands
+ * passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ * @param operand2 Second operand
+ *
+ * return Logical or of the operands, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_logical_or_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
+/**
+ * Logical and.
+ * This function creates a new expression corresponding to the and
+ * of the two expression operands passed as a parameter. The original operands
+ * passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ * @param operand2 Second operand
+ *
+ * return Logical and of the operands, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_logical_and_operator(struct bx_comp_expr *operand1, struct bx_comp_expr *operand2);
 
 #endif /* CODEGEN_EXPRESSION_LOGICAL_H_ */

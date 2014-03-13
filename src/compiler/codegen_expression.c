@@ -68,6 +68,8 @@ struct bx_comp_expr *bx_cgex_create_float_constant(bx_float32 value) {
 
 	expression = BX_MALLOC(struct bx_comp_expr);
 	if (expression == NULL) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error instantiating memory in function 'bx_cgex_create_float_constant'");
 		return NULL;
 	}
 
@@ -83,6 +85,8 @@ struct bx_comp_expr *bx_cgex_create_bool_constant(bx_boolean value) {
 
 	expression = BX_MALLOC(struct bx_comp_expr);
 	if (expression == NULL) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error instantiating memory in function 'bx_cgex_create_bool_constant'");
 		return NULL;
 	}
 
@@ -109,6 +113,8 @@ struct bx_comp_expr *bx_cgex_create_variable(char *identifier) {
 
 	expression = BX_MALLOC(struct bx_comp_expr);
 	if (expression == NULL) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error instantiating memory in function 'bx_cgex_create_variable'");
 		return NULL;
 	}
 
@@ -328,6 +334,8 @@ static bx_int8 variable_to_binary(struct bx_comp_expr *expression) {
 
 	code = bx_cgco_create();
 	if (code == NULL) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error creating bx_comp_code struct in 'variable_to_binary'");
 		return -1;
 	}
 	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
@@ -339,7 +347,7 @@ static bx_int8 variable_to_binary(struct bx_comp_expr *expression) {
 	return 0;
 }
 
-struct bx_comp_expr *bx_cgex_create_code_expression(enum bx_builtin_type data_type) {
+struct bx_comp_expr *bx_cgex_create_binary_expression(enum bx_builtin_type data_type) {
 	struct bx_comp_expr *expression;
 
 	expression = BX_MALLOC(struct bx_comp_expr);
@@ -348,6 +356,8 @@ struct bx_comp_expr *bx_cgex_create_code_expression(enum bx_builtin_type data_ty
 	}
 	expression->bx_value.code = bx_cgco_create();
 	if (expression->bx_value.code == NULL) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error creating bx_comp_code struct in 'bx_cgex_create_binary_expression'");
 		free(expression);
 		return NULL;
 	}
@@ -387,6 +397,8 @@ struct bx_comp_expr *bx_cgex_copy_expression(struct bx_comp_expr *expression) {
 
 	copy = BX_MALLOC(struct bx_comp_expr);
 	if (copy == NULL) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error instantiating memory in function 'bx_cgex_copy_expression'");
 		return NULL;
 	}
 
@@ -395,6 +407,8 @@ struct bx_comp_expr *bx_cgex_copy_expression(struct bx_comp_expr *expression) {
 	if (expression->type == BX_COMP_BINARY) {
 		copy->bx_value.code = bx_cgco_copy(expression->bx_value.code);
 		if (copy->bx_value.code == NULL) {
+			BX_LOG(LOG_ERROR, "codegen_expression",
+					"Error creating bx_comp_code struct in 'bx_cgex_create_binary_expression'");
 			free(copy);
 			return NULL;
 		}

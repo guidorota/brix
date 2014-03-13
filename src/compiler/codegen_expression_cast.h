@@ -34,26 +34,132 @@
 
 #include "compiler/codegen_expression.h"
 
+/**
+ * Convert an expression to integer type
+ * This function converts the expression passed as parameter to integer type.
+ * The original expression passed as parameter must be deallocated manually.
+ *
+ * @param operand1 expression
+ *
+ * return integer cast of the expression, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_cast_to_int(struct bx_comp_expr *expression);
 
+/**
+ * Convert an expression to float type
+ * This function converts the expression passed as parameter to float type.
+ * The original expression passed as parameter must be deallocated manually.
+ *
+ * @param operand1 expression
+ *
+ * return float cast of the expression, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_cast_to_float(struct bx_comp_expr *expression);
 
+/**
+ * Convert an expression to boolean type
+ * This function converts the expression passed as parameter to boolean type.
+ * The original expression passed as parameter must be deallocated manually.
+ *
+ * @param operand1 expression
+ *
+ * return boolean cast of the expression, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_cast_to_bool(struct bx_comp_expr *expression);
 
+/**
+ * Convert an expression to string type
+ * This function converts the expression passed as parameter to string type.
+ * The original expression passed as parameter must be deallocated manually.
+ *
+ * @param operand1 expression
+ *
+ * return string cast of the expression, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_cast_to_string(struct bx_comp_expr *expression);
 
+/**
+ * Convert an integer expression to boolean type
+ * This function converts the integer expression passed as parameter to
+ * boolean type.
+ * The original expression passed as parameter must be deallocated manually.
+ *
+ * @param operand1 expression
+ *
+ * return boolean cast of the expression, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_int_to_bool(struct bx_comp_expr *value);
 
+/**
+ * Convert a float expression to boolean type
+ * This function converts the float expression passed as parameter to
+ * boolean type.
+ * The original expression passed as parameter must be deallocated manually.
+ *
+ * @param operand1 expression
+ *
+ * return boolean cast of the expression, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_float_to_bool(struct bx_comp_expr *value);
 
+/**
+ * Convert an integer expression to float type
+ * This function converts the integer expression passed as parameter to
+ * float type.
+ * The original expression passed as parameter must be deallocated manually.
+ *
+ * @param operand1 expression
+ *
+ * return float cast of the expression, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_int_to_float(struct bx_comp_expr *value);
 
-struct bx_comp_expr *bx_cgex_float_to_int(struct bx_comp_expr *value);
-
-struct bx_comp_expr *bx_cgex_bool_to_int(struct bx_comp_expr *value);
-
+/**
+ * Convert a boolean expression to float type
+ * This function converts the boolean expression passed as parameter to
+ * float type.
+ * The original expression passed as parameter must be deallocated manually.
+ *
+ * @param operand1 expression
+ *
+ * return float cast of the expression, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_bool_to_float(struct bx_comp_expr *value);
 
+/**
+ * Convert a float expression to integer type
+ * This function converts the float expression passed as parameter to
+ * integer type.
+ * The original expression passed as parameter must be deallocated manually.
+ *
+ * @param operand1 expression
+ *
+ * return integer cast of the expression, NULL on failure
+ */
+struct bx_comp_expr *bx_cgex_float_to_int(struct bx_comp_expr *value);
+
+/**
+ * Convert a boolean expression to integer type
+ * This function converts the boolean expression passed as parameter to
+ * integer type.
+ * The original expression passed as parameter must be deallocated manually.
+ *
+ * @param operand1 expression
+ *
+ * return integer cast of the expression, NULL on failure
+ */
+struct bx_comp_expr *bx_cgex_bool_to_int(struct bx_comp_expr *value);
+
+/**
+ * Creates a copy of the expression passed as parameter.
+ * If the expression is of type BX_COMP_VARIABLE, the expression gets converted
+ * to BX_COMP_BINARY type.
+ * The original expression passed as parameter must be deallocated manually.
+ *
+ * @param operand1 expression
+ *
+ * return copy of the expression, NULL on failure
+ */
 struct bx_comp_expr *bx_cgex_same_type_cast(struct bx_comp_expr *expression);
 
 #endif /* CODEGEN_EXPRESSION_CAST_H_ */
