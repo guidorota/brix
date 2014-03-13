@@ -231,7 +231,7 @@ struct bx_comp_expr *bx_cgex_unary_expression(struct bx_comp_expr *operand1, enu
 	case BX_COMP_OP_BITWISE_COMPLEMENT:
 		return bx_cgex_bitwise_complement_operator(operand1);
 	case BX_COMP_OP_PREFIX_INC:
-		return NULL; //TODO; Stub
+		return bx_cgex_prefix_inc_operator(operand1);
 	case BX_COMP_OP_PREFIX_DEC:
 		return NULL; //TODO; Stub
 	case BX_COMP_OP_POSTFIX_INC:

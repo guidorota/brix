@@ -35,6 +35,18 @@
 #include "compiler/codegen_expression.h"
 
 /**
+ * Prefixed increment operator
+ * This function increases the value of the variable expression and places the
+ * new value in the stack.
+ * The original operand passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ *
+ * return ++ operand1, NULL on failure
+ */
+struct bx_comp_expr *bx_cgex_prefix_inc_operator(struct bx_comp_expr *operand1);
+
+/**
  * Unary plus
  * This function basically returns a copy of the expression passed as parameter.
  * The original operand passed as parameter must be deallocated manually.
