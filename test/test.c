@@ -45,6 +45,7 @@
 #include "compiler/test_codegen_expression_bitwise.h"
 #include "compiler/test_codegen_expression_logical.h"
 #include "compiler/test_codegen_expression_cast.h"
+#include "compiler/test_codegen_expression_assignment.h"
 
 int main(void) {
 	int number_failed = 0;
@@ -65,6 +66,7 @@ int main(void) {
 	srunner_add_suite(runner, test_codegen_expression_bitwise_create_suite());
 	srunner_add_suite(runner, test_codegen_expression_logical_create_suite());
 	srunner_add_suite(runner, test_codegen_expression_cast_create_suite());
+	srunner_add_suite(runner, test_codegen_expression_assignment_create_suite());
 
 	srunner_run_all(runner, CK_VERBOSE);
 	number_failed = srunner_ntests_failed(runner);

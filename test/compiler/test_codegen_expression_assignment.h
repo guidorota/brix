@@ -1,6 +1,6 @@
 /*
- * configuration.h
- * Created on: Feb 16, 2014
+ * test_codegen_expression_assignment.h
+ * Created on: Mar 13, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,18 +29,11 @@
  *
  */
 
-#ifndef CONFIGURATION_H_
-#define CONFIGURATION_H_
+#ifndef TEST_CODEGEN_EXPRESSION_ASSIGNMENT_H_
+#define TEST_CODEGEN_EXPRESSION_ASSIGNMENT_H_
 
-// Virtual machine
-#define VM_STACK_SIZE 512
+#include <check.h>
 
-// Application manager
-#define CODE_STORAGE_SIZE 4092
+Suite *test_codegen_expression_assignment_create_suite(void);
 
-// Document manager
-#define DM_MAX_FIELD_NUMBER 512
-#define DM_FIELD_IDENTIFIER_LENGTH 16
-#define DM_MMAP_STORAGE_SIZE 512
-
-#endif /* CONFIGURATION_H_ */
+#endif /* TEST_CODEGEN_EXPRESSION_ASSIGNMENT_H_ */
