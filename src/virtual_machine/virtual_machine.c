@@ -452,6 +452,20 @@ static bx_int8 bx_store32_function(struct bx_vm_status *vm_status) {
 	return 0;
 }
 
+static bx_int8 bx_dup32_function(struct bx_vm_status *vm_status) {
+	bx_int8 error;
+	bx_uint32 data;
+
+	error = BX_STACK_POP_VARIABLE(&vm_status->execution_stack, data);
+	error += BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, data);
+	error += BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, data);
+	if (error == -1) {
+		return -1;
+	}
+
+	return 0;
+}
+
 static bx_int8 bx_jump_function(struct bx_vm_status *vm_status) {
 	bx_int8 error;
 	bx_uint16 address;
@@ -628,6 +642,7 @@ static const bx_instruction instruction_array[256] = {
 	&bx_fpush_1_function,
 	&bx_load32_function,
 	&bx_store32_function,
+	&bx_dup32_function,
 	&bx_jump_function,
 	&bx_jeqz_function,
 	&bx_jnez_function,

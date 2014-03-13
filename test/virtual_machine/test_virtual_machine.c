@@ -41,9 +41,13 @@
 
 #define CODE_BUFFER_LENGTH 128
 #define TEST_FIELD_ID "test_field"
+#define OUTPUT_TEST_FIELD_ID "output_test_field"
 
 static struct bx_document_field test_field;
 static struct bx_test_field_data test_field_data;
+
+static struct bx_document_field output_test_field;
+static struct bx_test_field_data output_test_field_data;
 
 static struct bx_byte_buffer buffer;
 static bx_uint8 buffer_storage[CODE_BUFFER_LENGTH];
@@ -57,7 +61,11 @@ START_TEST (test_init) {
 	ck_assert_int_eq(error, 0);
 	error = bx_test_field_init(&test_field, &test_field_data);
 	ck_assert_int_eq(error, 0);
+	error = bx_test_field_init(&output_test_field, &output_test_field_data);
+	ck_assert_int_eq(error, 0);
 	error = bx_dm_add_field(&test_field, TEST_FIELD_ID);
+	ck_assert_int_eq(error, 0);
+	error = bx_dm_add_field(&output_test_field, OUTPUT_TEST_FIELD_ID);
 	ck_assert_int_eq(error, 0);
 	bx_bbuf_init(&buffer, buffer_storage, CODE_BUFFER_LENGTH);
 } END_TEST
@@ -1288,6 +1296,26 @@ START_TEST (test_halt) {
 	ck_assert_int_ne(bx_test_field_get_int(&test_field), operand1 + operand2);
 } END_TEST
 
+START_TEST (test_dup32) {
+	bx_int8 error;
+	bx_float32 value = 83.903;
+
+	bx_test_field_set_float(&test_field, 0);
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_float(&buffer, value);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_DUP32);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_STORE32);
+	bx_vmutils_add_identifier(&buffer, OUTPUT_TEST_FIELD_ID);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_float(&test_field), value);
+	ck_assert_int_eq(bx_test_field_get_float(&output_test_field), value);
+} END_TEST
+
 Suite *test_virtual_machine_create_suite() {
 	Suite *suite = suite_create("test_virtual_machine");
 	TCase *tcase;
@@ -1386,6 +1414,10 @@ Suite *test_virtual_machine_create_suite() {
 
 	tcase = tcase_create("test_halt");
 	tcase_add_test(tcase, test_halt);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("test_dup32");
+	tcase_add_test(tcase, test_dup32);
 	suite_add_tcase(suite, tcase);
 
 	return suite;
