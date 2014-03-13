@@ -1252,6 +1252,104 @@ START_TEST (prefix_decrement_test) {
 	bx_cgex_destroy_expression(result);
 } END_TEST
 
+START_TEST (postfix_increment_test) {
+	bx_int8 error;
+	struct bx_comp_expr *operand1;
+	struct bx_comp_expr *result;
+	bx_int32 int_value = 34;
+	bx_float32 float_value = 93.45;
+	struct bx_comp_code *code;
+
+	bx_test_field_set_int(&int_test_field, int_value);
+	bx_test_field_set_int(&int_output_test_field, 0);
+	operand1 = bx_cgex_create_variable(INT_TEST_FIELD);
+	ck_assert_ptr_ne(operand1, NULL);
+	ck_assert_int_eq(operand1->data_type, BX_INT);
+	ck_assert_int_eq(operand1->type, BX_COMP_VARIABLE);
+	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_POSTFIX_INC);
+	ck_assert_ptr_ne(result, NULL);
+	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->data_type, BX_INT);
+	code = result->bx_value.code;
+	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_identifier(code, INT_OUTPUT_TEST_FIELD);
+	error = bx_vm_execute(code->data, code->size);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_output_test_field), int_value);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), int_value + 1);
+	bx_cgex_destroy_expression(operand1);
+	bx_cgex_destroy_expression(result);
+
+	bx_test_field_set_float(&float_test_field, float_value);
+	bx_test_field_set_float(&float_output_test_field, 0.0);
+	operand1 = bx_cgex_create_variable(FLOAT_TEST_FIELD);
+	ck_assert_ptr_ne(operand1, NULL);
+	ck_assert_int_eq(operand1->data_type, BX_FLOAT);
+	ck_assert_int_eq(operand1->type, BX_COMP_VARIABLE);
+	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_POSTFIX_INC);
+	ck_assert_ptr_ne(result, NULL);
+	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->data_type, BX_FLOAT);
+	code = result->bx_value.code;
+	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_identifier(code, FLOAT_OUTPUT_TEST_FIELD);
+	error = bx_vm_execute(code->data, code->size);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_float(&float_output_test_field), float_value);
+	ck_assert_int_eq(bx_test_field_get_float(&float_test_field), float_value + 1);
+	bx_cgex_destroy_expression(operand1);
+	bx_cgex_destroy_expression(result);
+} END_TEST
+
+START_TEST (postfix_decrement_test) {
+	bx_int8 error;
+	struct bx_comp_expr *operand1;
+	struct bx_comp_expr *result;
+	bx_int32 int_value = 34;
+	bx_float32 float_value = 93.45;
+	struct bx_comp_code *code;
+
+	bx_test_field_set_int(&int_test_field, int_value);
+	bx_test_field_set_int(&int_output_test_field, 0);
+	operand1 = bx_cgex_create_variable(INT_TEST_FIELD);
+	ck_assert_ptr_ne(operand1, NULL);
+	ck_assert_int_eq(operand1->data_type, BX_INT);
+	ck_assert_int_eq(operand1->type, BX_COMP_VARIABLE);
+	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_POSTFIX_DEC);
+	ck_assert_ptr_ne(result, NULL);
+	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->data_type, BX_INT);
+	code = result->bx_value.code;
+	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_identifier(code, INT_OUTPUT_TEST_FIELD);
+	error = bx_vm_execute(code->data, code->size);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_output_test_field), int_value);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), int_value - 1);
+	bx_cgex_destroy_expression(operand1);
+	bx_cgex_destroy_expression(result);
+
+	bx_test_field_set_float(&float_test_field, float_value);
+	bx_test_field_set_float(&float_output_test_field, 0.0);
+	operand1 = bx_cgex_create_variable(FLOAT_TEST_FIELD);
+	ck_assert_ptr_ne(operand1, NULL);
+	ck_assert_int_eq(operand1->data_type, BX_FLOAT);
+	ck_assert_int_eq(operand1->type, BX_COMP_VARIABLE);
+	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_POSTFIX_DEC);
+	ck_assert_ptr_ne(result, NULL);
+	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->data_type, BX_FLOAT);
+	code = result->bx_value.code;
+	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_identifier(code, FLOAT_OUTPUT_TEST_FIELD);
+	error = bx_vm_execute(code->data, code->size);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_float(&float_output_test_field), float_value);
+	ck_assert_int_eq(bx_test_field_get_float(&float_test_field), float_value - 1);
+	bx_cgex_destroy_expression(operand1);
+	bx_cgex_destroy_expression(result);
+} END_TEST
+
 Suite *test_codegen_expression_arithmetics_create_suite(void) {
 	Suite *suite = suite_create("bx_linked_list");
 	TCase *tcase;
@@ -1306,6 +1404,14 @@ Suite *test_codegen_expression_arithmetics_create_suite(void) {
 
 	tcase = tcase_create("prefix_decrement_test");
 	tcase_add_test(tcase, prefix_decrement_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("postfix_increment_test");
+	tcase_add_test(tcase, postfix_increment_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("postfix_decrement_test");
+	tcase_add_test(tcase, postfix_decrement_test);
 	suite_add_tcase(suite, tcase);
 
 	return suite;

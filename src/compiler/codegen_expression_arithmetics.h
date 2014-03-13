@@ -35,6 +35,30 @@
 #include "compiler/codegen_expression.h"
 
 /**
+ * Postfixed decrement operator
+ * This function decreases the value of the variable expression and places the
+ * old value in the stack.
+ * The original operand passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ *
+ * return operand1 --, NULL on failure
+ */
+struct bx_comp_expr *bx_cgex_postfix_dec_operator(struct bx_comp_expr *operand1);
+
+/**
+ * Postfixed increment operator
+ * This function increases the value of the variable expression and places the
+ * old value in the stack.
+ * The original operand passed as parameter must be deallocated manually.
+ *
+ * @param operand1 First operand
+ *
+ * return operand1 ++, NULL on failure
+ */
+struct bx_comp_expr *bx_cgex_postfix_inc_operator(struct bx_comp_expr *operand1);
+
+/**
  * Prefixed decrement operator
  * This function decreses the value of the variable expression and places the
  * new value in the stack.
