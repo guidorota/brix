@@ -77,6 +77,24 @@ START_TEST (bx_linked_list_remove_equals) {
 	ck_assert_int_eq(bx_llist_contains_equals(linked_list, &element2, (bx_llist_equals) integer_equals), 0);
 } END_TEST
 
+START_TEST (bx_linked_list_remove_head) {
+	void *element_removed;
+	bx_ssize previous_size;
+
+	bx_llist_add(&linked_list, &element1);
+	bx_llist_add(&linked_list, &element2);
+	previous_size = bx_llist_size(linked_list);
+	ck_assert_int_ge(previous_size, 2);
+	element_removed = bx_llist_remove_head(&linked_list);
+	ck_assert_ptr_eq(element_removed, &element2);
+	ck_assert_int_eq(previous_size, bx_llist_size(linked_list) + 1);
+	previous_size = bx_llist_size(linked_list);
+	ck_assert_int_ge(previous_size, 1);
+	element_removed = bx_llist_remove_head(&linked_list);
+	ck_assert_ptr_eq(element_removed, &element1);
+	ck_assert_int_eq(previous_size, bx_llist_size(linked_list) + 1);
+} END_TEST
+
 Suite *test_linked_list_create_suite(void) {
 	Suite *suite = suite_create("bx_linked_list");
 	TCase *tcase;
@@ -99,6 +117,10 @@ Suite *test_linked_list_create_suite(void) {
 
 	tcase = tcase_create("bx_linked_list_remove_equals");
 	tcase_add_test(tcase, bx_linked_list_remove_equals);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("bx_linked_list_remove_head");
+	tcase_add_test(tcase, bx_linked_list_remove_head);
 	suite_add_tcase(suite, tcase);
 
 	return suite;

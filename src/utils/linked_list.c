@@ -56,6 +56,22 @@ struct bx_linked_list *bx_llist_add(struct bx_linked_list **linked_list, void *e
 	return node;
 }
 
+void *bx_llist_remove_head(struct bx_linked_list **linked_list) {
+	struct bx_linked_list *old_head;
+	void *element_content;
+
+	if (linked_list == NULL) {
+		return NULL;
+	}
+
+	element_content = (*linked_list)->element;
+	old_head = *linked_list;
+	*linked_list = (*linked_list)->next;
+	free(old_head);
+
+	return element_content;
+}
+
 void *bx_llist_remove(struct bx_linked_list **linked_list, void *element) {
 	return bx_llist_remove_equals(linked_list, element, default_equals);
 }

@@ -46,6 +46,8 @@ struct bx_linked_list {
 
 struct bx_linked_list *bx_llist_add(struct bx_linked_list **linked_list, void *element);
 
+void *bx_llist_remove_head(struct bx_linked_list **linked_list);
+
 void *bx_llist_remove(struct bx_linked_list **linked_list, void *element);
 
 void *bx_llist_remove_equals(struct bx_linked_list **linked_list, void *element, bx_llist_equals equals);
