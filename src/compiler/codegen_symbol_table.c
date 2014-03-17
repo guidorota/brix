@@ -93,13 +93,11 @@ struct bx_comp_symbol *bx_cgsy_get(char *identifier) {
 }
 
 bx_int8 bx_cgsy_reset() {
-	struct bx_linked_list *node;
+	struct bx_comp_symbol *symbol;
 
 	while (symbol_list != NULL) {
-		free(symbol_list->element);
-		node = symbol_list;
-		symbol_list = symbol_list->next;
-		free(node);
+		symbol = (struct bx_comp_symbol *) bx_llist_remove_head(&symbol_list);
+		free(symbol);
 	}
 
 	return 0;
