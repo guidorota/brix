@@ -39,13 +39,28 @@ struct bx_comp_task *bx_cgtk_create_task() {
 	struct bx_comp_task *task;
 
 	task = BX_MALLOC(struct bx_comp_task);
-	task->code = NULL;
+	task->code = bx_cgco_create();
+	if (task->code == NULL) {
+		free(task);
+		return NULL;
+	}
 	task->at_execution_condition = NULL;
 	task->on_execution_condition = NULL;
 	task->child_task_list = NULL;
 	task->parent = NULL;
 
 	return task;
+}
+
+bx_int8 bx_cgtk_append_code(struct bx_comp_task *task, struct bx_comp_code *code) {
+
+	if (task == NULL || code == NULL) {
+		return -1;
+	}
+
+	bx_cgco_append_code(task->code, code);
+
+	return 0;
 }
 
 bx_int8 bx_cgtk_add_at_execution_condition(struct bx_comp_task *task, struct bx_comp_expr *execution_condition) {
@@ -78,6 +93,10 @@ bx_int8 bx_cgtk_add_at_execution_condition(struct bx_comp_task *task, struct bx_
 
 
 bx_int8 bx_cgtk_add_on_execution_condition(struct bx_comp_task *task, struct bx_comp_expr *execution_condition) {
+	return -1; //TODO: Stub
+}
+
+bx_int8 bx_cgtk_add_every_execution_condition(struct bx_comp_task *task, struct bx_comp_expr *execution_condition) {
 	return -1; //TODO: Stub
 }
 

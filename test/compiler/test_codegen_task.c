@@ -56,6 +56,10 @@ START_TEST (on_execution_condition) {
 	//TODO: Stub
 } END_TEST
 
+START_TEST (every_execution_condition) {
+	//TODO: Stub
+} END_TEST
+
 START_TEST (create_child_task) {
 	struct bx_comp_task *child_task;
 
@@ -92,6 +96,10 @@ Suite *test_codegen_task_create_suite(void) {
 
 	tcase = tcase_create("on_execution_condition");
 	tcase_add_test(tcase, on_execution_condition);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("every_execution_condition");
+	tcase_add_test(tcase, every_execution_condition);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("create_child_task");

@@ -36,7 +36,6 @@
 #include "compiler/codegen_expression.h"
 #include "compiler/codegen_symbol_table.h"
 
-#define CODE_BUFFER_LENGTH 128
 #define INT_TEST_FIELD "int_test_field"
 #define FLOAT_TEST_FIELD "float_test_field"
 

@@ -41,6 +41,9 @@
 int yylex(void);
 int yyerror(char *);
 int init_parser(struct bx_comp_task *);
+
+static struct bx_comp_task *current_task;
+
 %}
 
 %token FROM NETWORK FILTER GET EVERY QUEUE WINDOW EACH LOCAL PARENT AT DOCUMENT
@@ -72,6 +75,13 @@ int init_parser(struct bx_comp_task *);
 %type <operator> unary_operator
 %type <data_type> type_name
 %type <creation_modifier> creation_modifier
+%type <task> statement_list
+%type <task> code_block
+%type <task> statement
+%type <code> iteration_statement
+%type <code> selection_statement
+%type <task> conditional_execution_statement
+%type <code> expression_statement
 
 %union {
 	enum bx_comp_creation_modifier creation_modifier;
@@ -81,6 +91,8 @@ int init_parser(struct bx_comp_task *);
 	bx_float32 float_val;
 	char *string_val;
 	struct bx_comp_expr *expression;
+	struct bx_comp_task *task;
+	struct bx_comp_code *code;
 }
 
 %start statement_list
@@ -89,20 +101,48 @@ int init_parser(struct bx_comp_task *);
 
 statement_list
 	: code_block
+	{
+	
+	}
 	| statement_list code_block
+	{
+	
+	}
 	;
 	
 code_block
 	: statement
+	{
+		
+	}
 	| '{' statement_list '}'
+	{
+	
+	}
 	;
 
 statement
 	: declaration_statement
+	{
+	
+	}
 	| selection_statement
+	{
+	
+	}
 	| iteration_statement
+	{
+	
+	}
 	| expression_statement
+	{
+		bx_cgtk_append_code(current_task, $1);
+		bx_cgco_destroy($1);
+	}
 	| conditional_execution_statement
+	{
+	
+	}
 	;
 	
 declaration_statement
@@ -111,6 +151,9 @@ declaration_statement
 		bx_cgsy_add($3, $2, $1);
 	}
 	| creation_modifier type_name IDENTIFIER '=' expression ';'
+	{
+	
+	}
 	;
 	
 type_name
@@ -157,20 +200,47 @@ creation_modifier
 	
 iteration_statement
 	: WHILE '(' expression ')' statement
+	{
+	
+	}
 	| DO statement WHILE '(' expression ')' ';'
+	{
+	
+	}
 	| FOR '(' expression_statement expression_statement ')' statement
+	{
+	
+	}
 	| FOR '(' expression_statement expression_statement expression ')' statement
+	{
+	
+	}
 	;
 	
 selection_statement
 	: IF '(' expression ')' statement
+	{
+	
+	}
 	| IF '(' expression ')' statement ELSE statement
+	{
+	
+	}
 	;
 	
 conditional_execution_statement
 	: AT '(' expression ')' code_block
+	{
+	
+	}
 	| ON '(' event_descriptor ')' code_block
+	{
+	
+	}
 	| EVERY '(' expression ')' code_block
+	{
+	
+	}
 	;
 	
 event_descriptor
@@ -190,7 +260,15 @@ event_trigger_modifier
 	
 expression_statement
 	: ';'
+	{
+		$$ = bx_cgco_create();
+	}
 	| expression ';'
+	{
+		bx_cgex_convert_to_binary($1);
+		$$ = bx_cgco_copy($1->bx_value.code);
+		bx_cgex_destroy_expression($1);
+	}
 	;
 	
 expression
@@ -545,8 +623,6 @@ conditional_expression
 
 extern char yytext[];
 extern int column;
-
-static struct bx_comp_task *current_task;
 
 int init_parser(struct bx_comp_task *main_task) {
 	if (main_task == NULL) {

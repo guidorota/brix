@@ -39,6 +39,7 @@
 struct bx_comp_task {
 	struct bx_comp_code *at_execution_condition;
 	struct bx_comp_code *on_execution_condition;
+	struct bx_comp_code *every_execution_condition;
 	struct bx_comp_code *code;
 	struct bx_linked_list *child_task_list;
 	struct bx_comp_task *parent;
@@ -50,6 +51,16 @@ struct bx_comp_task {
  * @return Pointer to the new task, NULL on failure
  */
 struct bx_comp_task *bx_cgtk_create_task(void);
+
+/**
+ * Append code to an existing task
+ *
+ * @param task Target task
+ * @param code Code to append
+ *
+ * @return 0 on success, -1 upon failure
+ */
+bx_int8 bx_cgtk_append_code(struct bx_comp_task *task, struct bx_comp_code *code);
 
 /**
  * Adds the @ execution condition to the task passed as parameter.
@@ -66,6 +77,9 @@ bx_int8 bx_cgtk_add_at_execution_condition(struct bx_comp_task *task, struct bx_
 
 //TODO: Interface stub
 bx_int8 bx_cgtk_add_on_execution_condition(struct bx_comp_task *task, struct bx_comp_expr *execution_condition);
+
+//TODO: Interface stub
+bx_int8 bx_cgtk_add_every_execution_condition(struct bx_comp_task *task, struct bx_comp_expr *execution_condition);
 
 /**
  * Creates a new empty child task and returns its pointer.

@@ -36,10 +36,85 @@
 #include "compiler/lex.yy.h"
 #include "compiler/y.tab.h"
 #include "compiler/codegen_task.h"
+#include "virtual_machine/virtual_machine.h"
+#include "document_manager/document_manager.h"
+#include "document_manager/test_field.h"
 
 extern int yyparse();
 extern int init_parser(struct bx_comp_task *);
 extern FILE *yyin;
+
+#define INT_TEST_FIELD "int_test_field"
+#define FLOAT_TEST_FIELD "float_test_field"
+#define BOOLEAN_TEST_FIELD "boolean_test_field"
+
+#define INT_OUTPUT_TEST_FIELD "int_output_test_field"
+#define FLOAT_OUTPUT_TEST_FIELD "float_output_test_field"
+#define BOOLEAN_OUTPUT_TEST_FIELD "boolean_output_test_field"
+
+static struct bx_document_field int_test_field;
+static struct bx_test_field_data int_test_field_data;
+
+static struct bx_document_field int_output_test_field;
+static struct bx_test_field_data int_output_test_field_data;
+
+static struct bx_document_field float_test_field;
+static struct bx_test_field_data float_test_field_data;
+
+static struct bx_document_field float_output_test_field;
+static struct bx_test_field_data float_output_test_field_data;
+
+static struct bx_document_field boolean_test_field;
+static struct bx_test_field_data boolean_test_field_data;
+
+static struct bx_document_field boolean_output_test_field;
+static struct bx_test_field_data boolean_output_test_field_data;
+
+START_TEST (init_test) {
+	bx_int8 error;
+
+	// Init virtual machine
+	error = bx_vm_virtual_machine_init();
+	ck_assert_int_eq(error, 0);
+
+	// Init document manager
+	error = bx_dm_document_manager_init();
+	ck_assert_int_eq(error, 0);
+	error = bx_test_field_init(&int_test_field, &int_test_field_data);
+	ck_assert_int_eq(error, 0);
+	error = bx_test_field_init(&float_test_field, &float_test_field_data);
+	ck_assert_int_eq(error, 0);
+	error = bx_test_field_init(&boolean_test_field, &boolean_test_field_data);
+	ck_assert_int_eq(error, 0);
+	error = bx_dm_add_field(&int_test_field, INT_TEST_FIELD);
+	ck_assert_int_eq(error, 0);
+	error = bx_dm_add_field(&float_test_field, FLOAT_TEST_FIELD);
+	ck_assert_int_eq(error, 0);
+	error = bx_dm_add_field(&boolean_test_field, BOOLEAN_TEST_FIELD);
+	ck_assert_int_eq(error, 0);
+	error = bx_test_field_init(&int_output_test_field, &int_output_test_field_data);
+	ck_assert_int_eq(error, 0);
+	error = bx_test_field_init(&float_output_test_field, &float_output_test_field_data);
+	ck_assert_int_eq(error, 0);
+	error = bx_test_field_init(&boolean_output_test_field, &boolean_output_test_field_data);
+	ck_assert_int_eq(error, 0);
+	error = bx_dm_add_field(&int_output_test_field, INT_OUTPUT_TEST_FIELD);
+	ck_assert_int_eq(error, 0);
+	error = bx_dm_add_field(&float_output_test_field, FLOAT_OUTPUT_TEST_FIELD);
+	ck_assert_int_eq(error, 0);
+	error = bx_dm_add_field(&boolean_output_test_field, BOOLEAN_OUTPUT_TEST_FIELD);
+	ck_assert_int_eq(error, 0);
+
+	// Setup compiler symbol table
+	error = bx_cgsy_init();
+	ck_assert_int_eq(error, 0);
+	error = bx_cgsy_add(INT_TEST_FIELD, BX_INT, BX_COMP_EXISTING);
+	ck_assert_int_eq(error, 0);
+	bx_cgsy_add(FLOAT_TEST_FIELD, BX_FLOAT, BX_COMP_EXISTING);
+	ck_assert_int_eq(error, 0);
+	bx_cgsy_add(BOOLEAN_TEST_FIELD, BX_BOOL, BX_COMP_EXISTING);
+	ck_assert_int_eq(error, 0);
+} END_TEST
 
 START_TEST (parser_invocation_test) {
 	int parse_result;
@@ -58,6 +133,10 @@ START_TEST (parser_invocation_test) {
 Suite *test_compiler_create_suite(void) {
 	Suite *suite = suite_create("bx_linked_list");
 	TCase *tcase;
+
+	tcase = tcase_create("init_test");
+	tcase_add_test(tcase, init_test);
+	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("parser_invocation_test");
 	tcase_add_test(tcase, parser_invocation_test);
