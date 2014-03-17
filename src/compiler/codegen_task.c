@@ -43,6 +43,7 @@ struct bx_comp_task *bx_cgtk_create_task() {
 	task->at_execution_condition = NULL;
 	task->on_execution_condition = NULL;
 	task->child_task_list = NULL;
+	task->parent = NULL;
 
 	return task;
 }
@@ -93,6 +94,7 @@ struct bx_comp_task *bx_cgtk_create_child_task(struct bx_comp_task *task) {
 		return NULL;
 	}
 
+	child_task->parent = task;
 	new_node = bx_llist_add(&task->child_task_list, (void *) child_task);
 	if (new_node == NULL) {
 		bx_cgtk_destroy_task(child_task);

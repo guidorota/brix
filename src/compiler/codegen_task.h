@@ -41,6 +41,7 @@ struct bx_comp_task {
 	struct bx_comp_code *on_execution_condition;
 	struct bx_comp_code *code;
 	struct bx_linked_list *child_task_list;
+	struct bx_comp_task *parent;
 };
 
 /**

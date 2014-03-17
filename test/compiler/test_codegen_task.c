@@ -61,9 +61,12 @@ START_TEST (create_child_task) {
 
 	child_task = bx_cgtk_create_child_task(task);
 	ck_assert_ptr_ne(child_task, NULL);
+	ck_assert_ptr_eq(child_task->parent, task);
 	ck_assert_ptr_ne(task->child_task_list, NULL);
 	ck_assert_int_eq(bx_llist_size(task->child_task_list), 1);
+	ck_assert_ptr_ne(child_task, NULL);
 	child_task = bx_cgtk_create_child_task(task);
+	ck_assert_ptr_eq(child_task->parent, task);
 	ck_assert_ptr_ne(child_task, NULL);
 	ck_assert_int_eq(bx_llist_size(task->child_task_list), 2);
 } END_TEST
