@@ -1,5 +1,5 @@
 /*
- * test_compiler.c
+ * test_fmemopen.h
  * Created on: Mar 17, 2014
  * Author: Guido Rota
  *
@@ -29,30 +29,11 @@
  *
  */
 
-#include <stdio.h>
-#include "test_compiler.h"
-#include "compiler/lex.yy.h"
-#include "compiler/y.tab.h"
-#include "compiler/codegen_task.h"
+#ifndef TEST_FMEMOPEN_H_
+#define TEST_FMEMOPEN_H_
 
-//extern int yyparse();
-//extern int init_parser(struct bx_comp_task *);
-//extern FILE *yyin;
+#include <check.h>
 
-START_TEST (parser_invocation_test) {
-//	struct bx_comp_task *main_task;
-//
-//	main_task = bx_cgtk_create_task();
-//	init_parser(main_task);
-} END_TEST
+Suite *test_fmemopen_create_suite(void);
 
-Suite *test_compiler_create_suite(void) {
-	Suite *suite = suite_create("bx_linked_list");
-	TCase *tcase;
-
-	tcase = tcase_create("parser_invocation_test");
-	tcase_add_test(tcase, parser_invocation_test);
-	suite_add_tcase(suite, tcase);
-
-	return suite;
-}
+#endif /* TEST_FMEMOPEN_H_ */
