@@ -1,6 +1,6 @@
 /*
- * compiler.c
- * Created on: Feb 15, 2014
+ * test_compiler.c
+ * Created on: Mar 17, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -30,6 +30,7 @@
  */
 
 #include <stdio.h>
+#include "test_compiler.h"
 #include "compiler/lex.yy.h"
 #include "compiler/y.tab.h"
 #include "compiler/codegen_task.h"
@@ -38,31 +39,20 @@ extern int yyparse();
 extern int init_parser(struct bx_comp_task *);
 extern FILE *yyin;
 
-int main(int argc, char* argv[]) {
-	int parse_result;
+START_TEST (parser_invocation_test) {
 	struct bx_comp_task *main_task;
 
-	if (argc < 2) {
-		printf("Usage: compiler <file_name>\n");
-		return -1;
-	}
-
 	main_task = bx_cgtk_create_task();
-	if (main_task == NULL) {
-		printf("Error creating main task\n");
-		return -1;
-	}
-
-	yyin = fopen(argv[1], "r");
 	init_parser(main_task);
-	parse_result = yyparse();
-	if (parse_result == 1) {
-		printf("Error while parsing %s\n", argv[1]);
-		return -1;
-	}
-	fclose(yyin);
+} END_TEST
 
-	bx_cgtk_destroy_task(main_task);
+Suite *test_compiler_create_suite(void) {
+	Suite *suite = suite_create("bx_linked_list");
+	TCase *tcase;
 
-	return 0;
+	tcase = tcase_create("parser_invocation_test");
+	tcase_add_test(tcase, parser_invocation_test);
+	suite_add_tcase(suite, tcase);
+
+	return suite;
 }

@@ -1,6 +1,6 @@
 /*
- * compiler.c
- * Created on: Feb 15, 2014
+ * test_compiler.h
+ * Created on: Mar 17, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,40 +29,11 @@
  *
  */
 
-#include <stdio.h>
-#include "compiler/lex.yy.h"
-#include "compiler/y.tab.h"
-#include "compiler/codegen_task.h"
+#ifndef TEST_COMPILER_H_
+#define TEST_COMPILER_H_
 
-extern int yyparse();
-extern int init_parser(struct bx_comp_task *);
-extern FILE *yyin;
+#include <check.h>
 
-int main(int argc, char* argv[]) {
-	int parse_result;
-	struct bx_comp_task *main_task;
+Suite *test_compiler_create_suite(void);
 
-	if (argc < 2) {
-		printf("Usage: compiler <file_name>\n");
-		return -1;
-	}
-
-	main_task = bx_cgtk_create_task();
-	if (main_task == NULL) {
-		printf("Error creating main task\n");
-		return -1;
-	}
-
-	yyin = fopen(argv[1], "r");
-	init_parser(main_task);
-	parse_result = yyparse();
-	if (parse_result == 1) {
-		printf("Error while parsing %s\n", argv[1]);
-		return -1;
-	}
-	fclose(yyin);
-
-	bx_cgtk_destroy_task(main_task);
-
-	return 0;
-}
+#endif /* TEST_COMPILER_H_ */

@@ -35,10 +35,12 @@
 #include "codegen_symbol_table.h"
 #include "codegen_expression.h"
 #include "codegen_code.h"
+#include "codegen_task.h"
 
 #define YYDEBUG 1
 int yylex(void);
 int yyerror(char *);
+int init_parser(struct bx_comp_task *);
 %}
 
 %token FROM NETWORK FILTER GET EVERY QUEUE WINDOW EACH LOCAL PARENT AT DOCUMENT
@@ -543,6 +545,18 @@ conditional_expression
 
 extern char yytext[];
 extern int column;
+
+static struct bx_comp_task *current_task;
+
+int init_parser(struct bx_comp_task *main_task) {
+	if (main_task == NULL) {
+		return -1;
+	}
+	
+	current_task = main_task;
+	
+	return 0;
+}
 
 int yyerror(char *error) {
 	printf("Error while parsing: %s\n", error);
