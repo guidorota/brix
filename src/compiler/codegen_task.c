@@ -29,6 +29,7 @@
  *
  */
 
+#include "logging.h"
 #include "utils/linked_list.h"
 #include "utils/memory_utils.h"
 #include "compiler/codegen_expression_cast.h"
@@ -77,6 +78,28 @@ bx_int8 bx_cgtk_add_at_execution_condition(struct bx_comp_task *task, struct bx_
 
 bx_int8 bx_cgtk_add_on_execution_condition(struct bx_comp_task *task, struct bx_comp_expr *execution_condition) {
 	return -1; //TODO: Stub
+}
+
+struct bx_comp_task *bx_cgtk_create_child_task(struct bx_comp_task *task) {
+	struct bx_comp_task *child_task;
+	struct bx_linked_list *new_node;
+
+	if (task == NULL) {
+		return NULL;
+	}
+
+	child_task = bx_cgtk_create_task();
+	if (child_task == NULL) {
+		return NULL;
+	}
+
+	new_node = bx_llist_add(&task->child_task_list, (void *) child_task);
+	if (new_node == NULL) {
+		bx_cgtk_destroy_task(child_task);
+		return NULL;
+	}
+
+	return child_task;
 }
 
 bx_int8 bx_cgtk_destroy_task(struct bx_comp_task *task) {

@@ -43,12 +43,46 @@ struct bx_comp_task {
 	struct bx_linked_list *child_task_list;
 };
 
+/**
+ * Creates a new empty task
+ *
+ * @return Pointer to the new task, NULL on failure
+ */
 struct bx_comp_task *bx_cgtk_create_task(void);
 
+/**
+ * Adds the @ execution condition to the task passed as parameter.
+ * The expression passed as parameter is converted as needed to the data type
+ * boolean. Conversion errors may arise if the execution condition cannot be
+ * converted to the target type.
+ *
+ * @param task Target task
+ * @param execution_condition Execution condition to add to the target task
+ *
+ * @return 0 on success, -1 on failure
+ */
 bx_int8 bx_cgtk_add_at_execution_condition(struct bx_comp_task *task, struct bx_comp_expr *execution_condition);
 
+//TODO: Interface stub
 bx_int8 bx_cgtk_add_on_execution_condition(struct bx_comp_task *task, struct bx_comp_expr *execution_condition);
 
+/**
+ * Creates a new empty child task and returns its pointer.
+ * The task passed as parameter is set as the parent of the newly created
+ * child task
+ *
+ * @param task Parent task
+ *
+ * @result Pointer to the new created child task, NULL on failure
+ */
+struct bx_comp_task *bx_cgtk_create_child_task(struct bx_comp_task *task);
+
+/**
+ * Destroys the task and reclaims the occupied memory.
+ * Child tasks are destroyed recursively.
+ *
+ * @return 0 on success, -1 on failure
+ */
 bx_int8 bx_cgtk_destroy_task(struct bx_comp_task *task);
 
 #endif /* CODEGEN_TASK_H_ */

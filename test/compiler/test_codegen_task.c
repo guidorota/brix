@@ -30,6 +30,7 @@
  */
 
 #include "test_codegen_task.h"
+#include "utils/linked_list.h"
 #include "compiler/codegen_expression.h"
 #include "compiler/codegen_task.h"
 
@@ -55,6 +56,18 @@ START_TEST (on_execution_condition) {
 	//TODO: Stub
 } END_TEST
 
+START_TEST (create_child_task) {
+	struct bx_comp_task *child_task;
+
+	child_task = bx_cgtk_create_child_task(task);
+	ck_assert_ptr_ne(child_task, NULL);
+	ck_assert_ptr_ne(task->child_task_list, NULL);
+	ck_assert_int_eq(bx_llist_size(task->child_task_list), 1);
+	child_task = bx_cgtk_create_child_task(task);
+	ck_assert_ptr_ne(child_task, NULL);
+	ck_assert_int_eq(bx_llist_size(task->child_task_list), 2);
+} END_TEST
+
 START_TEST (destroy) {
 	bx_int8 error;
 
@@ -76,6 +89,10 @@ Suite *test_codegen_task_create_suite(void) {
 
 	tcase = tcase_create("on_execution_condition");
 	tcase_add_test(tcase, on_execution_condition);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("create_child_task");
+	tcase_add_test(tcase, create_child_task);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("destroy");
