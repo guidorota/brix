@@ -119,15 +119,36 @@ START_TEST (init_test) {
 START_TEST (parser_invocation_test) {
 	int parse_result;
 	struct bx_comp_task *main_task;
-	char *code = "existing int test; test = 5 + test;";
+	char *program = "existing int test; test = 5 + test;";
 
 	main_task = bx_cgtk_create_task();
 	init_parser(main_task);
-	yyin = fmemopen(code, strlen(code), "r");
+	yyin = fmemopen(program, strlen(program), "r");
 	ck_assert_ptr_ne(yyin, NULL);
 	parse_result = yyparse();
 	ck_assert_int_eq(parse_result, 0);
 	fclose(yyin);
+	bx_cgtk_destroy_task(main_task);
+} END_TEST
+
+START_TEST (assignment_test) {
+	int parse_result;
+	bx_int8 error;
+	struct bx_comp_task *main_task;
+	char *program = "existing int int_test_field; int_test_field = 5;";
+
+	main_task = bx_cgtk_create_task();
+	init_parser(main_task);
+	yyin = fmemopen(program, strlen(program), "r");
+	ck_assert_ptr_ne(yyin, NULL);
+	parse_result = yyparse();
+	ck_assert_int_eq(parse_result, 0);
+	fclose(yyin);
+
+	error = bx_vm_execute(main_task->code->data, main_task->code->size);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 5);
+	bx_cgtk_destroy_task(main_task);
 } END_TEST
 
 Suite *test_compiler_create_suite(void) {
@@ -140,6 +161,10 @@ Suite *test_compiler_create_suite(void) {
 
 	tcase = tcase_create("parser_invocation_test");
 	tcase_add_test(tcase, parser_invocation_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("assignment_test");
+	tcase_add_test(tcase, assignment_test);
 	suite_add_tcase(suite, tcase);
 
 	return suite;
