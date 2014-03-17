@@ -30,20 +30,29 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include "test_compiler.h"
+#include "utils/fmemopen.h"
 #include "compiler/lex.yy.h"
 #include "compiler/y.tab.h"
 #include "compiler/codegen_task.h"
 
-//extern int yyparse();
-//extern int init_parser(struct bx_comp_task *);
-//extern FILE *yyin;
+extern int yyparse();
+extern int init_parser(struct bx_comp_task *);
+extern FILE *yyin;
 
 START_TEST (parser_invocation_test) {
-//	struct bx_comp_task *main_task;
-//
-//	main_task = bx_cgtk_create_task();
-//	init_parser(main_task);
+	int parse_result;
+	struct bx_comp_task *main_task;
+	char *code = "existing int test; test = 5 + test;";
+
+	main_task = bx_cgtk_create_task();
+	init_parser(main_task);
+	yyin = fmemopen(code, strlen(code), "r");
+	ck_assert_ptr_ne(yyin, NULL);
+	parse_result = yyparse();
+	ck_assert_int_eq(parse_result, 0);
+	fclose(yyin);
 } END_TEST
 
 Suite *test_compiler_create_suite(void) {

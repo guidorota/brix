@@ -56,6 +56,7 @@ START_TEST (read_test) {
 	bytes_read = fread(output_string, 1, strlen(test_string), stream);
 	ck_assert_int_eq(bytes_read, strlen(test_string));
 	ck_assert_int_eq(memcmp(output_string, test_string, strlen(test_string)), 0);
+	fclose(stream);
 } END_TEST
 
 Suite *test_fmemopen_create_suite(void) {
