@@ -50,7 +50,7 @@ static int readfn(void *handler, char *buf, int size) {
 
 	instance = (struct bx_comp_fmem *) handler;
 	if (instance->position + size > instance->size) {
-		return -1;
+		size = instance->size - instance->position;
 	}
 
 	memcpy(buf, instance->data + instance->position, size);
@@ -118,6 +118,6 @@ FILE *fmemopen(void *buf, size_t size, const char *mode) {
 
 	instance->size = size;
 	instance->data = buf;
-	instance->position = 8;
+	instance->position = 0;
 	return funopen((void *) instance, &readfn, &writefn, &seekfn, &closefn);
 }

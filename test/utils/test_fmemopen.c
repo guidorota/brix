@@ -29,19 +29,45 @@
  *
  */
 
+#include <stdio.h>
+#include <string.h>
 #include "test_fmemopen.h"
 #include "utils/fmemopen.h"
 
-START_TEST (init_test) {
+static char *test_string = "test_string";
 
+START_TEST (init_close_test) {
+	int error;
+	FILE *stream;
+
+	stream = fmemopen(test_string, strlen(test_string), "r");
+	ck_assert_ptr_ne(stream, NULL);
+	error = fclose(stream);
+	ck_assert_int_eq(error, 0);
+} END_TEST
+
+START_TEST (read_test) {
+	FILE *stream;
+	char output_string[strlen(test_string)];
+	size_t bytes_read;
+
+	stream = fmemopen(test_string, strlen(test_string), "r");
+	ck_assert_ptr_ne(stream, NULL);
+	bytes_read = fread(output_string, 1, strlen(test_string), stream);
+	ck_assert_int_eq(bytes_read, strlen(test_string));
+	ck_assert_int_eq(memcmp(output_string, test_string, strlen(test_string)), 0);
 } END_TEST
 
 Suite *test_fmemopen_create_suite(void) {
 	Suite *suite = suite_create("bx_linked_list");
 	TCase *tcase;
 
-	tcase = tcase_create("init_test");
-	tcase_add_test(tcase, init_test);
+	tcase = tcase_create("init_close_test");
+	tcase_add_test(tcase, init_close_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("read_test");
+	tcase_add_test(tcase, read_test);
 	suite_add_tcase(suite, tcase);
 
 	return suite;
