@@ -30,18 +30,56 @@
  */
 
 #include "test_codegen_task.h"
+#include "compiler/codegen_expression.h"
+#include "compiler/codegen_task.h"
 
-START_TEST (init_test) {
+struct bx_comp_task *task;
 
+START_TEST (create) {
+	task = bx_cgtk_create_task();
+	ck_assert_ptr_ne(task, NULL);
 } END_TEST
 
+START_TEST (at_execution_condition) {
+	bx_int8 error;
+	struct bx_comp_expr *execution_condition;
+
+	execution_condition = bx_cgex_create_bool_constant(BX_BOOLEAN_TRUE);
+	ck_assert_ptr_ne(execution_condition, NULL);
+	error = bx_cgtk_add_at_execution_condition(task, execution_condition);
+	ck_assert_int_eq(error, 0);
+	ck_assert_ptr_ne(task->at_execution_condition, NULL);
+} END_TEST
+
+START_TEST (on_execution_condition) {
+	//TODO: Stub
+} END_TEST
+
+START_TEST (destroy) {
+	bx_int8 error;
+
+	error = bx_cgtk_destroy_task(task);
+	ck_assert_int_eq(error, 0);
+} END_TEST
 
 Suite *test_codegen_task_create_suite(void) {
 	Suite *suite = suite_create("bx_linked_list");
 	TCase *tcase;
 
-	tcase = tcase_create("init_test");
-	tcase_add_test(tcase, init_test);
+	tcase = tcase_create("create");
+	tcase_add_test(tcase, create);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("at_execution_condition");
+	tcase_add_test(tcase, at_execution_condition);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("on_execution_condition");
+	tcase_add_test(tcase, on_execution_condition);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("destroy");
+	tcase_add_test(tcase, destroy);
 	suite_add_tcase(suite, tcase);
 
 	return suite;

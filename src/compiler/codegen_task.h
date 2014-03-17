@@ -34,6 +34,7 @@
 
 #include "types.h"
 #include "compiler/codegen_code.h"
+#include "compiler/codegen_expression.h"
 
 struct bx_comp_task {
 	struct bx_comp_code *at_execution_condition;
@@ -44,9 +45,9 @@ struct bx_comp_task {
 
 struct bx_comp_task *bx_cgtk_create_task(void);
 
-bx_int8 bx_cgtk_add_at_execution_condition(struct bx_comp_task *task, struct bx_comp_code *execution_condition);
+bx_int8 bx_cgtk_add_at_execution_condition(struct bx_comp_task *task, struct bx_comp_expr *execution_condition);
 
-bx_int8 bx_cgtk_add_on_execution_condition(struct bx_comp_task *task, struct bx_comp_code *execution_condition);
+bx_int8 bx_cgtk_add_on_execution_condition(struct bx_comp_task *task, struct bx_comp_expr *execution_condition);
 
 bx_int8 bx_cgtk_destroy_task(struct bx_comp_task *task);
 

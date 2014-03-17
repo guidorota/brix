@@ -31,42 +31,52 @@
 
 #include "utils/linked_list.h"
 #include "utils/memory_utils.h"
+#include "compiler/codegen_expression_cast.h"
 #include "compiler/codegen_task.h"
 
 struct bx_comp_task *bx_cgtk_create_task() {
 	struct bx_comp_task *task;
 
 	task = BX_MALLOC(struct bx_comp_task);
+	task->code = NULL;
+	task->at_execution_condition = NULL;
+	task->on_execution_condition = NULL;
+	task->child_task_list = NULL;
 
 	return task;
 }
 
-bx_int8 bx_cgtk_add_at_execution_condition(struct bx_comp_task *task, struct bx_comp_code *execution_condition) {
+bx_int8 bx_cgtk_add_at_execution_condition(struct bx_comp_task *task, struct bx_comp_expr *execution_condition) {
+	bx_int8 error;
+	struct bx_comp_expr *boolean_condition;
 
 	if (task == NULL || execution_condition == NULL) {
 		return -1;
 	}
 
-	task->at_execution_condition = bx_cgco_copy(execution_condition);
+	boolean_condition = bx_cgex_cast_to_bool(execution_condition);
+	if (boolean_condition == NULL) {
+		return -1;
+	}
+	error = bx_cgex_convert_to_binary(boolean_condition);
+	if (error != 0) {
+		return -1;
+	}
+
+	//TODO: Optimize: if the condition is always false there's no need to create the task
+	task->at_execution_condition = bx_cgco_copy(boolean_condition->bx_value.code);
 	if (task->at_execution_condition == NULL) {
 		return -1;
 	}
 
+	bx_cgex_destroy_expression(boolean_condition);
+
 	return 0;
 }
 
-bx_int8 bx_cgtk_add_on_execution_condition(struct bx_comp_task *task, struct bx_comp_code *execution_condition) {
-	//TODO: This may not be the final design of the on execution condition
-	if (task == NULL || execution_condition == NULL) {
-		return -1;
-	}
 
-	task->on_execution_condition = bx_cgco_copy(execution_condition);
-	if (task->on_execution_condition == NULL) {
-		return -1;
-	}
-
-	return 0;
+bx_int8 bx_cgtk_add_on_execution_condition(struct bx_comp_task *task, struct bx_comp_expr *execution_condition) {
+	return -1; //TODO: Stub
 }
 
 bx_int8 bx_cgtk_destroy_task(struct bx_comp_task *task) {
@@ -84,7 +94,9 @@ bx_int8 bx_cgtk_destroy_task(struct bx_comp_task *task) {
 		bx_cgco_destroy(task->on_execution_condition);
 	}
 
-	bx_cgco_destroy(task->code);
+	if (task->code != NULL) {
+		bx_cgco_destroy(task->code);
+	}
 
 	while (task->child_task_list != NULL) {
 		child_task = (struct bx_comp_task *) bx_llist_remove_head(&task->child_task_list);
