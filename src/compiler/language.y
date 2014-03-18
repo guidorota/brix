@@ -628,7 +628,7 @@ int init_parser(struct bx_comp_task *main_task) {
 	if (main_task == NULL) {
 		return -1;
 	}
-	
+	bx_cgsy_reset();
 	current_task = main_task;
 	
 	return 0;
