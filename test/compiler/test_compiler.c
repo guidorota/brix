@@ -189,11 +189,23 @@ START_TEST (expression_test) {
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 10);
 
 	run_program(
-			"existing int int_test_field; "
+			"existing int int_test_field;"
 			"existing float float_test_field;"
 			"float_test_field = 12.5;"
 			"int_test_field = 5 + float_test_field; ");
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 17);
+
+	run_program(
+			"existing bool boolean_test_field;"
+			"boolean_test_field = true;");
+	ck_assert_int_eq(bx_test_field_get_bool(&boolean_test_field), BX_BOOLEAN_TRUE);
+
+	run_program(
+			"existing bool boolean_test_field;"
+			"existing int int_test_field;"
+			"boolean_test_field = true;"
+			"int_test_field = (int) boolean_test_field;");
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
 } END_TEST
 
 Suite *test_compiler_create_suite(void) {
