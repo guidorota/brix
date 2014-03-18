@@ -113,6 +113,9 @@ LETTER		[a-zA-Z_]
 {DIGIT}+				{ count_column(); yylval.int_val = atoi(yytext); return INT_CONSTANT; }
 {DIGIT}*"."{DIGIT}+		{ count_column(); yylval.float_val = atof(yytext); return FLOAT_CONSTANT; }
 
+"true"		{ count_column(); return TRUE_CONSTANT; }
+"false"		{ count_column(); return FALSE_CONSTANT; }
+
 LETTER?\"(\\.|[^\\"])*\"		{ count_column(); yylval.string_val = strdup(yytext); return STRING_LITERAL; }
 
 {LETTER}({LETTER}|{DIGIT})*		{ count_column(); yylval.string_val = strdup(yytext); return IDENTIFIER; }

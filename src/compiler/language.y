@@ -48,7 +48,7 @@ static struct bx_comp_task *current_task;
 
 %token FROM NETWORK FILTER GET EVERY QUEUE WINDOW EACH LOCAL PARENT AT DOCUMENT
 %token ON CHANGE IF ELSE ALLOW RESAMPLE EXISTING NEW INC_OP DEC_OP
-%token DO WHILE FOR AND_OP OR_OP EQ_OP NEQ_OP LE_OP GE_OP
+%token DO WHILE FOR AND_OP OR_OP EQ_OP NEQ_OP LE_OP GE_OP TRUE_CONSTANT FALSE_CONSTANT
 %token INT FLOAT BOOL STRING STREAM SUBNET
 
 %token <int_val> INT_CONSTANT
@@ -361,6 +361,14 @@ primary_expression
 	| FLOAT_CONSTANT 		
 	{
 		$$ = bx_cgex_create_float_constant($1);
+	}
+	| TRUE_CONSTANT
+	{
+		$$ = bx_cgex_create_bool_constant(BX_BOOLEAN_TRUE);
+	}
+	| FALSE_CONSTANT
+	{
+		$$ = bx_cgex_create_bool_constant(BX_BOOLEAN_FALSE);
 	}
 	| STRING_LITERAL
 	{
