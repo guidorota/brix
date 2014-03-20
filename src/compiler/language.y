@@ -148,7 +148,7 @@ statement
 declaration_statement
 	: creation_modifier FIELD type_name IDENTIFIER ';'
 	{
-		bx_cgsy_add($4, $3, $1);
+		bx_cgsy_add_field($4, $3, $1);
 	}
 	| creation_modifier FIELD type_name IDENTIFIER '=' expression ';'
 	{

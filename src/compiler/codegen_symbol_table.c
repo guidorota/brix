@@ -37,45 +37,45 @@
 #include "utils/linked_list.h"
 #include "compiler/codegen_symbol_table.h"
 
-static struct bx_linked_list *symbol_list;
+static struct bx_linked_list *fiedl_symbol_list;
 
-static bx_int8 identifier_equals(struct bx_comp_symbol *symbol, char *identifier) {
-	return strncmp(symbol->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH) == 0 ? 1 : 0;
+static bx_int8 field_identifier_equals(struct bx_comp_field_symbol *field_symbol, char *identifier) {
+	return strncmp(field_symbol->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH) == 0 ? 1 : 0;
 }
 
 bx_int8 bx_cgsy_init() {
 
-	if (bx_llist_size(symbol_list) != 0) {
+	if (bx_llist_size(fiedl_symbol_list) != 0) {
 		return bx_cgsy_reset();
 	}
 
 	return 0;
 }
 
-bx_int8 bx_cgsy_add(char *identifier, enum bx_builtin_type data_type, enum bx_comp_creation_modifier creation_modifier) {
-	struct bx_comp_symbol *symbol;
+bx_int8 bx_cgsy_add_field(char *identifier, enum bx_builtin_type data_type, enum bx_comp_creation_modifier creation_modifier) {
+	struct bx_comp_field_symbol *field;
 	struct bx_linked_list *node;
 
 	if (identifier == NULL) {
 		return -1;
 	}
 
-	if (bx_llist_contains_equals(symbol_list, identifier, (bx_llist_equals) &identifier_equals) == 1) {
+	if (bx_llist_contains_equals(fiedl_symbol_list, identifier, (bx_llist_equals) &field_identifier_equals) == 1) {
 		BX_LOG(LOG_ERROR, "symbol_table", "Duplicate variable %s", identifier);
 		return -1;
 	}
 
-	symbol = BX_MALLOC(struct bx_comp_symbol);
-	if (symbol == NULL) {
+	field = BX_MALLOC(struct bx_comp_field_symbol);
+	if (field == NULL) {
 		return -1;
 	}
 
-	symbol->data_type = data_type;
-	symbol->creation_modifier = creation_modifier;
-	strncpy(symbol->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH);
+	field->data_type = data_type;
+	field->creation_modifier = creation_modifier;
+	strncpy(field->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH);
 	BX_LOG(LOG_DEBUG, "symbol_table", "Symbol %s added", identifier);
 
-	node = bx_llist_add(&symbol_list, (void *) symbol);
+	node = bx_llist_add(&fiedl_symbol_list, (void *) field);
 	if (node == NULL) {
 		return -1;
 	}
@@ -83,20 +83,20 @@ bx_int8 bx_cgsy_add(char *identifier, enum bx_builtin_type data_type, enum bx_co
 	return 0;
 }
 
-struct bx_comp_symbol *bx_cgsy_get(char *identifier) {
+struct bx_comp_field_symbol *bx_cgsy_get_field(char *identifier) {
 
 	if (identifier == NULL) {
 		return NULL;
 	}
 
-	return bx_llist_find_equals(symbol_list, (void *) identifier, (bx_llist_equals) &identifier_equals);
+	return bx_llist_find_equals(fiedl_symbol_list, (void *) identifier, (bx_llist_equals) &field_identifier_equals);
 }
 
 bx_int8 bx_cgsy_reset() {
-	struct bx_comp_symbol *symbol;
+	struct bx_comp_field_symbol *symbol;
 
-	while (symbol_list != NULL) {
-		symbol = (struct bx_comp_symbol *) bx_llist_remove_head(&symbol_list);
+	while (fiedl_symbol_list != NULL) {
+		symbol = (struct bx_comp_field_symbol *) bx_llist_remove_head(&fiedl_symbol_list);
 		free(symbol);
 	}
 

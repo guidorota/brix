@@ -104,19 +104,19 @@ START_TEST (init_test) {
 	// Setup compiler symbol table
 	error = bx_cgsy_init();
 	ck_assert_int_eq(error, 0);
-	error = bx_cgsy_add(INT_TEST_FIELD, BX_INT, BX_COMP_EXISTING);
+	error = bx_cgsy_add_field(INT_TEST_FIELD, BX_INT, BX_COMP_EXISTING);
 	ck_assert_int_eq(error, 0);
-	error = bx_cgsy_add(OUTPUT_INT_TEST_FIELD, BX_INT, BX_COMP_EXISTING);
-	ck_assert_int_eq(error, 0);
-
-	error = bx_cgsy_add(FLOAT_TEST_FIELD, BX_FLOAT, BX_COMP_EXISTING);
-	ck_assert_int_eq(error, 0);
-	error = bx_cgsy_add(OUTPUT_FLOAT_TEST_FIELD, BX_FLOAT, BX_COMP_EXISTING);
+	error = bx_cgsy_add_field(OUTPUT_INT_TEST_FIELD, BX_INT, BX_COMP_EXISTING);
 	ck_assert_int_eq(error, 0);
 
-	error = bx_cgsy_add(BOOL_TEST_FIELD, BX_BOOL, BX_COMP_EXISTING);
+	error = bx_cgsy_add_field(FLOAT_TEST_FIELD, BX_FLOAT, BX_COMP_EXISTING);
 	ck_assert_int_eq(error, 0);
-	error = bx_cgsy_add(OUTPUT_BOOL_TEST_FIELD, BX_BOOL, BX_COMP_EXISTING);
+	error = bx_cgsy_add_field(OUTPUT_FLOAT_TEST_FIELD, BX_FLOAT, BX_COMP_EXISTING);
+	ck_assert_int_eq(error, 0);
+
+	error = bx_cgsy_add_field(BOOL_TEST_FIELD, BX_BOOL, BX_COMP_EXISTING);
+	ck_assert_int_eq(error, 0);
+	error = bx_cgsy_add_field(OUTPUT_BOOL_TEST_FIELD, BX_BOOL, BX_COMP_EXISTING);
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
