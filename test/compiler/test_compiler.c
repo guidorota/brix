@@ -137,7 +137,7 @@ START_TEST (init_test) {
 START_TEST (parser_invocation_test) {
 	int parse_result;
 	struct bx_comp_task *main_task;
-	char *program = "existing int test; test = 5 + test;";
+	char *program = "field int test; test = 5 + test;";
 
 	main_task = bx_cgtk_create_task();
 	init_parser(main_task);
@@ -153,7 +153,7 @@ START_TEST (assignment_test) {
 	int parse_result;
 	bx_int8 error;
 	struct bx_comp_task *main_task;
-	char *program = "existing int int_test_field; int_test_field = 5;";
+	char *program = "field int int_test_field; int_test_field = 5;";
 
 	main_task = bx_cgtk_create_task();
 	init_parser(main_task);
@@ -170,39 +170,39 @@ START_TEST (assignment_test) {
 } END_TEST
 
 START_TEST (expression_test) {
-	run_program("existing int int_test_field; int_test_field = 5 + 10;");
+	run_program("field int int_test_field; int_test_field = 5 + 10;");
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 15);
 
-	run_program("existing int int_test_field; int_test_field = 5 * 10;");
+	run_program("field int int_test_field; int_test_field = 5 * 10;");
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 50);
 
-	run_program("existing int int_test_field; int_test_field = 5 * 10 + 5;");
+	run_program("field int int_test_field; int_test_field = 5 * 10 + 5;");
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 55);
 
-	run_program("existing int int_test_field; int_test_field = 5 * (10 + 5);");
+	run_program("field int int_test_field; int_test_field = 5 * (10 + 5);");
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 75);
 
-	run_program("existing int int_test_field; int_test_field = 5 * (10 + 5);");
+	run_program("field int int_test_field; int_test_field = 5 * (10 + 5);");
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 75);
 
-	run_program("existing int int_test_field; int_test_field = 5 * (11 / 5);");
+	run_program("field int int_test_field; int_test_field = 5 * (11 / 5);");
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 10);
 
 	run_program(
-			"existing int int_test_field;"
-			"existing float float_test_field;"
+			"field int int_test_field;"
+			"field float float_test_field;"
 			"float_test_field = 12.5;"
 			"int_test_field = 5 + float_test_field; ");
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 17);
 
 	run_program(
-			"existing bool boolean_test_field;"
+			"field bool boolean_test_field;"
 			"boolean_test_field = true;");
 	ck_assert_int_eq(bx_test_field_get_bool(&boolean_test_field), BX_BOOLEAN_TRUE);
 
 	run_program(
-			"existing bool boolean_test_field;"
-			"existing int int_test_field;"
+			"field bool boolean_test_field;"
+			"field int int_test_field;"
 			"boolean_test_field = true;"
 			"int_test_field = (int) boolean_test_field;");
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);

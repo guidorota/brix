@@ -65,6 +65,7 @@ LETTER		[a-zA-Z_]
 "@"				{ count_column(); return AT; }
 "on"			{ count_column(); return ON; }
 "new"			{ count_column(); return NEW; }
+"existing"		{ count_column(); return EXISTING; }
 "change"		{ count_column(); return CHANGE; }
 "if"			{ count_column(); return IF; }
 "else"			{ count_column(); return ELSE; }
@@ -74,7 +75,7 @@ LETTER		[a-zA-Z_]
 "while"			{ count_column(); return WHILE; }
 "for"			{ count_column(); return FOR; }
 
-"existing"		{ count_column(); return EXISTING; }
+"field"			{ count_column(); return FIELD; }
 "int"			{ count_column(); return INT; }
 "float"			{ count_column(); return FLOAT; }
 "bool"			{ count_column(); return BOOL; }

@@ -47,7 +47,7 @@ static struct bx_comp_task *current_task;
 %}
 
 %token FROM NETWORK FILTER GET EVERY QUEUE WINDOW EACH LOCAL PARENT AT DOCUMENT
-%token ON CHANGE IF ELSE ALLOW RESAMPLE EXISTING NEW INC_OP DEC_OP
+%token ON CHANGE IF ELSE ALLOW RESAMPLE EXISTING NEW INC_OP DEC_OP FIELD
 %token DO WHILE FOR AND_OP OR_OP EQ_OP NEQ_OP LE_OP GE_OP TRUE_CONSTANT FALSE_CONSTANT
 %token INT FLOAT BOOL STRING STREAM SUBNET
 
@@ -146,11 +146,19 @@ statement
 	;
 	
 declaration_statement
-	: creation_modifier type_name IDENTIFIER ';'
+	: creation_modifier FIELD type_name IDENTIFIER ';'
 	{
-		bx_cgsy_add($3, $2, $1);
+		bx_cgsy_add($4, $3, $1);
 	}
-	| creation_modifier type_name IDENTIFIER '=' expression ';'
+	| creation_modifier FIELD type_name IDENTIFIER '=' expression ';'
+	{
+	
+	}
+	| type_name IDENTIFIER ';'
+	{
+		
+	}
+	| type_name IDENTIFIER '=' expression ';'
 	{
 	
 	}
@@ -186,15 +194,15 @@ type_name
 creation_modifier
 	:
 	{
-		$$ = BX_COMP_NEW;
-	}
-	| NEW
-	{
-		$$ = BX_COMP_NEW;
+		$$ = BX_COMP_EXISTING;
 	}
 	| EXISTING
 	{
 		$$ = BX_COMP_EXISTING;
+	}
+	| NEW
+	{
+		$$ = BX_COMP_NEW;
 	}
 	;
 	
