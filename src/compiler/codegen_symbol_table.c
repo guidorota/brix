@@ -50,14 +50,9 @@ static bx_int8 variable_identifier_equals(struct bx_comp_variable_symbol *variab
 }
 
 bx_int8 bx_cgsy_init() {
-	bx_int8 error = 0;
+	bx_cgsy_reset();
 
-	current_variable_number = 0;
-	if (bx_llist_size(field_symbol_list) != 0) {
-		error = bx_cgsy_reset();
-	}
-
-	return error;
+	return 0;
 }
 
 bx_int8 bx_cgsy_add_field(char *identifier, enum bx_builtin_type data_type, enum bx_comp_creation_modifier creation_modifier) {
@@ -144,6 +139,11 @@ bx_int8 bx_cgsy_add_variable(char *identifier, enum bx_builtin_type data_type,
 		return -1;
 	}
 
+	if (bx_llist_contains_equals(field_symbol_list, identifier, (bx_llist_equals) &field_identifier_equals) == 1) {
+		BX_LOG(LOG_ERROR, "symbol_table", "Duplicate variable %s", identifier);
+		return -1;
+	}
+
 	variable_symbol = BX_MALLOC(struct bx_comp_variable_symbol);
 	if (variable_symbol == NULL) {
 		return -1;
@@ -152,6 +152,7 @@ bx_int8 bx_cgsy_add_variable(char *identifier, enum bx_builtin_type data_type,
 	variable_symbol->data_type = data_type;
 	variable_symbol->variable_number = current_variable_number++;
 	memcpy(variable_symbol->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH);
+	bx_llist_add(&scope->variable_list, variable_symbol);
 
 	return 0;
 }
@@ -179,6 +180,8 @@ struct bx_comp_variable_symbol *bx_cgsy_get_variable(struct bx_comp_variable_sco
 
 bx_int8 bx_cgsy_reset() {
 	struct bx_comp_field_symbol *symbol;
+
+	current_variable_number = 0;
 
 	while (field_symbol_list != NULL) {
 		symbol = (struct bx_comp_field_symbol *) bx_llist_remove_head(&field_symbol_list);
