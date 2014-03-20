@@ -34,6 +34,7 @@
 
 #include "types.h"
 #include "configuration.h"
+#include "utils/linked_list.h"
 
 enum bx_comp_creation_modifier {
 	BX_COMP_EXISTING,
@@ -46,8 +47,14 @@ struct bx_comp_field_symbol {
 	char identifier[DM_FIELD_IDENTIFIER_LENGTH];
 };
 
+struct bx_comp_variable_scope {
+	struct bx_comp_variable_scope *parent;
+	struct bx_linked_list *variable_list;
+};
+
 struct bx_comp_variable_symbol {
 	enum bx_builtin_type data_type;
+	bx_uint16 variable_number;
 	char identifier[DM_FIELD_IDENTIFIER_LENGTH];
 };
 
@@ -57,6 +64,15 @@ bx_int8 bx_cgsy_add_field(char *identifier, enum bx_builtin_type data_type,
 		enum bx_comp_creation_modifier creation_modifier);
 
 struct bx_comp_field_symbol *bx_cgsy_get_field(char *identifier);
+
+struct bx_comp_variable_scope *bx_cgsy_create_variable_scope(struct bx_comp_variable_scope *parent);
+
+bx_int8 bx_cgsy_destroy_variable_scope(struct bx_comp_variable_scope *variable_scope);
+
+bx_int8 bx_cgsy_add_variable(char *identifier, enum bx_builtin_type data_type,
+		struct bx_comp_variable_scope *scope);
+
+struct bx_comp_variable_symbol *bx_cgsy_get_variable(struct bx_comp_variable_scope *scope, char *identifier);
 
 bx_int8 bx_cgsy_reset();
 
