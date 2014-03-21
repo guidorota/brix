@@ -45,6 +45,9 @@ static bx_int8 variable_identifier_equals(struct bx_comp_symbol *variable_symbol
 	return strncmp(variable_symbol->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH) == 0 ? 1 : 0;
 }
 
+static struct bx_comp_symbol *get_field_symbol(struct bx_comp_symbol_table *symbol_table, char *identifier);
+static struct bx_comp_symbol *get_variable_symbol(struct bx_comp_symbol_table *symbol_table, char *identifier);
+
 struct bx_comp_symbol_table *bx_cgsy_create_symbol_table() {
 	bx_int8 error;
 	struct bx_comp_symbol_table *symbol_table;
@@ -130,13 +133,8 @@ bx_int8 bx_cgsy_add_field(struct bx_comp_symbol_table *symbol_table, char *ident
 		return -1;
 	}
 
-	if (bx_llist_contains_equals(symbol_table->field_list, identifier, (bx_llist_equals) &field_identifier_equals) == 1) {
-		BX_LOG(LOG_ERROR, "symbol_table", "Duplicate field declaration for '%s'", identifier);
-		return -1;
-	}
-
-	if (bx_cgsy_get_variable(symbol_table, identifier) != NULL) {
-		BX_LOG(LOG_ERROR, "symbol_table", "Duplicate use of identifier '%s'", identifier);
+	if (bx_cgsy_get_symbol(symbol_table, identifier) != NULL) {
+		BX_LOG(LOG_ERROR, "symbol_table", "Duplicate declaration of variable '%s'", identifier);
 		return -1;
 	}
 
@@ -195,23 +193,29 @@ bx_int8 bx_cgsy_add_variable(struct bx_comp_symbol_table *symbol_table, char *id
 	return 0;
 }
 
-struct bx_comp_symbol *bx_cgsy_get_field(struct bx_comp_symbol_table *symbol_table, char *identifier) {
+struct bx_comp_symbol *bx_cgsy_get_symbol(struct bx_comp_symbol_table *symbol_table, char *identifier) {
+	struct bx_comp_symbol *symbol;
 
 	if (symbol_table == NULL || identifier == NULL) {
 		return NULL;
 	}
 
+	symbol = get_field_symbol(symbol_table, identifier);
+	if (symbol != NULL) {
+		return symbol;
+	} else {
+		return get_variable_symbol(symbol_table, identifier);
+	}
+}
+
+static struct bx_comp_symbol *get_field_symbol(struct bx_comp_symbol_table *symbol_table, char *identifier) {
 	return bx_llist_find_equals(symbol_table->field_list,
 			(void *) identifier, (bx_llist_equals) &field_identifier_equals);
 }
 
-struct bx_comp_symbol *bx_cgsy_get_variable(struct bx_comp_symbol_table *symbol_table, char *identifier) {
+static struct bx_comp_symbol *get_variable_symbol(struct bx_comp_symbol_table *symbol_table, char *identifier) {
 	struct bx_comp_scope *current_scope;
 	struct bx_comp_symbol *variable_symbol;
-
-	if (symbol_table == NULL || identifier == NULL) {
-		return NULL;
-	}
 
 	current_scope = symbol_table->current_scope;
 	while (current_scope != NULL) {
@@ -225,3 +229,5 @@ struct bx_comp_symbol *bx_cgsy_get_variable(struct bx_comp_symbol_table *symbol_
 
 	return NULL;
 }
+
+

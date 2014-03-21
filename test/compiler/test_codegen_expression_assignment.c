@@ -38,13 +38,14 @@
 #include "compiler/codegen_symbol_table.h"
 #include "compiler/codegen_expression_assignment.h"
 
-#define CODE_BUFFER_LENGTH 128
 #define INT_TEST_FIELD "int_test_field"
 #define OUTPUT_INT_TEST_FIELD "output_int_test_field"
 #define FLOAT_TEST_FIELD "float_test_field"
 #define OUTPUT_FLOAT_TEST_FIELD "output_float_test_field"
 #define BOOL_TEST_FIELD "bool_test_field"
 #define OUTPUT_BOOL_TEST_FIELD "output_bool_test_field"
+
+#define LOCAL_VARIABLE_TEST "local_variable"
 
 static struct bx_document_field int_test_field;
 static struct bx_test_field_data int_test_field_data;
@@ -119,6 +120,9 @@ START_TEST (init_test) {
 	error = bx_cgsy_add_field(symbol_table, BOOL_TEST_FIELD, BX_BOOL, BX_COMP_EXISTING);
 	ck_assert_int_eq(error, 0);
 	error = bx_cgsy_add_field(symbol_table, OUTPUT_BOOL_TEST_FIELD, BX_BOOL, BX_COMP_EXISTING);
+	ck_assert_int_eq(error, 0);
+
+	error = bx_cgsy_add_variable(symbol_table, LOCAL_VARIABLE_TEST, BX_INT);
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
@@ -196,6 +200,34 @@ START_TEST (bool_assignment) {
 	ck_assert_int_eq(bx_test_field_get_bool(&output_bool_test_field), BX_BOOLEAN_TRUE);
 } END_TEST
 
+START_TEST (local_variable_assignment) {
+	bx_int8 error;
+	bx_int32 value = 84;
+	struct bx_comp_expr *destination;
+	struct bx_comp_expr *constant;
+	struct bx_comp_expr *result;
+	struct bx_comp_code *code;
+
+	bx_test_field_set_int(&int_test_field, 0);
+	destination = bx_cgex_create_variable(symbol_table, LOCAL_VARIABLE_TEST);
+	constant = bx_cgex_create_int_constant(value);
+	result =  bx_cgex_assignment_expression(destination, constant);
+	ck_assert_ptr_ne(result, NULL);
+	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->data_type, BX_INT);
+	code = result->value.code;
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
+	bx_cgco_add_identifier(code, OUTPUT_INT_TEST_FIELD);
+	bx_cgco_add_instruction(code, BX_INSTR_VLOAD32);
+	bx_cgco_add_address(code, 0);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
+	bx_cgco_add_identifier(code, INT_TEST_FIELD);
+	error = bx_vm_execute(code->data, code->size);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), value);
+	ck_assert_int_eq(bx_test_field_get_int(&output_int_test_field), value);
+} END_TEST
+
 START_TEST (cleanup) {
 	bx_int8 error;
 
@@ -221,6 +253,10 @@ Suite *test_codegen_expression_assignment_create_suite(void) {
 
 	tcase = tcase_create("bool_assignment");
 	tcase_add_test(tcase, bool_assignment);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("local_variable_assignment");
+	tcase_add_test(tcase, local_variable_assignment);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("cleanup");

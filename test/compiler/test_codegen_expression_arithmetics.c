@@ -88,7 +88,7 @@ START_TEST (init_test) {
 	ck_assert_ptr_ne(symbol_table, NULL);
 	error = bx_cgsy_add_field(symbol_table, INT_TEST_FIELD, BX_INT, BX_COMP_EXISTING);
 	ck_assert_int_eq(error, 0);
-	bx_cgsy_add_field(symbol_table, FLOAT_TEST_FIELD, BX_FLOAT, BX_COMP_EXISTING);
+	error = bx_cgsy_add_field(symbol_table, FLOAT_TEST_FIELD, BX_FLOAT, BX_COMP_EXISTING);
 	ck_assert_int_eq(error, 0);
 } END_TEST
 

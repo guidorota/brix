@@ -106,7 +106,7 @@ struct bx_comp_expr *bx_cgex_create_variable(struct bx_comp_symbol_table *symbol
 		return NULL;
 	}
 
-	symbol = bx_cgsy_get_field(symbol_table, identifier);
+	symbol = bx_cgsy_get_symbol(symbol_table, identifier);
 	if (symbol == NULL) {
 		BX_LOG(LOG_ERROR, "codegen_expression", "Variable %s has not been declared", identifier);
 		return NULL;
@@ -332,7 +332,9 @@ static bx_int8 variable_to_binary(struct bx_comp_expr *expression) {
 		bx_cgco_add_identifier(code, expression->value.variable.identifier);
 		break;
 	case BX_COMP_VARIABLE_SYMBOL:
-		return -1; //TODO: Stub
+		bx_cgco_add_instruction(code, BX_INSTR_VLOAD32);
+		bx_cgco_add_address(code, expression->value.variable.symbol_data.variable_number);
+		break;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Unexpected variable type in function 'variable_to_binary'");

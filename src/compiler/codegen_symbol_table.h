@@ -135,24 +135,13 @@ bx_int8 bx_cgsy_add_variable(struct bx_comp_symbol_table *symbol_table, char *id
 		enum bx_builtin_type data_type);
 
 /**
- * Get field information by identifier.
+ * Get field or variable information by identifier.
  *
  * @param symbol_table Current symbol table
- * @param identifier Identifier of the field to retrieve
+ * @param identifier Identifier of the field or variable to retrieve
  *
  * @return Field information, NULL on error or identifier not found
  */
-struct bx_comp_symbol *bx_cgsy_get_field(struct bx_comp_symbol_table *symbol_table, char *identifier);
-
-/**
- * Get variable information by identifier.
- * The variable identifier is searched inside the current and higher scopes.
- *
- * @param symbol_table Current symbol table
- * @param identifier Identifier of the variable to retrieve
- *
- * @return Variable information, NULL on error or identifier not found
- */
-struct bx_comp_symbol *bx_cgsy_get_variable(struct bx_comp_symbol_table *symbol_table, char *identifier);
+struct bx_comp_symbol *bx_cgsy_get_symbol(struct bx_comp_symbol_table *symbol_table, char *identifier);
 
 #endif /* CODEGEN_SYMBOL_TABLE_H_ */
