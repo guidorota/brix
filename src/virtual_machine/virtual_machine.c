@@ -55,11 +55,13 @@ enum vm_operand {
 };
 
 #define BYTE_AT_PC(vm_status_pointer) (vm_status_pointer->code + vm_status_pointer->program_counter)
+#define VARIABLE_PTR(vm_status_pointer, variable_number) (void *) (vm_status_pointer->variable_table + variable_number *4)
 
 struct bx_vm_status {
 	bx_size program_counter;
 	struct bx_stack execution_stack;
 	bx_uint8 *code;
+	bx_uint8 variable_table[VM_VARIABLE_TABLE_SIZE];
 	bx_size code_size;
 	bx_boolean stop;
 };
@@ -452,6 +454,41 @@ static bx_int8 bx_rstore32_function(struct bx_vm_status *vm_status) {
 	return 0;
 }
 
+static bx_int8 bx_vload32_function(struct bx_vm_status *vm_status) {
+	bx_int8 error;
+	bx_uint16 variable_number;
+
+	error = bx_fetch(vm_status, &variable_number, sizeof (bx_uint16));
+	if (error == -1) {
+		return -1;
+	}
+	error = bx_stack_push(&vm_status->execution_stack,
+			VARIABLE_PTR(vm_status, variable_number), 4);
+	if (error == -1) {
+		return -1;
+	}
+
+	return 0;
+}
+
+static bx_int8 bx_vstore32_function(struct bx_vm_status *vm_status) {
+	bx_int8 error;
+	bx_uint16 variable_number;
+
+	error = bx_fetch(vm_status, &variable_number, sizeof (bx_uint16));
+	if (error == -1) {
+		return -1;
+	}
+
+	error = bx_stack_pop(&vm_status->execution_stack,
+			VARIABLE_PTR(vm_status, variable_number), 4);
+	if (error == -1) {
+		return -1;
+	}
+
+	return 0;
+}
+
 static bx_int8 bx_dup32_function(struct bx_vm_status *vm_status) {
 	bx_int8 error;
 	bx_uint32 data;
@@ -642,6 +679,8 @@ static const bx_instruction instruction_array[256] = {
 	&bx_fpush_1_function,
 	&bx_rload32_function,
 	&bx_rstore32_function,
+	&bx_vload32_function,
+	&bx_vstore32_function,
 	&bx_dup32_function,
 	&bx_jump_function,
 	&bx_jeqz_function,

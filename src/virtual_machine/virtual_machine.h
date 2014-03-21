@@ -69,6 +69,8 @@ enum bx_instruction {
 	BX_INSTR_FPUSH_1,	// Push float constant 1 on the stack
 	BX_INSTR_RLOAD32,	// Load 32 bit reference value on the stack
 	BX_INSTR_RSTORE32,	// Store 32 bit stack data into a reference
+	BX_INSTR_VLOAD32,	// Load 32 bit local variable value on the stack
+	BX_INSTR_VSTORE32,	// Store 32 bit stack data into a local variable
 	BX_INSTR_DUP32,		// Duplicate top 32 bit of stack
 	BX_INSTR_JUMP,		// Unconditional jump
 	BX_INSTR_JEQZ,		// Jump if 32 bit stack value is zero

@@ -34,9 +34,10 @@
 
 // Virtual machine
 #define VM_STACK_SIZE 512
+#define VM_VARIABLE_TABLE_SIZE 512
 
 // Application manager
-#define CODE_STORAGE_SIZE 4092
+#define AM_CODE_STORAGE_SIZE 4092
 
 // Document manager
 #define DM_MAX_FIELD_NUMBER 512

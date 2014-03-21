@@ -70,7 +70,7 @@ START_TEST (test_init) {
 	bx_bbuf_init(&buffer, buffer_storage, CODE_BUFFER_LENGTH);
 } END_TEST
 
-START_TEST (store32_test) {
+START_TEST (rstore32_test) {
 	bx_int8 error;
 	bx_int32 test_data = 12;
 
@@ -85,7 +85,7 @@ START_TEST (store32_test) {
 	ck_assert_int_eq(bx_test_field_get_int(&test_field), test_data);
 } END_TEST
 
-START_TEST (load32_test) {
+START_TEST (rload32_test) {
 	bx_int8 error;
 	bx_int32 operand1 = 87;
 	bx_int32 operand2 = 69;
@@ -103,6 +103,28 @@ START_TEST (load32_test) {
 	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_int(&test_field), operand1 + operand2);
+} END_TEST
+
+START_TEST (vload32_vstore32_test) {
+	bx_int8 error;
+	bx_int32 value = 69;
+
+	bx_test_field_set_int(&test_field, 0);
+	bx_bbuf_reset(&buffer);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, value);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_VSTORE32);
+	bx_vmutils_add_short(&buffer, 0);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_PUSH32);
+	bx_vmutils_add_int(&buffer, 0);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_VLOAD32);
+	bx_vmutils_add_short(&buffer, 0);
+	bx_vmutils_add_instruction(&buffer, BX_INSTR_RSTORE32);
+	bx_vmutils_add_identifier(&buffer, TEST_FIELD_ID);
+
+	error = bx_vm_execute(buffer.storage, bx_bbuf_size(&buffer));
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&test_field), value);
 } END_TEST
 
 START_TEST (test_ipush_0) {
@@ -1324,12 +1346,16 @@ Suite *test_virtual_machine_create_suite() {
 	tcase_add_test(tcase, test_init);
 	suite_add_tcase(suite, tcase);
 
-	tcase = tcase_create("store32_test");
-	tcase_add_test(tcase, store32_test);
+	tcase = tcase_create("rstore32_test");
+	tcase_add_test(tcase, rstore32_test);
 	suite_add_tcase(suite, tcase);
 
-	tcase = tcase_create("load32_test");
-	tcase_add_test(tcase, load32_test);
+	tcase = tcase_create("rload32_test");
+	tcase_add_test(tcase, rload32_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("vload32_vstore32_test");
+	tcase_add_test(tcase, vload32_vstore32_test);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("test_ipush_0");
