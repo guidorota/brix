@@ -64,6 +64,8 @@ static struct bx_test_field_data bool_test_field_data;
 static struct bx_document_field output_bool_test_field;
 static struct bx_test_field_data output_bool_test_field_data;
 
+static struct bx_comp_symbol_table *symbol_table;
+
 START_TEST (init_test) {
 	bx_int8 error;
 
@@ -102,21 +104,21 @@ START_TEST (init_test) {
 	ck_assert_int_eq(error, 0);
 
 	// Setup compiler symbol table
-	error = bx_cgsy_init();
+	symbol_table = bx_cgsy_create_symbol_table();
+	ck_assert_ptr_ne(symbol_table, NULL);
+	error = bx_cgsy_add_field(symbol_table, INT_TEST_FIELD, BX_INT, BX_COMP_EXISTING);
 	ck_assert_int_eq(error, 0);
-	error = bx_cgsy_add_field(INT_TEST_FIELD, BX_INT, BX_COMP_EXISTING);
-	ck_assert_int_eq(error, 0);
-	error = bx_cgsy_add_field(OUTPUT_INT_TEST_FIELD, BX_INT, BX_COMP_EXISTING);
-	ck_assert_int_eq(error, 0);
-
-	error = bx_cgsy_add_field(FLOAT_TEST_FIELD, BX_FLOAT, BX_COMP_EXISTING);
-	ck_assert_int_eq(error, 0);
-	error = bx_cgsy_add_field(OUTPUT_FLOAT_TEST_FIELD, BX_FLOAT, BX_COMP_EXISTING);
+	error = bx_cgsy_add_field(symbol_table, OUTPUT_INT_TEST_FIELD, BX_INT, BX_COMP_EXISTING);
 	ck_assert_int_eq(error, 0);
 
-	error = bx_cgsy_add_field(BOOL_TEST_FIELD, BX_BOOL, BX_COMP_EXISTING);
+	error = bx_cgsy_add_field(symbol_table, FLOAT_TEST_FIELD, BX_FLOAT, BX_COMP_EXISTING);
 	ck_assert_int_eq(error, 0);
-	error = bx_cgsy_add_field(OUTPUT_BOOL_TEST_FIELD, BX_BOOL, BX_COMP_EXISTING);
+	error = bx_cgsy_add_field(symbol_table, OUTPUT_FLOAT_TEST_FIELD, BX_FLOAT, BX_COMP_EXISTING);
+	ck_assert_int_eq(error, 0);
+
+	error = bx_cgsy_add_field(symbol_table, BOOL_TEST_FIELD, BX_BOOL, BX_COMP_EXISTING);
+	ck_assert_int_eq(error, 0);
+	error = bx_cgsy_add_field(symbol_table, OUTPUT_BOOL_TEST_FIELD, BX_BOOL, BX_COMP_EXISTING);
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
@@ -129,7 +131,7 @@ START_TEST (int_assignment) {
 	struct bx_comp_code *code;
 
 	bx_test_field_set_int(&int_test_field, 0);
-	destination = bx_cgex_create_variable(INT_TEST_FIELD);
+	destination = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(destination, NULL);
 	expression = bx_cgex_create_int_constant(value);
 	result = bx_cgex_assignment_expression(destination, expression);
@@ -154,7 +156,7 @@ START_TEST (float_assignment) {
 	struct bx_comp_code *code;
 
 	bx_test_field_set_float(&float_test_field, 0);
-	destination = bx_cgex_create_variable(FLOAT_TEST_FIELD);
+	destination = bx_cgex_create_variable(symbol_table, FLOAT_TEST_FIELD);
 	ck_assert_ptr_ne(destination, NULL);
 	expression = bx_cgex_create_float_constant(value);
 	result = bx_cgex_assignment_expression(destination, expression);
@@ -178,7 +180,7 @@ START_TEST (bool_assignment) {
 	struct bx_comp_code *code;
 
 	bx_test_field_set_bool(&bool_test_field, BX_BOOLEAN_FALSE);
-	destination = bx_cgex_create_variable(BOOL_TEST_FIELD);
+	destination = bx_cgex_create_variable(symbol_table, BOOL_TEST_FIELD);
 	ck_assert_ptr_ne(destination, NULL);
 	expression = bx_cgex_create_bool_constant(BX_BOOLEAN_TRUE);
 	result = bx_cgex_assignment_expression(destination, expression);
@@ -192,6 +194,13 @@ START_TEST (bool_assignment) {
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_bool(&bool_test_field), BX_BOOLEAN_TRUE);
 	ck_assert_int_eq(bx_test_field_get_bool(&output_bool_test_field), BX_BOOLEAN_TRUE);
+} END_TEST
+
+START_TEST (cleanup) {
+	bx_int8 error;
+
+	error = bx_cgsy_destroy_symbol_table(symbol_table);
+	ck_assert_int_eq(error, 0);
 } END_TEST
 
 Suite *test_codegen_expression_assignment_create_suite(void) {
@@ -212,6 +221,10 @@ Suite *test_codegen_expression_assignment_create_suite(void) {
 
 	tcase = tcase_create("bool_assignment");
 	tcase_add_test(tcase, bool_assignment);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("cleanup");
+	tcase_add_test(tcase, cleanup);
 	suite_add_tcase(suite, tcase);
 
 	return suite;

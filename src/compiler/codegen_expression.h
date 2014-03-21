@@ -35,6 +35,7 @@
 #include "types.h"
 #include "configuration.h"
 #include "compiler/codegen_code.h"
+#include "compiler/codegen_symbol_table.h"
 
 enum bx_comp_operator {
 	BX_COMP_OP_ADD,
@@ -86,7 +87,7 @@ struct bx_comp_expr {
 /**
  * Creates a new constant int expression
  *
- * @parameter value Integer value of the constant
+ * @param value Integer value of the constant
  *
  * @return Constant int expression, NULL on failure
  */
@@ -95,7 +96,7 @@ struct bx_comp_expr *bx_cgex_create_int_constant(bx_int32 value);
 /**
  * Creates a new constant flaot expression
  *
- * @parameter value Float value of the constant
+ * @param value Float value of the constant
  *
  * @return Constant float expression, NULL on failure
  */
@@ -104,7 +105,7 @@ struct bx_comp_expr *bx_cgex_create_float_constant(bx_float32 value);
 /**
  * Creates a new constant boolean expression
  *
- * @parameter value Boolean value of the constant
+ * @param value Boolean value of the constant
  *
  * @return Constant boolean expression, NULL on failure
  */
@@ -116,11 +117,12 @@ struct bx_comp_expr *bx_cgex_create_bool_constant(bx_boolean value);
  * by performing a lookup on the symbol table. The variable data type is inherited
  * by the expression.
  *
- * @parameter identifier Name of the variable
+ * @param symbol_table Current symbol_table
+ * @param identifier Name of the variable
  *
  * @return Constant int expression, NULL on failure
  */
-struct bx_comp_expr *bx_cgex_create_variable(char *identifier);
+struct bx_comp_expr *bx_cgex_create_variable(struct bx_comp_symbol_table *symbol_table, char *identifier);
 
 /**
  * Casts the expression passed as a parameter to the specified type.

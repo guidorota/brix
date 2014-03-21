@@ -49,6 +49,8 @@ static struct bx_test_field_data float_test_field_data;
 static struct bx_document_field boolean_test_field;
 static struct bx_test_field_data boolean_test_field_data;
 
+static struct bx_comp_symbol_table *symbol_table;
+
 START_TEST (init_test) {
 	bx_int8 error;
 
@@ -73,13 +75,13 @@ START_TEST (init_test) {
 	ck_assert_int_eq(error, 0);
 
 	// Setup compiler symbol table
-	error = bx_cgsy_init();
+	symbol_table = bx_cgsy_create_symbol_table();
+	ck_assert_ptr_ne(symbol_table, 0);
+	error = bx_cgsy_add_field(symbol_table, INT_TEST_FIELD, BX_INT, BX_COMP_EXISTING);
 	ck_assert_int_eq(error, 0);
-	error = bx_cgsy_add_field(INT_TEST_FIELD, BX_INT, BX_COMP_EXISTING);
+	bx_cgsy_add_field(symbol_table, FLOAT_TEST_FIELD, BX_FLOAT, BX_COMP_EXISTING);
 	ck_assert_int_eq(error, 0);
-	bx_cgsy_add_field(FLOAT_TEST_FIELD, BX_FLOAT, BX_COMP_EXISTING);
-	ck_assert_int_eq(error, 0);
-	bx_cgsy_add_field(BOOLEAN_TEST_FIELD, BX_BOOL, BX_COMP_EXISTING);
+	bx_cgsy_add_field(symbol_table, BOOLEAN_TEST_FIELD, BX_BOOL, BX_COMP_EXISTING);
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
@@ -147,7 +149,7 @@ START_TEST (cast_binary_to_int) {
 	bx_float32 float_value = 87.34;
 
 	bx_test_field_set_int(&int_test_field, int_value);
-	expression = bx_cgex_create_variable(INT_TEST_FIELD);
+	expression = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
 	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_INT);
@@ -164,7 +166,7 @@ START_TEST (cast_binary_to_int) {
 	bx_cgex_destroy_expression(cast);
 
 	bx_test_field_set_float(&float_test_field, float_value);
-	expression = bx_cgex_create_variable(FLOAT_TEST_FIELD);
+	expression = bx_cgex_create_variable(symbol_table, FLOAT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
 	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_FLOAT);
@@ -181,7 +183,7 @@ START_TEST (cast_binary_to_int) {
 	bx_cgex_destroy_expression(cast);
 
 	bx_test_field_set_bool(&boolean_test_field, BX_BOOLEAN_FALSE);
-	expression = bx_cgex_create_variable(BOOLEAN_TEST_FIELD);
+	expression = bx_cgex_create_variable(symbol_table, BOOLEAN_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
 	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
@@ -198,7 +200,7 @@ START_TEST (cast_binary_to_int) {
 	bx_cgex_destroy_expression(cast);
 
 	bx_test_field_set_bool(&boolean_test_field, BX_BOOLEAN_TRUE);
-	expression = bx_cgex_create_variable(BOOLEAN_TEST_FIELD);
+	expression = bx_cgex_create_variable(symbol_table, BOOLEAN_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
 	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
@@ -279,7 +281,7 @@ START_TEST (cast_binary_to_float) {
 	bx_float32 float_value = 87.34;
 
 	bx_test_field_set_int(&int_test_field, int_value);
-	expression = bx_cgex_create_variable(INT_TEST_FIELD);
+	expression = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
 	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_INT);
@@ -296,7 +298,7 @@ START_TEST (cast_binary_to_float) {
 	bx_cgex_destroy_expression(cast);
 
 	bx_test_field_set_float(&float_test_field, float_value);
-	expression = bx_cgex_create_variable(FLOAT_TEST_FIELD);
+	expression = bx_cgex_create_variable(symbol_table, FLOAT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
 	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_FLOAT);
@@ -313,7 +315,7 @@ START_TEST (cast_binary_to_float) {
 	bx_cgex_destroy_expression(cast);
 
 	bx_test_field_set_bool(&boolean_test_field, BX_BOOLEAN_FALSE);
-	expression = bx_cgex_create_variable(BOOLEAN_TEST_FIELD);
+	expression = bx_cgex_create_variable(symbol_table, BOOLEAN_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
 	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
@@ -330,7 +332,7 @@ START_TEST (cast_binary_to_float) {
 	bx_cgex_destroy_expression(cast);
 
 	bx_test_field_set_bool(&boolean_test_field, BX_BOOLEAN_TRUE);
-	expression = bx_cgex_create_variable(BOOLEAN_TEST_FIELD);
+	expression = bx_cgex_create_variable(symbol_table, BOOLEAN_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
 	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
@@ -439,7 +441,7 @@ START_TEST (cast_binary_to_bool) {
 	bx_float32 float_value_0 = 0.0;
 
 	bx_test_field_set_int(&int_test_field, int_value);
-	expression = bx_cgex_create_variable(INT_TEST_FIELD);
+	expression = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
 	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_INT);
@@ -456,7 +458,7 @@ START_TEST (cast_binary_to_bool) {
 	bx_cgex_destroy_expression(cast);
 
 	bx_test_field_set_int(&int_test_field, int_value_0);
-	expression = bx_cgex_create_variable(INT_TEST_FIELD);
+	expression = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
 	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_INT);
@@ -473,7 +475,7 @@ START_TEST (cast_binary_to_bool) {
 	bx_cgex_destroy_expression(cast);
 
 	bx_test_field_set_float(&float_test_field, float_value);
-	expression = bx_cgex_create_variable(FLOAT_TEST_FIELD);
+	expression = bx_cgex_create_variable(symbol_table, FLOAT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
 	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_FLOAT);
@@ -490,7 +492,7 @@ START_TEST (cast_binary_to_bool) {
 	bx_cgex_destroy_expression(cast);
 
 	bx_test_field_set_float(&float_test_field, float_value_0);
-	expression = bx_cgex_create_variable(FLOAT_TEST_FIELD);
+	expression = bx_cgex_create_variable(symbol_table, FLOAT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
 	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_FLOAT);
@@ -507,7 +509,7 @@ START_TEST (cast_binary_to_bool) {
 	bx_cgex_destroy_expression(cast);
 
 	bx_test_field_set_bool(&boolean_test_field, BX_BOOLEAN_FALSE);
-	expression = bx_cgex_create_variable(BOOLEAN_TEST_FIELD);
+	expression = bx_cgex_create_variable(symbol_table, BOOLEAN_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
 	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
@@ -524,7 +526,7 @@ START_TEST (cast_binary_to_bool) {
 	bx_cgex_destroy_expression(cast);
 
 	bx_test_field_set_bool(&boolean_test_field, BX_BOOLEAN_TRUE);
-	expression = bx_cgex_create_variable(BOOLEAN_TEST_FIELD);
+	expression = bx_cgex_create_variable(symbol_table, BOOLEAN_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
 	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
@@ -539,6 +541,13 @@ START_TEST (cast_binary_to_bool) {
 	ck_assert_int_eq(bx_test_field_get_bool(&boolean_test_field), BX_BOOLEAN_TRUE);
 	bx_cgex_destroy_expression(expression);
 	bx_cgex_destroy_expression(cast);
+} END_TEST
+
+START_TEST (cleanup) {
+	bx_int8 error;
+
+	error = bx_cgsy_destroy_symbol_table(symbol_table);
+	ck_assert_int_eq(error, 0);
 } END_TEST
 
 Suite *test_codegen_expression_cast_create_suite(void) {
@@ -571,6 +580,10 @@ Suite *test_codegen_expression_cast_create_suite(void) {
 
 	tcase = tcase_create("cast_binary_to_bool");
 	tcase_add_test(tcase, cast_binary_to_bool);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("cleanup");
+	tcase_add_test(tcase, cleanup);
 	suite_add_tcase(suite, tcase);
 
 	return suite;

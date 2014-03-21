@@ -36,21 +36,24 @@
 #include "configuration.h"
 #include "utils/linked_list.h"
 
+enum bx_comp_symbol_type {
+	BX_COMP_FIELD_SYMBOL,
+	BX_COMP_VARIABLE_SYMBOL
+};
+
 enum bx_comp_creation_modifier {
 	BX_COMP_EXISTING,
 	BX_COMP_NEW
 };
 
-struct bx_comp_field_symbol {
-	enum bx_builtin_type data_type;
-	enum bx_comp_creation_modifier creation_modifier;
+struct bx_comp_symbol {
 	char identifier[DM_FIELD_IDENTIFIER_LENGTH];
-};
-
-struct bx_comp_variable_symbol {
 	enum bx_builtin_type data_type;
-	bx_uint16 variable_number;
-	char identifier[DM_FIELD_IDENTIFIER_LENGTH];
+	enum bx_comp_symbol_type symbol_type;
+	union bx_symbol_data {
+		enum bx_comp_creation_modifier creation_modifier;
+		bx_uint16 variable_number;
+	} bx_symbol_data;
 };
 
 struct bx_comp_scope {
@@ -139,7 +142,7 @@ bx_int8 bx_cgsy_add_variable(struct bx_comp_symbol_table *symbol_table, char *id
  *
  * @return Field information, NULL on error or identifier not found
  */
-struct bx_comp_field_symbol *bx_cgsy_get_field(struct bx_comp_symbol_table *symbol_table, char *identifier);
+struct bx_comp_symbol *bx_cgsy_get_field(struct bx_comp_symbol_table *symbol_table, char *identifier);
 
 /**
  * Get variable information by identifier.
@@ -150,6 +153,6 @@ struct bx_comp_field_symbol *bx_cgsy_get_field(struct bx_comp_symbol_table *symb
  *
  * @return Variable information, NULL on error or identifier not found
  */
-struct bx_comp_variable_symbol *bx_cgsy_get_variable(struct bx_comp_symbol_table *symbol_table, char *identifier);
+struct bx_comp_symbol *bx_cgsy_get_variable(struct bx_comp_symbol_table *symbol_table, char *identifier);
 
 #endif /* CODEGEN_SYMBOL_TABLE_H_ */

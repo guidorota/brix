@@ -98,15 +98,15 @@ struct bx_comp_expr *bx_cgex_create_bool_constant(bx_boolean value) {
 	return expression;
 }
 
-struct bx_comp_expr *bx_cgex_create_variable(char *identifier) {
-	struct bx_comp_field_symbol *symbol;
+struct bx_comp_expr *bx_cgex_create_variable(struct bx_comp_symbol_table *symbol_table, char *identifier) {
+	struct bx_comp_symbol *symbol;
 	struct bx_comp_expr *expression;
 
 	if (identifier == NULL) {
 		return NULL;
 	}
 
-	symbol = bx_cgsy_get_field(identifier);
+	symbol = bx_cgsy_get_field(symbol_table, identifier);
 	if (symbol == NULL) {
 		BX_LOG(LOG_ERROR, "codegen_expression", "Variable %s has not been declared", identifier);
 		return NULL;
@@ -118,7 +118,7 @@ struct bx_comp_expr *bx_cgex_create_variable(char *identifier) {
 				"Error instantiating memory in function 'bx_cgex_create_variable'");
 		return NULL;
 	}
-
+	//TODO: Differentiate between field and variables
 	expression->type = BX_COMP_VARIABLE;
 	expression->data_type = symbol->data_type;
 	memcpy(expression->bx_value.identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH);

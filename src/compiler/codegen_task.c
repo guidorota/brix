@@ -29,6 +29,7 @@
  *
  */
 
+#include <string.h>
 #include "logging.h"
 #include "utils/linked_list.h"
 #include "utils/memory_utils.h"
@@ -39,13 +40,24 @@ struct bx_comp_task *bx_cgtk_create_task() {
 	struct bx_comp_task *task;
 
 	task = BX_MALLOC(struct bx_comp_task);
+	memset((void *) task, 0, sizeof (struct bx_comp_task));
+
 	task->code = bx_cgco_create();
 	if (task->code == NULL) {
-		free(task);
-		return NULL;
+		goto cleanup_task;
 	}
-	memset((void *) task, 0, sizeof (struct bx_comp_task));
+
+	task->symbol_table = bx_cgsy_create_symbol_table();
+	if (task->symbol_table == NULL) {
+		goto cleanup_code;
+	}
 	return task;
+
+cleanup_code:
+	free(task->code);
+cleanup_task:
+	free(task);
+	return NULL;
 }
 
 bx_int8 bx_cgtk_append_code(struct bx_comp_task *task, struct bx_comp_code *code) {

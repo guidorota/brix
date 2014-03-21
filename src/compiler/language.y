@@ -360,7 +360,7 @@ assignment_expression
 primary_expression
 	: IDENTIFIER
 	{
-		$$ = bx_cgex_create_variable($1);
+		$$ = bx_cgex_create_variable(current_task->symbol_table, $1);
 	}
 	| INT_CONSTANT 			
 	{

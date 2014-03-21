@@ -122,16 +122,6 @@ START_TEST (init_test) {
 	ck_assert_int_eq(error, 0);
 	error = bx_dm_add_field(&boolean_output_test_field, BOOLEAN_OUTPUT_TEST_FIELD);
 	ck_assert_int_eq(error, 0);
-
-	// Setup compiler symbol table
-	error = bx_cgsy_init();
-	ck_assert_int_eq(error, 0);
-	error = bx_cgsy_add_field(INT_TEST_FIELD, BX_INT, BX_COMP_EXISTING);
-	ck_assert_int_eq(error, 0);
-	bx_cgsy_add_field(FLOAT_TEST_FIELD, BX_FLOAT, BX_COMP_EXISTING);
-	ck_assert_int_eq(error, 0);
-	bx_cgsy_add_field(BOOLEAN_TEST_FIELD, BX_BOOL, BX_COMP_EXISTING);
-	ck_assert_int_eq(error, 0);
 } END_TEST
 
 START_TEST (parser_invocation_test) {

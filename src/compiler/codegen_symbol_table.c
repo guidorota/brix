@@ -37,11 +37,11 @@
 #include "utils/linked_list.h"
 #include "compiler/codegen_symbol_table.h"
 
-static bx_int8 field_identifier_equals(struct bx_comp_field_symbol *field_symbol, char *identifier) {
+static bx_int8 field_identifier_equals(struct bx_comp_symbol *field_symbol, char *identifier) {
 	return strncmp(field_symbol->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH) == 0 ? 1 : 0;
 }
 
-static bx_int8 variable_identifier_equals(struct bx_comp_variable_symbol *variable_symbol, char *identifier) {
+static bx_int8 variable_identifier_equals(struct bx_comp_symbol *variable_symbol, char *identifier) {
 	return strncmp(variable_symbol->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH) == 0 ? 1 : 0;
 }
 
@@ -54,7 +54,7 @@ struct bx_comp_symbol_table *bx_cgsy_create_symbol_table() {
 		return NULL;
 	}
 
-	memset((void *) symbol_table, 0, sizeof (struct symbol_table));
+	memset((void *) symbol_table, 0, sizeof (struct bx_comp_symbol_table));
 	error = bx_cgsy_scope_down(symbol_table);
 	if (error != 0) {
 		free(symbol_table);
@@ -104,6 +104,7 @@ bx_int8 bx_cgsy_scope_down(struct bx_comp_symbol_table *symbol_table) {
 	}
 
 	child_scope->parent_scope = symbol_table->current_scope;
+	child_scope->variable_list = NULL;
 	symbol_table->current_scope = child_scope;
 	bx_llist_add(&symbol_table->scope_list, child_scope);
 
@@ -122,16 +123,14 @@ bx_int8 bx_cgsy_scope_up(struct bx_comp_symbol_table *symbol_table) {
 
 bx_int8 bx_cgsy_add_field(struct bx_comp_symbol_table *symbol_table, char *identifier,
 		enum bx_builtin_type data_type, enum bx_comp_creation_modifier creation_modifier) {
-	struct bx_linked_list *field_list;
-	struct bx_comp_field_symbol *field_symbol;
+	struct bx_comp_symbol *field_symbol;
 	struct bx_linked_list *node;
 
 	if (symbol_table == NULL || identifier == NULL) {
 		return -1;
 	}
 
-	field_list = symbol_table->field_list;
-	if (bx_llist_contains_equals(field_list, identifier, (bx_llist_equals) &field_identifier_equals) == 1) {
+	if (bx_llist_contains_equals(symbol_table->field_list, identifier, (bx_llist_equals) &field_identifier_equals) == 1) {
 		BX_LOG(LOG_ERROR, "symbol_table", "Duplicate field declaration for '%s'", identifier);
 		return -1;
 	}
@@ -141,17 +140,17 @@ bx_int8 bx_cgsy_add_field(struct bx_comp_symbol_table *symbol_table, char *ident
 		return -1;
 	}
 
-	field_symbol = BX_MALLOC(struct bx_comp_field_symbol);
+	field_symbol = BX_MALLOC(struct bx_comp_symbol);
 	if (field_symbol == NULL) {
 		return -1;
 	}
 
 	field_symbol->data_type = data_type;
-	field_symbol->creation_modifier = creation_modifier;
+	field_symbol->bx_symbol_data.creation_modifier = creation_modifier;
 	strncpy(field_symbol->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH);
 	BX_LOG(LOG_DEBUG, "symbol_table", "Symbol %s added", identifier);
 
-	node = bx_llist_add(&field_list, (void *) field_symbol);
+	node = bx_llist_add(&symbol_table->field_list, (void *) field_symbol);
 	if (node == NULL) {
 		return -1;
 	}
@@ -162,7 +161,7 @@ bx_int8 bx_cgsy_add_field(struct bx_comp_symbol_table *symbol_table, char *ident
 bx_int8 bx_cgsy_add_variable(struct bx_comp_symbol_table *symbol_table, char *identifier,
 		enum bx_builtin_type data_type) {
 	struct bx_comp_scope *scope;
-	struct bx_comp_variable_symbol *variable_symbol;
+	struct bx_comp_symbol *variable_symbol;
 
 	if (symbol_table == NULL || identifier == NULL) {
 		return -1;
@@ -181,20 +180,20 @@ bx_int8 bx_cgsy_add_variable(struct bx_comp_symbol_table *symbol_table, char *id
 		return -1;
 	}
 
-	variable_symbol = BX_MALLOC(struct bx_comp_variable_symbol);
+	variable_symbol = BX_MALLOC(struct bx_comp_symbol);
 	if (variable_symbol == NULL) {
 		return -1;
 	}
 
 	variable_symbol->data_type = data_type;
-	variable_symbol->variable_number = symbol_table->current_variable_number++;
+	variable_symbol->bx_symbol_data.variable_number = symbol_table->current_variable_number++;
 	memcpy(variable_symbol->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH);
 	bx_llist_add(&scope->variable_list, variable_symbol);
 
 	return 0;
 }
 
-struct bx_comp_field_symbol *bx_cgsy_get_field(struct bx_comp_symbol_table *symbol_table, char *identifier) {
+struct bx_comp_symbol *bx_cgsy_get_field(struct bx_comp_symbol_table *symbol_table, char *identifier) {
 
 	if (symbol_table == NULL || identifier == NULL) {
 		return NULL;
@@ -204,9 +203,9 @@ struct bx_comp_field_symbol *bx_cgsy_get_field(struct bx_comp_symbol_table *symb
 			(void *) identifier, (bx_llist_equals) &field_identifier_equals);
 }
 
-struct bx_comp_variable_symbol *bx_cgsy_get_variable(struct bx_comp_symbol_table *symbol_table, char *identifier) {
+struct bx_comp_symbol *bx_cgsy_get_variable(struct bx_comp_symbol_table *symbol_table, char *identifier) {
 	struct bx_comp_scope *current_scope;
-	struct bx_comp_variable_symbol *variable_symbol;
+	struct bx_comp_symbol *variable_symbol;
 
 	if (symbol_table == NULL || identifier == NULL) {
 		return NULL;

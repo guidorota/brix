@@ -50,22 +50,19 @@
 struct bx_comp_symbol_table *symbol_table;
 
 START_TEST (init_test) {
-	bx_int8 error;
-
 	symbol_table = bx_cgsy_create_symbol_table();
 	ck_assert_ptr_ne(symbol_table, NULL);
 	ck_assert_int_eq(symbol_table->current_variable_number, 0);
 	ck_assert_ptr_eq(symbol_table->field_list, NULL);
 	ck_assert_ptr_ne(symbol_table->current_scope, NULL);
 	ck_assert_ptr_ne(symbol_table->scope_list, NULL);
-	ck_assert_ptr_eq(bx_llist_size(symbol_table->scope_list), 1);
+	ck_assert_int_eq(bx_llist_size(symbol_table->scope_list), 1);
 	ck_assert_ptr_eq(symbol_table->current_scope, symbol_table->scope_list->element);
-	ck_assert_int_eq(error, 0);
 } END_TEST
 
 START_TEST (add_field_symbols) {
 	bx_int8 error;
-	struct bx_comp_field_symbol *symbol;
+	struct bx_comp_symbol *symbol;
 
 	error = bx_cgsy_add_field(symbol_table, FIELD_SYMBOL_ID_1, BX_INT, BX_COMP_EXISTING);
 	ck_assert_int_eq(error, 0);
@@ -77,19 +74,19 @@ START_TEST (add_field_symbols) {
 	symbol = bx_cgsy_get_field(symbol_table, FIELD_SYMBOL_ID_1);
 	ck_assert_ptr_ne(symbol, NULL);
 	ck_assert_int_eq(symbol->data_type, BX_INT);
-	ck_assert_int_eq(symbol->creation_modifier, BX_COMP_EXISTING);
+	ck_assert_int_eq(symbol->bx_symbol_data.creation_modifier, BX_COMP_EXISTING);
 	ck_assert_int_eq(strncmp(FIELD_SYMBOL_ID_1, (char *) symbol->identifier, DM_FIELD_IDENTIFIER_LENGTH), 0);
 
 	symbol = bx_cgsy_get_field(symbol_table, FIELD_SYMBOL_ID_2);
 	ck_assert_ptr_ne(symbol, NULL);
 	ck_assert_int_eq(symbol->data_type, BX_FLOAT);
-	ck_assert_int_eq(symbol->creation_modifier, BX_COMP_NEW);
+	ck_assert_int_eq(symbol->bx_symbol_data.creation_modifier, BX_COMP_NEW);
 	ck_assert_int_eq(strncmp(FIELD_SYMBOL_ID_2, (char *) symbol->identifier, DM_FIELD_IDENTIFIER_LENGTH), 0);
 
 	symbol = bx_cgsy_get_field(symbol_table, FIELD_SYMBOL_ID_3);
 	ck_assert_ptr_ne(symbol, NULL);
 	ck_assert_int_eq(symbol->data_type, BX_BOOL);
-	ck_assert_int_eq(symbol->creation_modifier, BX_COMP_EXISTING);
+	ck_assert_int_eq(symbol->bx_symbol_data.creation_modifier, BX_COMP_EXISTING);
 	ck_assert_int_eq(strncmp(FIELD_SYMBOL_ID_3, (char *) symbol->identifier, DM_FIELD_IDENTIFIER_LENGTH), 0);
 
 	symbol = bx_cgsy_get_field(symbol_table, NOT_IN_TABLE);
@@ -109,7 +106,7 @@ START_TEST (reject_duplicate_field) {
 
 START_TEST (main_scope_test) {
 	bx_int8 error;
-	struct bx_comp_variable_symbol *variable;
+	struct bx_comp_symbol *variable;
 
 	error = bx_cgsy_add_variable(symbol_table, VARIABLE_SYMBOL_ID_1, BX_BOOL);
 	ck_assert_int_eq(error, 0);
@@ -120,12 +117,12 @@ START_TEST (main_scope_test) {
 	ck_assert_ptr_ne(variable, NULL);
 	ck_assert_int_eq(memcmp(variable->identifier, VARIABLE_SYMBOL_ID_1, DM_FIELD_IDENTIFIER_LENGTH), 0);
 	ck_assert_int_eq(variable->data_type, BX_BOOL);
-	ck_assert_int_eq(variable->variable_number, 0);
+	ck_assert_int_eq(variable->bx_symbol_data.variable_number, 0);
 	variable = bx_cgsy_get_variable(symbol_table, VARIABLE_SYMBOL_ID_2);
 	ck_assert_ptr_ne(variable, NULL);
 	ck_assert_int_eq(memcmp(variable->identifier, VARIABLE_SYMBOL_ID_2, DM_FIELD_IDENTIFIER_LENGTH), 0);
 	ck_assert_int_eq(variable->data_type, BX_INT);
-	ck_assert_int_eq(variable->variable_number, 1);
+	ck_assert_int_eq(variable->bx_symbol_data.variable_number, 1);
 } END_TEST
 
 START_TEST (reject_field_variable_duplicate) {
@@ -145,8 +142,8 @@ START_TEST (reject_field_variable_duplicate) {
 } END_TEST
 
 START_TEST (variable_scopes) {
-	struct bx_comp_variable_symbol *variable;
-	struct bx_comp_variable_symbol *child_scope_var1;
+	struct bx_comp_symbol *variable;
+	struct bx_comp_symbol *child_scope_var1;
 	bx_int8 error;
 
 	error = bx_cgsy_scope_down(symbol_table);
@@ -160,19 +157,19 @@ START_TEST (variable_scopes) {
 	ck_assert_ptr_ne(variable, NULL);
 	ck_assert_int_eq(memcmp(variable->identifier, VARIABLE_SYMBOL_ID_1, DM_FIELD_IDENTIFIER_LENGTH), 0);
 	ck_assert_int_eq(variable->data_type, BX_FLOAT);
-	ck_assert_int_eq(variable->variable_number, 2);
+	ck_assert_int_eq(variable->bx_symbol_data.variable_number, 2);
 	variable = bx_cgsy_get_variable(symbol_table, VARIABLE_SYMBOL_ID_3);
 	ck_assert_ptr_ne(variable, NULL);
-	ck_assert_int_eq(memcmp(variable->identifier, VARIABLE_SYMBOL_ID_2, DM_FIELD_IDENTIFIER_LENGTH), 0);
+	ck_assert_int_eq(memcmp(variable->identifier, VARIABLE_SYMBOL_ID_3, DM_FIELD_IDENTIFIER_LENGTH), 0);
 	ck_assert_int_eq(variable->data_type, BX_INT);
-	ck_assert_int_eq(variable->variable_number, 3);
+	ck_assert_int_eq(variable->bx_symbol_data.variable_number, 3);
 
 	child_scope_var1 = bx_cgsy_get_variable(symbol_table, VARIABLE_SYMBOL_ID_1);
 	error = bx_cgsy_scope_up(symbol_table);
 	ck_assert_int_eq(error, 0);
 	variable = bx_cgsy_get_variable(symbol_table, VARIABLE_SYMBOL_ID_1);
 	ck_assert_ptr_ne(variable, NULL);
-	ck_assert_int_ne(variable->variable_number, child_scope_var1->variable_number);
+	ck_assert_int_ne(variable->bx_symbol_data.variable_number, child_scope_var1->bx_symbol_data.variable_number);
 } END_TEST
 
 
