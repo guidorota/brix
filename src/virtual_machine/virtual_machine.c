@@ -410,7 +410,7 @@ static bx_int8 bx_fpush_1_function(struct bx_vm_status *vm_status) {
 	return BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, float_const_1);
 }
 
-static bx_int8 bx_load32_function(struct bx_vm_status *vm_status) {
+static bx_int8 bx_rload32_function(struct bx_vm_status *vm_status) {
 	bx_int8 error;
 	char identifier[DM_FIELD_IDENTIFIER_LENGTH];
 	bx_uint32 data;
@@ -431,7 +431,7 @@ static bx_int8 bx_load32_function(struct bx_vm_status *vm_status) {
 	return 0;
 }
 
-static bx_int8 bx_store32_function(struct bx_vm_status *vm_status) {
+static bx_int8 bx_rstore32_function(struct bx_vm_status *vm_status) {
 	bx_int8 error;
 	char identifier[DM_FIELD_IDENTIFIER_LENGTH];
 	bx_uint32 data;
@@ -640,8 +640,8 @@ static const bx_instruction instruction_array[256] = {
 	&bx_ipush_1_function,
 	&bx_fpush_0_function,
 	&bx_fpush_1_function,
-	&bx_load32_function,
-	&bx_store32_function,
+	&bx_rload32_function,
+	&bx_rstore32_function,
 	&bx_dup32_function,
 	&bx_jump_function,
 	&bx_jeqz_function,

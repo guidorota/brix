@@ -96,7 +96,7 @@ START_TEST (logical_or_test) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOL_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -116,7 +116,7 @@ START_TEST (logical_or_test) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOL_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -136,7 +136,7 @@ START_TEST (logical_or_test) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOL_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -177,7 +177,7 @@ START_TEST (logical_and_test) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOL_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -197,7 +197,7 @@ START_TEST (logical_and_test) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOL_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -217,7 +217,7 @@ START_TEST (logical_and_test) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOL_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -263,7 +263,7 @@ START_TEST (logical_not_test) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOL_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -280,7 +280,7 @@ START_TEST (logical_not_test) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOL_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);

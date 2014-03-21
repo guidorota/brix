@@ -157,7 +157,7 @@ START_TEST (cast_binary_to_int) {
 	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_INT);
 	code = cast->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, INT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -174,7 +174,7 @@ START_TEST (cast_binary_to_int) {
 	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_INT);
 	code = cast->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, INT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -191,7 +191,7 @@ START_TEST (cast_binary_to_int) {
 	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_INT);
 	code = cast->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, INT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -208,7 +208,7 @@ START_TEST (cast_binary_to_int) {
 	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_INT);
 	code = cast->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, INT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -289,7 +289,7 @@ START_TEST (cast_binary_to_float) {
 	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_FLOAT);
 	code = cast->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -306,7 +306,7 @@ START_TEST (cast_binary_to_float) {
 	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_FLOAT);
 	code = cast->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -323,7 +323,7 @@ START_TEST (cast_binary_to_float) {
 	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_FLOAT);
 	code = cast->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -340,7 +340,7 @@ START_TEST (cast_binary_to_float) {
 	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_FLOAT);
 	code = cast->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -449,7 +449,7 @@ START_TEST (cast_binary_to_bool) {
 	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_BOOL);
 	code = cast->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -466,7 +466,7 @@ START_TEST (cast_binary_to_bool) {
 	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_BOOL);
 	code = cast->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -483,7 +483,7 @@ START_TEST (cast_binary_to_bool) {
 	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_BOOL);
 	code = cast->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -500,7 +500,7 @@ START_TEST (cast_binary_to_bool) {
 	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_BOOL);
 	code = cast->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -517,7 +517,7 @@ START_TEST (cast_binary_to_bool) {
 	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_BOOL);
 	code = cast->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -534,7 +534,7 @@ START_TEST (cast_binary_to_bool) {
 	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_BOOL);
 	code = cast->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);

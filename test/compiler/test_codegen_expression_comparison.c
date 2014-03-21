@@ -191,7 +191,7 @@ START_TEST (equality_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -211,7 +211,7 @@ START_TEST (equality_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -232,7 +232,7 @@ START_TEST (equality_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -253,7 +253,7 @@ START_TEST (equality_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -273,7 +273,7 @@ START_TEST (equality_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -293,7 +293,7 @@ START_TEST (equality_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -408,7 +408,7 @@ START_TEST (inequality_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -428,7 +428,7 @@ START_TEST (inequality_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -449,7 +449,7 @@ START_TEST (inequality_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -470,7 +470,7 @@ START_TEST (inequality_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -490,7 +490,7 @@ START_TEST (inequality_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -510,7 +510,7 @@ START_TEST (inequality_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -625,7 +625,7 @@ START_TEST (greater_than_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -645,7 +645,7 @@ START_TEST (greater_than_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -666,7 +666,7 @@ START_TEST (greater_than_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -687,7 +687,7 @@ START_TEST (greater_than_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -707,7 +707,7 @@ START_TEST (greater_than_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -727,7 +727,7 @@ START_TEST (greater_than_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -842,7 +842,7 @@ START_TEST (greater_or_equal_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -862,7 +862,7 @@ START_TEST (greater_or_equal_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -883,7 +883,7 @@ START_TEST (greater_or_equal_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -904,7 +904,7 @@ START_TEST (greater_or_equal_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -924,7 +924,7 @@ START_TEST (greater_or_equal_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -944,7 +944,7 @@ START_TEST (greater_or_equal_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -1059,7 +1059,7 @@ START_TEST (less_than_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -1079,7 +1079,7 @@ START_TEST (less_than_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -1100,7 +1100,7 @@ START_TEST (less_than_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -1121,7 +1121,7 @@ START_TEST (less_than_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -1141,7 +1141,7 @@ START_TEST (less_than_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -1161,7 +1161,7 @@ START_TEST (less_than_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -1276,7 +1276,7 @@ START_TEST (less_or_equal_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -1296,7 +1296,7 @@ START_TEST (less_or_equal_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -1317,7 +1317,7 @@ START_TEST (less_or_equal_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -1338,7 +1338,7 @@ START_TEST (less_or_equal_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -1358,7 +1358,7 @@ START_TEST (less_or_equal_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -1378,7 +1378,7 @@ START_TEST (less_or_equal_operator) {
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, BOOLEAN_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);

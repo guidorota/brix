@@ -106,12 +106,12 @@ struct bx_comp_expr *postfix_dec_int(struct bx_comp_expr *operand1) {
 		return NULL;
 	}
 	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
+	bx_cgco_add_instruction(code, BX_INSTR_RLOAD32);
 	bx_cgco_add_identifier(code, operand1->value.variable.identifier);
 	bx_cgco_add_instruction(code, BX_INSTR_DUP32);
 	bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
 	bx_cgco_add_instruction(code, BX_INSTR_ISUB);
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, operand1->value.variable.identifier);
 
 	return result;
@@ -128,12 +128,12 @@ struct bx_comp_expr *postfix_dec_float(struct bx_comp_expr *operand1) {
 		return NULL;
 	}
 	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
+	bx_cgco_add_instruction(code, BX_INSTR_RLOAD32);
 	bx_cgco_add_identifier(code, operand1->value.variable.identifier);
 	bx_cgco_add_instruction(code, BX_INSTR_DUP32);
 	bx_cgco_add_instruction(code, BX_INSTR_FPUSH_1);
 	bx_cgco_add_instruction(code, BX_INSTR_FSUB);
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, operand1->value.variable.identifier);
 
 	return result;
@@ -179,12 +179,12 @@ struct bx_comp_expr *postfix_inc_int(struct bx_comp_expr *operand1) {
 		return NULL;
 	}
 	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
+	bx_cgco_add_instruction(code, BX_INSTR_RLOAD32);
 	bx_cgco_add_identifier(code, operand1->value.variable.identifier);
 	bx_cgco_add_instruction(code, BX_INSTR_DUP32);
 	bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
 	bx_cgco_add_instruction(code, BX_INSTR_IADD);
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, operand1->value.variable.identifier);
 
 	return result;
@@ -201,12 +201,12 @@ struct bx_comp_expr *postfix_inc_float(struct bx_comp_expr *operand1) {
 		return NULL;
 	}
 	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
+	bx_cgco_add_instruction(code, BX_INSTR_RLOAD32);
 	bx_cgco_add_identifier(code, operand1->value.variable.identifier);
 	bx_cgco_add_instruction(code, BX_INSTR_DUP32);
 	bx_cgco_add_instruction(code, BX_INSTR_FPUSH_1);
 	bx_cgco_add_instruction(code, BX_INSTR_FADD);
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, operand1->value.variable.identifier);
 
 	return result;
@@ -252,12 +252,12 @@ struct bx_comp_expr *prefix_dec_int(struct bx_comp_expr *operand1) {
 		return NULL;
 	}
 	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
+	bx_cgco_add_instruction(code, BX_INSTR_RLOAD32);
 	bx_cgco_add_identifier(code, operand1->value.variable.identifier);
 	bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
 	bx_cgco_add_instruction(code, BX_INSTR_ISUB);
 	bx_cgco_add_instruction(code, BX_INSTR_DUP32);
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, operand1->value.variable.identifier);
 
 	return result;
@@ -274,12 +274,12 @@ struct bx_comp_expr *prefix_dec_float(struct bx_comp_expr *operand1) {
 		return NULL;
 	}
 	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
+	bx_cgco_add_instruction(code, BX_INSTR_RLOAD32);
 	bx_cgco_add_identifier(code, operand1->value.variable.identifier);
 	bx_cgco_add_instruction(code, BX_INSTR_FPUSH_1);
 	bx_cgco_add_instruction(code, BX_INSTR_FSUB);
 	bx_cgco_add_instruction(code, BX_INSTR_DUP32);
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, operand1->value.variable.identifier);
 
 	return result;
@@ -325,12 +325,12 @@ struct bx_comp_expr *prefix_inc_int(struct bx_comp_expr *operand1) {
 		return NULL;
 	}
 	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
+	bx_cgco_add_instruction(code, BX_INSTR_RLOAD32);
 	bx_cgco_add_identifier(code, operand1->value.variable.identifier);
 	bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
 	bx_cgco_add_instruction(code, BX_INSTR_IADD);
 	bx_cgco_add_instruction(code, BX_INSTR_DUP32);
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, operand1->value.variable.identifier);
 
 	return result;
@@ -347,12 +347,12 @@ struct bx_comp_expr *prefix_inc_float(struct bx_comp_expr *operand1) {
 		return NULL;
 	}
 	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
+	bx_cgco_add_instruction(code, BX_INSTR_RLOAD32);
 	bx_cgco_add_identifier(code, operand1->value.variable.identifier);
 	bx_cgco_add_instruction(code, BX_INSTR_FPUSH_1);
 	bx_cgco_add_instruction(code, BX_INSTR_FADD);
 	bx_cgco_add_instruction(code, BX_INSTR_DUP32);
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, operand1->value.variable.identifier);
 
 	return result;

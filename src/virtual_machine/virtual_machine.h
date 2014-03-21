@@ -35,52 +35,52 @@
 #include "types.h"
 
 enum bx_instruction {
-	BX_INSTR_IADD,
-	BX_INSTR_ISUB,
-	BX_INSTR_IMUL,
-	BX_INSTR_IDIV,
-	BX_INSTR_IMOD,
-	BX_INSTR_INEG,
-	BX_INSTR_IAND,
-	BX_INSTR_IOR,
-	BX_INSTR_IXOR,
-	BX_INSTR_INOT,
-	BX_INSTR_IEQ,
-	BX_INSTR_INE,
-	BX_INSTR_IGT,
-	BX_INSTR_IGE,
-	BX_INSTR_ILT,
-	BX_INSTR_ILE,
-	BX_INSTR_FADD,
-	BX_INSTR_FSUB,
-	BX_INSTR_FMUL,
-	BX_INSTR_FDIV,
-	BX_INSTR_FNEG,
-	BX_INSTR_FEQ,
-	BX_INSTR_FNE,
-	BX_INSTR_FGT,
-	BX_INSTR_FGE,
-	BX_INSTR_FLT,
-	BX_INSTR_FLE,
-	BX_INSTR_PUSH32,
-	BX_INSTR_IPUSH_0,
-	BX_INSTR_IPUSH_1,
-	BX_INSTR_FPUSH_0,
-	BX_INSTR_FPUSH_1,
-	BX_INSTR_LOAD32,
-	BX_INSTR_STORE32,
-	BX_INSTR_DUP32,
-	BX_INSTR_JUMP,
-	BX_INSTR_JEQZ,
-	BX_INSTR_JNEZ,
-	BX_INSTR_JGTZ,
-	BX_INSTR_JGEZ,
-	BX_INSTR_JLTZ,
-	BX_INSTR_JLEZ,
-	BX_INSTR_NOP,
-	BX_INSTR_I2F,
-	BX_INSTR_F2I,
-	BX_INSTR_HALT
+	BX_INSTR_IADD,		// Integer addition
+	BX_INSTR_ISUB,		// Integer subtraction
+	BX_INSTR_IMUL,		// Integer multiplication
+	BX_INSTR_IDIV,		// Integer division
+	BX_INSTR_IMOD,		// Integer division remainder
+	BX_INSTR_INEG,		// Integer negation
+	BX_INSTR_IAND,		// Integer bitwise and
+	BX_INSTR_IOR,		// Integer bitwise or
+	BX_INSTR_IXOR,		// Integer bitwise xor
+	BX_INSTR_INOT,		// Integer bitwise not
+	BX_INSTR_IEQ,		// Integer equality comparison
+	BX_INSTR_INE,		// Integer inequality comparison
+	BX_INSTR_IGT,		// Integer greater than comparison
+	BX_INSTR_IGE,		// Integer greater than or equal comparison
+	BX_INSTR_ILT,		// Integer less than comparison
+	BX_INSTR_ILE,		// Integer less than or equal comparison
+	BX_INSTR_FADD,		// Float addition
+	BX_INSTR_FSUB,		// Float subtraction
+	BX_INSTR_FMUL,		// Float multiplication
+	BX_INSTR_FDIV,		// Float division
+	BX_INSTR_FNEG,		// Float negation
+	BX_INSTR_FEQ,		// Float equality comparison
+	BX_INSTR_FNE,		// Float inequality comparison
+	BX_INSTR_FGT,		// Float greater than comparison
+	BX_INSTR_FGE,		// Float greater than or equal comparison
+	BX_INSTR_FLT,		// Float less than comparison
+	BX_INSTR_FLE,		// Float less than or equal comparison
+	BX_INSTR_PUSH32,	// Push 32 bit data on the stack
+	BX_INSTR_IPUSH_0,	// Push integer constant 0 on the stack
+	BX_INSTR_IPUSH_1,	// Push integer constant 1 on the stack
+	BX_INSTR_FPUSH_0,	// Push float constant 0 on the stack
+	BX_INSTR_FPUSH_1,	// Push float constant 1 on the stack
+	BX_INSTR_RLOAD32,	// Load 32 bit reference value on the stack
+	BX_INSTR_RSTORE32,	// Store 32 bit stack data into a reference
+	BX_INSTR_DUP32,		// Duplicate top 32 bit of stack
+	BX_INSTR_JUMP,		// Unconditional jump
+	BX_INSTR_JEQZ,		// Jump if 32 bit stack value is zero
+	BX_INSTR_JNEZ,		// Jump if 32 bit stack value is not zero
+	BX_INSTR_JGTZ,		// Jump if 32 bit stack value is greater than zero
+	BX_INSTR_JGEZ,		// Jump if 32 bit stack value is greater or equal to zero
+	BX_INSTR_JLTZ,		// Jump if 32 bit stack value is less than zero
+	BX_INSTR_JLEZ,		// Jump if 32 bit stack value is less or equal to zero
+	BX_INSTR_NOP,		// Do nothing
+	BX_INSTR_I2F,		// Convert top stack value from integer to float
+	BX_INSTR_F2I,		// Convert top stack value from float to integer
+	BX_INSTR_HALT		// Halt the execution of the virtual machine
 };
 
 bx_int8 bx_vm_virtual_machine_init();

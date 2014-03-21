@@ -135,7 +135,7 @@ START_TEST (create_variable) {
 	ck_assert_int_eq(error, 0);
 	ck_assert_ptr_ne(expression->value.code, NULL);
 	code = expression->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, INT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -282,7 +282,7 @@ START_TEST (addition_operator) {
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -302,7 +302,7 @@ START_TEST (addition_operator) {
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -323,7 +323,7 @@ START_TEST (addition_operator) {
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -344,7 +344,7 @@ START_TEST (addition_operator) {
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -364,7 +364,7 @@ START_TEST (addition_operator) {
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -384,7 +384,7 @@ START_TEST (addition_operator) {
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -472,7 +472,7 @@ START_TEST (subtraction_operator) {
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -492,7 +492,7 @@ START_TEST (subtraction_operator) {
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -513,7 +513,7 @@ START_TEST (subtraction_operator) {
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -534,7 +534,7 @@ START_TEST (subtraction_operator) {
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -554,7 +554,7 @@ START_TEST (subtraction_operator) {
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -574,7 +574,7 @@ START_TEST (subtraction_operator) {
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -662,7 +662,7 @@ START_TEST (multiplication_operator) {
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -682,7 +682,7 @@ START_TEST (multiplication_operator) {
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -703,7 +703,7 @@ START_TEST (multiplication_operator) {
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -724,7 +724,7 @@ START_TEST (multiplication_operator) {
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -744,7 +744,7 @@ START_TEST (multiplication_operator) {
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -764,7 +764,7 @@ START_TEST (multiplication_operator) {
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -851,7 +851,7 @@ START_TEST (division_operator) {
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -871,7 +871,7 @@ START_TEST (division_operator) {
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -892,7 +892,7 @@ START_TEST (division_operator) {
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -913,7 +913,7 @@ START_TEST (division_operator) {
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -933,7 +933,7 @@ START_TEST (division_operator) {
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -953,7 +953,7 @@ START_TEST (division_operator) {
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -996,7 +996,7 @@ START_TEST (modulo_operator) {
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -1016,7 +1016,7 @@ START_TEST (modulo_operator) {
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -1053,7 +1053,7 @@ START_TEST (unary_plus_test) {
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -1081,7 +1081,7 @@ START_TEST (unary_plus_test) {
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -1118,7 +1118,7 @@ START_TEST (negation_test) {
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -1146,7 +1146,7 @@ START_TEST (negation_test) {
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
 	error = bx_vm_execute(result->value.code->data, result->value.code->size);
 	ck_assert_int_eq(error, 0);
@@ -1174,7 +1174,7 @@ START_TEST (prefix_increment_test) {
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, INT_OUTPUT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -1194,7 +1194,7 @@ START_TEST (prefix_increment_test) {
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, FLOAT_OUTPUT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -1223,7 +1223,7 @@ START_TEST (prefix_decrement_test) {
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, INT_OUTPUT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -1243,7 +1243,7 @@ START_TEST (prefix_decrement_test) {
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, FLOAT_OUTPUT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -1272,7 +1272,7 @@ START_TEST (postfix_increment_test) {
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, INT_OUTPUT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -1292,7 +1292,7 @@ START_TEST (postfix_increment_test) {
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, FLOAT_OUTPUT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -1321,7 +1321,7 @@ START_TEST (postfix_decrement_test) {
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, INT_OUTPUT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);
@@ -1341,7 +1341,7 @@ START_TEST (postfix_decrement_test) {
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
+	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(code, FLOAT_OUTPUT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
 	ck_assert_int_eq(error, 0);

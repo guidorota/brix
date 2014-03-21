@@ -328,7 +328,7 @@ static bx_int8 variable_to_binary(struct bx_comp_expr *expression) {
 
 	switch (expression->value.variable.symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
-		bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
+		bx_cgco_add_instruction(code, BX_INSTR_RLOAD32);
 		bx_cgco_add_identifier(code, expression->value.variable.identifier);
 		break;
 	case BX_COMP_VARIABLE_SYMBOL:
