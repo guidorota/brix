@@ -74,18 +74,21 @@ START_TEST (add_field_symbols) {
 	symbol = bx_cgsy_get_field(symbol_table, FIELD_SYMBOL_ID_1);
 	ck_assert_ptr_ne(symbol, NULL);
 	ck_assert_int_eq(symbol->data_type, BX_INT);
+	ck_assert_int_eq(symbol->symbol_type, BX_COMP_FIELD_SYMBOL);
 	ck_assert_int_eq(symbol->symbol_data.creation_modifier, BX_COMP_EXISTING);
 	ck_assert_int_eq(strncmp(FIELD_SYMBOL_ID_1, (char *) symbol->identifier, DM_FIELD_IDENTIFIER_LENGTH), 0);
 
 	symbol = bx_cgsy_get_field(symbol_table, FIELD_SYMBOL_ID_2);
 	ck_assert_ptr_ne(symbol, NULL);
 	ck_assert_int_eq(symbol->data_type, BX_FLOAT);
+	ck_assert_int_eq(symbol->symbol_type, BX_COMP_FIELD_SYMBOL);
 	ck_assert_int_eq(symbol->symbol_data.creation_modifier, BX_COMP_NEW);
 	ck_assert_int_eq(strncmp(FIELD_SYMBOL_ID_2, (char *) symbol->identifier, DM_FIELD_IDENTIFIER_LENGTH), 0);
 
 	symbol = bx_cgsy_get_field(symbol_table, FIELD_SYMBOL_ID_3);
 	ck_assert_ptr_ne(symbol, NULL);
 	ck_assert_int_eq(symbol->data_type, BX_BOOL);
+	ck_assert_int_eq(symbol->symbol_type, BX_COMP_FIELD_SYMBOL);
 	ck_assert_int_eq(symbol->symbol_data.creation_modifier, BX_COMP_EXISTING);
 	ck_assert_int_eq(strncmp(FIELD_SYMBOL_ID_3, (char *) symbol->identifier, DM_FIELD_IDENTIFIER_LENGTH), 0);
 
@@ -117,11 +120,13 @@ START_TEST (main_scope_test) {
 	ck_assert_ptr_ne(variable, NULL);
 	ck_assert_int_eq(memcmp(variable->identifier, VARIABLE_SYMBOL_ID_1, DM_FIELD_IDENTIFIER_LENGTH), 0);
 	ck_assert_int_eq(variable->data_type, BX_BOOL);
+	ck_assert_int_eq(variable->symbol_type, BX_COMP_VARIABLE_SYMBOL);
 	ck_assert_int_eq(variable->symbol_data.variable_number, 0);
 	variable = bx_cgsy_get_variable(symbol_table, VARIABLE_SYMBOL_ID_2);
 	ck_assert_ptr_ne(variable, NULL);
 	ck_assert_int_eq(memcmp(variable->identifier, VARIABLE_SYMBOL_ID_2, DM_FIELD_IDENTIFIER_LENGTH), 0);
 	ck_assert_int_eq(variable->data_type, BX_INT);
+	ck_assert_int_eq(variable->symbol_type, BX_COMP_VARIABLE_SYMBOL);
 	ck_assert_int_eq(variable->symbol_data.variable_number, 1);
 } END_TEST
 
@@ -157,11 +162,13 @@ START_TEST (variable_scopes) {
 	ck_assert_ptr_ne(variable, NULL);
 	ck_assert_int_eq(memcmp(variable->identifier, VARIABLE_SYMBOL_ID_1, DM_FIELD_IDENTIFIER_LENGTH), 0);
 	ck_assert_int_eq(variable->data_type, BX_FLOAT);
+	ck_assert_int_eq(variable->symbol_type, BX_COMP_VARIABLE_SYMBOL);
 	ck_assert_int_eq(variable->symbol_data.variable_number, 2);
 	variable = bx_cgsy_get_variable(symbol_table, VARIABLE_SYMBOL_ID_3);
 	ck_assert_ptr_ne(variable, NULL);
 	ck_assert_int_eq(memcmp(variable->identifier, VARIABLE_SYMBOL_ID_3, DM_FIELD_IDENTIFIER_LENGTH), 0);
 	ck_assert_int_eq(variable->data_type, BX_INT);
+	ck_assert_int_eq(variable->symbol_type, BX_COMP_VARIABLE_SYMBOL);
 	ck_assert_int_eq(variable->symbol_data.variable_number, 3);
 
 	child_scope_var1 = bx_cgsy_get_variable(symbol_table, VARIABLE_SYMBOL_ID_1);

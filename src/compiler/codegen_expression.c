@@ -118,10 +118,10 @@ struct bx_comp_expr *bx_cgex_create_variable(struct bx_comp_symbol_table *symbol
 				"Error instantiating memory in function 'bx_cgex_create_variable'");
 		return NULL;
 	}
-	//TODO: Differentiate between field and variables
+
 	expression->type = BX_COMP_VARIABLE;
 	expression->data_type = symbol->data_type;
-	memcpy(expression->value.identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH);
+	expression->value.variable = *symbol;
 
 	return expression;
 }
@@ -325,8 +325,19 @@ static bx_int8 variable_to_binary(struct bx_comp_expr *expression) {
 				"Error creating bx_comp_code struct in 'variable_to_binary'");
 		return -1;
 	}
-	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
-	bx_cgco_add_identifier(code, expression->value.identifier);
+
+	switch (expression->value.variable.symbol_type) {
+	case BX_COMP_FIELD_SYMBOL:
+		bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
+		bx_cgco_add_identifier(code, expression->value.variable.identifier);
+		break;
+	case BX_COMP_VARIABLE_SYMBOL:
+		return -1; //TODO: Stub
+	default:
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Unexpected variable type in function 'variable_to_binary'");
+		return -1;
+	}
 
 	expression->type = BX_COMP_BINARY;
 	expression->value.code = code;
@@ -401,8 +412,7 @@ struct bx_comp_expr *bx_cgex_copy_expression(struct bx_comp_expr *expression) {
 		}
 
 	} else if (expression->type == BX_COMP_VARIABLE) {
-		memcpy(copy->value.identifier,
-				expression->value.identifier, DM_FIELD_IDENTIFIER_LENGTH);
+		copy->value.variable = expression->value.variable;
 
 	} else {
 		copy->value = expression->value;
