@@ -65,7 +65,7 @@ static struct bx_comp_expr *logical_not_bool(struct bx_comp_expr *operand1) {
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_bool_constant(!operand1->bx_value.bool_value);
+		return bx_cgex_create_bool_constant(!operand1->value.bool_value);
 	}
 
 	result = bx_cgex_copy_expression(operand1);
@@ -74,8 +74,8 @@ static struct bx_comp_expr *logical_not_bool(struct bx_comp_expr *operand1) {
 		return NULL;
 	}
 
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IPUSH_1);
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IXOR);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_IPUSH_1);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_IXOR);
 
 	return result;
 }
@@ -108,7 +108,7 @@ static struct bx_comp_expr *logical_or_bool(struct bx_comp_expr *operand1, struc
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_bool_constant(operand1->bx_value.bool_value || operand2->bx_value.bool_value);
+		return bx_cgex_create_bool_constant(operand1->value.bool_value || operand2->value.bool_value);
 	}
 
 	error = bx_cgex_convert_to_binary(operand1);
@@ -120,9 +120,9 @@ static struct bx_comp_expr *logical_or_bool(struct bx_comp_expr *operand1, struc
 	}
 
 	result = bx_cgex_create_binary_expression(BX_BOOL);
-	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
-	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IOR);
+	bx_cgco_append_code(result->value.code, operand1->value.code);
+	bx_cgco_append_code(result->value.code, operand2->value.code);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_IOR);
 
 	return result;
 }
@@ -155,7 +155,7 @@ static struct bx_comp_expr *logical_and_bool(struct bx_comp_expr *operand1, stru
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_bool_constant(operand1->bx_value.bool_value && operand2->bx_value.bool_value);
+		return bx_cgex_create_bool_constant(operand1->value.bool_value && operand2->value.bool_value);
 	}
 
 	error = bx_cgex_convert_to_binary(operand1);
@@ -167,9 +167,9 @@ static struct bx_comp_expr *logical_and_bool(struct bx_comp_expr *operand1, stru
 	}
 
 	result = bx_cgex_create_binary_expression(BX_BOOL);
-	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
-	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IAND);
+	bx_cgco_append_code(result->value.code, operand1->value.code);
+	bx_cgco_append_code(result->value.code, operand2->value.code);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_IAND);
 
 	return result;
 }

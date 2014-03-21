@@ -74,13 +74,13 @@ enum bx_comp_exp_type {
 struct bx_comp_expr {
 	enum bx_builtin_type data_type;
 	enum bx_comp_exp_type type;
-	union bx_value {
+	union bx_expr_value {
 		bx_int32 int_value;
 		bx_float32 float_value;
 		bx_boolean bool_value;
 		char identifier[DM_FIELD_IDENTIFIER_LENGTH];
 		struct bx_comp_code *code;
-	} bx_value;
+	} value;
 };
 
 

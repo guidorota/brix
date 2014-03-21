@@ -59,7 +59,7 @@ struct bx_comp_expr *bx_cgex_create_int_constant(bx_int32 value) {
 
 	expression->data_type = BX_INT;
 	expression->type = BX_COMP_CONSTANT;
-	expression->bx_value.int_value = value;
+	expression->value.int_value = value;
 
 	return expression;
 }
@@ -76,7 +76,7 @@ struct bx_comp_expr *bx_cgex_create_float_constant(bx_float32 value) {
 
 	expression->data_type = BX_FLOAT;
 	expression->type = BX_COMP_CONSTANT;
-	expression->bx_value.float_value = value;
+	expression->value.float_value = value;
 
 	return expression;
 }
@@ -93,7 +93,7 @@ struct bx_comp_expr *bx_cgex_create_bool_constant(bx_boolean value) {
 
 	expression->data_type = BX_BOOL;
 	expression->type = BX_COMP_CONSTANT;
-	expression->bx_value.bool_value = value;
+	expression->value.bool_value = value;
 
 	return expression;
 }
@@ -121,7 +121,7 @@ struct bx_comp_expr *bx_cgex_create_variable(struct bx_comp_symbol_table *symbol
 	//TODO: Differentiate between field and variables
 	expression->type = BX_COMP_VARIABLE;
 	expression->data_type = symbol->data_type;
-	memcpy(expression->bx_value.identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH);
+	memcpy(expression->value.identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH);
 
 	return expression;
 }
@@ -255,15 +255,15 @@ static bx_int8 constant_to_binary(struct bx_comp_expr *expression) {
 
 	switch(expression->data_type) {
 	case BX_INT:
-		constant_int_to_binary(code, expression->bx_value.int_value);
+		constant_int_to_binary(code, expression->value.int_value);
 		break;
 
 	case BX_FLOAT:
-		constant_float_to_binary(code, expression->bx_value.float_value);
+		constant_float_to_binary(code, expression->value.float_value);
 		break;
 
 	case BX_BOOL:
-		constant_bool_to_binary(code, expression->bx_value.bool_value);
+		constant_bool_to_binary(code, expression->value.bool_value);
 		break;
 
 	default:
@@ -273,7 +273,7 @@ static bx_int8 constant_to_binary(struct bx_comp_expr *expression) {
 	}
 
 	expression->type = BX_COMP_BINARY;
-	expression->bx_value.code = code;
+	expression->value.code = code;
 	return 0;
 }
 
@@ -326,10 +326,10 @@ static bx_int8 variable_to_binary(struct bx_comp_expr *expression) {
 		return -1;
 	}
 	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
-	bx_cgco_add_identifier(code, expression->bx_value.identifier);
+	bx_cgco_add_identifier(code, expression->value.identifier);
 
 	expression->type = BX_COMP_BINARY;
-	expression->bx_value.code = code;
+	expression->value.code = code;
 
 	return 0;
 }
@@ -341,8 +341,8 @@ struct bx_comp_expr *bx_cgex_create_binary_expression(enum bx_builtin_type data_
 	if (expression == NULL) {
 		return NULL;
 	}
-	expression->bx_value.code = bx_cgco_create();
-	if (expression->bx_value.code == NULL) {
+	expression->value.code = bx_cgco_create();
+	if (expression->value.code == NULL) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error creating bx_comp_code struct in 'bx_cgex_create_binary_expression'");
 		free(expression);
@@ -392,8 +392,8 @@ struct bx_comp_expr *bx_cgex_copy_expression(struct bx_comp_expr *expression) {
 	copy->data_type = expression->data_type;
 	copy->type = expression->type;
 	if (expression->type == BX_COMP_BINARY) {
-		copy->bx_value.code = bx_cgco_copy(expression->bx_value.code);
-		if (copy->bx_value.code == NULL) {
+		copy->value.code = bx_cgco_copy(expression->value.code);
+		if (copy->value.code == NULL) {
 			BX_LOG(LOG_ERROR, "codegen_expression",
 					"Error creating bx_comp_code struct in 'bx_cgex_create_binary_expression'");
 			free(copy);
@@ -401,11 +401,11 @@ struct bx_comp_expr *bx_cgex_copy_expression(struct bx_comp_expr *expression) {
 		}
 
 	} else if (expression->type == BX_COMP_VARIABLE) {
-		memcpy(copy->bx_value.identifier,
-				expression->bx_value.identifier, DM_FIELD_IDENTIFIER_LENGTH);
+		memcpy(copy->value.identifier,
+				expression->value.identifier, DM_FIELD_IDENTIFIER_LENGTH);
 
 	} else {
-		copy->bx_value = expression->bx_value;
+		copy->value = expression->value;
 	}
 
 	return copy;
@@ -418,7 +418,7 @@ void bx_cgex_destroy_expression(struct bx_comp_expr *expression) {
 	}
 
 	if (expression->type == BX_COMP_BINARY) {
-		bx_cgco_destroy(expression->bx_value.code);
+		bx_cgco_destroy(expression->value.code);
 	}
 
 	free(expression);

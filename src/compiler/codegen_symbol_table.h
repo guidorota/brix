@@ -53,7 +53,7 @@ struct bx_comp_symbol {
 	union bx_symbol_data {
 		enum bx_comp_creation_modifier creation_modifier;
 		bx_uint16 variable_number;
-	} bx_symbol_data;
+	} symbol_data;
 };
 
 struct bx_comp_scope {

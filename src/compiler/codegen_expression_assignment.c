@@ -90,9 +90,9 @@ static struct bx_comp_expr *assign_to_int(struct bx_comp_expr *destination, stru
 		return NULL;
 	}
 
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_DUP32);
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_STORE32);
-	bx_cgco_add_identifier(result->bx_value.code, destination->bx_value.identifier);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_identifier(result->value.code, destination->value.identifier);
 
 	return result;
 }
@@ -121,9 +121,9 @@ static struct bx_comp_expr *assign_to_float(struct bx_comp_expr *destination, st
 		return NULL;
 	}
 
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_DUP32);
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_STORE32);
-	bx_cgco_add_identifier(result->bx_value.code, destination->bx_value.identifier);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_identifier(result->value.code, destination->value.identifier);
 
 	return result;
 }
@@ -146,9 +146,9 @@ static struct bx_comp_expr *assign_to_boolean(struct bx_comp_expr *destination, 
 		return NULL;
 	}
 
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_DUP32);
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_STORE32);
-	bx_cgco_add_identifier(result->bx_value.code, destination->bx_value.identifier);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_STORE32);
+	bx_cgco_add_identifier(result->value.code, destination->value.identifier);
 
 	return result;
 }

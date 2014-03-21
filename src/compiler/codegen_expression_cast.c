@@ -65,7 +65,7 @@ struct bx_comp_expr *bx_cgex_float_to_int(struct bx_comp_expr *expression) {
 	struct bx_comp_expr *result;
 
 	if (expression->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_int_constant((bx_int32) expression->bx_value.float_value);
+		return bx_cgex_create_int_constant((bx_int32) expression->value.float_value);
 	}
 
 	result = bx_cgex_copy_expression(expression);
@@ -76,7 +76,7 @@ struct bx_comp_expr *bx_cgex_float_to_int(struct bx_comp_expr *expression) {
 		return NULL;
 	}
 
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_F2I);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_F2I);
 	result->data_type = BX_INT;
 	return result;
 }
@@ -86,7 +86,7 @@ struct bx_comp_expr *bx_cgex_bool_to_int(struct bx_comp_expr *expression) {
 	struct bx_comp_expr *result;
 
 	if (expression->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_int_constant((bx_int32) expression->bx_value.bool_value);
+		return bx_cgex_create_int_constant((bx_int32) expression->value.bool_value);
 	}
 
 	result = bx_cgex_copy_expression(expression);
@@ -133,7 +133,7 @@ struct bx_comp_expr *bx_cgex_int_to_float(struct bx_comp_expr *expression) {
 	struct bx_comp_expr *result;
 
 	if (expression->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_float_constant((bx_float32) expression->bx_value.int_value);
+		return bx_cgex_create_float_constant((bx_float32) expression->value.int_value);
 	}
 
 	result = bx_cgex_copy_expression(expression);
@@ -144,7 +144,7 @@ struct bx_comp_expr *bx_cgex_int_to_float(struct bx_comp_expr *expression) {
 		return NULL;
 	}
 
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_I2F);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_I2F);
 	result->data_type = BX_FLOAT;
 	return result;
 }
@@ -154,7 +154,7 @@ struct bx_comp_expr *bx_cgex_bool_to_float(struct bx_comp_expr *expression) {
 	struct bx_comp_expr *result;
 
 	if (expression->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_float_constant((bx_float32) expression->bx_value.bool_value);
+		return bx_cgex_create_float_constant((bx_float32) expression->value.bool_value);
 	}
 
 	result = bx_cgex_copy_expression(expression);
@@ -165,7 +165,7 @@ struct bx_comp_expr *bx_cgex_bool_to_float(struct bx_comp_expr *expression) {
 		return NULL;
 	}
 
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_I2F);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_I2F);
 	result->data_type = BX_FLOAT;
 	return result;
 }
@@ -206,7 +206,7 @@ struct bx_comp_expr *bx_cgex_int_to_bool(struct bx_comp_expr *expression) {
 
 	if (expression->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(
-				expression->bx_value.int_value == 0 ? BX_BOOLEAN_FALSE : BX_BOOLEAN_TRUE);
+				expression->value.int_value == 0 ? BX_BOOLEAN_FALSE : BX_BOOLEAN_TRUE);
 	}
 
 	result = bx_cgex_copy_expression(expression);
@@ -218,7 +218,7 @@ struct bx_comp_expr *bx_cgex_int_to_bool(struct bx_comp_expr *expression) {
 	}
 
 	result->data_type = BX_BOOL;
-	code = result->bx_value.code;
+	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_JEQZ);
 	false_label = bx_cgco_create_address_label(code);
 	bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
@@ -240,7 +240,7 @@ struct bx_comp_expr *bx_cgex_float_to_bool(struct bx_comp_expr *expression) {
 
 	if (expression->type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(
-				expression->bx_value.float_value == 0 ? BX_BOOLEAN_FALSE : BX_BOOLEAN_TRUE);
+				expression->value.float_value == 0 ? BX_BOOLEAN_FALSE : BX_BOOLEAN_TRUE);
 	}
 
 	result = bx_cgex_copy_expression(expression);
@@ -252,7 +252,7 @@ struct bx_comp_expr *bx_cgex_float_to_bool(struct bx_comp_expr *expression) {
 	}
 
 	result->data_type = BX_BOOL;
-	code = result->bx_value.code;
+	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_JEQZ);
 	false_label = bx_cgco_create_address_label(code);
 	bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);

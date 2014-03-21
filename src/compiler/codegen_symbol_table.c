@@ -146,7 +146,7 @@ bx_int8 bx_cgsy_add_field(struct bx_comp_symbol_table *symbol_table, char *ident
 	}
 
 	field_symbol->data_type = data_type;
-	field_symbol->bx_symbol_data.creation_modifier = creation_modifier;
+	field_symbol->symbol_data.creation_modifier = creation_modifier;
 	strncpy(field_symbol->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH);
 	BX_LOG(LOG_DEBUG, "symbol_table", "Symbol %s added", identifier);
 
@@ -186,7 +186,7 @@ bx_int8 bx_cgsy_add_variable(struct bx_comp_symbol_table *symbol_table, char *id
 	}
 
 	variable_symbol->data_type = data_type;
-	variable_symbol->bx_symbol_data.variable_number = symbol_table->current_variable_number++;
+	variable_symbol->symbol_data.variable_number = symbol_table->current_variable_number++;
 	memcpy(variable_symbol->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH);
 	bx_llist_add(&scope->variable_list, variable_symbol);
 

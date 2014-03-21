@@ -274,7 +274,7 @@ expression_statement
 	| expression ';'
 	{
 		bx_cgex_convert_to_binary($1);
-		$$ = bx_cgco_copy($1->bx_value.code);
+		$$ = bx_cgco_copy($1->value.code);
 		bx_cgex_destroy_expression($1);
 	}
 	;

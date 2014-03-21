@@ -89,7 +89,7 @@ bx_int8 bx_cgtk_add_at_execution_condition(struct bx_comp_task *task, struct bx_
 	}
 
 	//TODO: Optimize: if the condition is always false there's no need to create the task
-	task->at_execution_condition = bx_cgco_copy(boolean_condition->bx_value.code);
+	task->at_execution_condition = bx_cgco_copy(boolean_condition->value.code);
 	if (task->at_execution_condition == NULL) {
 		return -1;
 	}

@@ -138,7 +138,7 @@ START_TEST (int_assignment) {
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	code = result->bx_value.code;
+	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
 	bx_cgco_add_identifier(code, OUTPUT_INT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
@@ -163,7 +163,7 @@ START_TEST (float_assignment) {
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	code = result->bx_value.code;
+	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
 	bx_cgco_add_identifier(code, OUTPUT_FLOAT_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);
@@ -187,7 +187,7 @@ START_TEST (bool_assignment) {
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_BOOL);
-	code = result->bx_value.code;
+	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
 	bx_cgco_add_identifier(code, OUTPUT_BOOL_TEST_FIELD);
 	error = bx_vm_execute(code->data, code->size);

@@ -105,14 +105,14 @@ struct bx_comp_expr *postfix_dec_int(struct bx_comp_expr *operand1) {
 				"Error creating binary expression in functin 'postfix_dec_int'");
 		return NULL;
 	}
-	code = result->bx_value.code;
+	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
-	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_identifier(code, operand1->value.identifier);
 	bx_cgco_add_instruction(code, BX_INSTR_DUP32);
 	bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
 	bx_cgco_add_instruction(code, BX_INSTR_ISUB);
 	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
-	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_identifier(code, operand1->value.identifier);
 
 	return result;
 }
@@ -127,14 +127,14 @@ struct bx_comp_expr *postfix_dec_float(struct bx_comp_expr *operand1) {
 				"Error creating binary expression in functin 'postfix_dec_float'");
 		return NULL;
 	}
-	code = result->bx_value.code;
+	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
-	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_identifier(code, operand1->value.identifier);
 	bx_cgco_add_instruction(code, BX_INSTR_DUP32);
 	bx_cgco_add_instruction(code, BX_INSTR_FPUSH_1);
 	bx_cgco_add_instruction(code, BX_INSTR_FSUB);
 	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
-	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_identifier(code, operand1->value.identifier);
 
 	return result;
 }
@@ -178,14 +178,14 @@ struct bx_comp_expr *postfix_inc_int(struct bx_comp_expr *operand1) {
 				"Error creating binary expression in functin 'postfix_inc_int'");
 		return NULL;
 	}
-	code = result->bx_value.code;
+	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
-	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_identifier(code, operand1->value.identifier);
 	bx_cgco_add_instruction(code, BX_INSTR_DUP32);
 	bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
 	bx_cgco_add_instruction(code, BX_INSTR_IADD);
 	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
-	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_identifier(code, operand1->value.identifier);
 
 	return result;
 }
@@ -200,14 +200,14 @@ struct bx_comp_expr *postfix_inc_float(struct bx_comp_expr *operand1) {
 				"Error creating binary expression in functin 'postfix_inc_float'");
 		return NULL;
 	}
-	code = result->bx_value.code;
+	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
-	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_identifier(code, operand1->value.identifier);
 	bx_cgco_add_instruction(code, BX_INSTR_DUP32);
 	bx_cgco_add_instruction(code, BX_INSTR_FPUSH_1);
 	bx_cgco_add_instruction(code, BX_INSTR_FADD);
 	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
-	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_identifier(code, operand1->value.identifier);
 
 	return result;
 }
@@ -251,14 +251,14 @@ struct bx_comp_expr *prefix_dec_int(struct bx_comp_expr *operand1) {
 				"Error creating binary expression in functin 'prefix_inc_int'");
 		return NULL;
 	}
-	code = result->bx_value.code;
+	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
-	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_identifier(code, operand1->value.identifier);
 	bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
 	bx_cgco_add_instruction(code, BX_INSTR_ISUB);
 	bx_cgco_add_instruction(code, BX_INSTR_DUP32);
 	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
-	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_identifier(code, operand1->value.identifier);
 
 	return result;
 }
@@ -273,14 +273,14 @@ struct bx_comp_expr *prefix_dec_float(struct bx_comp_expr *operand1) {
 				"Error creating binary expression in functin 'prefix_inc_int'");
 		return NULL;
 	}
-	code = result->bx_value.code;
+	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
-	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_identifier(code, operand1->value.identifier);
 	bx_cgco_add_instruction(code, BX_INSTR_FPUSH_1);
 	bx_cgco_add_instruction(code, BX_INSTR_FSUB);
 	bx_cgco_add_instruction(code, BX_INSTR_DUP32);
 	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
-	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_identifier(code, operand1->value.identifier);
 
 	return result;
 }
@@ -324,14 +324,14 @@ struct bx_comp_expr *prefix_inc_int(struct bx_comp_expr *operand1) {
 				"Error creating binary expression in functin 'prefix_inc_int'");
 		return NULL;
 	}
-	code = result->bx_value.code;
+	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
-	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_identifier(code, operand1->value.identifier);
 	bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
 	bx_cgco_add_instruction(code, BX_INSTR_IADD);
 	bx_cgco_add_instruction(code, BX_INSTR_DUP32);
 	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
-	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_identifier(code, operand1->value.identifier);
 
 	return result;
 }
@@ -346,14 +346,14 @@ struct bx_comp_expr *prefix_inc_float(struct bx_comp_expr *operand1) {
 				"Error creating binary expression in functin 'prefix_inc_int'");
 		return NULL;
 	}
-	code = result->bx_value.code;
+	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_LOAD32);
-	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_identifier(code, operand1->value.identifier);
 	bx_cgco_add_instruction(code, BX_INSTR_FPUSH_1);
 	bx_cgco_add_instruction(code, BX_INSTR_FADD);
 	bx_cgco_add_instruction(code, BX_INSTR_DUP32);
 	bx_cgco_add_instruction(code, BX_INSTR_STORE32);
-	bx_cgco_add_identifier(code, operand1->bx_value.identifier);
+	bx_cgco_add_identifier(code, operand1->value.identifier);
 
 	return result;
 }
@@ -428,7 +428,7 @@ static struct bx_comp_expr *unary_minus_int(struct bx_comp_expr *operand1) {
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_int_constant(- operand1->bx_value.int_value);
+		return bx_cgex_create_int_constant(- operand1->value.int_value);
 	}
 
 	error = bx_cgex_convert_to_binary(operand1);
@@ -439,8 +439,8 @@ static struct bx_comp_expr *unary_minus_int(struct bx_comp_expr *operand1) {
 	}
 
 	result = bx_cgex_create_binary_expression(BX_INT);
-	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_INEG);
+	bx_cgco_append_code(result->value.code, operand1->value.code);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_INEG);
 
 	return result;
 }
@@ -450,7 +450,7 @@ static struct bx_comp_expr *unary_minus_float(struct bx_comp_expr *operand1) {
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_float_constant(- operand1->bx_value.float_value);
+		return bx_cgex_create_float_constant(- operand1->value.float_value);
 	}
 
 	error = bx_cgex_convert_to_binary(operand1);
@@ -461,8 +461,8 @@ static struct bx_comp_expr *unary_minus_float(struct bx_comp_expr *operand1) {
 	}
 
 	result = bx_cgex_create_binary_expression(BX_FLOAT);
-	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_FNEG);
+	bx_cgco_append_code(result->value.code, operand1->value.code);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_FNEG);
 
 	return result;
 }
@@ -507,7 +507,7 @@ static struct bx_comp_expr *add_int(struct bx_comp_expr *operand1, struct bx_com
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_int_constant(operand1->bx_value.int_value + operand2->bx_value.int_value);
+		return bx_cgex_create_int_constant(operand1->value.int_value + operand2->value.int_value);
 	}
 
 	error = bx_cgex_convert_to_binary(operand1);
@@ -519,9 +519,9 @@ static struct bx_comp_expr *add_int(struct bx_comp_expr *operand1, struct bx_com
 	}
 
 	result = bx_cgex_create_binary_expression(BX_INT);
-	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
-	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IADD);
+	bx_cgco_append_code(result->value.code, operand1->value.code);
+	bx_cgco_append_code(result->value.code, operand2->value.code);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_IADD);
 
 	return result;
 }
@@ -531,7 +531,7 @@ static struct bx_comp_expr *add_float(struct bx_comp_expr *operand1, struct bx_c
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_float_constant(operand1->bx_value.float_value + operand2->bx_value.float_value);
+		return bx_cgex_create_float_constant(operand1->value.float_value + operand2->value.float_value);
 	}
 
 	error = bx_cgex_convert_to_binary(operand1);
@@ -543,9 +543,9 @@ static struct bx_comp_expr *add_float(struct bx_comp_expr *operand1, struct bx_c
 	}
 
 	result = bx_cgex_create_binary_expression(BX_FLOAT);
-	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
-	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_FADD);
+	bx_cgco_append_code(result->value.code, operand1->value.code);
+	bx_cgco_append_code(result->value.code, operand2->value.code);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_FADD);
 
 	return result;
 }
@@ -593,7 +593,7 @@ static struct bx_comp_expr *sub_int(struct bx_comp_expr *operand1, struct bx_com
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_int_constant(operand1->bx_value.int_value - operand2->bx_value.int_value);
+		return bx_cgex_create_int_constant(operand1->value.int_value - operand2->value.int_value);
 	}
 
 	error = bx_cgex_convert_to_binary(operand1);
@@ -605,9 +605,9 @@ static struct bx_comp_expr *sub_int(struct bx_comp_expr *operand1, struct bx_com
 	}
 
 	result = bx_cgex_create_binary_expression(BX_INT);
-	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
-	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_ISUB);
+	bx_cgco_append_code(result->value.code, operand1->value.code);
+	bx_cgco_append_code(result->value.code, operand2->value.code);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_ISUB);
 
 	return result;
 }
@@ -617,7 +617,7 @@ static struct bx_comp_expr *sub_float(struct bx_comp_expr *operand1, struct bx_c
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_float_constant(operand1->bx_value.float_value - operand2->bx_value.float_value);
+		return bx_cgex_create_float_constant(operand1->value.float_value - operand2->value.float_value);
 	}
 
 	error = bx_cgex_convert_to_binary(operand1);
@@ -629,9 +629,9 @@ static struct bx_comp_expr *sub_float(struct bx_comp_expr *operand1, struct bx_c
 	}
 
 	result = bx_cgex_create_binary_expression(BX_FLOAT);
-	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
-	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_FSUB);
+	bx_cgco_append_code(result->value.code, operand1->value.code);
+	bx_cgco_append_code(result->value.code, operand2->value.code);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_FSUB);
 
 	return result;
 }
@@ -674,7 +674,7 @@ static struct bx_comp_expr *mul_int(struct bx_comp_expr *operand1, struct bx_com
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_int_constant(operand1->bx_value.int_value * operand2->bx_value.int_value);
+		return bx_cgex_create_int_constant(operand1->value.int_value * operand2->value.int_value);
 	}
 
 	error = bx_cgex_convert_to_binary(operand1);
@@ -686,9 +686,9 @@ static struct bx_comp_expr *mul_int(struct bx_comp_expr *operand1, struct bx_com
 	}
 
 	result = bx_cgex_create_binary_expression(BX_INT);
-	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
-	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IMUL);
+	bx_cgco_append_code(result->value.code, operand1->value.code);
+	bx_cgco_append_code(result->value.code, operand2->value.code);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_IMUL);
 
 	return result;
 }
@@ -698,7 +698,7 @@ static struct bx_comp_expr *mul_float(struct bx_comp_expr *operand1, struct bx_c
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_float_constant(operand1->bx_value.float_value * operand2->bx_value.float_value);
+		return bx_cgex_create_float_constant(operand1->value.float_value * operand2->value.float_value);
 	}
 
 	error = bx_cgex_convert_to_binary(operand1);
@@ -710,9 +710,9 @@ static struct bx_comp_expr *mul_float(struct bx_comp_expr *operand1, struct bx_c
 	}
 
 	result = bx_cgex_create_binary_expression(BX_FLOAT);
-	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
-	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_FMUL);
+	bx_cgco_append_code(result->value.code, operand1->value.code);
+	bx_cgco_append_code(result->value.code, operand2->value.code);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_FMUL);
 
 	return result;
 }
@@ -755,7 +755,7 @@ static struct bx_comp_expr *div_int(struct bx_comp_expr *operand1, struct bx_com
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_int_constant(operand1->bx_value.int_value / operand2->bx_value.int_value);
+		return bx_cgex_create_int_constant(operand1->value.int_value / operand2->value.int_value);
 	}
 
 	error = bx_cgex_convert_to_binary(operand1);
@@ -767,9 +767,9 @@ static struct bx_comp_expr *div_int(struct bx_comp_expr *operand1, struct bx_com
 	}
 
 	result = bx_cgex_create_binary_expression(BX_INT);
-	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
-	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IDIV);
+	bx_cgco_append_code(result->value.code, operand1->value.code);
+	bx_cgco_append_code(result->value.code, operand2->value.code);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_IDIV);
 
 	return result;
 }
@@ -779,7 +779,7 @@ static struct bx_comp_expr *div_float(struct bx_comp_expr *operand1, struct bx_c
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_float_constant(operand1->bx_value.float_value / operand2->bx_value.float_value);
+		return bx_cgex_create_float_constant(operand1->value.float_value / operand2->value.float_value);
 	}
 
 	error = bx_cgex_convert_to_binary(operand1);
@@ -791,9 +791,9 @@ static struct bx_comp_expr *div_float(struct bx_comp_expr *operand1, struct bx_c
 	}
 
 	result = bx_cgex_create_binary_expression(BX_FLOAT);
-	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
-	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_FDIV);
+	bx_cgco_append_code(result->value.code, operand1->value.code);
+	bx_cgco_append_code(result->value.code, operand2->value.code);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_FDIV);
 
 	return result;
 }
@@ -825,7 +825,7 @@ static struct bx_comp_expr *mod_int(struct bx_comp_expr *operand1, struct bx_com
 	struct bx_comp_expr *result;
 
 	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
-		return bx_cgex_create_int_constant(operand1->bx_value.int_value % operand2->bx_value.int_value);
+		return bx_cgex_create_int_constant(operand1->value.int_value % operand2->value.int_value);
 	}
 
 	error = bx_cgex_convert_to_binary(operand1);
@@ -837,9 +837,9 @@ static struct bx_comp_expr *mod_int(struct bx_comp_expr *operand1, struct bx_com
 	}
 
 	result = bx_cgex_create_binary_expression(BX_INT);
-	bx_cgco_append_code(result->bx_value.code, operand1->bx_value.code);
-	bx_cgco_append_code(result->bx_value.code, operand2->bx_value.code);
-	bx_cgco_add_instruction(result->bx_value.code, BX_INSTR_IMOD);
+	bx_cgco_append_code(result->value.code, operand1->value.code);
+	bx_cgco_append_code(result->value.code, operand2->value.code);
+	bx_cgco_add_instruction(result->value.code, BX_INSTR_IMOD);
 
 	return result;
 }
