@@ -47,33 +47,109 @@ struct bx_comp_field_symbol {
 	char identifier[DM_FIELD_IDENTIFIER_LENGTH];
 };
 
-struct bx_comp_variable_scope {
-	struct bx_comp_variable_scope *parent;
-	struct bx_linked_list *variable_list;
-};
-
 struct bx_comp_variable_symbol {
 	enum bx_builtin_type data_type;
 	bx_uint16 variable_number;
 	char identifier[DM_FIELD_IDENTIFIER_LENGTH];
 };
 
-bx_int8 bx_cgsy_init();
+struct bx_comp_scope {
+	struct bx_comp_scope *parent_scope;
+	struct bx_linked_list *variable_list;
+};
 
-bx_int8 bx_cgsy_add_field(char *identifier, enum bx_builtin_type data_type,
-		enum bx_comp_creation_modifier creation_modifier);
+struct bx_comp_symbol_table {
+	struct bx_comp_scope *current_scope;	///< Current variable scope
+	struct bx_linked_list *scope_list;		///< List of all scopes
+	struct bx_linked_list *field_list;		///< List of fields
+	bx_int16 current_variable_number;		///< Current variable number
+};
 
-struct bx_comp_field_symbol *bx_cgsy_get_field(char *identifier);
+/**
+ * Creates a new symbol table context.
+ * The symbol table context is used for storing references to variables
+ * and fields, and to allocate variable numeric references.
+ * Variables are stored in a data structure composed of a hierarchy of scopes.
+ * Each scope stores variable references encountered in a specific code block.
+ * The scope hierarchy is deepened as the parser finds new code blocks.
+ * Fields are stored in a flat data structure, since their namespace common
+ * for the entire device.
+ *
+ * @return New symbol table context, NULL on failure
+ */
+struct bx_comp_symbol_table *bx_cgsy_create_symbol_table();
 
-struct bx_comp_variable_scope *bx_cgsy_create_variable_scope(struct bx_comp_variable_scope *parent);
+/**
+ * Destroys the symbol table context passed as parameter and reclaims memory.
+ *
+ * @param symbol_table Symbol table to destroy
+ *
+ * @return 0 on success, -1 on failure
+ */
+bx_int8 bx_cgsy_destroy_symbol_table(struct bx_comp_symbol_table *symbol_table);
 
-bx_int8 bx_cgsy_destroy_variable_scope(struct bx_comp_variable_scope *variable_scope);
+/**
+ * Adds a new scope to the scope hierarchy, and sets it as the current_scope.
+ *
+ * @param symbol_table Target symbol table context.
+ *
+ * @return 0 on success, -1 on failure
+ */
+bx_int8 bx_cgsy_scope_down(struct bx_comp_symbol_table *symbol_table);
 
-bx_int8 bx_cgsy_add_variable(char *identifier, enum bx_builtin_type data_type,
-		struct bx_comp_variable_scope *scope);
+/**
+ * Moves up one position on the scope hierarchy.
+ *
+ * @param symbol_table Target symbol table context
+ *
+ * @return 0 on success, -1 on failure
+ */
+bx_int8 bx_cgsy_scope_up(struct bx_comp_symbol_table *symbol_table);
 
-struct bx_comp_variable_symbol *bx_cgsy_get_variable(struct bx_comp_variable_scope *scope, char *identifier);
+/**
+ * Adds a new field variable to the symbol table context.
+ *
+ * @param symbol_table Target symbol table
+ * @param identifier Field identifier
+ * @param data_type Field data type
+ * @param creation_modifier Field creation modifier (new or existing)
+ *
+ * @return 0 on success, -1 on failure
+ */
+bx_int8 bx_cgsy_add_field(struct bx_comp_symbol_table *symbol_table, char *identifier,
+		enum bx_builtin_type data_type, enum bx_comp_creation_modifier creation_modifier);
 
-bx_int8 bx_cgsy_reset();
+/**
+ * Adds a new variable to the current scope.
+ *
+ * @param symbol_table Target symbol table
+ * @param identifier Field identifier
+ * @param data_type Field data type
+ *
+ * @return 0 on success, -1 on failure
+ */
+bx_int8 bx_cgsy_add_variable(struct bx_comp_symbol_table *symbol_table, char *identifier,
+		enum bx_builtin_type data_type);
+
+/**
+ * Get field information by identifier.
+ *
+ * @param symbol_table Current symbol table
+ * @param identifier Identifier of the field to retrieve
+ *
+ * @return Field information, NULL on error or identifier not found
+ */
+struct bx_comp_field_symbol *bx_cgsy_get_field(struct bx_comp_symbol_table *symbol_table, char *identifier);
+
+/**
+ * Get variable information by identifier.
+ * The variable identifier is searched inside the current and higher scopes.
+ *
+ * @param symbol_table Current symbol table
+ * @param identifier Identifier of the variable to retrieve
+ *
+ * @return Variable information, NULL on error or identifier not found
+ */
+struct bx_comp_variable_symbol *bx_cgsy_get_variable(struct bx_comp_symbol_table *symbol_table, char *identifier);
 
 #endif /* CODEGEN_SYMBOL_TABLE_H_ */

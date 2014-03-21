@@ -37,10 +37,6 @@
 #include "utils/linked_list.h"
 #include "compiler/codegen_symbol_table.h"
 
-static struct bx_linked_list *field_symbol_list;
-
-static bx_uint16 current_variable_number;
-
 static bx_int8 field_identifier_equals(struct bx_comp_field_symbol *field_symbol, char *identifier) {
 	return strncmp(field_symbol->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH) == 0 ? 1 : 0;
 }
@@ -49,22 +45,99 @@ static bx_int8 variable_identifier_equals(struct bx_comp_variable_symbol *variab
 	return strncmp(variable_symbol->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH) == 0 ? 1 : 0;
 }
 
-bx_int8 bx_cgsy_init() {
-	bx_cgsy_reset();
+struct bx_comp_symbol_table *bx_cgsy_create_symbol_table() {
+	bx_int8 error;
+	struct bx_comp_symbol_table *symbol_table;
+
+	symbol_table = BX_MALLOC(struct bx_comp_symbol_table);
+	if (symbol_table == NULL) {
+		return NULL;
+	}
+
+	memset((void *) symbol_table, 0, sizeof (struct symbol_table));
+	error = bx_cgsy_scope_down(symbol_table);
+	if (error != 0) {
+		free(symbol_table);
+		return NULL;
+	}
+
+	return symbol_table;
+}
+
+bx_int8 bx_cgsy_destroy_symbol_table(struct bx_comp_symbol_table *symbol_table) {
+	struct bx_comp_field_symbol *field;
+	struct bx_comp_variable_symbol *variable;
+	struct bx_comp_scope *scope;
+
+	if (symbol_table == NULL) {
+		return -1;
+	}
+
+	while (symbol_table->field_list != NULL) {
+		field = bx_llist_remove_head(&symbol_table->field_list);
+		free(field);
+	}
+
+	while (symbol_table->scope_list != NULL) {
+		scope = bx_llist_remove_head(&symbol_table->scope_list);
+		while (scope->variable_list != NULL) {
+			variable = bx_llist_remove_head(&scope->variable_list);
+			free(variable);
+		}
+		free(scope);
+	}
+
+	free(symbol_table);
+	return 0;
+}
+
+bx_int8 bx_cgsy_scope_down(struct bx_comp_symbol_table *symbol_table) {
+	struct bx_comp_scope *child_scope;
+
+	if (symbol_table == NULL) {
+		return -1;
+	}
+
+	child_scope = BX_MALLOC(struct bx_comp_scope);
+	if (child_scope == NULL) {
+		return -1;
+	}
+
+	child_scope->parent_scope = symbol_table->current_scope;
+	symbol_table->current_scope = child_scope;
+	bx_llist_add(&symbol_table->scope_list, child_scope);
 
 	return 0;
 }
 
-bx_int8 bx_cgsy_add_field(char *identifier, enum bx_builtin_type data_type, enum bx_comp_creation_modifier creation_modifier) {
-	struct bx_comp_field_symbol *field_symbol;
-	struct bx_linked_list *node;
+bx_int8 bx_cgsy_scope_up(struct bx_comp_symbol_table *symbol_table) {
 
-	if (identifier == NULL) {
+	if (symbol_table == NULL) {
 		return -1;
 	}
 
-	if (bx_llist_contains_equals(field_symbol_list, identifier, (bx_llist_equals) &field_identifier_equals) == 1) {
-		BX_LOG(LOG_ERROR, "symbol_table", "Duplicate variable %s", identifier);
+	symbol_table->current_scope = symbol_table->current_scope->parent_scope;
+	return 0;
+}
+
+bx_int8 bx_cgsy_add_field(struct bx_comp_symbol_table *symbol_table, char *identifier,
+		enum bx_builtin_type data_type, enum bx_comp_creation_modifier creation_modifier) {
+	struct bx_linked_list *field_list;
+	struct bx_comp_field_symbol *field_symbol;
+	struct bx_linked_list *node;
+
+	if (symbol_table == NULL || identifier == NULL) {
+		return -1;
+	}
+
+	field_list = symbol_table->field_list;
+	if (bx_llist_contains_equals(field_list, identifier, (bx_llist_equals) &field_identifier_equals) == 1) {
+		BX_LOG(LOG_ERROR, "symbol_table", "Duplicate field declaration for '%s'", identifier);
+		return -1;
+	}
+
+	if (bx_cgsy_get_variable(symbol_table, identifier) != NULL) {
+		BX_LOG(LOG_ERROR, "symbol_table", "Duplicate use of identifier '%s'", identifier);
 		return -1;
 	}
 
@@ -78,7 +151,7 @@ bx_int8 bx_cgsy_add_field(char *identifier, enum bx_builtin_type data_type, enum
 	strncpy(field_symbol->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH);
 	BX_LOG(LOG_DEBUG, "symbol_table", "Symbol %s added", identifier);
 
-	node = bx_llist_add(&field_symbol_list, (void *) field_symbol);
+	node = bx_llist_add(&field_list, (void *) field_symbol);
 	if (node == NULL) {
 		return -1;
 	}
@@ -86,61 +159,25 @@ bx_int8 bx_cgsy_add_field(char *identifier, enum bx_builtin_type data_type, enum
 	return 0;
 }
 
-struct bx_comp_field_symbol *bx_cgsy_get_field(char *identifier) {
-
-	if (identifier == NULL) {
-		return NULL;
-	}
-
-	return bx_llist_find_equals(field_symbol_list, (void *) identifier, (bx_llist_equals) &field_identifier_equals);
-}
-
-struct bx_comp_variable_scope *bx_cgsy_create_variable_scope(struct bx_comp_variable_scope *parent) {
-	struct bx_comp_variable_scope *variable_scope;
-
-	variable_scope = BX_MALLOC(struct bx_comp_variable_scope);
-	if (variable_scope == NULL) {
-		return NULL;
-	}
-	variable_scope->variable_list = NULL;
-	variable_scope->parent = parent;
-
-	return variable_scope;
-}
-
-bx_int8 bx_cgsy_destroy_variable_scope(struct bx_comp_variable_scope *variable_scope) {
-	struct bx_linked_list *variable_list;
+bx_int8 bx_cgsy_add_variable(struct bx_comp_symbol_table *symbol_table, char *identifier,
+		enum bx_builtin_type data_type) {
+	struct bx_comp_scope *scope;
 	struct bx_comp_variable_symbol *variable_symbol;
 
-	if (variable_scope == NULL) {
+	if (symbol_table == NULL || identifier == NULL) {
 		return -1;
 	}
 
-	variable_list = variable_scope->variable_list;
-	while(variable_list != NULL) {
-		variable_symbol = bx_llist_remove_head(&variable_list);
-		free(variable_symbol);
-	}
-	free(variable_scope);
-
-	return 0;
-}
-
-bx_int8 bx_cgsy_add_variable(char *identifier, enum bx_builtin_type data_type,
-		struct bx_comp_variable_scope *scope) {
-	struct bx_comp_variable_symbol *variable_symbol;
-
-	if (identifier == NULL || scope == NULL) {
+	scope = symbol_table->current_scope;
+	if (bx_llist_contains_equals(scope->variable_list,
+			identifier, (bx_llist_equals) &variable_identifier_equals) == 1) {
+		BX_LOG(LOG_ERROR, "symbol_table", "Duplicate variable declaration for '%s'", identifier);
 		return -1;
 	}
 
-	if (bx_llist_contains_equals(scope->variable_list, identifier, (bx_llist_equals) &variable_identifier_equals) == 1) {
-		BX_LOG(LOG_ERROR, "symbol_table", "Duplicate variable %s", identifier);
-		return -1;
-	}
-
-	if (bx_llist_contains_equals(field_symbol_list, identifier, (bx_llist_equals) &field_identifier_equals) == 1) {
-		BX_LOG(LOG_ERROR, "symbol_table", "Duplicate variable %s", identifier);
+	if (bx_llist_contains_equals(symbol_table->field_list,
+			identifier, (bx_llist_equals) &field_identifier_equals) == 1) {
+		BX_LOG(LOG_ERROR, "symbol_table", "Duplicate use of identifier '%s'", identifier);
 		return -1;
 	}
 
@@ -150,43 +187,40 @@ bx_int8 bx_cgsy_add_variable(char *identifier, enum bx_builtin_type data_type,
 	}
 
 	variable_symbol->data_type = data_type;
-	variable_symbol->variable_number = current_variable_number++;
+	variable_symbol->variable_number = symbol_table->current_variable_number++;
 	memcpy(variable_symbol->identifier, identifier, DM_FIELD_IDENTIFIER_LENGTH);
 	bx_llist_add(&scope->variable_list, variable_symbol);
 
 	return 0;
 }
 
-struct bx_comp_variable_symbol *bx_cgsy_get_variable(struct bx_comp_variable_scope *scope, char *identifier) {
-	struct bx_comp_variable_scope *current_scope;
-	struct bx_comp_variable_symbol *variable_symbol;
+struct bx_comp_field_symbol *bx_cgsy_get_field(struct bx_comp_symbol_table *symbol_table, char *identifier) {
 
-	if (scope == NULL || identifier == NULL) {
+	if (symbol_table == NULL || identifier == NULL) {
 		return NULL;
 	}
 
-	current_scope = scope;
+	return bx_llist_find_equals(symbol_table->field_list,
+			(void *) identifier, (bx_llist_equals) &field_identifier_equals);
+}
+
+struct bx_comp_variable_symbol *bx_cgsy_get_variable(struct bx_comp_symbol_table *symbol_table, char *identifier) {
+	struct bx_comp_scope *current_scope;
+	struct bx_comp_variable_symbol *variable_symbol;
+
+	if (symbol_table == NULL || identifier == NULL) {
+		return NULL;
+	}
+
+	current_scope = symbol_table->current_scope;
 	while (current_scope != NULL) {
 		variable_symbol = bx_llist_find_equals(
 				current_scope->variable_list, identifier, (bx_llist_equals) &variable_identifier_equals);
 		if (variable_symbol != NULL) {
 			return variable_symbol;
 		}
-		current_scope = current_scope->parent;
+		current_scope = current_scope->parent_scope;
 	}
 
 	return NULL;
-}
-
-bx_int8 bx_cgsy_reset() {
-	struct bx_comp_field_symbol *symbol;
-
-	current_variable_number = 0;
-
-	while (field_symbol_list != NULL) {
-		symbol = (struct bx_comp_field_symbol *) bx_llist_remove_head(&field_symbol_list);
-		free(symbol);
-	}
-
-	return 0;
 }
