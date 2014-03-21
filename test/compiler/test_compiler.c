@@ -70,7 +70,7 @@ static struct bx_test_field_data boolean_test_field_data;
 static struct bx_document_field boolean_output_test_field;
 static struct bx_test_field_data boolean_output_test_field_data;
 
-static void run_program(char *program) {
+static bx_int8 run_program(char *program) {
 	bx_int8 error;
 	int parse_result;
 	struct bx_comp_task *main_task;
@@ -80,12 +80,18 @@ static void run_program(char *program) {
 	yyin = fmemopen(program, strlen(program), "r");
 	ck_assert_ptr_ne(yyin, NULL);
 	parse_result = yyparse();
-	ck_assert_int_eq(parse_result, 0);
+	if (parse_result != 0) {
+		bx_cgtk_destroy_task(main_task);
+		return -1;
+	}
 	fclose(yyin);
 
 	error = bx_vm_execute(main_task->code->data, main_task->code->size);
-	ck_assert_int_eq(error, 0);
+	if (error != 0) {
+		return -1;
+	}
 	bx_cgtk_destroy_task(main_task);
+	return 0;
 }
 
 START_TEST (init_test) {
@@ -159,42 +165,65 @@ START_TEST (assignment_test) {
 	bx_cgtk_destroy_task(main_task);
 } END_TEST
 
+START_TEST (local_variable_assignment_test) {
+	bx_int8 error;
+
+	error = run_program(
+			"field int int_test_field;"
+			"int temp;"
+			"temp = 5;"
+			"int_test_field = temp + 12;");
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 17);
+} END_TEST
+
 START_TEST (expression_test) {
-	run_program("field int int_test_field; int_test_field = 5 + 10;");
+	bx_int8 error;
+
+	error = run_program("field int int_test_field; int_test_field = 5 + 10;");
+	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 15);
 
-	run_program("field int int_test_field; int_test_field = 5 * 10;");
+	error = run_program("field int int_test_field; int_test_field = 5 * 10;");
+	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 50);
 
-	run_program("field int int_test_field; int_test_field = 5 * 10 + 5;");
+	error = run_program("field int int_test_field; int_test_field = 5 * 10 + 5;");
+	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 55);
 
-	run_program("field int int_test_field; int_test_field = 5 * (10 + 5);");
+	error = run_program("field int int_test_field; int_test_field = 5 * (10 + 5);");
+	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 75);
 
-	run_program("field int int_test_field; int_test_field = 5 * (10 + 5);");
+	error = run_program("field int int_test_field; int_test_field = 5 * (10 + 5);");
+	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 75);
 
-	run_program("field int int_test_field; int_test_field = 5 * (11 / 5);");
+	error = run_program("field int int_test_field; int_test_field = 5 * (11 / 5);");
+	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 10);
 
-	run_program(
+	error = run_program(
 			"field int int_test_field;"
 			"field float float_test_field;"
 			"float_test_field = 12.5;"
 			"int_test_field = 5 + float_test_field; ");
+	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 17);
 
-	run_program(
+	error = run_program(
 			"field bool boolean_test_field;"
 			"boolean_test_field = true;");
+	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_bool(&boolean_test_field), BX_BOOLEAN_TRUE);
 
-	run_program(
+	error = run_program(
 			"field bool boolean_test_field;"
 			"field int int_test_field;"
 			"boolean_test_field = true;"
 			"int_test_field = (int) boolean_test_field;");
+	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
 } END_TEST
 
@@ -212,6 +241,10 @@ Suite *test_compiler_create_suite(void) {
 
 	tcase = tcase_create("assignment_test");
 	tcase_add_test(tcase, assignment_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("local_variable_assignment_test");
+	tcase_add_test(tcase, local_variable_assignment_test);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("expression_test");

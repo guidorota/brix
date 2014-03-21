@@ -156,7 +156,7 @@ declaration_statement
 	}
 	| type_name IDENTIFIER ';'
 	{
-		
+		bx_cgsy_add_variable(current_task->symbol_table, $2, $1);
 	}
 	| type_name IDENTIFIER '=' expression ';'
 	{
