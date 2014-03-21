@@ -78,7 +78,7 @@ struct bx_comp_expr {
 		bx_int32 int_value;
 		bx_float32 float_value;
 		bx_boolean bool_value;
-		struct bx_comp_symbol variable;
+		struct bx_comp_symbol *variable;
 		struct bx_comp_code *code;
 	} value;
 };

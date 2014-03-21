@@ -121,7 +121,7 @@ struct bx_comp_expr *bx_cgex_create_variable(struct bx_comp_symbol_table *symbol
 
 	expression->type = BX_COMP_VARIABLE;
 	expression->data_type = symbol->data_type;
-	expression->value.variable = *symbol;
+	expression->value.variable = symbol;
 
 	return expression;
 }
@@ -326,14 +326,14 @@ static bx_int8 variable_to_binary(struct bx_comp_expr *expression) {
 		return -1;
 	}
 
-	switch (expression->value.variable.symbol_type) {
+	switch (expression->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
 		bx_cgco_add_instruction(code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(code, expression->value.variable.identifier);
+		bx_cgco_add_identifier(code, expression->value.variable->identifier);
 		break;
 	case BX_COMP_VARIABLE_SYMBOL:
 		bx_cgco_add_instruction(code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(code, expression->value.variable.symbol_data.variable_number);
+		bx_cgco_add_address(code, expression->value.variable->symbol_data.variable_number);
 		break;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression",

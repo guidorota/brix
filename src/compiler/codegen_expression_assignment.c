@@ -159,16 +159,16 @@ static struct bx_comp_expr *assign_to_boolean(struct bx_comp_expr *destination, 
 
 static bx_int8 add_32bit_assign_code(struct bx_comp_code *code, struct bx_comp_expr *destination) {
 
-	switch (destination->value.variable.symbol_type) {
+	switch (destination->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
 		bx_cgco_add_instruction(code, BX_INSTR_DUP32);
 		bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(code, destination->value.variable.identifier);
+		bx_cgco_add_identifier(code, destination->value.variable->identifier);
 		break;
 	case BX_COMP_VARIABLE_SYMBOL:
 		bx_cgco_add_instruction(code, BX_INSTR_DUP32);
 		bx_cgco_add_instruction(code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(code, destination->value.variable.symbol_data.variable_number);
+		bx_cgco_add_address(code, destination->value.variable->symbol_data.variable_number);
 		break;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression",

@@ -115,12 +115,21 @@ bx_int8 bx_cgsy_scope_down(struct bx_comp_symbol_table *symbol_table) {
 }
 
 bx_int8 bx_cgsy_scope_up(struct bx_comp_symbol_table *symbol_table) {
+	struct bx_comp_scope *parent_scope;
 
 	if (symbol_table == NULL) {
 		return -1;
 	}
 
-	symbol_table->current_scope = symbol_table->current_scope->parent_scope;
+	if (bx_llist_size(symbol_table->current_scope->variable_list) == 0) {
+		parent_scope = symbol_table->current_scope->parent_scope;
+		free(symbol_table->current_scope);
+		symbol_table->current_scope = parent_scope;
+
+	} else {
+		symbol_table->current_scope = symbol_table->current_scope->parent_scope;
+	}
+
 	return 0;
 }
 
