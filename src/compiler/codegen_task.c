@@ -44,11 +44,7 @@ struct bx_comp_task *bx_cgtk_create_task() {
 		free(task);
 		return NULL;
 	}
-	task->at_execution_condition = NULL;
-	task->on_execution_condition = NULL;
-	task->child_task_list = NULL;
-	task->parent = NULL;
-
+	memset((void *) task, 0, sizeof (struct bx_comp_task));
 	return task;
 }
 
