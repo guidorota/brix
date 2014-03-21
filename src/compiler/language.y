@@ -148,7 +148,7 @@ statement
 declaration_statement
 	: creation_modifier FIELD type_name IDENTIFIER ';'
 	{
-		bx_cgsy_add_field($4, $3, $1);
+		bx_cgsy_add_field(current_task->symbol_table, $4, $3, $1);
 	}
 	| creation_modifier FIELD type_name IDENTIFIER '=' expression ';'
 	{
@@ -644,7 +644,6 @@ int init_parser(struct bx_comp_task *main_task) {
 	if (main_task == NULL) {
 		return -1;
 	}
-	bx_cgsy_reset();
 	current_task = main_task;
 	
 	return 0;
