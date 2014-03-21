@@ -124,15 +124,17 @@ code_block
 statement
 	: declaration_statement
 	{
-	
+
 	}
 	| selection_statement
 	{
-	
+		bx_cgtk_append_code(current_task, $1);
+		bx_cgco_destroy($1);	
 	}
 	| iteration_statement
 	{
-	
+		bx_cgtk_append_code(current_task, $1);
+		bx_cgco_destroy($1);
 	}
 	| expression_statement
 	{
