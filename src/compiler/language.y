@@ -47,14 +47,15 @@ static struct bx_comp_task *current_task;
 %}
 
 %token FROM NETWORK FILTER GET EVERY QUEUE WINDOW EACH LOCAL PARENT AT DOCUMENT
-%token ON CHANGE IF ELSE ALLOW RESAMPLE EXISTING NEW INC_OP DEC_OP FIELD
-%token DO WHILE FOR AND_OP OR_OP EQ_OP NEQ_OP LE_OP GE_OP TRUE_CONSTANT FALSE_CONSTANT
+%token ON CHANGE ALLOW RESAMPLE EXISTING NEW INC_OP DEC_OP FIELD IF DO WHILE
+%token FOR AND_OP OR_OP EQ_OP NEQ_OP LE_OP GE_OP TRUE_CONSTANT FALSE_CONSTANT
 %token INT FLOAT BOOL STRING STREAM SUBNET
 
 %token <int_val> INT_CONSTANT
 %token <float_val> FLOAT_CONSTANT
 %token <string_val> IDENTIFIER
 %token <string_val> STRING_LITERAL
+%token <jump_label> ELSE
 
 %type <expression> expression
 %type <expression> conditional_expression
@@ -75,7 +76,7 @@ static struct bx_comp_task *current_task;
 %type <operator> unary_operator
 %type <data_type> type_name
 %type <creation_modifier> creation_modifier
-%type <jump_label> if_header
+%type <jump_label> if_statement
 
 %union {
 	enum bx_comp_creation_modifier creation_modifier;
@@ -198,20 +199,33 @@ iteration_statement
 	;
 	
 selection_statement
-	: if_header statement
+	: if_statement statement
 	{
 		bx_uint16 jump_address;
 		
 		jump_address = bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
 		bx_cgco_set_address_label(current_task->code, $1, jump_address);
 	}
-	| if_header statement ELSE statement
+	| if_statement statement ELSE 
 	{
-	
+		bx_uint16 jump_address;
+		
+		bx_cgco_add_instruction(current_task->code, BX_INSTR_JUMP);
+		$3 = bx_cgco_create_address_label(current_task->code);
+		
+		jump_address = bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
+		bx_cgco_set_address_label(current_task->code, $1, jump_address);
+	}
+	statement
+	{
+		bx_uint16 jump_address;
+		
+		jump_address = bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
+		bx_cgco_set_address_label(current_task->code, $3, jump_address);
 	}
 	;
 	
-if_header
+if_statement
 	: IF '(' expression ')'
 	{
 		struct bx_comp_expr *condition;
@@ -225,6 +239,7 @@ if_header
 		bx_cgex_destroy_expression(condition);
 		bx_cgex_destroy_expression($3);
 	}
+	;
 	
 conditional_execution_statement
 	: AT '(' expression ')' statement

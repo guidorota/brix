@@ -243,6 +243,20 @@ START_TEST (selection_statement_test) {
 			"if (0) int_test_field = 12;");
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 0);
+
+	error = run_program(
+			"field int int_test_field;"
+			"int_test_field = 0;"
+			"if (3) int_test_field = 12; else int_test_field = 6;");
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 12);
+
+	error = run_program(
+			"field int int_test_field;"
+			"int_test_field = 0;"
+			"if (0) int_test_field = 12; else int_test_field = 6;");
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 6);
 } END_TEST
 
 Suite *test_compiler_create_suite(void) {
