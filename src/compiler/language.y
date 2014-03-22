@@ -75,13 +75,6 @@ static struct bx_comp_task *current_task;
 %type <operator> unary_operator
 %type <data_type> type_name
 %type <creation_modifier> creation_modifier
-%type <task> statement_list
-%type <task> code_block
-%type <task> statement
-%type <code> iteration_statement
-%type <code> selection_statement
-%type <task> conditional_execution_statement
-%type <code> expression_statement
 
 %union {
 	enum bx_comp_creation_modifier creation_modifier;
@@ -91,8 +84,6 @@ static struct bx_comp_task *current_task;
 	bx_float32 float_val;
 	char *string_val;
 	struct bx_comp_expr *expression;
-	struct bx_comp_task *task;
-	struct bx_comp_code *code;
 }
 
 %start statement_list
@@ -100,50 +91,27 @@ static struct bx_comp_task *current_task;
 %%
 
 statement_list
-	: code_block
-	{
-	
-	}
-	| statement_list code_block
-	{
-	
-	}
-	;
-	
-code_block
 	: statement
-	{
-		
-	}
-	| '{' statement_list '}'
-	{
-	
-	}
+	| statement_list statement
 	;
 
 statement
-	: declaration_statement
+	: compound_statement
+	| declaration_statement
+	| selection_statement
+	| iteration_statement
+	| expression_statement
+	| conditional_execution_statement
+	;
+	
+compound_statement
+	: '{' '}'
 	{
 
 	}
-	| selection_statement
+	| '{' statement_list '}'
 	{
-		bx_cgtk_append_code(current_task, $1);
-		bx_cgco_destroy($1);	
-	}
-	| iteration_statement
-	{
-		bx_cgtk_append_code(current_task, $1);
-		bx_cgco_destroy($1);
-	}
-	| expression_statement
-	{
-		bx_cgtk_append_code(current_task, $1);
-		bx_cgco_destroy($1);
-	}
-	| conditional_execution_statement
-	{
-	
+
 	}
 	;
 	
@@ -239,15 +207,15 @@ selection_statement
 	;
 	
 conditional_execution_statement
-	: AT '(' expression ')' code_block
+	: AT '(' expression ')' statement
 	{
 	
 	}
-	| ON '(' event_descriptor ')' code_block
+	| ON '(' event_descriptor ')' statement
 	{
 	
 	}
-	| EVERY '(' expression ')' code_block
+	| EVERY '(' expression ')' statement
 	{
 	
 	}
@@ -270,14 +238,14 @@ event_trigger_modifier
 	
 expression_statement
 	: ';'
-	{
-		$$ = bx_cgco_create();
-	}
 	| expression ';'
 	{
-		bx_cgex_convert_to_binary($1);
-		$$ = bx_cgco_copy($1->value.code);
+		struct bx_comp_code *code;
+		
+		code = bx_cgco_copy($1->value.code);
 		bx_cgex_destroy_expression($1);
+		bx_cgtk_append_code(current_task, code);
+		bx_cgco_destroy(code);
 	}
 	;
 	
