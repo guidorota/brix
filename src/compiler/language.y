@@ -75,6 +75,7 @@ static struct bx_comp_task *current_task;
 %type <operator> unary_operator
 %type <data_type> type_name
 %type <creation_modifier> creation_modifier
+%type <jump_label> if_header
 
 %union {
 	enum bx_comp_creation_modifier creation_modifier;
@@ -84,6 +85,7 @@ static struct bx_comp_task *current_task;
 	bx_float32 float_val;
 	char *string_val;
 	struct bx_comp_expr *expression;
+	bx_comp_label jump_label;
 }
 
 %start statement_list
@@ -196,15 +198,33 @@ iteration_statement
 	;
 	
 selection_statement
-	: IF '(' expression ')' statement
+	: if_header statement
 	{
-	
+		bx_uint16 jump_address;
+		
+		jump_address = bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
+		bx_cgco_set_address_label(current_task->code, $1, jump_address);
 	}
-	| IF '(' expression ')' statement ELSE statement
+	| if_header statement ELSE statement
 	{
 	
 	}
 	;
+	
+if_header
+	: IF '(' expression ')'
+	{
+		struct bx_comp_expr *condition;
+		
+		condition = bx_cgex_cast($3, BX_BOOL);
+		bx_cgex_convert_to_binary(condition);
+		bx_cgtk_append_code(current_task, condition->value.code);
+		bx_cgco_add_instruction(current_task->code, BX_INSTR_JEQZ);
+		$$ = bx_cgco_create_address_label(current_task->code);
+	
+		bx_cgex_destroy_expression(condition);
+		bx_cgex_destroy_expression($3);
+	}
 	
 conditional_execution_statement
 	: AT '(' expression ')' statement
@@ -243,9 +263,10 @@ expression_statement
 		struct bx_comp_code *code;
 		
 		code = bx_cgco_copy($1->value.code);
-		bx_cgex_destroy_expression($1);
 		bx_cgtk_append_code(current_task, code);
+		
 		bx_cgco_destroy(code);
+		bx_cgex_destroy_expression($1);
 	}
 	;
 	

@@ -227,6 +227,24 @@ START_TEST (expression_test) {
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
 } END_TEST
 
+START_TEST (selection_statement_test) {
+	bx_int8 error;
+
+	error = run_program(
+			"field int int_test_field;"
+			"int_test_field = 0;"
+			"if (12) int_test_field = 12;");
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 12);
+
+	error = run_program(
+			"field int int_test_field;"
+			"int_test_field = 0;"
+			"if (0) int_test_field = 12;");
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 0);
+} END_TEST
+
 Suite *test_compiler_create_suite(void) {
 	Suite *suite = suite_create("bx_linked_list");
 	TCase *tcase;
@@ -249,6 +267,10 @@ Suite *test_compiler_create_suite(void) {
 
 	tcase = tcase_create("expression_test");
 	tcase_add_test(tcase, expression_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("selection_statement_test");
+	tcase_add_test(tcase, selection_statement_test);
 	suite_add_tcase(suite, tcase);
 
 	return suite;
