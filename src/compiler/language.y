@@ -36,6 +36,7 @@
 #include "codegen_expression.h"
 #include "codegen_code.h"
 #include "codegen_task.h"
+#include "codegen_while_statement.h"
 
 #define YYDEBUG 1
 int yylex(void);
@@ -55,9 +56,10 @@ static struct bx_comp_task *current_task;
 %token <float_val> FLOAT_CONSTANT
 %token <string_val> IDENTIFIER
 %token <string_val> STRING_LITERAL
+
 %token <jump_label> ELSE
 %token <jump_label> DO
-%token <jump_label> WHILE
+%token <while_statement> WHILE
 
 %type <expression> expression
 %type <expression> conditional_expression
@@ -78,6 +80,7 @@ static struct bx_comp_task *current_task;
 %type <operator> unary_operator
 %type <data_type> type_name
 %type <creation_modifier> creation_modifier
+
 %type <jump_label> if_statement
 
 %union {
@@ -89,7 +92,7 @@ static struct bx_comp_task *current_task;
 	char *string_val;
 	struct bx_comp_expr *expression;
 	bx_comp_label jump_label;
-	bx_size instruction_address;
+	struct bx_comp_while *while_statement;
 }
 
 %start network_definition
@@ -190,9 +193,33 @@ creation_modifier
 	;
 	
 iteration_statement
-	: WHILE '(' expression ')' statement
+	: WHILE '(' expression ')'
 	{
+		struct bx_comp_expr *condition;
+		struct bx_comp_while *while_statement;
 		
+		while_statement = bx_cgwh_create();
+		condition = bx_cgex_cast($3, BX_BOOL);
+		bx_cgex_convert_to_binary(condition);
+		while_statement->condition_address = bx_cgco_append_code(current_task->code, condition->value.code);
+		bx_cgco_add_instruction(current_task->code, BX_INSTR_JEQZ);
+		while_statement->label = bx_cgco_create_address_label(current_task->code);
+		$1 = while_statement;
+		
+		bx_cgex_destroy_expression(condition);
+		bx_cgex_destroy_expression($3);
+	}
+	statement
+	{
+		bx_uint16 jump_address;
+		
+		bx_cgco_add_instruction(current_task->code, BX_INSTR_JUMP);
+		bx_cgco_add_address(current_task->code, $1->condition_address);
+		
+		jump_address = bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
+		bx_cgco_set_address_label(current_task->code, $1->label, jump_address);
+		
+		bx_cgwh_destroy($1);
 	}
 	| DO statement WHILE '(' expression ')' ';'
 	{

@@ -41,6 +41,7 @@ LETTER		[a-zA-Z_]
 	#include "codegen_expression.h"
 	#include "codegen_code.h"
 	#include "codegen_task.h"
+	#include "codegen_while_statement.h"
 	#include "y.tab.h"
 }
 

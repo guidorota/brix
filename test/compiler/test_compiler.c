@@ -260,6 +260,28 @@ START_TEST (selection_statement_test) {
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 6);
 } END_TEST
 
+START_TEST (while_statement_test) {
+	bx_int8 error;
+
+	error = run_program(
+			"field int int_test_field;"
+			"int temp;"
+			"temp = 0;"
+			"while (temp < 0) temp++;"
+			"int_test_field = temp;");
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 0);
+
+	error = run_program(
+			"field int int_test_field;"
+			"int temp;"
+			"temp = 0;"
+			"while (temp < 10) temp++;"
+			"int_test_field = temp;");
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 10);
+} END_TEST
+
 Suite *test_compiler_create_suite(void) {
 	Suite *suite = suite_create("bx_linked_list");
 	TCase *tcase;
@@ -286,6 +308,10 @@ Suite *test_compiler_create_suite(void) {
 
 	tcase = tcase_create("selection_statement_test");
 	tcase_add_test(tcase, selection_statement_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("while_statement_test");
+	tcase_add_test(tcase, while_statement_test);
 	suite_add_tcase(suite, tcase);
 
 	return suite;
