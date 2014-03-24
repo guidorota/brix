@@ -93,11 +93,11 @@ START_TEST (cast_constant_to_int) {
 
 	expression = bx_cgex_create_int_constant(int_value);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(expression->data_type, BX_INT);
 	ck_assert_int_eq(expression->value.int_value, int_value);
 	cast = bx_cgex_cast(expression, BX_INT);
-	ck_assert_int_eq(cast->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(cast->data_type, BX_INT);
 	ck_assert_int_eq(cast->value.int_value, int_value);
 	bx_cgex_destroy_expression(expression);
@@ -105,11 +105,11 @@ START_TEST (cast_constant_to_int) {
 
 	expression = bx_cgex_create_float_constant(float_value);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(expression->data_type, BX_FLOAT);
 	ck_assert_int_eq(expression->value.float_value, float_value);
 	cast = bx_cgex_cast(expression, BX_INT);
-	ck_assert_int_eq(cast->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(cast->data_type, BX_INT);
 	ck_assert_int_eq(cast->value.int_value, (bx_int32) float_value);
 	bx_cgex_destroy_expression(expression);
@@ -117,11 +117,11 @@ START_TEST (cast_constant_to_int) {
 
 	expression = bx_cgex_create_bool_constant(BX_BOOLEAN_TRUE);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
 	ck_assert_int_eq(expression->value.bool_value, BX_BOOLEAN_TRUE);
 	cast = bx_cgex_cast(expression, BX_INT);
-	ck_assert_int_eq(cast->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(cast->data_type, BX_INT);
 	ck_assert_int_eq(cast->value.int_value, (bx_int32) BX_BOOLEAN_TRUE);
 	bx_cgex_destroy_expression(expression);
@@ -129,11 +129,11 @@ START_TEST (cast_constant_to_int) {
 
 	expression = bx_cgex_create_bool_constant(BX_BOOLEAN_FALSE);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
 	ck_assert_int_eq(expression->value.bool_value, BX_BOOLEAN_FALSE);
 	cast = bx_cgex_cast(expression, BX_INT);
-	ck_assert_int_eq(cast->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(cast->data_type, BX_INT);
 	ck_assert_int_eq(cast->value.int_value, (bx_int32) BX_BOOLEAN_FALSE);
 	bx_cgex_destroy_expression(expression);
@@ -151,10 +151,10 @@ START_TEST (cast_binary_to_int) {
 	bx_test_field_set_int(&int_test_field, int_value);
 	expression = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_INT);
 	cast = bx_cgex_cast(expression, BX_INT);
-	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_INT);
 	code = cast->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -168,10 +168,10 @@ START_TEST (cast_binary_to_int) {
 	bx_test_field_set_float(&float_test_field, float_value);
 	expression = bx_cgex_create_variable(symbol_table, FLOAT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_FLOAT);
 	cast = bx_cgex_cast(expression, BX_INT);
-	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_INT);
 	code = cast->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -185,10 +185,10 @@ START_TEST (cast_binary_to_int) {
 	bx_test_field_set_bool(&boolean_test_field, BX_BOOLEAN_FALSE);
 	expression = bx_cgex_create_variable(symbol_table, BOOLEAN_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
 	cast = bx_cgex_cast(expression, BX_INT);
-	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_INT);
 	code = cast->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -202,10 +202,10 @@ START_TEST (cast_binary_to_int) {
 	bx_test_field_set_bool(&boolean_test_field, BX_BOOLEAN_TRUE);
 	expression = bx_cgex_create_variable(symbol_table, BOOLEAN_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
 	cast = bx_cgex_cast(expression, BX_INT);
-	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_INT);
 	code = cast->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -225,11 +225,11 @@ START_TEST (cast_constant_to_float) {
 
 	expression = bx_cgex_create_int_constant(int_value);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(expression->data_type, BX_INT);
 	ck_assert_int_eq(expression->value.int_value, int_value);
 	cast = bx_cgex_cast(expression, BX_FLOAT);
-	ck_assert_int_eq(cast->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(cast->data_type, BX_FLOAT);
 	ck_assert_int_eq(cast->value.float_value, (bx_float32) int_value);
 	bx_cgex_destroy_expression(expression);
@@ -237,11 +237,11 @@ START_TEST (cast_constant_to_float) {
 
 	expression = bx_cgex_create_float_constant(float_value);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(expression->data_type, BX_FLOAT);
 	ck_assert_int_eq(expression->value.float_value, float_value);
 	cast = bx_cgex_cast(expression, BX_FLOAT);
-	ck_assert_int_eq(cast->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(cast->data_type, BX_FLOAT);
 	ck_assert_int_eq(cast->value.float_value, float_value);
 	bx_cgex_destroy_expression(expression);
@@ -249,11 +249,11 @@ START_TEST (cast_constant_to_float) {
 
 	expression = bx_cgex_create_bool_constant(BX_BOOLEAN_TRUE);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
 	ck_assert_int_eq(expression->value.bool_value, BX_BOOLEAN_TRUE);
 	cast = bx_cgex_cast(expression, BX_FLOAT);
-	ck_assert_int_eq(cast->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(cast->data_type, BX_FLOAT);
 	ck_assert_int_eq(cast->value.float_value, (bx_float32) BX_BOOLEAN_TRUE);
 	bx_cgex_destroy_expression(expression);
@@ -261,11 +261,11 @@ START_TEST (cast_constant_to_float) {
 
 	expression = bx_cgex_create_bool_constant(BX_BOOLEAN_FALSE);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
 	ck_assert_int_eq(expression->value.bool_value, BX_BOOLEAN_FALSE);
 	cast = bx_cgex_cast(expression, BX_FLOAT);
-	ck_assert_int_eq(cast->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(cast->data_type, BX_FLOAT);
 	ck_assert_int_eq(cast->value.float_value, (bx_float32) BX_BOOLEAN_FALSE);
 	bx_cgex_destroy_expression(expression);
@@ -283,10 +283,10 @@ START_TEST (cast_binary_to_float) {
 	bx_test_field_set_int(&int_test_field, int_value);
 	expression = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_INT);
 	cast = bx_cgex_cast(expression, BX_FLOAT);
-	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_FLOAT);
 	code = cast->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -300,10 +300,10 @@ START_TEST (cast_binary_to_float) {
 	bx_test_field_set_float(&float_test_field, float_value);
 	expression = bx_cgex_create_variable(symbol_table, FLOAT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_FLOAT);
 	cast = bx_cgex_cast(expression, BX_FLOAT);
-	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_FLOAT);
 	code = cast->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -317,10 +317,10 @@ START_TEST (cast_binary_to_float) {
 	bx_test_field_set_bool(&boolean_test_field, BX_BOOLEAN_FALSE);
 	expression = bx_cgex_create_variable(symbol_table, BOOLEAN_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
 	cast = bx_cgex_cast(expression, BX_FLOAT);
-	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_FLOAT);
 	code = cast->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -334,10 +334,10 @@ START_TEST (cast_binary_to_float) {
 	bx_test_field_set_bool(&boolean_test_field, BX_BOOLEAN_TRUE);
 	expression = bx_cgex_create_variable(symbol_table, BOOLEAN_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
 	cast = bx_cgex_cast(expression, BX_FLOAT);
-	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_FLOAT);
 	code = cast->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -359,11 +359,11 @@ START_TEST (cast_constant_to_bool) {
 
 	expression = bx_cgex_create_int_constant(int_value);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(expression->data_type, BX_INT);
 	ck_assert_int_eq(expression->value.int_value, int_value);
 	cast = bx_cgex_cast(expression, BX_BOOL);
-	ck_assert_int_eq(cast->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(cast->data_type, BX_BOOL);
 	ck_assert_int_eq(cast->value.bool_value, BX_BOOLEAN_TRUE);
 	bx_cgex_destroy_expression(expression);
@@ -371,11 +371,11 @@ START_TEST (cast_constant_to_bool) {
 
 	expression = bx_cgex_create_int_constant(int_value_0);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(expression->data_type, BX_INT);
 	ck_assert_int_eq(expression->value.int_value, int_value_0);
 	cast = bx_cgex_cast(expression, BX_BOOL);
-	ck_assert_int_eq(cast->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(cast->data_type, BX_BOOL);
 	ck_assert_int_eq(cast->value.bool_value, BX_BOOLEAN_FALSE);
 	bx_cgex_destroy_expression(expression);
@@ -383,11 +383,11 @@ START_TEST (cast_constant_to_bool) {
 
 	expression = bx_cgex_create_float_constant(float_value);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(expression->data_type, BX_FLOAT);
 	ck_assert_int_eq(expression->value.float_value, float_value);
 	cast = bx_cgex_cast(expression, BX_BOOL);
-	ck_assert_int_eq(cast->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(cast->data_type, BX_BOOL);
 	ck_assert_int_eq(cast->value.bool_value, BX_BOOLEAN_TRUE);
 	bx_cgex_destroy_expression(expression);
@@ -395,11 +395,11 @@ START_TEST (cast_constant_to_bool) {
 
 	expression = bx_cgex_create_float_constant(float_value_0);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(expression->data_type, BX_FLOAT);
 	ck_assert_int_eq(expression->value.float_value, float_value_0);
 	cast = bx_cgex_cast(expression, BX_BOOL);
-	ck_assert_int_eq(cast->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(cast->data_type, BX_BOOL);
 	ck_assert_int_eq(cast->value.bool_value, BX_BOOLEAN_FALSE);
 	bx_cgex_destroy_expression(expression);
@@ -407,11 +407,11 @@ START_TEST (cast_constant_to_bool) {
 
 	expression = bx_cgex_create_bool_constant(BX_BOOLEAN_TRUE);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
 	ck_assert_int_eq(expression->value.bool_value, BX_BOOLEAN_TRUE);
 	cast = bx_cgex_cast(expression, BX_BOOL);
-	ck_assert_int_eq(cast->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(cast->data_type, BX_BOOL);
 	ck_assert_int_eq(cast->value.bool_value, BX_BOOLEAN_TRUE);
 	bx_cgex_destroy_expression(expression);
@@ -419,11 +419,11 @@ START_TEST (cast_constant_to_bool) {
 
 	expression = bx_cgex_create_bool_constant(BX_BOOLEAN_FALSE);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
 	ck_assert_int_eq(expression->value.bool_value, BX_BOOLEAN_FALSE);
 	cast = bx_cgex_cast(expression, BX_BOOL);
-	ck_assert_int_eq(cast->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(cast->data_type, BX_BOOL);
 	ck_assert_int_eq(cast->value.bool_value, BX_BOOLEAN_FALSE);
 	bx_cgex_destroy_expression(expression);
@@ -443,10 +443,10 @@ START_TEST (cast_binary_to_bool) {
 	bx_test_field_set_int(&int_test_field, int_value);
 	expression = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_INT);
 	cast = bx_cgex_cast(expression, BX_BOOL);
-	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_BOOL);
 	code = cast->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -460,10 +460,10 @@ START_TEST (cast_binary_to_bool) {
 	bx_test_field_set_int(&int_test_field, int_value_0);
 	expression = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_INT);
 	cast = bx_cgex_cast(expression, BX_BOOL);
-	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_BOOL);
 	code = cast->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -477,10 +477,10 @@ START_TEST (cast_binary_to_bool) {
 	bx_test_field_set_float(&float_test_field, float_value);
 	expression = bx_cgex_create_variable(symbol_table, FLOAT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_FLOAT);
 	cast = bx_cgex_cast(expression, BX_BOOL);
-	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_BOOL);
 	code = cast->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -494,10 +494,10 @@ START_TEST (cast_binary_to_bool) {
 	bx_test_field_set_float(&float_test_field, float_value_0);
 	expression = bx_cgex_create_variable(symbol_table, FLOAT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_FLOAT);
 	cast = bx_cgex_cast(expression, BX_BOOL);
-	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_BOOL);
 	code = cast->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -511,10 +511,10 @@ START_TEST (cast_binary_to_bool) {
 	bx_test_field_set_bool(&boolean_test_field, BX_BOOLEAN_FALSE);
 	expression = bx_cgex_create_variable(symbol_table, BOOLEAN_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
 	cast = bx_cgex_cast(expression, BX_BOOL);
-	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_BOOL);
 	code = cast->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -528,10 +528,10 @@ START_TEST (cast_binary_to_bool) {
 	bx_test_field_set_bool(&boolean_test_field, BX_BOOLEAN_TRUE);
 	expression = bx_cgex_create_variable(symbol_table, BOOLEAN_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
 	cast = bx_cgex_cast(expression, BX_BOOL);
-	ck_assert_int_eq(cast->type, BX_COMP_BINARY);
+	ck_assert_int_eq(cast->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(cast->data_type, BX_BOOL);
 	code = cast->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);

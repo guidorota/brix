@@ -390,12 +390,9 @@ expression_statement
 	}
 	| expression ';'
 	{
-		struct bx_comp_code *code;
+		bx_cgex_convert_to_binary($1);
+		bx_cgco_append_code(current_task->code, $1->value.code);
 		
-		code = bx_cgco_copy($1->value.code);
-		bx_cgco_append_code(current_task->code, code);
-		
-		bx_cgco_destroy(code);
 		bx_cgex_destroy_expression($1);
 	}
 	;
@@ -417,57 +414,6 @@ expression
 	{
 	
 	}
-	;
-	
-resample_expression
-	: RESAMPLE source_modifier IDENTIFIER EVERY expression
-	;
-	
-query_expression
-	: subnet_expression
-	| subnet_expression document_stream
-	;
-	
-document_stream
-	: windowed_document_stream
-	| ON event_descriptor windowed_document_stream
-	| EVERY conditional_expression resample_modifier windowed_document_stream
-	;
-	
-resample_modifier
-	:
-	| ALLOW RESAMPLE
-	;
-	
-windowed_document_stream
-	: basic_document_stream
-	| WINDOW conditional_expression EACH conditional_expression basic_document_stream
-	| QUEUE conditional_expression EACH conditional_expression basic_document_stream
-	;
-	
-basic_document_stream
-	: GET document_structure_definition
-	| GET document_structure_definition FILTER conditional_expression
-	;
-	
-subnet_expression
-	: FROM conditional_expression
-	| FROM conditional_expression FILTER conditional_expression
-	;
-
-document_structure_definition
-	: DOCUMENT '{' document_field_list '}'
-	;
-	
-document_field_list
-	: document_field
-	| document_field_list ',' document_field
-	;
-	
-document_field
-	: type_name IDENTIFIER
-	| type_name IDENTIFIER ':' expression
-	| type_name IDENTIFIER ':' document_structure_definition
 	;
 
 assignment_expression
@@ -752,6 +698,57 @@ conditional_expression
 		$$ = $1;
 	}
 	| logical_or_expression '?' expression ':' conditional_expression
+	;
+
+resample_expression
+	: RESAMPLE source_modifier IDENTIFIER EVERY expression
+	;
+	
+query_expression
+	: subnet_expression
+	| subnet_expression document_stream
+	;
+	
+document_stream
+	: windowed_document_stream
+	| ON event_descriptor windowed_document_stream
+	| EVERY conditional_expression resample_modifier windowed_document_stream
+	;
+	
+resample_modifier
+	:
+	| ALLOW RESAMPLE
+	;
+	
+windowed_document_stream
+	: basic_document_stream
+	| WINDOW conditional_expression EACH conditional_expression basic_document_stream
+	| QUEUE conditional_expression EACH conditional_expression basic_document_stream
+	;
+	
+basic_document_stream
+	: GET document_structure_definition
+	| GET document_structure_definition FILTER conditional_expression
+	;
+	
+subnet_expression
+	: FROM conditional_expression
+	| FROM conditional_expression FILTER conditional_expression
+	;
+
+document_structure_definition
+	: DOCUMENT '{' document_field_list '}'
+	;
+	
+document_field_list
+	: document_field
+	| document_field_list ',' document_field
+	;
+	
+document_field
+	: type_name IDENTIFIER
+	| type_name IDENTIFIER ':' expression
+	| type_name IDENTIFIER ':' document_structure_definition
 	;
 
 %%

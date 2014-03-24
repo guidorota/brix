@@ -140,7 +140,7 @@ START_TEST (int_assignment) {
 	expression = bx_cgex_create_int_constant(value);
 	result = bx_cgex_assignment_expression(destination, expression);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -165,7 +165,7 @@ START_TEST (float_assignment) {
 	expression = bx_cgex_create_float_constant(value);
 	result = bx_cgex_assignment_expression(destination, expression);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -189,7 +189,7 @@ START_TEST (bool_assignment) {
 	expression = bx_cgex_create_bool_constant(BX_BOOLEAN_TRUE);
 	result = bx_cgex_assignment_expression(destination, expression);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_BOOL);
 	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -213,7 +213,7 @@ START_TEST (local_variable_assignment) {
 	constant = bx_cgex_create_int_constant(value);
 	result =  bx_cgex_assignment_expression(destination, constant);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);

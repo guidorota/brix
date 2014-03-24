@@ -64,7 +64,7 @@ struct bx_comp_expr *bx_cgex_float_to_int(struct bx_comp_expr *expression) {
 	bx_int8 error;
 	struct bx_comp_expr *result;
 
-	if (expression->type == BX_COMP_CONSTANT) {
+	if (expression->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_int_constant((bx_int32) expression->value.float_value);
 	}
 
@@ -85,7 +85,7 @@ struct bx_comp_expr *bx_cgex_bool_to_int(struct bx_comp_expr *expression) {
 	bx_int8 error;
 	struct bx_comp_expr *result;
 
-	if (expression->type == BX_COMP_CONSTANT) {
+	if (expression->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_int_constant((bx_int32) expression->value.bool_value);
 	}
 
@@ -132,7 +132,7 @@ struct bx_comp_expr *bx_cgex_int_to_float(struct bx_comp_expr *expression) {
 	bx_int8 error;
 	struct bx_comp_expr *result;
 
-	if (expression->type == BX_COMP_CONSTANT) {
+	if (expression->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_float_constant((bx_float32) expression->value.int_value);
 	}
 
@@ -153,7 +153,7 @@ struct bx_comp_expr *bx_cgex_bool_to_float(struct bx_comp_expr *expression) {
 	bx_int8 error;
 	struct bx_comp_expr *result;
 
-	if (expression->type == BX_COMP_CONSTANT) {
+	if (expression->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_float_constant((bx_float32) expression->value.bool_value);
 	}
 
@@ -204,7 +204,7 @@ struct bx_comp_expr *bx_cgex_int_to_bool(struct bx_comp_expr *expression) {
 	bx_ssize false_jump_address, true_jump_address;
 	struct bx_comp_code *code;
 
-	if (expression->type == BX_COMP_CONSTANT) {
+	if (expression->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(
 				expression->value.int_value == 0 ? BX_BOOLEAN_FALSE : BX_BOOLEAN_TRUE);
 	}
@@ -238,7 +238,7 @@ struct bx_comp_expr *bx_cgex_float_to_bool(struct bx_comp_expr *expression) {
 	bx_ssize false_jump_address, true_jump_address;
 	struct bx_comp_code *code;
 
-	if (expression->type == BX_COMP_CONSTANT) {
+	if (expression->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(
 				expression->value.float_value == 0 ? BX_BOOLEAN_FALSE : BX_BOOLEAN_TRUE);
 	}
@@ -303,7 +303,7 @@ struct bx_comp_expr *bx_cgex_same_type_cast(struct bx_comp_expr *expression) {
 
 	result = bx_cgex_copy_expression(expression);
 
-	if (result->type != BX_COMP_VARIABLE) {
+	if (result->expression_type != BX_COMP_VARIABLE) {
 		return result;
 	}
 

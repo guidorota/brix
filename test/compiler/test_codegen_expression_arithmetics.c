@@ -100,21 +100,21 @@ START_TEST (create_constant) {
 
 	expression = bx_cgex_create_int_constant(int_value);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(expression->data_type, BX_INT);
 	ck_assert_int_eq(expression->value.int_value, int_value);
 	bx_cgex_destroy_expression(expression);
 
 	expression = bx_cgex_create_float_constant(float_value);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(expression->data_type, BX_FLOAT);
 	ck_assert_int_eq(expression->value.float_value, float_value);
 	bx_cgex_destroy_expression(expression);
 
 	expression = bx_cgex_create_bool_constant(bool_value);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(expression->data_type, BX_BOOL);
 	ck_assert_int_eq(expression->value.bool_value, bool_value);
 	bx_cgex_destroy_expression(expression);
@@ -129,7 +129,7 @@ START_TEST (create_variable) {
 	bx_test_field_set_int(&int_test_field, int_value);
 	expression = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_INT);
 	error = bx_cgex_convert_to_binary(expression);
 	ck_assert_int_eq(error, 0);
@@ -155,7 +155,7 @@ START_TEST (copy_expression) {
 	copy = bx_cgex_copy_expression(expression);
 	ck_assert_ptr_ne(copy, NULL);
 	ck_assert_ptr_ne(copy, expression);
-	ck_assert_int_eq(copy->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(copy->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(copy->data_type, BX_INT);
 	ck_assert_int_eq(copy->value.int_value, int_value);
 	bx_cgex_destroy_expression(expression);
@@ -165,7 +165,7 @@ START_TEST (copy_expression) {
 	copy = bx_cgex_copy_expression(expression);
 	ck_assert_ptr_ne(copy, NULL);
 	ck_assert_ptr_ne(copy, expression);
-	ck_assert_int_eq(copy->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(copy->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(copy->data_type, BX_FLOAT);
 	ck_assert_int_eq(copy->value.float_value, float_value);
 	bx_cgex_destroy_expression(expression);
@@ -175,7 +175,7 @@ START_TEST (copy_expression) {
 	copy = bx_cgex_copy_expression(expression);
 	ck_assert_ptr_ne(copy, NULL);
 	ck_assert_ptr_ne(copy, expression);
-	ck_assert_int_eq(copy->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(copy->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(copy->data_type, BX_BOOL);
 	ck_assert_int_eq(copy->value.bool_value, bool_value);
 	bx_cgex_destroy_expression(expression);
@@ -184,18 +184,18 @@ START_TEST (copy_expression) {
 	bx_test_field_set_int(&int_test_field, int_value);
 	expression = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(expression, NULL);
-	ck_assert_int_eq(expression->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_VARIABLE);
 	ck_assert_int_eq(expression->data_type, BX_INT);
 	ck_assert_ptr_ne(expression->value.code, NULL);
 	error = bx_cgex_convert_to_binary(expression);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(expression->type, BX_COMP_BINARY);
+	ck_assert_int_eq(expression->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(expression->data_type, BX_INT);
 	ck_assert_ptr_ne(expression->value.code, NULL);
 	copy = bx_cgex_copy_expression(expression);
 	ck_assert_ptr_ne(copy, NULL);
 	ck_assert_ptr_ne(copy, expression);
-	ck_assert_int_eq(copy->type, BX_COMP_BINARY);
+	ck_assert_int_eq(copy->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(copy->data_type, BX_INT);
 	ck_assert_int_eq(copy->value.code->capacity, expression->value.code->capacity);
 	ck_assert_int_eq(copy->value.code->size, expression->value.code->size);
@@ -222,7 +222,7 @@ START_TEST (addition_operator) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_ADD);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->value.int_value, int_operand1 + int_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -236,7 +236,7 @@ START_TEST (addition_operator) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_ADD);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->value.float_value, float_operand1 + float_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -250,7 +250,7 @@ START_TEST (addition_operator) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_ADD);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->value.float_value, int_operand1 + float_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -264,7 +264,7 @@ START_TEST (addition_operator) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_ADD);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->value.float_value, float_operand1 + int_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -280,7 +280,7 @@ START_TEST (addition_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_ADD);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -300,7 +300,7 @@ START_TEST (addition_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_ADD);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
@@ -321,7 +321,7 @@ START_TEST (addition_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_ADD);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
@@ -342,7 +342,7 @@ START_TEST (addition_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_ADD);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
@@ -362,7 +362,7 @@ START_TEST (addition_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_ADD);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -382,7 +382,7 @@ START_TEST (addition_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_ADD);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
@@ -412,7 +412,7 @@ START_TEST (subtraction_operator) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_SUB);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->value.int_value, int_operand1 - int_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -426,7 +426,7 @@ START_TEST (subtraction_operator) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_SUB);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->value.float_value, float_operand1 - float_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -440,7 +440,7 @@ START_TEST (subtraction_operator) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_SUB);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->value.float_value, int_operand1 - float_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -454,7 +454,7 @@ START_TEST (subtraction_operator) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_SUB);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->value.float_value, float_operand1 - int_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -470,7 +470,7 @@ START_TEST (subtraction_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_SUB);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -490,7 +490,7 @@ START_TEST (subtraction_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_SUB);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
@@ -511,7 +511,7 @@ START_TEST (subtraction_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_SUB);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
@@ -532,7 +532,7 @@ START_TEST (subtraction_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_SUB);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
@@ -552,7 +552,7 @@ START_TEST (subtraction_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_SUB);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -572,7 +572,7 @@ START_TEST (subtraction_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_SUB);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
@@ -602,7 +602,7 @@ START_TEST (multiplication_operator) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_MUL);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->value.int_value, int_operand1 * int_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -616,7 +616,7 @@ START_TEST (multiplication_operator) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_MUL);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->value.float_value, float_operand1 * float_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -630,7 +630,7 @@ START_TEST (multiplication_operator) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_MUL);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->value.float_value, int_operand1 * float_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -644,7 +644,7 @@ START_TEST (multiplication_operator) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_MUL);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->value.float_value, float_operand1 * int_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -660,7 +660,7 @@ START_TEST (multiplication_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_MUL);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -680,7 +680,7 @@ START_TEST (multiplication_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_MUL);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
@@ -701,7 +701,7 @@ START_TEST (multiplication_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_MUL);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
@@ -722,7 +722,7 @@ START_TEST (multiplication_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_MUL);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
@@ -742,7 +742,7 @@ START_TEST (multiplication_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_MUL);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -762,7 +762,7 @@ START_TEST (multiplication_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_MUL);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
@@ -791,7 +791,7 @@ START_TEST (division_operator) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_DIV);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->value.int_value, int_operand1 / int_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -805,7 +805,7 @@ START_TEST (division_operator) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_DIV);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->value.float_value, float_operand1 / float_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -819,7 +819,7 @@ START_TEST (division_operator) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_DIV);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->value.float_value, int_operand1 / float_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -833,7 +833,7 @@ START_TEST (division_operator) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_DIV);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->value.float_value, float_operand1 / int_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -849,7 +849,7 @@ START_TEST (division_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_DIV);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -869,7 +869,7 @@ START_TEST (division_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_DIV);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
@@ -890,7 +890,7 @@ START_TEST (division_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_DIV);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
@@ -911,7 +911,7 @@ START_TEST (division_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_DIV);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
@@ -931,7 +931,7 @@ START_TEST (division_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_DIV);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -951,7 +951,7 @@ START_TEST (division_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_DIV);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
@@ -978,7 +978,7 @@ START_TEST (modulo_operator) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_MOD);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->value.int_value, int_operand1 % int_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -994,7 +994,7 @@ START_TEST (modulo_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_MOD);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -1014,7 +1014,7 @@ START_TEST (modulo_operator) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_MOD);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -1038,7 +1038,7 @@ START_TEST (unary_plus_test) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_UNARY_PLUS);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->value.int_value, positive_int);
 	bx_cgex_destroy_expression(operand1);
@@ -1051,7 +1051,7 @@ START_TEST (unary_plus_test) {
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_UNARY_PLUS);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -1066,7 +1066,7 @@ START_TEST (unary_plus_test) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_UNARY_PLUS);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->value.float_value, positive_float);
 	bx_cgex_destroy_expression(operand1);
@@ -1079,7 +1079,7 @@ START_TEST (unary_plus_test) {
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_UNARY_PLUS);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
@@ -1103,7 +1103,7 @@ START_TEST (negation_test) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_UNARY_MINUS);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->value.int_value, - positive_int);
 	bx_cgex_destroy_expression(operand1);
@@ -1116,7 +1116,7 @@ START_TEST (negation_test) {
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_UNARY_MINUS);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -1131,7 +1131,7 @@ START_TEST (negation_test) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_UNARY_MINUS);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	ck_assert_int_eq(result->value.float_value, - positive_float);
 	bx_cgex_destroy_expression(operand1);
@@ -1144,7 +1144,7 @@ START_TEST (negation_test) {
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_UNARY_MINUS);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, FLOAT_TEST_FIELD);
@@ -1168,10 +1168,10 @@ START_TEST (prefix_increment_test) {
 	operand1 = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
 	ck_assert_int_eq(operand1->data_type, BX_INT);
-	ck_assert_int_eq(operand1->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(operand1->expression_type, BX_COMP_VARIABLE);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_PREFIX_INC);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -1188,10 +1188,10 @@ START_TEST (prefix_increment_test) {
 	operand1 = bx_cgex_create_variable(symbol_table, FLOAT_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
 	ck_assert_int_eq(operand1->data_type, BX_FLOAT);
-	ck_assert_int_eq(operand1->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(operand1->expression_type, BX_COMP_VARIABLE);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_PREFIX_INC);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -1217,10 +1217,10 @@ START_TEST (prefix_decrement_test) {
 	operand1 = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
 	ck_assert_int_eq(operand1->data_type, BX_INT);
-	ck_assert_int_eq(operand1->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(operand1->expression_type, BX_COMP_VARIABLE);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_PREFIX_DEC);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -1237,10 +1237,10 @@ START_TEST (prefix_decrement_test) {
 	operand1 = bx_cgex_create_variable(symbol_table, FLOAT_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
 	ck_assert_int_eq(operand1->data_type, BX_FLOAT);
-	ck_assert_int_eq(operand1->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(operand1->expression_type, BX_COMP_VARIABLE);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_PREFIX_DEC);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -1266,10 +1266,10 @@ START_TEST (postfix_increment_test) {
 	operand1 = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
 	ck_assert_int_eq(operand1->data_type, BX_INT);
-	ck_assert_int_eq(operand1->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(operand1->expression_type, BX_COMP_VARIABLE);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_POSTFIX_INC);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -1286,10 +1286,10 @@ START_TEST (postfix_increment_test) {
 	operand1 = bx_cgex_create_variable(symbol_table, FLOAT_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
 	ck_assert_int_eq(operand1->data_type, BX_FLOAT);
-	ck_assert_int_eq(operand1->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(operand1->expression_type, BX_COMP_VARIABLE);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_POSTFIX_INC);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -1315,10 +1315,10 @@ START_TEST (postfix_decrement_test) {
 	operand1 = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
 	ck_assert_int_eq(operand1->data_type, BX_INT);
-	ck_assert_int_eq(operand1->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(operand1->expression_type, BX_COMP_VARIABLE);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_POSTFIX_DEC);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
@@ -1335,10 +1335,10 @@ START_TEST (postfix_decrement_test) {
 	operand1 = bx_cgex_create_variable(symbol_table, FLOAT_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
 	ck_assert_int_eq(operand1->data_type, BX_FLOAT);
-	ck_assert_int_eq(operand1->type, BX_COMP_VARIABLE);
+	ck_assert_int_eq(operand1->expression_type, BX_COMP_VARIABLE);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_POSTFIX_DEC);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
 	code = result->value.code;
 	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);

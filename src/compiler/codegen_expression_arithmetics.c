@@ -72,7 +72,7 @@ static struct bx_comp_expr *mod_int(struct bx_comp_expr *operand1, struct bx_com
 
 struct bx_comp_expr *bx_cgex_postfix_dec_operator(struct bx_comp_expr *operand1) {
 
-	if (operand1->type != BX_COMP_VARIABLE) {
+	if (operand1->expression_type != BX_COMP_VARIABLE) {
 		BX_LOG(LOG_ERROR, "compiler",
 				"Unable to apply postfixed decrement operator to non-assignable expression");
 		return NULL;
@@ -183,7 +183,7 @@ struct bx_comp_expr *postfix_dec_float(struct bx_comp_expr *operand1) {
 
 struct bx_comp_expr *bx_cgex_postfix_inc_operator(struct bx_comp_expr *operand1) {
 
-	if (operand1->type != BX_COMP_VARIABLE) {
+	if (operand1->expression_type != BX_COMP_VARIABLE) {
 		BX_LOG(LOG_ERROR, "compiler",
 				"Unable to apply postfixed increment operator to non-assignable expression");
 		return NULL;
@@ -294,7 +294,7 @@ struct bx_comp_expr *postfix_inc_float(struct bx_comp_expr *operand1) {
 
 struct bx_comp_expr *bx_cgex_prefix_dec_operator(struct bx_comp_expr *operand1) {
 
-	if (operand1->type != BX_COMP_VARIABLE) {
+	if (operand1->expression_type != BX_COMP_VARIABLE) {
 		BX_LOG(LOG_ERROR, "compiler",
 				"Unable to apply prefixed decrement operator to non-assignable expression");
 		return NULL;
@@ -405,7 +405,7 @@ struct bx_comp_expr *prefix_dec_float(struct bx_comp_expr *operand1) {
 
 struct bx_comp_expr *bx_cgex_prefix_inc_operator(struct bx_comp_expr *operand1) {
 
-	if (operand1->type != BX_COMP_VARIABLE) {
+	if (operand1->expression_type != BX_COMP_VARIABLE) {
 		BX_LOG(LOG_ERROR, "compiler",
 				"Unable to apply prefixed increment operator to non-assignable expression");
 		return NULL;
@@ -538,7 +538,7 @@ static struct bx_comp_expr *unary_plus(struct bx_comp_expr *operand1) {
 
 	result = bx_cgex_copy_expression(operand1);
 
-	if (result->type == BX_COMP_CONSTANT) {
+	if (result->expression_type == BX_COMP_CONSTANT) {
 		return result;
 	}
 
@@ -579,7 +579,7 @@ static struct bx_comp_expr *unary_minus_int(struct bx_comp_expr *operand1) {
 	bx_int8 error;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_int_constant(- operand1->value.int_value);
 	}
 
@@ -601,7 +601,7 @@ static struct bx_comp_expr *unary_minus_float(struct bx_comp_expr *operand1) {
 	bx_int8 error;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_float_constant(- operand1->value.float_value);
 	}
 
@@ -658,7 +658,7 @@ static struct bx_comp_expr *add_int(struct bx_comp_expr *operand1, struct bx_com
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_int_constant(operand1->value.int_value + operand2->value.int_value);
 	}
 
@@ -682,7 +682,7 @@ static struct bx_comp_expr *add_float(struct bx_comp_expr *operand1, struct bx_c
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_float_constant(operand1->value.float_value + operand2->value.float_value);
 	}
 
@@ -744,7 +744,7 @@ static struct bx_comp_expr *sub_int(struct bx_comp_expr *operand1, struct bx_com
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_int_constant(operand1->value.int_value - operand2->value.int_value);
 	}
 
@@ -768,7 +768,7 @@ static struct bx_comp_expr *sub_float(struct bx_comp_expr *operand1, struct bx_c
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_float_constant(operand1->value.float_value - operand2->value.float_value);
 	}
 
@@ -825,7 +825,7 @@ static struct bx_comp_expr *mul_int(struct bx_comp_expr *operand1, struct bx_com
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_int_constant(operand1->value.int_value * operand2->value.int_value);
 	}
 
@@ -849,7 +849,7 @@ static struct bx_comp_expr *mul_float(struct bx_comp_expr *operand1, struct bx_c
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_float_constant(operand1->value.float_value * operand2->value.float_value);
 	}
 
@@ -906,7 +906,7 @@ static struct bx_comp_expr *div_int(struct bx_comp_expr *operand1, struct bx_com
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_int_constant(operand1->value.int_value / operand2->value.int_value);
 	}
 
@@ -930,7 +930,7 @@ static struct bx_comp_expr *div_float(struct bx_comp_expr *operand1, struct bx_c
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_float_constant(operand1->value.float_value / operand2->value.float_value);
 	}
 
@@ -976,7 +976,7 @@ static struct bx_comp_expr *mod_int(struct bx_comp_expr *operand1, struct bx_com
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_int_constant(operand1->value.int_value % operand2->value.int_value);
 	}
 

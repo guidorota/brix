@@ -101,7 +101,7 @@ static struct bx_comp_expr *equals_int(struct bx_comp_expr *operand1, struct bx_
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->value.int_value == operand2->value.int_value);
 	}
 
@@ -125,7 +125,7 @@ static struct bx_comp_expr *equals_float(struct bx_comp_expr *operand1, struct b
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->value.float_value == operand2->value.float_value);
 	}
 
@@ -149,7 +149,7 @@ static struct bx_comp_expr *equals_bool(struct bx_comp_expr *operand1, struct bx
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->value.bool_value == operand2->value.bool_value);
 	}
 
@@ -215,7 +215,7 @@ static struct bx_comp_expr *not_equals_int(struct bx_comp_expr *operand1, struct
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->value.int_value != operand2->value.int_value);
 	}
 
@@ -239,7 +239,7 @@ static struct bx_comp_expr *not_equals_float(struct bx_comp_expr *operand1, stru
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->value.float_value != operand2->value.float_value);
 	}
 
@@ -263,7 +263,7 @@ static struct bx_comp_expr *not_equals_bool(struct bx_comp_expr *operand1, struc
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->value.bool_value != operand2->value.bool_value);
 	}
 
@@ -327,7 +327,7 @@ static struct bx_comp_expr *greater_than_int(struct bx_comp_expr *operand1, stru
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->value.int_value > operand2->value.int_value);
 	}
 
@@ -351,7 +351,7 @@ static struct bx_comp_expr *greater_than_float(struct bx_comp_expr *operand1, st
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->value.float_value > operand2->value.float_value);
 	}
 
@@ -415,7 +415,7 @@ static struct bx_comp_expr *greater_or_equal_int(struct bx_comp_expr *operand1, 
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->value.int_value >= operand2->value.int_value);
 	}
 
@@ -439,7 +439,7 @@ static struct bx_comp_expr *greater_or_equal_float(struct bx_comp_expr *operand1
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->value.float_value >= operand2->value.float_value);
 	}
 
@@ -503,7 +503,7 @@ static struct bx_comp_expr *less_than_int(struct bx_comp_expr *operand1, struct 
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->value.int_value < operand2->value.int_value);
 	}
 
@@ -527,7 +527,7 @@ static struct bx_comp_expr *less_than_float(struct bx_comp_expr *operand1, struc
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->value.float_value < operand2->value.float_value);
 	}
 
@@ -591,7 +591,7 @@ static struct bx_comp_expr *less_or_equal_int(struct bx_comp_expr *operand1, str
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->value.int_value <= operand2->value.int_value);
 	}
 
@@ -615,7 +615,7 @@ static struct bx_comp_expr *less_or_equal_float(struct bx_comp_expr *operand1, s
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->value.float_value <= operand2->value.float_value);
 	}
 

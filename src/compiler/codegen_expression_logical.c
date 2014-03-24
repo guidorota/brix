@@ -64,7 +64,7 @@ static struct bx_comp_expr *logical_not_bool(struct bx_comp_expr *operand1) {
 	bx_int8 error;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(!operand1->value.bool_value);
 	}
 
@@ -107,7 +107,7 @@ static struct bx_comp_expr *logical_or_bool(struct bx_comp_expr *operand1, struc
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->value.bool_value || operand2->value.bool_value);
 	}
 
@@ -154,7 +154,7 @@ static struct bx_comp_expr *logical_and_bool(struct bx_comp_expr *operand1, stru
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(operand1->value.bool_value && operand2->value.bool_value);
 	}
 

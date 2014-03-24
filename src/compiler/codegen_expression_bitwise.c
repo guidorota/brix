@@ -66,7 +66,7 @@ struct bx_comp_expr *bitwise_complement_int(struct bx_comp_expr *operand1) {
 	bx_int8 error;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_int_constant(~operand1->value.int_value);
 	}
 
@@ -110,7 +110,7 @@ static struct bx_comp_expr *bitwise_or_int(struct bx_comp_expr *operand1, struct
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_int_constant(operand1->value.int_value | operand2->value.int_value);
 	}
 
@@ -157,7 +157,7 @@ static struct bx_comp_expr *bitwise_xor_int(struct bx_comp_expr *operand1, struc
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_int_constant(operand1->value.int_value ^ operand2->value.int_value);
 	}
 
@@ -204,7 +204,7 @@ static struct bx_comp_expr *bitwise_and_int(struct bx_comp_expr *operand1, struc
 	bx_int8 error = 0;
 	struct bx_comp_expr *result;
 
-	if (operand1->type == BX_COMP_CONSTANT && operand2->type == BX_COMP_CONSTANT) {
+	if (operand1->expression_type == BX_COMP_CONSTANT && operand2->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_int_constant(operand1->value.int_value & operand2->value.int_value);
 	}
 

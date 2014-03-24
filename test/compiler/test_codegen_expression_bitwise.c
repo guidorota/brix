@@ -81,7 +81,7 @@ START_TEST (bitwise_or_test) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_BITWISE_OR);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->value.int_value, int_operand1 | int_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -97,7 +97,7 @@ START_TEST (bitwise_or_test) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_BITWISE_OR);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -117,7 +117,7 @@ START_TEST (bitwise_or_test) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_BITWISE_OR);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -137,7 +137,7 @@ START_TEST (bitwise_or_test) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_BITWISE_OR);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -164,7 +164,7 @@ START_TEST (bitwise_xor_test) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_BITWISE_XOR);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->value.int_value, int_operand1 ^ int_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -180,7 +180,7 @@ START_TEST (bitwise_xor_test) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_BITWISE_XOR);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -200,7 +200,7 @@ START_TEST (bitwise_xor_test) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_BITWISE_XOR);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -220,7 +220,7 @@ START_TEST (bitwise_xor_test) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_BITWISE_XOR);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -247,7 +247,7 @@ START_TEST (bitwise_and_test) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_BITWISE_AND);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->value.int_value, int_operand1 & int_operand2);
 	bx_cgex_destroy_expression(operand1);
@@ -263,7 +263,7 @@ START_TEST (bitwise_and_test) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_BITWISE_AND);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -283,7 +283,7 @@ START_TEST (bitwise_and_test) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_BITWISE_AND);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -303,7 +303,7 @@ START_TEST (bitwise_and_test) {
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_BITWISE_AND);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -328,7 +328,7 @@ START_TEST (bitwise_not_test) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_BITWISE_COMPLEMENT);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->value.int_value, ~int_value0);
 	bx_cgex_destroy_expression(operand1);
@@ -339,7 +339,7 @@ START_TEST (bitwise_not_test) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_BITWISE_COMPLEMENT);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->value.int_value, ~int_value1);
 	bx_cgex_destroy_expression(operand1);
@@ -350,7 +350,7 @@ START_TEST (bitwise_not_test) {
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_BITWISE_COMPLEMENT);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(result->type, BX_COMP_CONSTANT);
+	ck_assert_int_eq(result->expression_type, BX_COMP_CONSTANT);
 	ck_assert_int_eq(result->data_type, BX_INT);
 	ck_assert_int_eq(result->value.int_value, ~int_value2);
 	bx_cgex_destroy_expression(operand1);
@@ -363,7 +363,7 @@ START_TEST (bitwise_not_test) {
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_BITWISE_COMPLEMENT);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -380,7 +380,7 @@ START_TEST (bitwise_not_test) {
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_BITWISE_COMPLEMENT);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);
@@ -397,7 +397,7 @@ START_TEST (bitwise_not_test) {
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_BITWISE_COMPLEMENT);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	ck_assert_int_eq(result->type, BX_COMP_BINARY);
+	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_ptr_ne(result->value.code, NULL);
 	bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
 	bx_cgco_add_identifier(result->value.code, INT_TEST_FIELD);

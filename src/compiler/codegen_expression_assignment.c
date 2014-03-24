@@ -41,7 +41,7 @@ static bx_int8 add_32bit_assign_code(struct bx_comp_code *code, struct bx_comp_e
 
 struct bx_comp_expr *bx_cgex_assignment_expression(struct bx_comp_expr *destination, struct bx_comp_expr *expression) {
 
-	if (destination->type != BX_COMP_VARIABLE) {
+	if (destination->expression_type != BX_COMP_VARIABLE) {
 		BX_LOG(LOG_ERROR, "variable_assignment",
 				"Non-assignable destination passed to function 'variable_assignment'");
 		return NULL;
