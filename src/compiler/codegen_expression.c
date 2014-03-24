@@ -216,51 +216,67 @@ struct bx_comp_expr *bx_cgex_binary_expression(struct bx_comp_expr *operand1,
 	switch(operator) {
 	case BX_COMP_OP_ADD:
 		result = bx_cgex_addition_operator(operand1, operand2);
+		combine_side_effect_code(operand1, operand2, result);
 		break;
 	case BX_COMP_OP_SUB:
 		result = bx_cgex_subtraction_operator(operand1, operand2);
+		combine_side_effect_code(operand1, operand2, result);
 		break;
 	case BX_COMP_OP_MUL:
 		result = bx_cgex_multiplication_operator(operand1, operand2);
+		combine_side_effect_code(operand1, operand2, result);
 		break;
 	case BX_COMP_OP_DIV:
 		result = bx_cgex_division_operator(operand1, operand2);
+		combine_side_effect_code(operand1, operand2, result);
 		break;
 	case BX_COMP_OP_MOD:
 		result = bx_cgex_modulo_operator(operand1, operand2);
+		combine_side_effect_code(operand1, operand2, result);
 		break;
 	case BX_COMP_OP_EQ:
 		result = bx_cgex_equality_operator(operand1, operand2);
+		combine_side_effect_code(operand1, operand2, result);
 		break;
 	case BX_COMP_OP_NE:
 		result = bx_cgex_inequality_operator(operand1, operand2);
+		combine_side_effect_code(operand1, operand2, result);
 		break;
 	case BX_COMP_OP_GT:
 		result = bx_cgex_greater_than_operator(operand1, operand2);
+		combine_side_effect_code(operand1, operand2, result);
 		break;
 	case BX_COMP_OP_GE:
 		result = bx_cgex_greater_or_equal_operator(operand1, operand2);
+		combine_side_effect_code(operand1, operand2, result);
 		break;
 	case BX_COMP_OP_LT:
 		result = bx_cgex_less_than_operator(operand1, operand2);
+		combine_side_effect_code(operand1, operand2, result);
 		break;
 	case BX_COMP_OP_LE:
 		result = bx_cgex_less_or_equal_operator(operand1, operand2);
+		combine_side_effect_code(operand1, operand2, result);
 		break;
 	case BX_COMP_OP_BITWISE_OR:
 		result = bx_cgex_bitwise_or_operator(operand1, operand2);
+		combine_side_effect_code(operand1, operand2, result);
 		break;
 	case BX_COMP_OP_BITWISE_XOR:
 		result = bx_cgex_bitwise_xor_operator(operand1, operand2);
+		combine_side_effect_code(operand1, operand2, result);
 		break;
 	case BX_COMP_OP_BITWISE_AND:
 		result = bx_cgex_bitwise_and_operator(operand1, operand2);
+		combine_side_effect_code(operand1, operand2, result);
 		break;
 	case BX_COMP_OP_OR:
 		result = bx_cgex_logical_or_operator(operand1, operand2);
+		combine_side_effect_code(operand1, operand2, result);
 		break;
 	case BX_COMP_OP_AND:
 		result = bx_cgex_logical_and_operator(operand1, operand2);
+		combine_side_effect_code(operand1, operand2, result);
 		break;
 	case BX_COMP_OP_ASSIGNMENT:
 		result = bx_cgex_assignment_expression(operand1, operand2);
@@ -270,8 +286,6 @@ struct bx_comp_expr *bx_cgex_binary_expression(struct bx_comp_expr *operand1,
 				"encountered in function 'bx_cgex_binary_expression'");
 		return NULL;
 	}
-
-	combine_side_effect_code(operand1, operand2, result);
 
 	return result;
 }
@@ -286,15 +300,19 @@ struct bx_comp_expr *bx_cgex_unary_expression(struct bx_comp_expr *operand1, enu
 	switch (operator) {
 	case BX_COMP_OP_UNARY_PLUS:
 		result = bx_cgex_unary_plus_operator(operand1);
+		copy_side_effect_code(operand1, result);
 		break;
 	case BX_COMP_OP_UNARY_MINUS:
 		result = bx_cgex_unary_minus_operator(operand1);
+		copy_side_effect_code(operand1, result);
 		break;
 	case BX_COMP_OP_NOT:
 		result = bx_cgex_logical_not_operator(operand1);
+		copy_side_effect_code(operand1, result);
 		break;
 	case BX_COMP_OP_BITWISE_COMPLEMENT:
 		result = bx_cgex_bitwise_complement_operator(operand1);
+		copy_side_effect_code(operand1, result);
 		break;
 	case BX_COMP_OP_PREFIX_INC:
 		result = bx_cgex_prefix_inc_operator(operand1);
@@ -313,8 +331,6 @@ struct bx_comp_expr *bx_cgex_unary_expression(struct bx_comp_expr *operand1, enu
 						"encountered in function 'bx_cgex_unary_expression'");
 		return NULL;
 	}
-
-	copy_side_effect_code(operand1, result);
 
 	return result;
 }
