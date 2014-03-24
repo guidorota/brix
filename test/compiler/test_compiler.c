@@ -304,6 +304,38 @@ START_TEST (do_while_statement_test) {
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 10);
 } END_TEST
 
+START_TEST (for_statement_test) {
+	bx_int8 error;
+
+	error = run_program(
+			"field int int_test_field;"
+			"int temp;"
+			"for (temp = 0; temp < 0; temp++) ; int_test_field = temp;");
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 0);
+
+	error = run_program(
+			"field int int_test_field;"
+			"int temp;"
+			"for (temp = 0; temp < 10; temp++) ; int_test_field = temp;");
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 10);
+
+	error = run_program(
+			"field int int_test_field;"
+			"int temp;"
+			"for (temp = 0; temp < 0; ) temp++; int_test_field = temp;");
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 0);
+
+	error = run_program(
+			"field int int_test_field;"
+			"int temp;"
+			"for (temp = 0; temp < 10; ) temp++; int_test_field = temp;");
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 10);
+} END_TEST
+
 Suite *test_compiler_create_suite(void) {
 	Suite *suite = suite_create("bx_linked_list");
 	TCase *tcase;
@@ -338,6 +370,10 @@ Suite *test_compiler_create_suite(void) {
 
 	tcase = tcase_create("do_while_statement_test");
 	tcase_add_test(tcase, do_while_statement_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("for_statement_test");
+	tcase_add_test(tcase, for_statement_test);
 	suite_add_tcase(suite, tcase);
 
 	return suite;

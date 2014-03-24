@@ -49,7 +49,7 @@ static struct bx_comp_task *current_task;
 
 %token FROM NETWORK FILTER GET EVERY QUEUE WINDOW EACH LOCAL PARENT AT DOCUMENT
 %token ON CHANGE ALLOW RESAMPLE EXISTING NEW INC_OP DEC_OP FIELD IF
-%token FOR AND_OP OR_OP EQ_OP NEQ_OP LE_OP GE_OP TRUE_CONSTANT FALSE_CONSTANT
+%token AND_OP OR_OP EQ_OP NEQ_OP LE_OP GE_OP TRUE_CONSTANT FALSE_CONSTANT
 %token INT FLOAT BOOL STRING STREAM SUBNET
 
 %token <int_val> INT_CONSTANT
@@ -59,6 +59,7 @@ static struct bx_comp_task *current_task;
 
 %token <jump_label> ELSE
 %token <instruction_address> DO
+%token <while_statement> FOR
 %token <while_statement> WHILE
 
 %type <expression> expression
@@ -239,13 +240,73 @@ iteration_statement
 		bx_cgex_destroy_expression(condition);
 		bx_cgex_destroy_expression($6);
 	}
-	| FOR '(' expression_statement expression_statement ')' statement
+	| FOR '(' expression ';' expression ';' expression ')'
 	{
-	
+		struct bx_comp_expr *condition;
+		struct bx_comp_while *while_statement;
+		
+		bx_cgex_convert_to_binary($3);
+		bx_cgco_append_code(current_task->code, $3->value.code);
+		
+		while_statement = bx_cgwh_create();
+		condition = bx_cgex_cast($5, BX_BOOL);
+		bx_cgex_convert_to_binary(condition);
+		while_statement->condition_address = bx_cgco_append_code(current_task->code, condition->value.code);
+		bx_cgco_add_instruction(current_task->code, BX_INSTR_JEQZ);
+		while_statement->label = bx_cgco_create_address_label(current_task->code);
+		$1 = while_statement;
+		
+		bx_cgex_destroy_expression($3);
+		bx_cgex_destroy_expression(condition);
+		bx_cgex_destroy_expression($5);
 	}
-	| FOR '(' expression_statement expression_statement expression ')' statement
+	statement
 	{
-	
+		bx_uint16 jump_address;
+		
+		bx_cgex_convert_to_binary($7);
+		bx_cgco_append_code(current_task->code, $7->value.code);
+		
+		bx_cgco_add_instruction(current_task->code, BX_INSTR_JUMP);
+		bx_cgco_add_address(current_task->code, $1->condition_address);
+		
+		jump_address = bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
+		bx_cgco_set_address_label(current_task->code, $1->label, jump_address);
+		
+		bx_cgwh_destroy($1);
+		bx_cgex_destroy_expression($7);
+	}
+	| FOR '(' expression ';' expression ';' ')'
+	{
+		struct bx_comp_expr *condition;
+		struct bx_comp_while *while_statement;
+		
+		bx_cgex_convert_to_binary($3);
+		bx_cgco_append_code(current_task->code, $3->value.code);
+		
+		while_statement = bx_cgwh_create();
+		condition = bx_cgex_cast($5, BX_BOOL);
+		bx_cgex_convert_to_binary(condition);
+		while_statement->condition_address = bx_cgco_append_code(current_task->code, condition->value.code);
+		bx_cgco_add_instruction(current_task->code, BX_INSTR_JEQZ);
+		while_statement->label = bx_cgco_create_address_label(current_task->code);
+		$1 = while_statement;
+		
+		bx_cgex_destroy_expression($3);
+		bx_cgex_destroy_expression(condition);
+		bx_cgex_destroy_expression($5);
+	}
+	statement
+	{
+		bx_uint16 jump_address;
+		
+		bx_cgco_add_instruction(current_task->code, BX_INSTR_JUMP);
+		bx_cgco_add_address(current_task->code, $1->condition_address);
+		
+		jump_address = bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
+		bx_cgco_set_address_label(current_task->code, $1->label, jump_address);
+		
+		bx_cgwh_destroy($1);
 	}
 	;
 	
