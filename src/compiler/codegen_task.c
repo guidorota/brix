@@ -60,17 +60,6 @@ cleanup_task:
 	return NULL;
 }
 
-bx_int8 bx_cgtk_append_code(struct bx_comp_task *task, struct bx_comp_code *code) {
-
-	if (task == NULL || code == NULL) {
-		return -1;
-	}
-
-	bx_cgco_append_code(task->code, code);
-
-	return 0;
-}
-
 bx_int8 bx_cgtk_add_at_execution_condition(struct bx_comp_task *task, struct bx_comp_expr *execution_condition) {
 	bx_int8 error;
 	struct bx_comp_expr *boolean_condition;

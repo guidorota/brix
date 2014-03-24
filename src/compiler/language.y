@@ -47,7 +47,7 @@ static struct bx_comp_task *current_task;
 %}
 
 %token FROM NETWORK FILTER GET EVERY QUEUE WINDOW EACH LOCAL PARENT AT DOCUMENT
-%token ON CHANGE ALLOW RESAMPLE EXISTING NEW INC_OP DEC_OP FIELD IF DO WHILE
+%token ON CHANGE ALLOW RESAMPLE EXISTING NEW INC_OP DEC_OP FIELD IF
 %token FOR AND_OP OR_OP EQ_OP NEQ_OP LE_OP GE_OP TRUE_CONSTANT FALSE_CONSTANT
 %token INT FLOAT BOOL STRING STREAM SUBNET
 
@@ -56,6 +56,8 @@ static struct bx_comp_task *current_task;
 %token <string_val> IDENTIFIER
 %token <string_val> STRING_LITERAL
 %token <jump_label> ELSE
+%token <jump_label> DO
+%token <jump_label> WHILE
 
 %type <expression> expression
 %type <expression> conditional_expression
@@ -87,11 +89,19 @@ static struct bx_comp_task *current_task;
 	char *string_val;
 	struct bx_comp_expr *expression;
 	bx_comp_label jump_label;
+	bx_size instruction_address;
 }
 
-%start statement_list
+%start network_definition
 
 %%
+
+network_definition
+	: statement_list
+	{
+		bx_cgco_add_instruction(current_task->code, BX_INSTR_HALT);
+	}
+	;
 
 statement_list
 	: statement
@@ -110,7 +120,7 @@ statement
 compound_statement
 	: '{' '}'
 	{
-
+		bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
 	}
 	| '{' statement_list '}'
 	{
@@ -182,7 +192,7 @@ creation_modifier
 iteration_statement
 	: WHILE '(' expression ')' statement
 	{
-	
+		
 	}
 	| DO statement WHILE '(' expression ')' ';'
 	{
@@ -232,7 +242,7 @@ if_statement
 		
 		condition = bx_cgex_cast($3, BX_BOOL);
 		bx_cgex_convert_to_binary(condition);
-		bx_cgtk_append_code(current_task, condition->value.code);
+		bx_cgco_append_code(current_task->code, condition->value.code);
 		bx_cgco_add_instruction(current_task->code, BX_INSTR_JEQZ);
 		$$ = bx_cgco_create_address_label(current_task->code);
 	
@@ -273,12 +283,15 @@ event_trigger_modifier
 	
 expression_statement
 	: ';'
+	{
+		bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
+	}
 	| expression ';'
 	{
 		struct bx_comp_code *code;
 		
 		code = bx_cgco_copy($1->value.code);
-		bx_cgtk_append_code(current_task, code);
+		bx_cgco_append_code(current_task->code, code);
 		
 		bx_cgco_destroy(code);
 		bx_cgex_destroy_expression($1);

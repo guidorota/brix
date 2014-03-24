@@ -86,6 +86,7 @@ static bx_int8 run_program(char *program) {
 	}
 	fclose(yyin);
 
+	printf("\nCode size: %zu\n\n", main_task->code->size);
 	error = bx_vm_execute(main_task->code->data, main_task->code->size);
 	if (error != 0) {
 		return -1;

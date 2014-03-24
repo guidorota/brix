@@ -33,6 +33,7 @@
 #include "configuration.h"
 #include "utils/memory_utils.h"
 #include "compiler/codegen_code.h"
+#include "virtual_machine/virtual_machine.h"
 
 #define DEFAULT_SIZE 256
 
@@ -130,6 +131,10 @@ static bx_ssize add_to_code(struct bx_comp_code *code, void *data, bx_size data_
 
 	if (code == NULL || data == NULL) {
 		return -1;
+	}
+
+	if (*((bx_uint8 *) code->data + code->size - 1) == (bx_uint8) BX_INSTR_NOP) {
+		--code->size;
 	}
 
 	if (code->size + data_length > code->capacity) {

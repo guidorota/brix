@@ -55,16 +55,6 @@ struct bx_comp_task {
 struct bx_comp_task *bx_cgtk_create_task(void);
 
 /**
- * Append code to an existing task
- *
- * @param task Target task
- * @param code Code to append
- *
- * @return 0 on success, -1 upon failure
- */
-bx_int8 bx_cgtk_append_code(struct bx_comp_task *task, struct bx_comp_code *code);
-
-/**
  * Adds the @ execution condition to the task passed as parameter.
  * The expression passed as parameter is converted as needed to the data type
  * boolean. Conversion errors may arise if the execution condition cannot be
