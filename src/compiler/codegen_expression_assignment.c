@@ -37,7 +37,7 @@
 static struct bx_comp_expr *assign_to_int(struct bx_comp_expr *destination, struct bx_comp_expr *expression);
 static struct bx_comp_expr *assign_to_float(struct bx_comp_expr *destination, struct bx_comp_expr *expression);
 static struct bx_comp_expr *assign_to_boolean(struct bx_comp_expr *destination, struct bx_comp_expr *expression);
-static bx_int8 add_32bit_assign_code(struct bx_comp_code *code, struct bx_comp_expr *destination);
+static bx_int8 add_32bit_assign_code(struct bx_comp_expr *result, struct bx_comp_expr *destination);
 
 struct bx_comp_expr *bx_cgex_assignment_expression(struct bx_comp_expr *destination, struct bx_comp_expr *expression) {
 
@@ -91,7 +91,7 @@ static struct bx_comp_expr *assign_to_int(struct bx_comp_expr *destination, stru
 		return NULL;
 	}
 
-	error = add_32bit_assign_code(result->value.code, destination);
+	error = add_32bit_assign_code(result, destination);
 	if (error != 0) {
 		return NULL;
 	}
@@ -123,7 +123,7 @@ static struct bx_comp_expr *assign_to_float(struct bx_comp_expr *destination, st
 		return NULL;
 	}
 
-	error = add_32bit_assign_code(result->value.code, destination);
+	error = add_32bit_assign_code(result, destination);
 	if (error != 0) {
 		return NULL;
 	}
@@ -149,7 +149,7 @@ static struct bx_comp_expr *assign_to_boolean(struct bx_comp_expr *destination, 
 		return NULL;
 	}
 
-	error = add_32bit_assign_code(result->value.code, destination);
+	error = add_32bit_assign_code(result, destination);
 	if (error != 0) {
 		return NULL;
 	}
@@ -157,18 +157,26 @@ static struct bx_comp_expr *assign_to_boolean(struct bx_comp_expr *destination, 
 	return result;
 }
 
-static bx_int8 add_32bit_assign_code(struct bx_comp_code *code, struct bx_comp_expr *destination) {
+static bx_int8 add_32bit_assign_code(struct bx_comp_expr *result, struct bx_comp_expr *destination) {
+
+	result->side_effect_code = bx_cgco_copy(result->value.code);
 
 	switch (destination->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
-		bx_cgco_add_instruction(code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(code, destination->value.variable->identifier);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
+		bx_cgco_add_identifier(result->value.code, destination->value.variable->identifier);
+
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RSTORE32);
+		bx_cgco_add_identifier(result->side_effect_code, destination->value.variable->identifier);
 		break;
 	case BX_COMP_VARIABLE_SYMBOL:
-		bx_cgco_add_instruction(code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(code, destination->value.variable->symbol_data.variable_number);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_VSTORE32);
+		bx_cgco_add_address(result->value.code, destination->value.variable->symbol_data.variable_number);
+
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VSTORE32);
+		bx_cgco_add_address(result->side_effect_code, destination->value.variable->symbol_data.variable_number);
 		break;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression",

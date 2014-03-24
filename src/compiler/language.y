@@ -390,8 +390,10 @@ expression_statement
 	}
 	| expression ';'
 	{
-		bx_cgex_convert_to_binary($1);
-		bx_cgco_append_code(current_task->code, $1->value.code);
+		struct bx_comp_code *code;
+		
+		code = bx_cgex_side_effect_code($1);
+		bx_cgco_append_code(current_task->code, code);
 		
 		bx_cgex_destroy_expression($1);
 	}

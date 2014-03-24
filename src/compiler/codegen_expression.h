@@ -174,6 +174,15 @@ struct bx_comp_expr *bx_cgex_unary_expression(struct bx_comp_expr *operand1, enu
 bx_int8 bx_cgex_convert_to_binary(struct bx_comp_expr *expression);
 
 /**
+ * Returns the portion of expression code that generates side effects.
+ *
+ * @param expression Source expression
+ *
+ * @return Side effect code, NULL on error
+ */
+struct bx_comp_code *bx_cgex_side_effect_code(struct bx_comp_expr *expression);
+
+/**
  * Creates an empty code expression.
  * This function is for INTERNAL USE ONLY.
  *

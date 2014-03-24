@@ -335,6 +335,19 @@ bx_int8 bx_cgex_convert_to_binary(struct bx_comp_expr *expression) {
 	}
 }
 
+struct bx_comp_code *bx_cgex_side_effect_code(struct bx_comp_expr *expression) {
+
+	if (expression == NULL) {
+		return NULL;
+	}
+
+	if (expression->side_effect_code == NULL) {
+		return bx_cgco_create();
+	}
+
+	return expression->side_effect_code;
+}
+
 static bx_int8 constant_to_binary(struct bx_comp_expr *expression) {
 	struct bx_comp_code *code;
 
