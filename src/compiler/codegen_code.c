@@ -37,7 +37,7 @@
 
 #define DEFAULT_SIZE 256
 
-static bx_ssize add_to_code(struct bx_comp_code *code, void *data, bx_size data_length);
+static bx_ssize add_to_code(struct bx_comp_code *code, void *data, bx_size data_length, bx_boolean suppress_nop);
 
 struct bx_comp_code *bx_cgco_create() {
 	struct bx_comp_code *code;
@@ -96,44 +96,45 @@ void bx_cgco_destroy(struct bx_comp_code *code) {
 
 bx_ssize bx_cgco_add_instruction(struct bx_comp_code *code, enum bx_instruction instruction) {
 	bx_uint8 uint8_instruction = (bx_uint8) instruction;
-	return add_to_code(code, (void *) &uint8_instruction, sizeof uint8_instruction);
+	return add_to_code(code, (void *) &uint8_instruction, sizeof uint8_instruction, BX_BOOLEAN_TRUE);
 }
 
 bx_ssize bx_cgco_add_identifier(struct bx_comp_code *code, char *identifier) {
-	return add_to_code(code, (void *) identifier, DM_FIELD_IDENTIFIER_LENGTH);
+	return add_to_code(code, (void *) identifier, DM_FIELD_IDENTIFIER_LENGTH, BX_BOOLEAN_FALSE);
 }
 
 bx_ssize bx_cgco_add_int_constant(struct bx_comp_code *code, bx_int32 value) {
-	return add_to_code(code, (void *) &value, sizeof value);
+	return add_to_code(code, (void *) &value, sizeof value, BX_BOOLEAN_FALSE);
 }
 
 bx_ssize bx_cgco_add_address(struct bx_comp_code *code, bx_int16 address) {
-	return add_to_code(code, (void *) &address, sizeof address);
+	return add_to_code(code, (void *) &address, sizeof address, BX_BOOLEAN_FALSE);
 }
 
 bx_ssize bx_cgco_add_float_constant(struct bx_comp_code *code, bx_float32 value) {
-	return add_to_code(code, (void *) &value, sizeof value);
+	return add_to_code(code, (void *) &value, sizeof value, BX_BOOLEAN_FALSE);
 }
 
 bx_ssize bx_cgco_add_bool_constant(struct bx_comp_code *code, bx_uint32 value) {
 	if (value != 0) {
 		value = 1;
 	}
-	return add_to_code(code, (void *) &value, sizeof value);
+	return add_to_code(code, (void *) &value, sizeof value, BX_BOOLEAN_FALSE);
 }
 
 bx_ssize bx_cgco_append_code(struct bx_comp_code *destination, struct bx_comp_code *source) {
-	return add_to_code(destination, source->data, source->size);
+	return add_to_code(destination, source->data, source->size, BX_BOOLEAN_TRUE);
 }
 
-static bx_ssize add_to_code(struct bx_comp_code *code, void *data, bx_size data_length) {
+static bx_ssize add_to_code(struct bx_comp_code *code, void *data, bx_size data_length, bx_boolean suppress_nop) {
 	bx_ssize address;
 
 	if (code == NULL || data == NULL) {
 		return -1;
 	}
 
-	if (*((bx_uint8 *) code->data + code->size - 1) == (bx_uint8) BX_INSTR_NOP) {
+	if (suppress_nop &&
+			*((bx_uint8 *) code->data + code->size - 1) == (bx_uint8) BX_INSTR_NOP) {
 		--code->size;
 	}
 
@@ -157,7 +158,7 @@ bx_comp_label bx_cgco_create_address_label(struct bx_comp_code *code) {
 	bx_comp_label label;
 
 	label = code->size;
-	add_to_code(code, (void *) &null_data, sizeof null_data);
+	add_to_code(code, (void *) &null_data, sizeof null_data, BX_BOOLEAN_FALSE);
 
 	return label;
 }
