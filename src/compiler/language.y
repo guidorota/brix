@@ -58,7 +58,7 @@ static struct bx_comp_task *current_task;
 %token <string_val> STRING_LITERAL
 
 %token <jump_label> ELSE
-%token <jump_label> DO
+%token <instruction_address> DO
 %token <while_statement> WHILE
 
 %type <expression> expression
@@ -93,6 +93,7 @@ static struct bx_comp_task *current_task;
 	struct bx_comp_expr *expression;
 	bx_comp_label jump_label;
 	struct bx_comp_while *while_statement;
+	bx_uint16 instruction_address;
 }
 
 %start network_definition
@@ -221,9 +222,22 @@ iteration_statement
 		
 		bx_cgwh_destroy($1);
 	}
-	| DO statement WHILE '(' expression ')' ';'
+	| DO 
 	{
-	
+		$1 = bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
+	}
+	statement WHILE '(' expression ')' ';'
+	{
+		struct bx_comp_expr *condition;
+		
+		condition = bx_cgex_cast($6, BX_BOOL);
+		bx_cgex_convert_to_binary(condition);
+		bx_cgco_append_code(current_task->code, condition->value.code);
+		bx_cgco_add_instruction(current_task->code, BX_INSTR_JNEZ);
+		bx_cgco_add_address(current_task->code, $1);
+		
+		bx_cgex_destroy_expression(condition);
+		bx_cgex_destroy_expression($6);
 	}
 	| FOR '(' expression_statement expression_statement ')' statement
 	{
