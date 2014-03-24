@@ -43,17 +43,35 @@
 #include "compiler/codegen_code.h"
 #include "virtual_machine/virtual_machine.h"
 
+static void combine_side_effect_code(struct bx_comp_expr *source1,
+		struct bx_comp_expr *source2, struct bx_comp_expr *destination);
+static void copy_side_effect_code(struct bx_comp_expr *source, struct bx_comp_expr *destination);
+
 static void constant_bool_to_binary(struct bx_comp_code *code, bx_int32 bool_value);
 static void constant_int_to_binary(struct bx_comp_code *code, bx_int32 int_value);
 static void constant_float_to_binary(struct bx_comp_code *code, bx_float32 float_value);
 static bx_int8 constant_to_binary(struct bx_comp_expr *expression);
 static bx_int8 variable_to_binary(struct bx_comp_expr *expression);
 
-struct bx_comp_expr *bx_cgex_create_int_constant(bx_int32 value) {
+static struct bx_comp_expr *create_empty_expression() {
 	struct bx_comp_expr *expression;
 
 	expression = BX_MALLOC(struct bx_comp_expr);
 	if (expression == NULL) {
+		return NULL;
+	}
+
+	memset((void *) expression, 0, sizeof (struct bx_comp_expr));
+	return expression;
+}
+
+struct bx_comp_expr *bx_cgex_create_int_constant(bx_int32 value) {
+	struct bx_comp_expr *expression;
+
+	expression = create_empty_expression();
+	if (expression == NULL) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error instantiating memory in function 'bx_cgex_create_int_constant'");
 		return NULL;
 	}
 
@@ -67,7 +85,7 @@ struct bx_comp_expr *bx_cgex_create_int_constant(bx_int32 value) {
 struct bx_comp_expr *bx_cgex_create_float_constant(bx_float32 value) {
 	struct bx_comp_expr *expression;
 
-	expression = BX_MALLOC(struct bx_comp_expr);
+	expression = create_empty_expression();;
 	if (expression == NULL) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error instantiating memory in function 'bx_cgex_create_float_constant'");
@@ -84,7 +102,7 @@ struct bx_comp_expr *bx_cgex_create_float_constant(bx_float32 value) {
 struct bx_comp_expr *bx_cgex_create_bool_constant(bx_boolean value) {
 	struct bx_comp_expr *expression;
 
-	expression = BX_MALLOC(struct bx_comp_expr);
+	expression = create_empty_expression();;
 	if (expression == NULL) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error instantiating memory in function 'bx_cgex_create_bool_constant'");
@@ -112,7 +130,7 @@ struct bx_comp_expr *bx_cgex_create_variable(struct bx_comp_symbol_table *symbol
 		return NULL;
 	}
 
-	expression = BX_MALLOC(struct bx_comp_expr);
+	expression = create_empty_expression();;
 	if (expression == NULL) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error instantiating memory in function 'bx_cgex_create_variable'");
@@ -126,7 +144,33 @@ struct bx_comp_expr *bx_cgex_create_variable(struct bx_comp_symbol_table *symbol
 	return expression;
 }
 
+static void combine_side_effect_code(struct bx_comp_expr *source1,
+		struct bx_comp_expr *source2, struct bx_comp_expr *destination) {
+	struct bx_comp_code *code;
+
+	if (source1->side_effect_code != NULL &&
+			source2->side_effect_code != NULL) {
+		return;
+	}
+
+	code = bx_cgco_create();
+	if (source1->side_effect_code != NULL) {
+		bx_cgco_append_code(code, source1->side_effect_code);
+	}
+	if (source1->side_effect_code != NULL) {
+		bx_cgco_append_code(code, source1->side_effect_code);
+	}
+
+	destination->side_effect_code = code;
+}
+
+static void copy_side_effect_code(struct bx_comp_expr *source, struct bx_comp_expr *destination) {
+
+	destination->side_effect_code = bx_cgco_copy(source->side_effect_code);
+}
+
 struct bx_comp_expr *bx_cgex_cast(struct bx_comp_expr *expression, enum bx_builtin_type type) {
+	struct bx_comp_expr *result;
 
 	if (expression == NULL) {
 		return NULL;
@@ -134,13 +178,17 @@ struct bx_comp_expr *bx_cgex_cast(struct bx_comp_expr *expression, enum bx_built
 
 	switch (type) {
 	case BX_INT:
-		return bx_cgex_cast_to_int(expression);
+		result = bx_cgex_cast_to_int(expression);
+		break;
 	case BX_FLOAT:
-		return bx_cgex_cast_to_float(expression);
+		result = bx_cgex_cast_to_float(expression);
+		break;
 	case BX_BOOL:
-		return bx_cgex_cast_to_bool(expression);
+		result = bx_cgex_cast_to_bool(expression);
+		break;
 	case BX_STRING:
-		return bx_cgex_cast_to_string(expression);
+		result = bx_cgex_cast_to_string(expression);
+		break;
 	case BX_SUBNET:
 		BX_LOG(LOG_ERROR, "compiler", "Cast to type 'subnet' is not allowed.");
 		return NULL;
@@ -151,10 +199,15 @@ struct bx_comp_expr *bx_cgex_cast(struct bx_comp_expr *expression, enum bx_built
 		BX_LOG(LOG_ERROR, "codegen_cast", "Unknown type encountered in function bx_cgca_cast.");
 		return NULL;
 	}
+
+	copy_side_effect_code(expression, result);
+
+	return result;
 }
 
 struct bx_comp_expr *bx_cgex_binary_expression(struct bx_comp_expr *operand1,
 		struct bx_comp_expr *operand2, enum bx_comp_operator operator) {
+	struct bx_comp_expr *result;
 
 	if (operand1 == NULL || operand2 == NULL) {
 		return NULL;
@@ -162,47 +215,69 @@ struct bx_comp_expr *bx_cgex_binary_expression(struct bx_comp_expr *operand1,
 
 	switch(operator) {
 	case BX_COMP_OP_ADD:
-		return bx_cgex_addition_operator(operand1, operand2);
+		result = bx_cgex_addition_operator(operand1, operand2);
+		break;
 	case BX_COMP_OP_SUB:
-		return bx_cgex_subtraction_operator(operand1, operand2);
+		result = bx_cgex_subtraction_operator(operand1, operand2);
+		break;
 	case BX_COMP_OP_MUL:
-		return bx_cgex_multiplication_operator(operand1, operand2);
+		result = bx_cgex_multiplication_operator(operand1, operand2);
+		break;
 	case BX_COMP_OP_DIV:
-		return bx_cgex_division_operator(operand1, operand2);
+		result = bx_cgex_division_operator(operand1, operand2);
+		break;
 	case BX_COMP_OP_MOD:
-		return bx_cgex_modulo_operator(operand1, operand2);
+		result = bx_cgex_modulo_operator(operand1, operand2);
+		break;
 	case BX_COMP_OP_EQ:
-		return bx_cgex_equality_operator(operand1, operand2);
+		result = bx_cgex_equality_operator(operand1, operand2);
+		break;
 	case BX_COMP_OP_NE:
-		return bx_cgex_inequality_operator(operand1, operand2);
+		result = bx_cgex_inequality_operator(operand1, operand2);
+		break;
 	case BX_COMP_OP_GT:
-		return bx_cgex_greater_than_operator(operand1, operand2);
+		result = bx_cgex_greater_than_operator(operand1, operand2);
+		break;
 	case BX_COMP_OP_GE:
-		return bx_cgex_greater_or_equal_operator(operand1, operand2);
+		result = bx_cgex_greater_or_equal_operator(operand1, operand2);
+		break;
 	case BX_COMP_OP_LT:
-		return bx_cgex_less_than_operator(operand1, operand2);
+		result = bx_cgex_less_than_operator(operand1, operand2);
+		break;
 	case BX_COMP_OP_LE:
-		return bx_cgex_less_or_equal_operator(operand1, operand2);
+		result = bx_cgex_less_or_equal_operator(operand1, operand2);
+		break;
 	case BX_COMP_OP_BITWISE_OR:
-		return bx_cgex_bitwise_or_operator(operand1, operand2);
+		result = bx_cgex_bitwise_or_operator(operand1, operand2);
+		break;
 	case BX_COMP_OP_BITWISE_XOR:
-		return bx_cgex_bitwise_xor_operator(operand1, operand2);
+		result = bx_cgex_bitwise_xor_operator(operand1, operand2);
+		break;
 	case BX_COMP_OP_BITWISE_AND:
-		return bx_cgex_bitwise_and_operator(operand1, operand2);
+		result = bx_cgex_bitwise_and_operator(operand1, operand2);
+		break;
 	case BX_COMP_OP_OR:
-		return bx_cgex_logical_or_operator(operand1, operand2);
+		result = bx_cgex_logical_or_operator(operand1, operand2);
+		break;
 	case BX_COMP_OP_AND:
-		return bx_cgex_logical_and_operator(operand1, operand2);
+		result = bx_cgex_logical_and_operator(operand1, operand2);
+		break;
 	case BX_COMP_OP_ASSIGNMENT:
-		return bx_cgex_assignment_expression(operand1, operand2);
+		result = bx_cgex_assignment_expression(operand1, operand2);
+		break;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operator "
 				"encountered in function 'bx_cgex_binary_expression'");
 		return NULL;
 	}
+
+	combine_side_effect_code(operand1, operand2, result);
+
+	return result;
 }
 
 struct bx_comp_expr *bx_cgex_unary_expression(struct bx_comp_expr *operand1, enum bx_comp_operator operator) {
+	struct bx_comp_expr *result;
 
 	if (operand1 == NULL) {
 		return NULL;
@@ -210,26 +285,38 @@ struct bx_comp_expr *bx_cgex_unary_expression(struct bx_comp_expr *operand1, enu
 
 	switch (operator) {
 	case BX_COMP_OP_UNARY_PLUS:
-		return bx_cgex_unary_plus_operator(operand1);
+		result = bx_cgex_unary_plus_operator(operand1);
+		break;
 	case BX_COMP_OP_UNARY_MINUS:
-		return bx_cgex_unary_minus_operator(operand1);
+		result = bx_cgex_unary_minus_operator(operand1);
+		break;
 	case BX_COMP_OP_NOT:
-		return bx_cgex_logical_not_operator(operand1);
+		result = bx_cgex_logical_not_operator(operand1);
+		break;
 	case BX_COMP_OP_BITWISE_COMPLEMENT:
-		return bx_cgex_bitwise_complement_operator(operand1);
+		result = bx_cgex_bitwise_complement_operator(operand1);
+		break;
 	case BX_COMP_OP_PREFIX_INC:
-		return bx_cgex_prefix_inc_operator(operand1);
+		result = bx_cgex_prefix_inc_operator(operand1);
+		break;
 	case BX_COMP_OP_PREFIX_DEC:
-		return bx_cgex_prefix_dec_operator(operand1);
+		result = bx_cgex_prefix_dec_operator(operand1);
+		break;
 	case BX_COMP_OP_POSTFIX_INC:
-		return bx_cgex_postfix_inc_operator(operand1);
+		result = bx_cgex_postfix_inc_operator(operand1);
+		break;
 	case BX_COMP_OP_POSTFIX_DEC:
-		return bx_cgex_postfix_dec_operator(operand1);
+		result = bx_cgex_postfix_dec_operator(operand1);
+		break;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected operator "
 						"encountered in function 'bx_cgex_unary_expression'");
 		return NULL;
 	}
+
+	copy_side_effect_code(operand1, result);
+
+	return result;
 }
 
 bx_int8 bx_cgex_convert_to_binary(struct bx_comp_expr *expression) {
@@ -350,7 +437,7 @@ static bx_int8 variable_to_binary(struct bx_comp_expr *expression) {
 struct bx_comp_expr *bx_cgex_create_binary_expression(enum bx_builtin_type data_type) {
 	struct bx_comp_expr *expression;
 
-	expression = BX_MALLOC(struct bx_comp_expr);
+	expression = create_empty_expression();;
 	if (expression == NULL) {
 		return NULL;
 	}
@@ -395,7 +482,7 @@ struct bx_comp_expr *bx_cgex_copy_expression(struct bx_comp_expr *expression) {
 		return NULL;
 	}
 
-	copy = BX_MALLOC(struct bx_comp_expr);
+	copy = create_empty_expression();;
 	if (copy == NULL) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error instantiating memory in function 'bx_cgex_copy_expression'");
@@ -420,6 +507,10 @@ struct bx_comp_expr *bx_cgex_copy_expression(struct bx_comp_expr *expression) {
 		copy->value = expression->value;
 	}
 
+	if (expression->side_effect_code != NULL) {
+		copy->side_effect_code = bx_cgco_copy(expression->side_effect_code);
+	}
+
 	return copy;
 }
 
@@ -431,6 +522,10 @@ void bx_cgex_destroy_expression(struct bx_comp_expr *expression) {
 
 	if (expression->expression_type == BX_COMP_BINARY) {
 		bx_cgco_destroy(expression->value.code);
+	}
+
+	if (expression->side_effect_code != NULL) {
+		bx_cgco_destroy(expression->side_effect_code);
 	}
 
 	free(expression);

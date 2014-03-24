@@ -29,7 +29,7 @@
  *
  */
 
-#include <strings.h>
+#include <string.h>
 #include "utils/memory_utils.h"
 #include "compiler/codegen_while_statement.h"
 

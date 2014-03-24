@@ -81,6 +81,7 @@ struct bx_comp_expr {
 		struct bx_comp_symbol *variable;
 		struct bx_comp_code *code;
 	} value;
+	struct bx_comp_code *side_effect_code;
 };
 
 
