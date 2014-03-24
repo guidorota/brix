@@ -473,12 +473,12 @@ postfix_expression
 	}
 	| postfix_expression INC_OP
 	{
-		$$ = bx_cgex_unary_expression($1, BX_COMP_OP_PREFIX_INC);
+		$$ = bx_cgex_unary_expression($1, BX_COMP_OP_POSTFIX_INC);
 		bx_cgex_destroy_expression($1);
 	}
 	| postfix_expression DEC_OP
 	{
-		$$ = bx_cgex_unary_expression($1, BX_COMP_OP_PREFIX_DEC);
+		$$ = bx_cgex_unary_expression($1, BX_COMP_OP_POSTFIX_DEC);
 		bx_cgex_destroy_expression($1);
 	}
 	;

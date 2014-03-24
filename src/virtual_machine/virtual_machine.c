@@ -36,6 +36,57 @@
 #include "logging.h"
 #include "document_manager/document_manager.h"
 
+char *bx_instruction_names[] = {
+	"BX_INSTR_IADD",
+	"BX_INSTR_ISUB",
+	"BX_INSTR_IMUL",
+	"BX_INSTR_IDIV",
+	"BX_INSTR_IMOD",
+	"BX_INSTR_INEG",
+	"BX_INSTR_IAND",
+	"BX_INSTR_IOR",
+	"BX_INSTR_IXOR",
+	"BX_INSTR_INOT",
+	"BX_INSTR_IEQ",
+	"BX_INSTR_INE",
+	"BX_INSTR_IGT",
+	"BX_INSTR_IGE",
+	"BX_INSTR_ILT",
+	"BX_INSTR_ILE",
+	"BX_INSTR_FADD",
+	"BX_INSTR_FSUB",
+	"BX_INSTR_FMUL",
+	"BX_INSTR_FDIV",
+	"BX_INSTR_FNEG",
+	"BX_INSTR_FEQ",
+	"BX_INSTR_FNE",
+	"BX_INSTR_FGT",
+	"BX_INSTR_FGE",
+	"BX_INSTR_FLT",
+	"BX_INSTR_FLE",
+	"BX_INSTR_PUSH32",
+	"BX_INSTR_IPUSH_0",
+	"BX_INSTR_IPUSH_1",
+	"BX_INSTR_FPUSH_0",
+	"BX_INSTR_FPUSH_1",
+	"BX_INSTR_RLOAD32",
+	"BX_INSTR_RSTORE32",
+	"BX_INSTR_VLOAD32",
+	"BX_INSTR_VSTORE32",
+	"BX_INSTR_DUP32",
+	"BX_INSTR_JUMP",
+	"BX_INSTR_JEQZ",
+	"BX_INSTR_JNEZ",
+	"BX_INSTR_JGTZ",
+	"BX_INSTR_JGEZ",
+	"BX_INSTR_JLTZ",
+	"BX_INSTR_JLEZ",
+	"BX_INSTR_NOP",
+	"BX_INSTR_I2F",
+	"BX_INSTR_F2I",
+	"BX_INSTR_HALT"
+};
+
 enum vm_operand {
 	BX_VMOP_ADD,
 	BX_VMOP_SUB,
@@ -718,6 +769,7 @@ bx_int8 bx_vm_execute(bx_uint8 *code, bx_size code_size) {
 		if (error != 0) {
 			break;
 		}
+		BX_LOG(LOG_DEBUG, "virtual_machine", bx_instruction_names[instruction_id]);
 		error = instruction_array[instruction_id](&vm_status);
 		if (error != 0) {
 			break;

@@ -178,6 +178,17 @@ START_TEST (local_variable_assignment_test) {
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 17);
 } END_TEST
 
+START_TEST (post_increment_test) {
+	bx_int8 error;
+
+	error = run_program(
+			"field int int_test_field;"
+			"int_test_field = 0;"
+			"int_test_field++;");
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
+} END_TEST
+
 START_TEST (expression_test) {
 	bx_int8 error;
 
@@ -354,6 +365,10 @@ Suite *test_compiler_create_suite(void) {
 
 	tcase = tcase_create("local_variable_assignment_test");
 	tcase_add_test(tcase, local_variable_assignment_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("post_increment_test");
+	tcase_add_test(tcase, post_increment_test);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("expression_test");
