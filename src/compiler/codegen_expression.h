@@ -68,8 +68,7 @@ enum bx_comp_operator {
 enum bx_comp_exp_type {
 	BX_COMP_CONSTANT,	// Constant value
 	BX_COMP_VARIABLE,	// A variable
-	BX_COMP_BINARY,		// An expression in binary form
-	BX_COMP_ASSIGNMENT	// An assignment expression
+	BX_COMP_BINARY		// An expression in binary form
 };
 
 struct bx_comp_expr {
