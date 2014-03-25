@@ -63,9 +63,9 @@ bx_int8 bx_mlist_init(struct bx_mlist *list, void *storage, bx_size storage_size
  * @param element Element to add in the list
  * @param element_size Size of the element to add
  *
- * @return Pointer to element added, NULL on error
+ * @return Index of the element added, NULL on error
  */
-void *bx_mlist_add(struct bx_mlist *list, void *element, bx_size element_size);
+bx_ssize bx_mlist_add(struct bx_mlist *list, void *element, bx_size element_size);
 
 /**
  * Returns a pointer to an element given its index.

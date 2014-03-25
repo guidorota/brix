@@ -35,6 +35,8 @@
 #define TAIL_POINTER(list_pointer) ((bx_uint8 *) list_pointer->storage) + list_pointer->size
 #define OFFSET_POINTER(list_pointer, offset) ((bx_uint8 *) list_pointer->storage + offset)
 
+static bx_ssize element_count(struct bx_mlist *list);
+
 bx_int8 bx_mlist_init(struct bx_mlist *list, void *storage, bx_size capacity) {
 
 	if (list == NULL || storage == NULL || capacity == 0) {
@@ -48,11 +50,11 @@ bx_int8 bx_mlist_init(struct bx_mlist *list, void *storage, bx_size capacity) {
 	return 0;
 }
 
-void *bx_mlist_add(struct bx_mlist *list, void *element, bx_size element_size) {
+bx_ssize bx_mlist_add(struct bx_mlist *list, void *element, bx_size element_size) {
 	void *new_element;
 
 	if (list == NULL || element == NULL || element_size == 0) {
-		return NULL;
+		return -1;
 	}
 
 	memcpy(TAIL_POINTER(list), &element_size, sizeof element_size);
@@ -61,7 +63,19 @@ void *bx_mlist_add(struct bx_mlist *list, void *element, bx_size element_size) {
 	memcpy(new_element, element, element_size);
 	list->size += element_size;
 
-	return new_element;
+	return element_count(list);
+}
+
+static bx_ssize element_count(struct bx_mlist *list) {
+	bx_size element_count = 0;
+	bx_size offset = 0;
+
+	while(offset < list->size) {
+		offset = sizeof (bx_size) + * (bx_uint16 *) OFFSET_POINTER(list, offset);
+		++element_count;
+	}
+
+	return element_count;
 }
 
 void *bx_mlist_get(struct bx_mlist *list, bx_size index, bx_size *element_size) {
