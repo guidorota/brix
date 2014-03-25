@@ -1,5 +1,5 @@
 /*
- * bx_signal.c
+ * test_storage.h
  * Created on: Mar 25, 2014
  * Author: Guido Rota
  *
@@ -29,8 +29,11 @@
  *
  */
 
-#include "runtime/signal.h"
+#ifndef TEST_STORAGE_H_
+#define TEST_STORAGE_H_
 
-bx_int8 bx_sig_set_handler(bx_uint8 signal, struct bx_signal_handler *handler) {
-	return -1; //TODO: Stub
-}
+#include <check.h>
+
+Suite *test_storage_create_suite(void);
+
+#endif /* TEST_STORAGE_H_ */

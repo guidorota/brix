@@ -29,12 +29,78 @@
  *
  */
 
+#include "logging.h"
 #include "runtime/storage.h"
+#include "utils/memory_utils.h"
+#include "utils/linked_list.h"
 
-bx_int8 bx_stora_persist(void *data, bx_size data_length, bx_file_id *file_id) {
-	return -1; //TODO: Stub
+struct bx_stora_file {
+	bx_file_id file_id;
+	void *data;
+	bx_size data_length;
+};
+
+static bx_file_id current_index;
+static struct bx_linked_list *file_list;
+
+static bx_int8 file_id_equals(struct bx_stora_file *list_element, bx_file_id *file_id) {
+	return list_element->file_id == *file_id;
 }
 
-bx_ssize bx_stora_retrieve(bx_file_id *file_id, void *data) {
-	return -1; //TODO: Stub
+bx_int8 bx_stora_init(void *param) {
+	current_index = 0;
+
+	return 0;
+}
+
+bx_int8 bx_stora_persist(void *data, bx_size data_length, bx_file_id *file_id) {
+	struct bx_stora_file *file;
+	void *result;
+
+	file = BX_MALLOC(struct bx_stora_file);
+	if (file == NULL) {
+		return -1;
+	}
+
+	*file_id = current_index++;
+	file->file_id = *file_id;
+	file->data = data;
+	file->data_length = data_length;
+
+	result = bx_llist_add(&file_list, (void *) file);
+	if (result == NULL) {
+		free(file);
+		return -1;
+	}
+
+	return 0;
+}
+
+bx_int8 bx_stora_retrieve(bx_file_id file_id, void **data, bx_size *data_length) {
+	struct bx_stora_file *file;
+
+	file = (struct bx_stora_file *) bx_llist_find_equals(
+			file_list, (void *) &file_id, (bx_llist_equals) file_id_equals);
+	if (file == NULL) {
+		BX_LOG(LOG_ERROR, "storage", "File '%zu' not found.", file_id);
+		return -1;
+	}
+
+	*data = file->data;
+	*data_length = file->data_length;
+
+	return 0;
+}
+
+bx_int8 bx_stora_delete(bx_file_id file_id) {
+	struct bx_stora_file *file;
+
+	file = bx_llist_remove_equals(&file_list, (void *) &file_id, (bx_llist_equals) file_id_equals);
+	if (file == NULL) {
+		BX_LOG(LOG_ERROR, "storage", "File '%zu' not found.", file_id);
+		return -1;
+	}
+
+	free(file);
+	return 0;
 }

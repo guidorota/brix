@@ -1,4 +1,4 @@
-MODULES := utils virtual_machine document_manager compiler
+MODULES := utils virtual_machine document_manager compiler runtime
 EXECUTABLES := brix compiler/compiler
 ARCH := linux
 

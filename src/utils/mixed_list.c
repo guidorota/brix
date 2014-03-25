@@ -67,7 +67,7 @@ bx_ssize bx_mlist_add(struct bx_mlist *list, void *element, bx_size element_size
 }
 
 static bx_ssize element_count(struct bx_mlist *list) {
-	bx_size element_count = 0;
+	bx_size element_count = 1;
 	bx_size offset = 0;
 
 	while(offset < list->size) {

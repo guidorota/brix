@@ -32,7 +32,9 @@
 #ifndef SIGNAL_H_
 #define SIGNAL_H_
 
-#define BX_SIG_TMR
+#define BX_SIG_TMR 1
+
+#include "types.h"
 
 enum bx_handler_type {
 	BX_SIGNAL_NATIVE,	///< Native C handler
@@ -42,5 +44,7 @@ enum bx_handler_type {
 struct bx_signal_handler {
 	enum bx_handler_type handler_type;
 };
+
+bx_int8 bx_sig_set_handler(bx_uint8 signal, struct bx_signal_handler *handler);
 
 #endif /* SIGNAL_H_ */
