@@ -127,9 +127,13 @@ compound_statement
 	{
 		bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
 	}
-	| '{' statement_list '}'
+	| '{'
 	{
-
+		bx_cgsy_scope_down(current_task->symbol_table);	
+	}
+	statement_list '}'
+	{
+		bx_cgsy_scope_up(current_task->symbol_table);
 	}
 	;
 	

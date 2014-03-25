@@ -416,6 +416,26 @@ START_TEST (for_statement_test) {
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 10);
 } END_TEST
 
+START_TEST (automatic_variable) {
+	bx_int8 error;
+
+	error = run_program(
+			"field int int_test_field;"
+			"field int int_output_test_field;"
+			"int var;"
+			"var = 0;"
+			"do {"
+			"	int var;"
+			"	var = 5;"
+			"	int_output_test_field = var;"
+			"} while (0);"
+			"int_test_field = var;"
+			);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_output_test_field), 5);
+} END_TEST
+
 Suite *test_compiler_create_suite(void) {
 	Suite *suite = suite_create("bx_linked_list");
 	TCase *tcase;
@@ -462,6 +482,10 @@ Suite *test_compiler_create_suite(void) {
 
 	tcase = tcase_create("for_statement_test");
 	tcase_add_test(tcase, for_statement_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("automatic_variable");
+	tcase_add_test(tcase, automatic_variable);
 	suite_add_tcase(suite, tcase);
 
 	return suite;
