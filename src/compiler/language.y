@@ -144,7 +144,19 @@ declaration_statement
 	}
 	| creation_modifier FIELD type_name IDENTIFIER '=' expression ';'
 	{
-	
+		struct bx_comp_expr *assignment;
+		struct bx_comp_expr *destination;
+		struct bx_comp_code *code;
+		
+		bx_cgsy_add_field(current_task->symbol_table, $4, $3, $1);
+		destination = bx_cgex_create_variable(current_task->symbol_table, $4);
+		assignment = bx_cgex_binary_expression(destination, $6, BX_COMP_OP_ASSIGNMENT);
+		code = bx_cgex_side_effect_code(assignment);
+		bx_cgco_append_code(current_task->code, code);
+		
+		bx_cgex_destroy_expression(destination);
+		bx_cgex_destroy_expression(assignment);
+		bx_cgex_destroy_expression($6);
 	}
 	| type_name IDENTIFIER ';'
 	{
@@ -152,7 +164,19 @@ declaration_statement
 	}
 	| type_name IDENTIFIER '=' expression ';'
 	{
-	
+		struct bx_comp_expr *assignment;
+		struct bx_comp_expr *destination;
+		struct bx_comp_code *code;
+		
+		bx_cgsy_add_variable(current_task->symbol_table, $2, $1);
+		destination = bx_cgex_create_variable(current_task->symbol_table, $2);
+		assignment = bx_cgex_binary_expression(destination, $4, BX_COMP_OP_ASSIGNMENT);
+		code = bx_cgex_side_effect_code(assignment);
+		bx_cgco_append_code(current_task->code, code);
+		
+		bx_cgex_destroy_expression(destination);
+		bx_cgex_destroy_expression(assignment);
+		bx_cgex_destroy_expression($4);
 	}
 	;
 	

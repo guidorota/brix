@@ -178,6 +178,20 @@ START_TEST (local_variable_assignment_test) {
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 17);
 } END_TEST
 
+START_TEST (declaration_assignment_test) {
+	bx_int8 error;
+
+	error = run_program(
+			"field int int_test_field = 5;"
+			"field int int_output_test_field;"
+			"int temp = 12;"
+			"int_output_test_field = temp;"
+			);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 5);
+	ck_assert_int_eq(bx_test_field_get_int(&int_output_test_field), 12);
+} END_TEST
+
 START_TEST (post_increment_test) {
 	bx_int8 error;
 
@@ -454,6 +468,10 @@ Suite *test_compiler_create_suite(void) {
 
 	tcase = tcase_create("local_variable_assignment_test");
 	tcase_add_test(tcase, local_variable_assignment_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("declaration_assignment_test");
+	tcase_add_test(tcase, declaration_assignment_test);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("post_increment_test");
