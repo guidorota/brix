@@ -47,13 +47,13 @@ static bx_int8 file_id_equals(struct bx_stora_file *list_element, bx_file_id *fi
 	return list_element->file_id == *file_id;
 }
 
-bx_int8 bx_stora_init(void *param) {
+bx_int8 bx_st_init(void *param) {
 	current_index = 0;
 
 	return 0;
 }
 
-bx_int8 bx_stora_persist(void *data, bx_size data_length, bx_file_id *file_id) {
+bx_int8 bx_st_persist(void *data, bx_size data_length, bx_file_id *file_id) {
 	struct bx_stora_file *file;
 	void *result;
 
@@ -76,7 +76,7 @@ bx_int8 bx_stora_persist(void *data, bx_size data_length, bx_file_id *file_id) {
 	return 0;
 }
 
-bx_int8 bx_stora_retrieve(bx_file_id file_id, void **data, bx_size *data_length) {
+bx_int8 bx_st_retrieve(bx_file_id file_id, void **data, bx_size *data_length) {
 	struct bx_stora_file *file;
 
 	file = (struct bx_stora_file *) bx_llist_find_equals(
@@ -92,7 +92,7 @@ bx_int8 bx_stora_retrieve(bx_file_id file_id, void **data, bx_size *data_length)
 	return 0;
 }
 
-bx_int8 bx_stora_delete(bx_file_id file_id) {
+bx_int8 bx_st_delete(bx_file_id file_id) {
 	struct bx_stora_file *file;
 
 	file = bx_llist_remove_equals(&file_list, (void *) &file_id, (bx_llist_equals) file_id_equals);

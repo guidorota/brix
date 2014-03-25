@@ -14,6 +14,7 @@ int main(int argc, char* argv[]) {
 	BX_LOG(LOG_INFO, "main", "Initializing...");
 	bx_vm_virtual_machine_init();
 	bx_dm_document_manager_init();
+	bx_st_init(NULL);
 
 	return 0;
 }

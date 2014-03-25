@@ -41,7 +41,7 @@ static bx_file_id file_id2;
 START_TEST (init_test) {
 	bx_int8 error;
 
-	error = bx_stora_init(NULL);
+	error = bx_st_init(NULL);
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
@@ -50,16 +50,16 @@ START_TEST (test_addition) {
 	char *data;
 	bx_size data_length;
 
-	error = bx_stora_persist(test_data1, strlen(test_data1), &file_id1);
+	error = bx_st_persist(test_data1, strlen(test_data1), &file_id1);
 	ck_assert_int_eq(error, 0);
-	error = bx_stora_retrieve(file_id1, (void *) &data, &data_length);
+	error = bx_st_retrieve(file_id1, (void *) &data, &data_length);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(strlen(test_data1), data_length);
 	ck_assert_int_eq(strcmp(test_data1, data), 0);
 
-	error = bx_stora_persist(test_data2, strlen(test_data2), &file_id2);
+	error = bx_st_persist(test_data2, strlen(test_data2), &file_id2);
 	ck_assert_int_eq(error, 0);
-	error = bx_stora_retrieve(file_id2, (void *) &data, &data_length);
+	error = bx_st_retrieve(file_id2, (void *) &data, &data_length);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(strlen(test_data2), data_length);
 	ck_assert_int_eq(strcmp(test_data2, data), 0);
@@ -70,20 +70,20 @@ START_TEST (test_removal) {
 	char *data;
 	bx_size data_length;
 
-	error = bx_stora_delete(file_id1);
+	error = bx_st_delete(file_id1);
 	ck_assert_int_eq(error, 0);
-	error = bx_stora_retrieve(file_id1, (void *) &data, &data_length);
+	error = bx_st_retrieve(file_id1, (void *) &data, &data_length);
 	ck_assert_int_ne(error, 0);
-	error = bx_stora_retrieve(file_id2, (void *) &data, &data_length);
+	error = bx_st_retrieve(file_id2, (void *) &data, &data_length);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(strlen(test_data2), data_length);
 	ck_assert_int_eq(strcmp(test_data2, data), 0);
 
-	error = bx_stora_delete(file_id2);
+	error = bx_st_delete(file_id2);
 	ck_assert_int_eq(error, 0);
-	error = bx_stora_retrieve(file_id1, (void *) &data, &data_length);
+	error = bx_st_retrieve(file_id1, (void *) &data, &data_length);
 	ck_assert_int_ne(error, 0);
-	error = bx_stora_retrieve(file_id2, (void *) &data, &data_length);
+	error = bx_st_retrieve(file_id2, (void *) &data, &data_length);
 	ck_assert_int_ne(error, 0);
 } END_TEST
 

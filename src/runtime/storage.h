@@ -36,12 +36,12 @@
 
 typedef bx_uint16 bx_file_id;
 
-bx_int8 bx_stora_init(void *param);
+bx_int8 bx_st_init(void *param);
 
-bx_int8 bx_stora_persist(void *data, bx_size data_length, bx_file_id *file_id);
+bx_int8 bx_st_persist(void *data, bx_size data_length, bx_file_id *file_id);
 
-bx_int8 bx_stora_retrieve(bx_file_id file_id, void **data, bx_size *data_length);
+bx_int8 bx_st_retrieve(bx_file_id file_id, void **data, bx_size *data_length);
 
-bx_int8 bx_stora_delete(bx_file_id file_id);
+bx_int8 bx_st_delete(bx_file_id file_id);
 
 #endif /* STORAGE_H_ */
