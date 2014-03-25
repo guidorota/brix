@@ -141,6 +141,16 @@ bx_ssize bx_cgco_add_address(struct bx_comp_code *code, bx_int16 address);
 bx_ssize bx_cgco_append_code(struct bx_comp_code *destination, struct bx_comp_code *source);
 
 /**
+ * Replaces the code in destination with the code in source
+ *
+ * @param destination Destination structure
+ * @param source Source structure
+ *
+ * @return Starting address of the appended code in the destination bx_comp_code structure, -1 on failure
+ */
+bx_ssize bx_cgco_replace_code(struct bx_comp_code *destination, struct bx_comp_code *source);
+
+/**
  * Creates a new label.
  * This function adds 2 empty bytes to the bx_comp_code structure and returns
  * their starting address (a label). This label can be later used to set

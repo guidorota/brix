@@ -126,6 +126,11 @@ bx_ssize bx_cgco_append_code(struct bx_comp_code *destination, struct bx_comp_co
 	return add_to_code(destination, source->data, source->size, BX_BOOLEAN_TRUE);
 }
 
+bx_ssize bx_cgco_replace_code(struct bx_comp_code *destination, struct bx_comp_code *source) {
+	destination->size = 0;
+	return add_to_code(destination, source->data, source->size, BX_BOOLEAN_TRUE);
+}
+
 static bx_ssize add_to_code(struct bx_comp_code *code, void *data, bx_size data_length, bx_boolean suppress_nop) {
 	bx_ssize address;
 

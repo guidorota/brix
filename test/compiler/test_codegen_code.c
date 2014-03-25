@@ -81,6 +81,71 @@ START_TEST (expand_size) {
 	bx_cgco_destroy(code);
 } END_TEST
 
+START_TEST (append_test) {
+	struct bx_comp_code *source;
+	struct bx_comp_code *destination;
+	bx_size capacity;
+	bx_int8 error;
+	bx_int32 i;
+
+	source = bx_cgco_create();
+	destination = bx_cgco_create();
+
+	for (i = 0; i < 10; i++) {
+		error = bx_cgco_add_int_constant(source, 5);
+		ck_assert_int_ne(error, -1);
+	}
+	for (i = 0; i < 10; i++) {
+		error = bx_cgco_add_int_constant(destination, 3);
+		ck_assert_int_ne(error, -1);
+	}
+
+	capacity = destination->size;
+	bx_cgco_append_code(destination, source);
+	ck_assert_int_eq(destination->size, source->size + capacity);
+
+	bx_int32 *value = (bx_int32 *) destination->data;
+	for (i = 0; i < 10; i++) {
+		ck_assert_int_eq(*(value + i), 3);
+		ck_assert_int_eq(*(value + i + 10), 5);
+	}
+
+	bx_cgco_destroy(source);
+	bx_cgco_destroy(destination);
+} END_TEST
+
+START_TEST (replace_test) {
+	struct bx_comp_code *source;
+	struct bx_comp_code *destination;
+	bx_size capacity;
+	bx_int8 error;
+	bx_int32 i;
+
+	source = bx_cgco_create();
+	destination = bx_cgco_create();
+
+	for (i = 0; i < 10; i++) {
+		error = bx_cgco_add_int_constant(source, 5);
+		ck_assert_int_ne(error, -1);
+	}
+	for (i = 0; i < 10; i++) {
+		error = bx_cgco_add_int_constant(destination, 3);
+		ck_assert_int_ne(error, -1);
+	}
+
+	capacity = destination->size;
+	bx_cgco_replace_code(destination, source);
+	ck_assert_int_eq(destination->size, source->size);
+
+	bx_int32 *value = (bx_int32 *) destination->data;
+	for (i = 0; i < 10; i++) {
+		ck_assert_int_eq(*(value + i), 5);
+	}
+
+	bx_cgco_destroy(source);
+	bx_cgco_destroy(destination);
+} END_TEST
+
 START_TEST (copy_test) {
 	struct bx_comp_code *code;
 	struct bx_comp_code *copy;
@@ -146,6 +211,14 @@ Suite *test_codegen_code_create_suite(void) {
 
 	tcase = tcase_create("expand_size");
 	tcase_add_test(tcase, expand_size);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("append_test");
+	tcase_add_test(tcase, append_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("replace_test");
+	tcase_add_test(tcase, replace_test);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("copy_test");
