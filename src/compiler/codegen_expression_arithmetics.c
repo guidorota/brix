@@ -391,7 +391,6 @@ struct bx_comp_expr *bx_cgex_prefix_dec_operator(struct bx_comp_expr *operand1) 
 
 struct bx_comp_expr *prefix_dec_int(struct bx_comp_expr *operand1) {
 	struct bx_comp_expr *result;
-	struct bx_comp_code *code;
 
 	result = bx_cgex_create_binary_expression(BX_INT);
 	if (result == NULL) {
@@ -400,26 +399,45 @@ struct bx_comp_expr *prefix_dec_int(struct bx_comp_expr *operand1) {
 		return NULL;
 	}
 
+	result->side_effect_code = bx_cgco_create();
+	if (result->side_effect_code == NULL) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error creating side effect code in function 'postfix_inc_int'");
+		return NULL;
+	}
+
 	switch (operand1->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
-		code = result->value.code;
-		bx_cgco_add_instruction(code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(code, BX_INSTR_ISUB);
-		bx_cgco_add_instruction(code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(code, operand1->value.variable->identifier);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_RLOAD32);
+		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_IPUSH_1);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_ISUB);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
+		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
+
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RLOAD32);
+		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_IPUSH_1);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_ISUB);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RSTORE32);
+		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
 		break;
 	case BX_COMP_VARIABLE_SYMBOL:
-		code = result->value.code;
-		bx_cgco_add_instruction(code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(code, operand1->value.variable->symbol_data.variable_number);
-		bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(code, BX_INSTR_ISUB);
-		bx_cgco_add_instruction(code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_VLOAD32);
+		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_IPUSH_1);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_ISUB);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_VSTORE32);
+		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
+
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VLOAD32);
+		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_IPUSH_1);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_ISUB);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VSTORE32);
+		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
 		break;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected data type encountered "
@@ -432,7 +450,6 @@ struct bx_comp_expr *prefix_dec_int(struct bx_comp_expr *operand1) {
 
 struct bx_comp_expr *prefix_dec_float(struct bx_comp_expr *operand1) {
 	struct bx_comp_expr *result;
-	struct bx_comp_code *code;
 
 	result = bx_cgex_create_binary_expression(BX_FLOAT);
 	if (result == NULL) {
@@ -441,26 +458,45 @@ struct bx_comp_expr *prefix_dec_float(struct bx_comp_expr *operand1) {
 		return NULL;
 	}
 
+	result->side_effect_code = bx_cgco_create();
+	if (result->side_effect_code == NULL) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error creating side effect code in function 'postfix_inc_int'");
+		return NULL;
+	}
+
 	switch (operand1->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
-		code = result->value.code;
-		bx_cgco_add_instruction(code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(code, BX_INSTR_FSUB);
-		bx_cgco_add_instruction(code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(code, operand1->value.variable->identifier);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_RLOAD32);
+		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_FPUSH_1);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_FSUB);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
+		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
+
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RLOAD32);
+		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FPUSH_1);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FSUB);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RSTORE32);
+		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
 		break;
 	case BX_COMP_VARIABLE_SYMBOL:
-		code = result->value.code;
-		bx_cgco_add_instruction(code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(code, operand1->value.variable->symbol_data.variable_number);
-		bx_cgco_add_instruction(code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(code, BX_INSTR_FSUB);
-		bx_cgco_add_instruction(code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_VLOAD32);
+		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_FPUSH_1);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_FSUB);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_VSTORE32);
+		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
+
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VLOAD32);
+		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FPUSH_1);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FSUB);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VSTORE32);
+		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
 		break;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected data type encountered "
@@ -502,7 +538,6 @@ struct bx_comp_expr *bx_cgex_prefix_inc_operator(struct bx_comp_expr *operand1) 
 
 struct bx_comp_expr *prefix_inc_int(struct bx_comp_expr *operand1) {
 	struct bx_comp_expr *result;
-	struct bx_comp_code *code;
 
 	result = bx_cgex_create_binary_expression(BX_INT);
 	if (result == NULL) {
@@ -511,26 +546,45 @@ struct bx_comp_expr *prefix_inc_int(struct bx_comp_expr *operand1) {
 		return NULL;
 	}
 
+	result->side_effect_code = bx_cgco_create();
+	if (result->side_effect_code == NULL) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error creating side effect code in function 'postfix_inc_int'");
+		return NULL;
+	}
+
 	switch (operand1->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
-		code = result->value.code;
-		bx_cgco_add_instruction(code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(code, BX_INSTR_IADD);
-		bx_cgco_add_instruction(code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(code, operand1->value.variable->identifier);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_RLOAD32);
+		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_IPUSH_1);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_IADD);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
+		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
+
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RLOAD32);
+		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_IPUSH_1);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_IADD);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RSTORE32);
+		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
 		break;
 	case BX_COMP_VARIABLE_SYMBOL:
-		code = result->value.code;
-		bx_cgco_add_instruction(code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(code, operand1->value.variable->symbol_data.variable_number);
-		bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(code, BX_INSTR_IADD);
-		bx_cgco_add_instruction(code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_VLOAD32);
+		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_IPUSH_1);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_IADD);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_VSTORE32);
+		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
+
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VLOAD32);
+		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_IPUSH_1);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_IADD);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VSTORE32);
+		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
 		break;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected data type encountered "
@@ -543,7 +597,6 @@ struct bx_comp_expr *prefix_inc_int(struct bx_comp_expr *operand1) {
 
 struct bx_comp_expr *prefix_inc_float(struct bx_comp_expr *operand1) {
 	struct bx_comp_expr *result;
-	struct bx_comp_code *code;
 
 	result = bx_cgex_create_binary_expression(BX_FLOAT);
 	if (result == NULL) {
@@ -552,26 +605,45 @@ struct bx_comp_expr *prefix_inc_float(struct bx_comp_expr *operand1) {
 		return NULL;
 	}
 
+	result->side_effect_code = bx_cgco_create();
+	if (result->side_effect_code == NULL) {
+		BX_LOG(LOG_ERROR, "codegen_expression",
+				"Error creating side effect code in function 'postfix_inc_int'");
+		return NULL;
+	}
+
 	switch (operand1->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
-		code = result->value.code;
-		bx_cgco_add_instruction(code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(code, BX_INSTR_FADD);
-		bx_cgco_add_instruction(code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(code, operand1->value.variable->identifier);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_RLOAD32);
+		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_FPUSH_1);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_FADD);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
+		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
+
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RLOAD32);
+		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FPUSH_1);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FADD);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RSTORE32);
+		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
 		break;
 	case BX_COMP_VARIABLE_SYMBOL:
-		code = result->value.code;
-		bx_cgco_add_instruction(code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(code, operand1->value.variable->symbol_data.variable_number);
-		bx_cgco_add_instruction(code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(code, BX_INSTR_FADD);
-		bx_cgco_add_instruction(code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_VLOAD32);
+		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_FPUSH_1);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_FADD);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
+		bx_cgco_add_instruction(result->value.code, BX_INSTR_VSTORE32);
+		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
+
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VLOAD32);
+		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FPUSH_1);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FADD);
+		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VSTORE32);
+		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
 		break;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected data type encountered "

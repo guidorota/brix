@@ -187,6 +187,75 @@ START_TEST (post_increment_test) {
 			"int_test_field++;");
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
+
+	error = run_program(
+			"field int int_test_field;"
+			"field int int_output_test_field;"
+			"int_test_field = 0;"
+			"int_output_test_field = 1;"
+			"int_output_test_field = int_test_field++;");
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
+	ck_assert_int_eq(bx_test_field_get_int(&int_output_test_field), 0);
+
+	error = run_program(
+			"field int int_test_field;"
+			"int temp;"
+			"int_test_field = 0;"
+			"temp = 0;"
+			"temp++;"
+			"int_test_field = temp;");
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
+
+	error = run_program(
+			"field int int_test_field;"
+			"int temp;"
+			"int_test_field = 1;"
+			"temp = 0;"
+			"int_test_field = temp++;");
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 0);
+} END_TEST
+
+START_TEST (pre_increment_test) {
+	bx_int8 error;
+
+	error = run_program(
+			"field int int_test_field;"
+			"int_test_field = 0;"
+			"++int_test_field;");
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
+
+	error = run_program(
+			"field int int_test_field;"
+			"field int int_output_test_field;"
+			"int_test_field = 0;"
+			"int_output_test_field = 0;"
+			"int_output_test_field = ++int_test_field;");
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
+	ck_assert_int_eq(bx_test_field_get_int(&int_output_test_field), 1);
+
+	error = run_program(
+			"field int int_test_field;"
+			"int temp;"
+			"int_test_field = 0;"
+			"temp = 0;"
+			"++temp;"
+			"int_test_field = temp;");
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
+
+	error = run_program(
+			"field int int_test_field;"
+			"int temp;"
+			"int_test_field = 0;"
+			"temp = 0;"
+			"int_test_field = ++temp;");
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
 } END_TEST
 
 START_TEST (expression_test) {
@@ -369,6 +438,10 @@ Suite *test_compiler_create_suite(void) {
 
 	tcase = tcase_create("post_increment_test");
 	tcase_add_test(tcase, post_increment_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("pre_increment_test");
+	tcase_add_test(tcase, pre_increment_test);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("expression_test");
