@@ -159,7 +159,7 @@ static struct bx_comp_expr *assign_to_boolean(struct bx_comp_expr *destination, 
 
 static bx_int8 add_32bit_assign_code(struct bx_comp_expr *result, struct bx_comp_expr *destination) {
 
-	result->side_effect_code = bx_cgco_copy(result->value.code);
+	bx_cgco_replace_code(result->side_effect_code, result->value.code);
 
 	switch (destination->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:

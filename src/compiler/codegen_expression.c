@@ -62,6 +62,12 @@ static struct bx_comp_expr *create_empty_expression() {
 	}
 
 	memset((void *) expression, 0, sizeof (struct bx_comp_expr));
+	expression->side_effect_code = bx_cgco_create();
+	if (expression->side_effect_code == NULL) {
+		free(expression);
+		return NULL;
+	}
+
 	return expression;
 }
 
@@ -146,27 +152,23 @@ struct bx_comp_expr *bx_cgex_create_variable(struct bx_comp_symbol_table *symbol
 
 static void combine_side_effect_code(struct bx_comp_expr *source1,
 		struct bx_comp_expr *source2, struct bx_comp_expr *destination) {
-	struct bx_comp_code *code;
 
 	if (source1->side_effect_code != NULL &&
 			source2->side_effect_code != NULL) {
 		return;
 	}
 
-	code = bx_cgco_create();
 	if (source1->side_effect_code != NULL) {
-		bx_cgco_append_code(code, source1->side_effect_code);
+		bx_cgco_replace_code(destination->side_effect_code, source1->side_effect_code);
 	}
 	if (source1->side_effect_code != NULL) {
-		bx_cgco_append_code(code, source1->side_effect_code);
+		bx_cgco_append_code(destination->side_effect_code, source1->side_effect_code);
 	}
-
-	destination->side_effect_code = code;
 }
 
 static void copy_side_effect_code(struct bx_comp_expr *source, struct bx_comp_expr *destination) {
 
-	destination->side_effect_code = bx_cgco_copy(source->side_effect_code);
+	bx_cgco_replace_code(destination->side_effect_code, source->side_effect_code);
 }
 
 struct bx_comp_expr *bx_cgex_cast(struct bx_comp_expr *expression, enum bx_builtin_type type) {
@@ -466,7 +468,7 @@ static bx_int8 variable_to_binary(struct bx_comp_expr *expression) {
 struct bx_comp_expr *bx_cgex_create_binary_expression(enum bx_builtin_type data_type) {
 	struct bx_comp_expr *expression;
 
-	expression = create_empty_expression();;
+	expression = create_empty_expression();
 	if (expression == NULL) {
 		return NULL;
 	}
@@ -537,7 +539,7 @@ struct bx_comp_expr *bx_cgex_copy_expression(struct bx_comp_expr *expression) {
 	}
 
 	if (expression->side_effect_code != NULL) {
-		copy->side_effect_code = bx_cgco_copy(expression->side_effect_code);
+		bx_cgco_replace_code(copy->side_effect_code, expression->side_effect_code);
 	}
 
 	return copy;

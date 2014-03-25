@@ -105,13 +105,6 @@ struct bx_comp_expr *postfix_dec_int(struct bx_comp_expr *operand1) {
 		return NULL;
 	}
 
-	result->side_effect_code = bx_cgco_create();
-	if (result->side_effect_code == NULL) {
-		BX_LOG(LOG_ERROR, "codegen_expression",
-				"Error creating side effect code in function 'postfix_dec_int'");
-		return NULL;
-	}
-
 	switch (operand1->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
 		bx_cgco_add_instruction(result->value.code, BX_INSTR_RLOAD32);
@@ -161,13 +154,6 @@ struct bx_comp_expr *postfix_dec_float(struct bx_comp_expr *operand1) {
 	if (result == NULL) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error creating binary expression in function 'postfix_dec_float'");
-		return NULL;
-	}
-
-	result->side_effect_code = bx_cgco_create();
-	if (result->side_effect_code == NULL) {
-		BX_LOG(LOG_ERROR, "codegen_expression",
-				"Error creating side effect code in function 'postfix_dec_float'");
 		return NULL;
 	}
 
@@ -252,13 +238,6 @@ struct bx_comp_expr *postfix_inc_int(struct bx_comp_expr *operand1) {
 		return NULL;
 	}
 
-	result->side_effect_code = bx_cgco_create();
-	if (result->side_effect_code == NULL) {
-		BX_LOG(LOG_ERROR, "codegen_expression",
-				"Error creating side effect code in function 'postfix_inc_int'");
-		return NULL;
-	}
-
 	switch (operand1->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
 		bx_cgco_add_instruction(result->value.code, BX_INSTR_RLOAD32);
@@ -308,13 +287,6 @@ struct bx_comp_expr *postfix_inc_float(struct bx_comp_expr *operand1) {
 	if (result == NULL) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error creating binary expression in functin 'postfix_inc_float'");
-		return NULL;
-	}
-
-	result->side_effect_code = bx_cgco_create();
-	if (result->side_effect_code == NULL) {
-		BX_LOG(LOG_ERROR, "codegen_expression",
-				"Error creating side effect code in function 'postfix_inc_int'");
 		return NULL;
 	}
 
@@ -399,13 +371,6 @@ struct bx_comp_expr *prefix_dec_int(struct bx_comp_expr *operand1) {
 		return NULL;
 	}
 
-	result->side_effect_code = bx_cgco_create();
-	if (result->side_effect_code == NULL) {
-		BX_LOG(LOG_ERROR, "codegen_expression",
-				"Error creating side effect code in function 'postfix_inc_int'");
-		return NULL;
-	}
-
 	switch (operand1->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
 		bx_cgco_add_instruction(result->value.code, BX_INSTR_RLOAD32);
@@ -455,13 +420,6 @@ struct bx_comp_expr *prefix_dec_float(struct bx_comp_expr *operand1) {
 	if (result == NULL) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error creating binary expression in functin 'prefix_inc_int'");
-		return NULL;
-	}
-
-	result->side_effect_code = bx_cgco_create();
-	if (result->side_effect_code == NULL) {
-		BX_LOG(LOG_ERROR, "codegen_expression",
-				"Error creating side effect code in function 'postfix_inc_int'");
 		return NULL;
 	}
 
@@ -546,13 +504,6 @@ struct bx_comp_expr *prefix_inc_int(struct bx_comp_expr *operand1) {
 		return NULL;
 	}
 
-	result->side_effect_code = bx_cgco_create();
-	if (result->side_effect_code == NULL) {
-		BX_LOG(LOG_ERROR, "codegen_expression",
-				"Error creating side effect code in function 'postfix_inc_int'");
-		return NULL;
-	}
-
 	switch (operand1->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
 		bx_cgco_add_instruction(result->value.code, BX_INSTR_RLOAD32);
@@ -602,13 +553,6 @@ struct bx_comp_expr *prefix_inc_float(struct bx_comp_expr *operand1) {
 	if (result == NULL) {
 		BX_LOG(LOG_ERROR, "codegen_expression",
 				"Error creating binary expression in functin 'prefix_inc_int'");
-		return NULL;
-	}
-
-	result->side_effect_code = bx_cgco_create();
-	if (result->side_effect_code == NULL) {
-		BX_LOG(LOG_ERROR, "codegen_expression",
-				"Error creating side effect code in function 'postfix_inc_int'");
 		return NULL;
 	}
 
