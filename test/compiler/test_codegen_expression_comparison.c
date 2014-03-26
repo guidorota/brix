@@ -1396,7 +1396,7 @@ START_TEST (cleanup) {
 } END_TEST
 
 Suite *test_codegen_expression_comparison_create_suite(void) {
-	Suite *suite = suite_create("bx_linked_list");
+	Suite *suite = suite_create("codegen_expression_comparison");
 	TCase *tcase;
 
 	tcase = tcase_create("init_test");

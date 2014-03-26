@@ -112,7 +112,7 @@ START_TEST (get_field_value) {
 } END_TEST
 
 Suite *test_document_manager_create_suite() {
-	Suite *suite = suite_create("test_document_manager");
+	Suite *suite = suite_create("document_manager");
 	TCase *tcase;
 
 	tcase = tcase_create("test_field_init");

@@ -451,7 +451,7 @@ START_TEST (automatic_variable) {
 } END_TEST
 
 Suite *test_compiler_create_suite(void) {
-	Suite *suite = suite_create("bx_linked_list");
+	Suite *suite = suite_create("copmiler");
 	TCase *tcase;
 
 	tcase = tcase_create("init_test");

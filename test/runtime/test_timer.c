@@ -57,7 +57,7 @@ START_TEST (timer_stop) {
 } END_TEST
 
 Suite *test_timer_create_suite() {
-	Suite *suite = suite_create("test_timer");
+	Suite *suite = suite_create("timer");
 	TCase *tcase;
 
 	tcase = tcase_create("timer_init");

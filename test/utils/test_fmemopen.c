@@ -60,7 +60,7 @@ START_TEST (read_test) {
 } END_TEST
 
 Suite *test_fmemopen_create_suite(void) {
-	Suite *suite = suite_create("bx_linked_list");
+	Suite *suite = suite_create("fmemopen");
 	TCase *tcase;
 
 	tcase = tcase_create("init_close_test");

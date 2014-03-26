@@ -88,7 +88,7 @@ START_TEST (test_removal) {
 } END_TEST
 
 Suite *test_storage_create_suite() {
-	Suite *suite = suite_create("test_storage");
+	Suite *suite = suite_create("storage");
 	TCase *tcase;
 
 	tcase = tcase_create("init_test");

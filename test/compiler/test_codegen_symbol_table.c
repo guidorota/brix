@@ -188,7 +188,7 @@ START_TEST (symbol_table_destroy) {
 } END_TEST
 
 Suite *test_codegen_symbol_table_create_suite(void) {
-	Suite *suite = suite_create("bx_linked_list");
+	Suite *suite = suite_create("codegen_symbol_table");
 	TCase *tcase;
 
 	tcase = tcase_create("init_test");

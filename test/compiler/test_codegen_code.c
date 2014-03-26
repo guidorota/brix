@@ -198,7 +198,7 @@ START_TEST (address_label) {
 } END_TEST
 
 Suite *test_codegen_code_create_suite(void) {
-	Suite *suite = suite_create("bx_linked_list");
+	Suite *suite = suite_create("codegen_code");
 	TCase *tcase;
 
 	tcase = tcase_create("test_create_destroy");

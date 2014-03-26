@@ -1339,7 +1339,7 @@ START_TEST (test_dup32) {
 } END_TEST
 
 Suite *test_virtual_machine_create_suite() {
-	Suite *suite = suite_create("test_virtual_machine");
+	Suite *suite = suite_create("virtual_machine");
 	TCase *tcase;
 
 	tcase = tcase_create("test_init");

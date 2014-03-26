@@ -137,7 +137,7 @@ START_TEST (full_stack_push) {
 } END_TEST
 
 Suite *test_stack_create_suite(void) {
-	Suite *suite = suite_create("test_stack");
+	Suite *suite = suite_create("stack");
 	TCase *tcase;
 
 	tcase = tcase_create("create_stack");

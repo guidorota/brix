@@ -177,7 +177,7 @@ Suite *test_mixed_list_create_suite() {
 	Suite *suite = suite_create("test_mixed_list");
 	TCase *tcase;
 
-	tcase = tcase_create("init_list");
+	tcase = tcase_create("mixed_list");
 	tcase_add_test(tcase, init_list);
 	suite_add_tcase(suite, tcase);
 

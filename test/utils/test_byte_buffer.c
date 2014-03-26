@@ -143,7 +143,7 @@ START_TEST (write_and_read_around) {
 } END_TEST
 
 Suite *test_byte_buffer_create_suite() {
-	Suite *suite = suite_create("test_list");
+	Suite *suite = suite_create("byte_buffer");
 	TCase *tcase;
 
 	tcase = tcase_create("create_byte_buffer");
