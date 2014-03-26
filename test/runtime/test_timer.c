@@ -1,6 +1,6 @@
 /*
- * signal.h
- * Created on: Mar 25, 2014
+ * test_timer.c
+ * Created on: Mar 26, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,22 +29,20 @@
  *
  */
 
-#ifndef SIGNAL_H_
-#define SIGNAL_H_
+#include "test_timer.h"
+#include "runtime/timer.h"
 
-#define BX_SIG_TMR 1
+START_TEST (test_init) {
 
-#include "types.h"
+} END_TEST
 
-enum bx_handler_type {
-	BX_SIGNAL_NATIVE,	///< Native C handler
-	BX_SIGNAL_VM		///< Virtual machine handler
-};
+Suite *test_timer_create_suite() {
+	Suite *suite = suite_create("test_timer");
+	TCase *tcase;
 
-struct bx_signal_handler {
-	enum bx_handler_type handler_type;
-};
+	tcase = tcase_create("test_init");
+	tcase_add_test(tcase, test_init);
+	suite_add_tcase(suite, tcase);
 
-bx_int8 bx_sig_set_handler(bx_uint8 signal, struct bx_signal_handler *handler);
-
-#endif /* SIGNAL_H_ */
+	return suite;
+}

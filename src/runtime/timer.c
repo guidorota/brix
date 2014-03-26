@@ -1,5 +1,5 @@
 /*
- * bx_signal.c
+ * timer.c
  * Created on: Mar 25, 2014
  * Author: Guido Rota
  *
@@ -29,8 +29,25 @@
  *
  */
 
-#include "runtime/signal.h"
+#include "logging.h"
+#include "runtime/timer.h"
+#include "runtime/tick.h"
 
-bx_int8 bx_sig_set_handler(bx_uint8 signal, struct bx_signal_handler *handler) {
-	return -1; //TODO: Stub
+volatile bx_int64 tick_count;
+
+static void tick_callback() {
+	++tick_count;
+}
+
+bx_int8 bx_tm_init() {
+	tick_count = 0;
+	return bx_tk_start(1000, &tick_callback);
+}
+
+bx_int64 bx_tm_get_tick_count() {
+	return tick_count;
+}
+
+bx_int8 bx_tm_destroy() {
+	return bx_tk_stop();
 }

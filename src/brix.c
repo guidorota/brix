@@ -8,6 +8,8 @@
 #include "logging.h"
 #include "document_manager/document_manager.h"
 #include "virtual_machine/virtual_machine.h"
+#include "runtime/storage.h"
+#include "runtime/timer.h"
 
 int main(int argc, char* argv[]) {
 
@@ -15,6 +17,14 @@ int main(int argc, char* argv[]) {
 	bx_vm_virtual_machine_init();
 	bx_dm_document_manager_init();
 	bx_st_init(NULL);
+	bx_tm_init();
+
+	printf("Type q :return to quit\n");
+	char input = 0;
+	while(input != 'q') {
+		input = getchar();
+	}
+	bx_tm_destroy();
 
 	return 0;
 }
