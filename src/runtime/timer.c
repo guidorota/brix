@@ -30,6 +30,7 @@
  */
 
 #include "logging.h"
+#include "configuration.h"
 #include "runtime/timer.h"
 #include "runtime/tick.h"
 
@@ -41,7 +42,7 @@ static void tick_callback() {
 
 bx_int8 bx_tm_init() {
 	tick_count = 0;
-	return bx_tk_start(1000, &tick_callback);
+	return bx_tk_start(TM_TICK_PERIOD_MS, &tick_callback);
 }
 
 bx_int64 bx_tm_get_tick_count() {

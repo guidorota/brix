@@ -30,18 +30,42 @@
  */
 
 #include "test_timer.h"
+#include <unistd.h>
 #include "runtime/timer.h"
+#include "configuration.h"
 
-START_TEST (test_init) {
+START_TEST (timer_init) {
+	bx_int8 error;
+	bx_uint64 previous_count;
 
+	error = bx_tm_init();
+	ck_assert_int_eq(error, 0);
+	previous_count = bx_tm_get_tick_count();
+	sleep(1);
+	ck_assert_int_gt(bx_tm_get_tick_count(), previous_count);
+} END_TEST
+
+START_TEST (timer_stop) {
+	bx_int8 error;
+	bx_uint64 previous_count;
+
+	error = bx_tm_destroy();
+	ck_assert_int_eq(error, 0);
+	previous_count = bx_tm_get_tick_count();
+	sleep(1);
+	ck_assert_int_eq(bx_tm_get_tick_count(), previous_count);
 } END_TEST
 
 Suite *test_timer_create_suite() {
 	Suite *suite = suite_create("test_timer");
 	TCase *tcase;
 
-	tcase = tcase_create("test_init");
-	tcase_add_test(tcase, test_init);
+	tcase = tcase_create("timer_init");
+	tcase_add_test(tcase, timer_init);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("timer_stop");
+	tcase_add_test(tcase, timer_stop);
 	suite_add_tcase(suite, tcase);
 
 	return suite;

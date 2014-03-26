@@ -44,4 +44,7 @@
 #define DM_FIELD_IDENTIFIER_LENGTH 16
 #define DM_MMAP_STORAGE_SIZE 512
 
+// Timer
+#define TM_TICK_PERIOD_MS 125
+
 #endif /* CONFIGURATION_H_ */
