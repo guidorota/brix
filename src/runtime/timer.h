@@ -35,10 +35,19 @@
 #include "types.h"
 #include "runtime/tick.h"
 #include "runtime/event_handler.h"
+#include "runtime/event_handler.h"
+
+enum bx_timer_type {
+	BX_TIMER_PERIODIC,
+	BX_TIMER_ONE_OFF
+};
 
 bx_int8 bx_tm_init();
 
 bx_int64 bx_tm_get_tick_count();
+
+bx_int8 bx_tm_set_timer(enum bx_timer_type timer_type,
+		bx_int64 time_msec, struct bx_event_handler *handler);
 
 bx_int8 bx_tm_destroy();
 

@@ -49,6 +49,14 @@ bx_int64 bx_tm_get_tick_count() {
 	return tick_count;
 }
 
+bx_int8 bx_tm_set_timer(enum bx_timer_type timer_type,
+		bx_int64 time_msec, struct bx_event_handler *handler) {
+
+
+
+	return -1; //TODO: Stub
+}
+
 bx_int8 bx_tm_destroy() {
 	return bx_tk_stop();
 }

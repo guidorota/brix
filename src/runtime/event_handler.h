@@ -38,11 +38,11 @@
 #include "runtime/storage.h"
 
 enum bx_handler_type {
-	BX_SIGNAL_NATIVE,	///< Native C handler
-	BX_SIGNAL_VM		///< Virtual machine handler
+	BX_HANDLER_NATIVE,	///< Native C handler
+	BX_HANDLER_VM		///< Virtual machine handler
 };
 
-typedef bx_boolean (*native_handler)(bx_uint8 event, void *event_data);
+typedef bx_boolean (*native_handler)();
 
 struct bx_event_handler {
 	enum bx_handler_type handler_type;

@@ -46,5 +46,6 @@
 
 // Timer
 #define TM_TICK_PERIOD_MS 125
+#define TM_MAX_HANDLER_NUMBER 100
 
 #endif /* CONFIGURATION_H_ */
