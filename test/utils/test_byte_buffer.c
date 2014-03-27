@@ -45,7 +45,7 @@ START_TEST (create_byte_buffer) {
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_bbuf_capacity(&buffer), BYTE_BUFFER_CAPACITY);
 	ck_assert_int_eq(bx_bbuf_size(&buffer), 0);
-	ck_assert_ptr_eq(buffer.storage, byte_buffer_storage);
+	ck_assert_ptr_eq(buffer.data, byte_buffer_storage);
 } END_TEST
 
 START_TEST (normal_usage_test) {
@@ -99,7 +99,7 @@ START_TEST (reset_byte_buffer) {
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_bbuf_capacity(&buffer), BYTE_BUFFER_CAPACITY);
 	ck_assert_int_eq(bx_bbuf_size(&buffer), 0);
-	ck_assert_ptr_eq(buffer.storage, byte_buffer_storage);
+	ck_assert_ptr_eq(buffer.data, byte_buffer_storage);
 } END_TEST
 
 START_TEST (fill_test) {

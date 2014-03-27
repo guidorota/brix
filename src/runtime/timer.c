@@ -34,6 +34,12 @@
 #include "runtime/timer.h"
 #include "runtime/tick.h"
 
+struct timer_entry {
+	enum bx_timer_type timer_type;
+	bx_int64 time_msec;
+	struct bx_event_handler *handler;
+};
+
 volatile bx_int64 tick_count;
 
 static void tick_callback() {

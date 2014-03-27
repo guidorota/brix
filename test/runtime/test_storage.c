@@ -32,6 +32,10 @@
 #include "test_storage.h"
 #include "runtime/storage.h"
 
+#define BUFFER_SIZE 1024
+
+static char buffer[BUFFER_SIZE];
+
 static char *test_data1 = "TEST_DATA1";
 static char *test_data2 = "TESTING AGAIN WITH OTHER DATA";
 
@@ -47,43 +51,41 @@ START_TEST (init_test) {
 
 START_TEST (test_addition) {
 	bx_int8 error;
-	char *data;
 	bx_size data_length;
 
 	error = bx_st_persist(test_data1, strlen(test_data1), &file_id1);
 	ck_assert_int_eq(error, 0);
-	error = bx_st_retrieve(file_id1, (void *) &data, &data_length);
+	error = bx_st_retrieve(file_id1, (void *) buffer, BUFFER_SIZE, &data_length);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(strlen(test_data1), data_length);
-	ck_assert_int_eq(strcmp(test_data1, data), 0);
+	ck_assert_int_eq(memcmp(test_data1, buffer, strlen(test_data1)), 0);
 
 	error = bx_st_persist(test_data2, strlen(test_data2), &file_id2);
 	ck_assert_int_eq(error, 0);
-	error = bx_st_retrieve(file_id2, (void *) &data, &data_length);
+	error = bx_st_retrieve(file_id2, (void *) buffer, BUFFER_SIZE, &data_length);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(strlen(test_data2), data_length);
-	ck_assert_int_eq(strcmp(test_data2, data), 0);
+	ck_assert_int_eq(memcmp(test_data2, buffer, strlen(test_data2)), 0);
 } END_TEST
 
 START_TEST (test_removal) {
 	bx_int8 error;
-	char *data;
 	bx_size data_length;
 
 	error = bx_st_delete(file_id1);
 	ck_assert_int_eq(error, 0);
-	error = bx_st_retrieve(file_id1, (void *) &data, &data_length);
+	error = bx_st_retrieve(file_id1, (void *) buffer, BUFFER_SIZE, &data_length);
 	ck_assert_int_ne(error, 0);
-	error = bx_st_retrieve(file_id2, (void *) &data, &data_length);
+	error = bx_st_retrieve(file_id2, (void *) buffer, BUFFER_SIZE, &data_length);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(strlen(test_data2), data_length);
-	ck_assert_int_eq(strcmp(test_data2, data), 0);
+	ck_assert_int_eq(memcmp(test_data2, buffer, strlen(test_data2)), 0);
 
 	error = bx_st_delete(file_id2);
 	ck_assert_int_eq(error, 0);
-	error = bx_st_retrieve(file_id1, (void *) &data, &data_length);
+	error = bx_st_retrieve(file_id1, (void *) buffer, BUFFER_SIZE, &data_length);
 	ck_assert_int_ne(error, 0);
-	error = bx_st_retrieve(file_id2, (void *) &data, &data_length);
+	error = bx_st_retrieve(file_id2, (void *) buffer, BUFFER_SIZE, &data_length);
 	ck_assert_int_ne(error, 0);
 } END_TEST
 

@@ -1,6 +1,6 @@
 /*
- * event_handler.h
- * Created on: Mar 25, 2014
+ * event_handler.c
+ * Created on: Mar 27, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,31 +29,46 @@
  *
  */
 
-#ifndef EVENT_HANDLER_H_
-#define EVENT_HANDLER_H_
-
-#include "virtual_machine/virtual_machine.h"
-
-#define BX_EV_TICK 1
-
-#include "types.h"
+#include "logging.h"
+#include "configuration.h"
+#include "runtime/event_handler.h"
 #include "runtime/storage.h"
+#include "utils/byte_buffer.h"
 
-enum bx_handler_type {
-	BX_HANDLER_NATIVE,	///< Native C handler
-	BX_HANDLER_VM		///< Virtual machine handler
-};
+static bx_uint8 buffer[EV_BUFFER_SIZE];
 
-typedef void (*native_handler)();
+static bx_int8 invoke_vm_handler(bx_file_id code_id);
 
-struct bx_event_handler {
-	enum bx_handler_type handler_type;
-	union bx_event_handler_data {
-		native_handler native_function;
-		bx_size code_file_id;
-	} handler;
-};
+bx_int8 bx_ev_invoke(struct bx_event_handler *event_handler) {
 
-bx_int8 bx_ev_invoke(struct bx_event_handler *event_handler);
+	if (event_handler == NULL) {
+		return -1;
+	}
 
-#endif /* EVENT_HANDLER_H_ */
+	switch (event_handler->handler_type) {
+	case BX_HANDLER_NATIVE:
+		event_handler->handler.native_function();
+		break;
+	case BX_HANDLER_VM:
+		invoke_vm_handler(event_handler->handler.code_file_id);
+		break;
+	default:
+		BX_LOG(LOG_ERROR, "event_handler", "Unexpected handler type "
+				"encountered in function 'bx_ev_invoke'");
+		return -1;
+	}
+
+	return 0;
+}
+
+static bx_int8 invoke_vm_handler(bx_file_id code_id) {
+	bx_int8 error;
+	bx_size data_length;
+
+	error = bx_st_retrieve(code_id, (void *) buffer, EV_BUFFER_SIZE, &data_length);
+	if (error != 0) {
+		return -1;
+	}
+
+	return bx_vm_execute(buffer, data_length);
+}

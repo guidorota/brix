@@ -42,7 +42,7 @@
  * Buffer data structure
  */
 struct bx_byte_buffer {
-	bx_uint8 *storage;		///< Byte array
+	bx_uint8 *data;		///< Byte array
 	bx_size capacity;		///< Byte buffer capacity in byte
 	bx_size head;			///< Pointer to the first readable byte
 	bx_size size;			///< Number of bytes in the buffer

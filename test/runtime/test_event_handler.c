@@ -1,6 +1,6 @@
 /*
- * event_handler.h
- * Created on: Mar 25, 2014
+ * test_event_handler.c
+ * Created on: Mar 27, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,31 +29,39 @@
  *
  */
 
-#ifndef EVENT_HANDLER_H_
-#define EVENT_HANDLER_H_
-
+#include "test_event_handler.h"
 #include "virtual_machine/virtual_machine.h"
+#include "document_manager/document_manager.h"
+#include "document_manager/test_field.h"
 
-#define BX_EV_TICK 1
+#define INT_TEST_FIELD "int_test_field"
 
-#include "types.h"
-#include "runtime/storage.h"
+static struct bx_document_field int_test_field;
+static struct bx_test_field_data int_test_field_data;
 
-enum bx_handler_type {
-	BX_HANDLER_NATIVE,	///< Native C handler
-	BX_HANDLER_VM		///< Virtual machine handler
-};
+START_TEST (init_test) {
+	bx_int8 error;
 
-typedef void (*native_handler)();
+	// Init virtual machine
+	error = bx_vm_virtual_machine_init();
+	ck_assert_int_eq(error, 0);
 
-struct bx_event_handler {
-	enum bx_handler_type handler_type;
-	union bx_event_handler_data {
-		native_handler native_function;
-		bx_size code_file_id;
-	} handler;
-};
+	// Init document manager
+	error = bx_dm_document_manager_init();
+	ck_assert_int_eq(error, 0);
+	error = bx_test_field_init(&int_test_field, &int_test_field_data);
+	ck_assert_int_eq(error, 0);
+	error = bx_dm_add_field(&int_test_field, INT_TEST_FIELD);
+	ck_assert_int_eq(error, 0);
+} END_TEST
 
-bx_int8 bx_ev_invoke(struct bx_event_handler *event_handler);
+Suite *test_event_handler_create_suite() {
+	Suite *suite = suite_create("event_handler");
+	TCase *tcase;
 
-#endif /* EVENT_HANDLER_H_ */
+	tcase = tcase_create("init_test");
+	tcase_add_test(tcase, init_test);
+	suite_add_tcase(suite, tcase);
+
+	return suite;
+}

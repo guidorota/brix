@@ -37,7 +37,7 @@ bx_int8 bx_bbuf_init(struct bx_byte_buffer *buffer, bx_uint8 *storage, bx_size s
 		return -1;
 	}
 
-	buffer->storage = storage;
+	buffer->data = storage;
 	buffer->capacity = storage_size;
 	buffer->head = 0;
 	buffer->size = 0;
@@ -61,7 +61,7 @@ bx_int8 bx_bbuf_append(struct bx_byte_buffer *buffer, void *data, bx_size length
 	tail = (buffer->head + buffer->size) % buffer->capacity;
 	buffer->size += length;
 	while(length > 0) {
-		*(buffer->storage + tail) = *source++;
+		*(buffer->data + tail) = *source++;
 		tail = (tail + 1) % buffer->capacity;
 		length--;
 	}
@@ -85,7 +85,7 @@ bx_int8 bx_bbuf_get(struct bx_byte_buffer *buffer, void *data, bx_size length) {
 	i = buffer->head;
 	buffer->size -= length;
 	while(length > 0) {
-		*destination++ = *(buffer->storage + i);
+		*destination++ = *(buffer->data + i);
 		i = (i + 1) % buffer->capacity;
 		length--;
 	}

@@ -38,9 +38,9 @@ typedef bx_uint16 bx_file_id;
 
 bx_int8 bx_st_init(void *param);
 
-bx_int8 bx_st_persist(void *data, bx_size data_length, bx_file_id *file_id);
+bx_int8 bx_st_persist(void *buffer, bx_size buffer_size, bx_file_id *file_id);
 
-bx_int8 bx_st_retrieve(bx_file_id file_id, void **data, bx_size *data_length);
+bx_int8 bx_st_retrieve(bx_file_id file_id, void *buffer, bx_size buffer_size, bx_size *bytes_read);
 
 bx_int8 bx_st_delete(bx_file_id file_id);
 

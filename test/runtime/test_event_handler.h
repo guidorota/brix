@@ -1,6 +1,6 @@
 /*
- * event_handler.h
- * Created on: Mar 25, 2014
+ * test_event_handler.h
+ * Created on: Mar 27, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,31 +29,11 @@
  *
  */
 
-#ifndef EVENT_HANDLER_H_
-#define EVENT_HANDLER_H_
+#ifndef TEST_EVENT_HANDLER_H_
+#define TEST_EVENT_HANDLER_H_
 
-#include "virtual_machine/virtual_machine.h"
+#include <check.h>
 
-#define BX_EV_TICK 1
+Suite *test_event_handler_create_suite(void);
 
-#include "types.h"
-#include "runtime/storage.h"
-
-enum bx_handler_type {
-	BX_HANDLER_NATIVE,	///< Native C handler
-	BX_HANDLER_VM		///< Virtual machine handler
-};
-
-typedef void (*native_handler)();
-
-struct bx_event_handler {
-	enum bx_handler_type handler_type;
-	union bx_event_handler_data {
-		native_handler native_function;
-		bx_size code_file_id;
-	} handler;
-};
-
-bx_int8 bx_ev_invoke(struct bx_event_handler *event_handler);
-
-#endif /* EVENT_HANDLER_H_ */
+#endif /* TEST_EVENT_HANDLER_H_ */

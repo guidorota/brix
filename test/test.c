@@ -51,6 +51,7 @@
 #include "compiler/test_compiler.h"
 #include "runtime/test_storage.h"
 #include "runtime/test_timer.h"
+#include "runtime/test_event_handler.h"
 
 int main(void) {
 	int number_failed = 0;
@@ -77,6 +78,7 @@ int main(void) {
 	srunner_add_suite(runner, test_compiler_create_suite());
 	srunner_add_suite(runner, test_storage_create_suite());
 	srunner_add_suite(runner, test_timer_create_suite());
+	srunner_add_suite(runner, test_event_handler_create_suite());
 
 	srunner_run_all(runner, CK_VERBOSE);
 	number_failed = srunner_ntests_failed(runner);

@@ -48,4 +48,7 @@
 #define TM_TICK_PERIOD_MS 125
 #define TM_MAX_HANDLER_NUMBER 100
 
+// Event handler
+#define EV_BUFFER_SIZE 512
+
 #endif /* CONFIGURATION_H_ */
