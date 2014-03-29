@@ -30,78 +30,78 @@
  */
 
 #include "types.h"
-#include "test_codegen_code.h"
-#include "compiler/codegen_code.h"
+#include "test_codegen_pcode.h"
+#include "compiler/codegen_pcode.h"
 
 START_TEST (test_create_destroy) {
-	struct bx_comp_code *code;
+	struct bx_comp_pcode *pcode;
 
-	code = bx_cgco_create();
-	ck_assert_ptr_ne(code, NULL);
-	ck_assert_ptr_ne(code->data, NULL);
-	ck_assert_int_eq(code->size, 0);
-	ck_assert_int_gt(code->capacity, 0);
-	bx_cgco_destroy(code);
+	pcode = bx_cgpc_create();
+	ck_assert_ptr_ne(pcode, NULL);
+	ck_assert_ptr_ne(pcode->data, NULL);
+	ck_assert_int_eq(pcode->size, 0);
+	ck_assert_int_gt(pcode->capacity, 0);
+	bx_cgpc_destroy(pcode);
 } END_TEST
 
 START_TEST (data_addition) {
 	bx_int8 error;
-	struct bx_comp_code *code;
+	struct bx_comp_pcode *pcode;
 
-	code = bx_cgco_create();
-	ck_assert_ptr_ne(code, NULL);
+	pcode = bx_cgpc_create();
+	ck_assert_ptr_ne(pcode, NULL);
 
 	bx_int32 i;
 	for (i = 0; i < 10; i++) {
-		error = bx_cgco_add_int_constant(code, i);
+		error = bx_cgpc_add_int_constant(pcode, i);
 		ck_assert_int_ne(error, -1);
 	}
 
 	for (i = 0; i < 10; i++) {
-		ck_assert_int_eq(*((bx_int32 *) code->data + i), i);
+		ck_assert_int_eq(*((bx_int32 *) pcode->data + i), i);
 	}
 } END_TEST
 
 START_TEST (expand_size) {
-	struct bx_comp_code *code;
+	struct bx_comp_pcode *pcode;
 	bx_int32 data = 12;
 	bx_size initial_capacity;
 
-	code = bx_cgco_create();
-	ck_assert_ptr_ne(code, NULL);
-	initial_capacity = code->capacity;
+	pcode = bx_cgpc_create();
+	ck_assert_ptr_ne(pcode, NULL);
+	initial_capacity = pcode->capacity;
 
 	bx_size i;
 	for (i = 0; i < initial_capacity; i++) {
-		bx_cgco_add_int_constant(code, data);
+		bx_cgpc_add_int_constant(pcode, data);
 	}
 
-	ck_assert_int_gt(code->capacity, initial_capacity);
-	ck_assert_int_ge(code->size, initial_capacity);
-	bx_cgco_destroy(code);
+	ck_assert_int_gt(pcode->capacity, initial_capacity);
+	ck_assert_int_ge(pcode->size, initial_capacity);
+	bx_cgpc_destroy(pcode);
 } END_TEST
 
 START_TEST (append_test) {
-	struct bx_comp_code *source;
-	struct bx_comp_code *destination;
+	struct bx_comp_pcode *source;
+	struct bx_comp_pcode *destination;
 	bx_size capacity;
 	bx_int8 error;
 	bx_int32 i;
 
-	source = bx_cgco_create();
-	destination = bx_cgco_create();
+	source = bx_cgpc_create();
+	destination = bx_cgpc_create();
 
 	for (i = 0; i < 10; i++) {
-		error = bx_cgco_add_int_constant(source, 5);
+		error = bx_cgpc_add_int_constant(source, 5);
 		ck_assert_int_ne(error, -1);
 	}
 	for (i = 0; i < 10; i++) {
-		error = bx_cgco_add_int_constant(destination, 3);
+		error = bx_cgpc_add_int_constant(destination, 3);
 		ck_assert_int_ne(error, -1);
 	}
 
 	capacity = destination->size;
-	bx_cgco_append_code(destination, source);
+	bx_cgpc_append_pcode(destination, source);
 	ck_assert_int_eq(destination->size, source->size + capacity);
 
 	bx_int32 *value = (bx_int32 *) destination->data;
@@ -110,31 +110,31 @@ START_TEST (append_test) {
 		ck_assert_int_eq(*(value + i + 10), 5);
 	}
 
-	bx_cgco_destroy(source);
-	bx_cgco_destroy(destination);
+	bx_cgpc_destroy(source);
+	bx_cgpc_destroy(destination);
 } END_TEST
 
 START_TEST (replace_test) {
-	struct bx_comp_code *source;
-	struct bx_comp_code *destination;
+	struct bx_comp_pcode *source;
+	struct bx_comp_pcode *destination;
 	bx_size capacity;
 	bx_int8 error;
 	bx_int32 i;
 
-	source = bx_cgco_create();
-	destination = bx_cgco_create();
+	source = bx_cgpc_create();
+	destination = bx_cgpc_create();
 
 	for (i = 0; i < 10; i++) {
-		error = bx_cgco_add_int_constant(source, 5);
+		error = bx_cgpc_add_int_constant(source, 5);
 		ck_assert_int_ne(error, -1);
 	}
 	for (i = 0; i < 10; i++) {
-		error = bx_cgco_add_int_constant(destination, 3);
+		error = bx_cgpc_add_int_constant(destination, 3);
 		ck_assert_int_ne(error, -1);
 	}
 
 	capacity = destination->size;
-	bx_cgco_replace_code(destination, source);
+	bx_cgpc_replace_pcode(destination, source);
 	ck_assert_int_eq(destination->size, source->size);
 
 	bx_int32 *value = (bx_int32 *) destination->data;
@@ -142,63 +142,63 @@ START_TEST (replace_test) {
 		ck_assert_int_eq(*(value + i), 5);
 	}
 
-	bx_cgco_destroy(source);
-	bx_cgco_destroy(destination);
+	bx_cgpc_destroy(source);
+	bx_cgpc_destroy(destination);
 } END_TEST
 
 START_TEST (copy_test) {
-	struct bx_comp_code *code;
-	struct bx_comp_code *copy;
+	struct bx_comp_pcode *pcode;
+	struct bx_comp_pcode *copy;
 	bx_int32 data = 12;
 	bx_size initial_capacity;
 
-	code = bx_cgco_create();
-	ck_assert_ptr_ne(code, NULL);
-	initial_capacity = code->capacity;
+	pcode = bx_cgpc_create();
+	ck_assert_ptr_ne(pcode, NULL);
+	initial_capacity = pcode->capacity;
 
 	bx_size i;
 	for (i = 0; i < initial_capacity; i++) {
-		bx_cgco_add_int_constant(code, data);
+		bx_cgpc_add_int_constant(pcode, data);
 	}
 
-	ck_assert_int_gt(code->capacity, initial_capacity);
-	ck_assert_int_ge(code->size, initial_capacity);
+	ck_assert_int_gt(pcode->capacity, initial_capacity);
+	ck_assert_int_ge(pcode->size, initial_capacity);
 
-	copy = bx_cgco_copy(code);
-	ck_assert_ptr_ne(code, copy);
-	ck_assert_ptr_ne(code->data, copy->data);
-	ck_assert_int_eq(code->capacity, copy->capacity);
-	ck_assert_int_eq(code->size, copy->size);
-	ck_assert_int_eq(memcmp(code->data, copy->data, copy->capacity), 0);
+	copy = bx_cgpc_copy(pcode);
+	ck_assert_ptr_ne(pcode, copy);
+	ck_assert_ptr_ne(pcode->data, copy->data);
+	ck_assert_int_eq(pcode->capacity, copy->capacity);
+	ck_assert_int_eq(pcode->size, copy->size);
+	ck_assert_int_eq(memcmp(pcode->data, copy->data, copy->capacity), 0);
 
-	bx_cgco_destroy(code);
+	bx_cgpc_destroy(pcode);
 } END_TEST
 
 START_TEST (address_label) {
-	struct bx_comp_code *code;
+	struct bx_comp_pcode *pcode;
 	bx_comp_label false_label, true_label;
 	bx_ssize false_jump_address, true_jump_address;
 
-	code = bx_cgco_create();
-	ck_assert_ptr_ne(code, NULL);
+	pcode = bx_cgpc_create();
+	ck_assert_ptr_ne(pcode, NULL);
 
-	bx_cgco_add_instruction(code, BX_INSTR_JEQZ);
-	false_label = bx_cgco_create_address_label(code);
-	bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
-	bx_cgco_add_instruction(code, BX_INSTR_JUMP);
-	true_label = bx_cgco_create_address_label(code);
-	false_jump_address = bx_cgco_add_instruction(code, BX_INSTR_IPUSH_0);
-	true_jump_address = bx_cgco_add_instruction(code, BX_INSTR_NOP);
-	bx_cgco_set_address_label(code, false_label, false_jump_address);
-	bx_cgco_set_address_label(code, true_label, true_jump_address);
+	bx_cgpc_add_instruction(pcode, BX_INSTR_JEQZ);
+	false_label = bx_cgpc_create_address_label(pcode);
+	bx_cgpc_add_instruction(pcode, BX_INSTR_IPUSH_1);
+	bx_cgpc_add_instruction(pcode, BX_INSTR_JUMP);
+	true_label = bx_cgpc_create_address_label(pcode);
+	false_jump_address = bx_cgpc_add_instruction(pcode, BX_INSTR_IPUSH_0);
+	true_jump_address = bx_cgpc_add_instruction(pcode, BX_INSTR_NOP);
+	bx_cgpc_set_address_label(pcode, false_label, false_jump_address);
+	bx_cgpc_set_address_label(pcode, true_label, true_jump_address);
 
-	ck_assert_int_eq(*(bx_uint16 *) ((bx_uint8 *) code->data + false_label), (bx_uint16) false_jump_address);
-	ck_assert_int_eq(*(bx_uint16 *) ((bx_uint8 *) code->data + true_label), (bx_uint16) true_jump_address);
-	bx_cgco_destroy(code);
+	ck_assert_int_eq(*(bx_uint16 *) ((bx_uint8 *) pcode->data + false_label), (bx_uint16) false_jump_address);
+	ck_assert_int_eq(*(bx_uint16 *) ((bx_uint8 *) pcode->data + true_label), (bx_uint16) true_jump_address);
+	bx_cgpc_destroy(pcode);
 } END_TEST
 
-Suite *test_codegen_code_create_suite(void) {
-	Suite *suite = suite_create("codegen_code");
+Suite *test_codegen_pcode_create_suite(void) {
+	Suite *suite = suite_create("codegen_pcode");
 	TCase *tcase;
 
 	tcase = tcase_create("test_create_destroy");

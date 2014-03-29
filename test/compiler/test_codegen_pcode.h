@@ -1,5 +1,5 @@
 /*
- * test_codegen_code.h
+ * test_codegen_pcode.h
  * Created on: Mar 6, 2014
  * Author: Guido Rota
  *
@@ -29,11 +29,11 @@
  *
  */
 
-#ifndef TEST_CODEGEN_CODE_H_
-#define TEST_CODEGEN_CODE_H_
+#ifndef TEST_CODEGEN_PCODE_H_
+#define TEST_CODEGEN_PCODE_H_
 
 #include <check.h>
 
-Suite *test_codegen_code_create_suite(void);
+Suite *test_codegen_pcode_create_suite(void);
 
-#endif /* TEST_CODEGEN_CODE_H_ */
+#endif /* TEST_CODEGEN_PCODE_H_ */

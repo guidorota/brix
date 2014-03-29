@@ -39,7 +39,7 @@
 #include "document_manager/test_document_manager.h"
 #include "virtual_machine/test_virtual_machine.h"
 #include "compiler/test_codegen_symbol_table.h"
-#include "compiler/test_codegen_code.h"
+#include "compiler/test_codegen_pcode.h"
 #include "compiler/test_codegen_expression_arithmetics.h"
 #include "compiler/test_codegen_expression_comparison.h"
 #include "compiler/test_codegen_expression_bitwise.h"
@@ -65,7 +65,7 @@ int main(void) {
 	srunner_add_suite(runner, test_linked_list_create_suite());
 	srunner_add_suite(runner, test_fmemopen_create_suite());
 	srunner_add_suite(runner, test_codegen_symbol_table_create_suite());
-	srunner_add_suite(runner, test_codegen_code_create_suite());
+	srunner_add_suite(runner, test_codegen_pcode_create_suite());
 	srunner_add_suite(runner, test_codegen_expression_arithmetics_create_suite());
 	srunner_add_suite(runner, test_codegen_expression_comparison_create_suite());
 	srunner_add_suite(runner, test_codegen_expression_bitwise_create_suite());

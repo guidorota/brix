@@ -33,16 +33,16 @@
 #define CODEGEN_TASK_H_
 
 #include "types.h"
-#include "compiler/codegen_code.h"
+#include "compiler/codegen_pcode.h"
 #include "compiler/codegen_expression.h"
 #include "compiler/codegen_symbol_table.h"
 
 struct bx_comp_task {
 	struct bx_comp_symbol_table *symbol_table;
-	struct bx_comp_code *at_execution_condition;
-	struct bx_comp_code *on_execution_condition;
-	struct bx_comp_code *every_execution_condition;
-	struct bx_comp_code *code;
+	struct bx_comp_pcode *at_execution_condition;
+	struct bx_comp_pcode *on_execution_condition;
+	struct bx_comp_pcode *every_execution_condition;
+	struct bx_comp_pcode *pcode;
 	struct bx_linked_list *child_task_list;
 	struct bx_comp_task *parent;
 };

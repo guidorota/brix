@@ -34,7 +34,7 @@
 #include "types.h"
 #include "codegen_symbol_table.h"
 #include "codegen_expression.h"
-#include "codegen_code.h"
+#include "codegen_pcode.h"
 #include "codegen_task.h"
 #include "codegen_while_statement.h"
 
@@ -104,7 +104,7 @@ static struct bx_comp_task *current_task;
 network_definition
 	: statement_list
 	{
-		bx_cgco_add_instruction(current_task->code, BX_INSTR_HALT);
+		bx_cgpc_add_instruction(current_task->pcode, BX_INSTR_HALT);
 	}
 	;
 
@@ -125,7 +125,7 @@ statement
 compound_statement
 	: '{' '}'
 	{
-		bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
+		bx_cgpc_add_instruction(current_task->pcode, BX_INSTR_NOP);
 	}
 	| '{'
 	{
@@ -146,13 +146,13 @@ declaration_statement
 	{
 		struct bx_comp_expr *assignment;
 		struct bx_comp_expr *destination;
-		struct bx_comp_code *code;
+		struct bx_comp_pcode *pcode;
 		
 		bx_cgsy_add_field(current_task->symbol_table, $4, $3, $1);
 		destination = bx_cgex_create_variable(current_task->symbol_table, $4);
 		assignment = bx_cgex_binary_expression(destination, $6, BX_COMP_OP_ASSIGNMENT);
-		code = bx_cgex_side_effect_code(assignment);
-		bx_cgco_append_code(current_task->code, code);
+		pcode = bx_cgex_side_effect_pcode(assignment);
+		bx_cgpc_append_pcode(current_task->pcode, pcode);
 		
 		bx_cgex_destroy_expression(destination);
 		bx_cgex_destroy_expression(assignment);
@@ -166,13 +166,13 @@ declaration_statement
 	{
 		struct bx_comp_expr *assignment;
 		struct bx_comp_expr *destination;
-		struct bx_comp_code *code;
+		struct bx_comp_pcode *pcode;
 		
 		bx_cgsy_add_variable(current_task->symbol_table, $2, $1);
 		destination = bx_cgex_create_variable(current_task->symbol_table, $2);
 		assignment = bx_cgex_binary_expression(destination, $4, BX_COMP_OP_ASSIGNMENT);
-		code = bx_cgex_side_effect_code(assignment);
-		bx_cgco_append_code(current_task->code, code);
+		pcode = bx_cgex_side_effect_pcode(assignment);
+		bx_cgpc_append_pcode(current_task->pcode, pcode);
 		
 		bx_cgex_destroy_expression(destination);
 		bx_cgex_destroy_expression(assignment);
@@ -231,9 +231,9 @@ iteration_statement
 		while_statement = bx_cgwh_create();
 		condition = bx_cgex_cast($3, BX_BOOL);
 		bx_cgex_convert_to_binary(condition);
-		while_statement->condition_address = bx_cgco_append_code(current_task->code, condition->value.code);
-		bx_cgco_add_instruction(current_task->code, BX_INSTR_JEQZ);
-		while_statement->label = bx_cgco_create_address_label(current_task->code);
+		while_statement->condition_address = bx_cgpc_append_pcode(current_task->pcode, condition->value.pcode);
+		bx_cgpc_add_instruction(current_task->pcode, BX_INSTR_JEQZ);
+		while_statement->label = bx_cgpc_create_address_label(current_task->pcode);
 		$1 = while_statement;
 		
 		bx_cgex_destroy_expression(condition);
@@ -243,17 +243,17 @@ iteration_statement
 	{
 		bx_uint16 jump_address;
 		
-		bx_cgco_add_instruction(current_task->code, BX_INSTR_JUMP);
-		bx_cgco_add_address(current_task->code, $1->condition_address);
+		bx_cgpc_add_instruction(current_task->pcode, BX_INSTR_JUMP);
+		bx_cgpc_add_address(current_task->pcode, $1->condition_address);
 		
-		jump_address = bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
-		bx_cgco_set_address_label(current_task->code, $1->label, jump_address);
+		jump_address = bx_cgpc_add_instruction(current_task->pcode, BX_INSTR_NOP);
+		bx_cgpc_set_address_label(current_task->pcode, $1->label, jump_address);
 		
 		bx_cgwh_destroy($1);
 	}
 	| DO 
 	{
-		$1 = bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
+		$1 = bx_cgpc_add_instruction(current_task->pcode, BX_INSTR_NOP);
 	}
 	statement WHILE '(' expression ')' ';'
 	{
@@ -261,9 +261,9 @@ iteration_statement
 		
 		condition = bx_cgex_cast($6, BX_BOOL);
 		bx_cgex_convert_to_binary(condition);
-		bx_cgco_append_code(current_task->code, condition->value.code);
-		bx_cgco_add_instruction(current_task->code, BX_INSTR_JNEZ);
-		bx_cgco_add_address(current_task->code, $1);
+		bx_cgpc_append_pcode(current_task->pcode, condition->value.pcode);
+		bx_cgpc_add_instruction(current_task->pcode, BX_INSTR_JNEZ);
+		bx_cgpc_add_address(current_task->pcode, $1);
 		
 		bx_cgex_destroy_expression(condition);
 		bx_cgex_destroy_expression($6);
@@ -274,14 +274,14 @@ iteration_statement
 		struct bx_comp_while *while_statement;
 		
 		bx_cgex_convert_to_binary($3);
-		bx_cgco_append_code(current_task->code, $3->value.code);
+		bx_cgpc_append_pcode(current_task->pcode, $3->value.pcode);
 		
 		while_statement = bx_cgwh_create();
 		condition = bx_cgex_cast($5, BX_BOOL);
 		bx_cgex_convert_to_binary(condition);
-		while_statement->condition_address = bx_cgco_append_code(current_task->code, condition->value.code);
-		bx_cgco_add_instruction(current_task->code, BX_INSTR_JEQZ);
-		while_statement->label = bx_cgco_create_address_label(current_task->code);
+		while_statement->condition_address = bx_cgpc_append_pcode(current_task->pcode, condition->value.pcode);
+		bx_cgpc_add_instruction(current_task->pcode, BX_INSTR_JEQZ);
+		while_statement->label = bx_cgpc_create_address_label(current_task->pcode);
 		$1 = while_statement;
 		
 		bx_cgex_destroy_expression($3);
@@ -293,13 +293,13 @@ iteration_statement
 		bx_uint16 jump_address;
 		
 		bx_cgex_convert_to_binary($7);
-		bx_cgco_append_code(current_task->code, $7->value.code);
+		bx_cgpc_append_pcode(current_task->pcode, $7->value.pcode);
 		
-		bx_cgco_add_instruction(current_task->code, BX_INSTR_JUMP);
-		bx_cgco_add_address(current_task->code, $1->condition_address);
+		bx_cgpc_add_instruction(current_task->pcode, BX_INSTR_JUMP);
+		bx_cgpc_add_address(current_task->pcode, $1->condition_address);
 		
-		jump_address = bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
-		bx_cgco_set_address_label(current_task->code, $1->label, jump_address);
+		jump_address = bx_cgpc_add_instruction(current_task->pcode, BX_INSTR_NOP);
+		bx_cgpc_set_address_label(current_task->pcode, $1->label, jump_address);
 		
 		bx_cgwh_destroy($1);
 		bx_cgex_destroy_expression($7);
@@ -310,14 +310,14 @@ iteration_statement
 		struct bx_comp_while *while_statement;
 		
 		bx_cgex_convert_to_binary($3);
-		bx_cgco_append_code(current_task->code, $3->value.code);
+		bx_cgpc_append_pcode(current_task->pcode, $3->value.pcode);
 		
 		while_statement = bx_cgwh_create();
 		condition = bx_cgex_cast($5, BX_BOOL);
 		bx_cgex_convert_to_binary(condition);
-		while_statement->condition_address = bx_cgco_append_code(current_task->code, condition->value.code);
-		bx_cgco_add_instruction(current_task->code, BX_INSTR_JEQZ);
-		while_statement->label = bx_cgco_create_address_label(current_task->code);
+		while_statement->condition_address = bx_cgpc_append_pcode(current_task->pcode, condition->value.pcode);
+		bx_cgpc_add_instruction(current_task->pcode, BX_INSTR_JEQZ);
+		while_statement->label = bx_cgpc_create_address_label(current_task->pcode);
 		$1 = while_statement;
 		
 		bx_cgex_destroy_expression($3);
@@ -328,11 +328,11 @@ iteration_statement
 	{
 		bx_uint16 jump_address;
 		
-		bx_cgco_add_instruction(current_task->code, BX_INSTR_JUMP);
-		bx_cgco_add_address(current_task->code, $1->condition_address);
+		bx_cgpc_add_instruction(current_task->pcode, BX_INSTR_JUMP);
+		bx_cgpc_add_address(current_task->pcode, $1->condition_address);
 		
-		jump_address = bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
-		bx_cgco_set_address_label(current_task->code, $1->label, jump_address);
+		jump_address = bx_cgpc_add_instruction(current_task->pcode, BX_INSTR_NOP);
+		bx_cgpc_set_address_label(current_task->pcode, $1->label, jump_address);
 		
 		bx_cgwh_destroy($1);
 	}
@@ -343,25 +343,25 @@ selection_statement
 	{
 		bx_uint16 jump_address;
 		
-		jump_address = bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
-		bx_cgco_set_address_label(current_task->code, $1, jump_address);
+		jump_address = bx_cgpc_add_instruction(current_task->pcode, BX_INSTR_NOP);
+		bx_cgpc_set_address_label(current_task->pcode, $1, jump_address);
 	}
 	| if_statement statement ELSE 
 	{
 		bx_uint16 jump_address;
 		
-		bx_cgco_add_instruction(current_task->code, BX_INSTR_JUMP);
-		$3 = bx_cgco_create_address_label(current_task->code);
+		bx_cgpc_add_instruction(current_task->pcode, BX_INSTR_JUMP);
+		$3 = bx_cgpc_create_address_label(current_task->pcode);
 		
-		jump_address = bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
-		bx_cgco_set_address_label(current_task->code, $1, jump_address);
+		jump_address = bx_cgpc_add_instruction(current_task->pcode, BX_INSTR_NOP);
+		bx_cgpc_set_address_label(current_task->pcode, $1, jump_address);
 	}
 	statement
 	{
 		bx_uint16 jump_address;
 		
-		jump_address = bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
-		bx_cgco_set_address_label(current_task->code, $3, jump_address);
+		jump_address = bx_cgpc_add_instruction(current_task->pcode, BX_INSTR_NOP);
+		bx_cgpc_set_address_label(current_task->pcode, $3, jump_address);
 	}
 	;
 	
@@ -372,9 +372,9 @@ if_statement
 		
 		condition = bx_cgex_cast($3, BX_BOOL);
 		bx_cgex_convert_to_binary(condition);
-		bx_cgco_append_code(current_task->code, condition->value.code);
-		bx_cgco_add_instruction(current_task->code, BX_INSTR_JEQZ);
-		$$ = bx_cgco_create_address_label(current_task->code);
+		bx_cgpc_append_pcode(current_task->pcode, condition->value.pcode);
+		bx_cgpc_add_instruction(current_task->pcode, BX_INSTR_JEQZ);
+		$$ = bx_cgpc_create_address_label(current_task->pcode);
 	
 		bx_cgex_destroy_expression(condition);
 		bx_cgex_destroy_expression($3);
@@ -414,14 +414,14 @@ event_trigger_modifier
 expression_statement
 	: ';'
 	{
-		bx_cgco_add_instruction(current_task->code, BX_INSTR_NOP);
+		bx_cgpc_add_instruction(current_task->pcode, BX_INSTR_NOP);
 	}
 	| expression ';'
 	{
-		struct bx_comp_code *code;
+		struct bx_comp_pcode *pcode;
 		
-		code = bx_cgex_side_effect_code($1);
-		bx_cgco_append_code(current_task->code, code);
+		pcode = bx_cgex_side_effect_pcode($1);
+		bx_cgpc_append_pcode(current_task->pcode, pcode);
 		
 		bx_cgex_destroy_expression($1);
 	}

@@ -76,7 +76,7 @@ struct bx_comp_expr *bx_cgex_float_to_int(struct bx_comp_expr *expression) {
 		return NULL;
 	}
 
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_F2I);
+	bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_F2I);
 	result->data_type = BX_INT;
 	return result;
 }
@@ -144,7 +144,7 @@ struct bx_comp_expr *bx_cgex_int_to_float(struct bx_comp_expr *expression) {
 		return NULL;
 	}
 
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_I2F);
+	bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_I2F);
 	result->data_type = BX_FLOAT;
 	return result;
 }
@@ -165,7 +165,7 @@ struct bx_comp_expr *bx_cgex_bool_to_float(struct bx_comp_expr *expression) {
 		return NULL;
 	}
 
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_I2F);
+	bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_I2F);
 	result->data_type = BX_FLOAT;
 	return result;
 }
@@ -202,7 +202,7 @@ struct bx_comp_expr *bx_cgex_int_to_bool(struct bx_comp_expr *expression) {
 	struct bx_comp_expr *result;
 	bx_comp_label false_label, true_label;
 	bx_ssize false_jump_address, true_jump_address;
-	struct bx_comp_code *code;
+	struct bx_comp_pcode *pcode;
 
 	if (expression->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(
@@ -218,16 +218,16 @@ struct bx_comp_expr *bx_cgex_int_to_bool(struct bx_comp_expr *expression) {
 	}
 
 	result->data_type = BX_BOOL;
-	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_JEQZ);
-	false_label = bx_cgco_create_address_label(code);
-	bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
-	bx_cgco_add_instruction(code, BX_INSTR_JUMP);
-	true_label = bx_cgco_create_address_label(code);
-	false_jump_address = bx_cgco_add_instruction(code, BX_INSTR_IPUSH_0);
-	true_jump_address = bx_cgco_add_instruction(code, BX_INSTR_NOP);
-	bx_cgco_set_address_label(code, false_label, false_jump_address);
-	bx_cgco_set_address_label(code, true_label, true_jump_address);
+	pcode = result->value.pcode;
+	bx_cgpc_add_instruction(pcode, BX_INSTR_JEQZ);
+	false_label = bx_cgpc_create_address_label(pcode);
+	bx_cgpc_add_instruction(pcode, BX_INSTR_IPUSH_1);
+	bx_cgpc_add_instruction(pcode, BX_INSTR_JUMP);
+	true_label = bx_cgpc_create_address_label(pcode);
+	false_jump_address = bx_cgpc_add_instruction(pcode, BX_INSTR_IPUSH_0);
+	true_jump_address = bx_cgpc_add_instruction(pcode, BX_INSTR_NOP);
+	bx_cgpc_set_address_label(pcode, false_label, false_jump_address);
+	bx_cgpc_set_address_label(pcode, true_label, true_jump_address);
 	return result;
 }
 
@@ -236,7 +236,7 @@ struct bx_comp_expr *bx_cgex_float_to_bool(struct bx_comp_expr *expression) {
 	struct bx_comp_expr *result;
 	bx_comp_label false_label, true_label;
 	bx_ssize false_jump_address, true_jump_address;
-	struct bx_comp_code *code;
+	struct bx_comp_pcode *pcode;
 
 	if (expression->expression_type == BX_COMP_CONSTANT) {
 		return bx_cgex_create_bool_constant(
@@ -252,16 +252,16 @@ struct bx_comp_expr *bx_cgex_float_to_bool(struct bx_comp_expr *expression) {
 	}
 
 	result->data_type = BX_BOOL;
-	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_JEQZ);
-	false_label = bx_cgco_create_address_label(code);
-	bx_cgco_add_instruction(code, BX_INSTR_IPUSH_1);
-	bx_cgco_add_instruction(code, BX_INSTR_JUMP);
-	true_label = bx_cgco_create_address_label(code);
-	false_jump_address = bx_cgco_add_instruction(code, BX_INSTR_IPUSH_0);
-	true_jump_address = bx_cgco_add_instruction(code, BX_INSTR_NOP);
-	bx_cgco_set_address_label(code, false_label, false_jump_address);
-	bx_cgco_set_address_label(code, true_label, true_jump_address);
+	pcode = result->value.pcode;
+	bx_cgpc_add_instruction(pcode, BX_INSTR_JEQZ);
+	false_label = bx_cgpc_create_address_label(pcode);
+	bx_cgpc_add_instruction(pcode, BX_INSTR_IPUSH_1);
+	bx_cgpc_add_instruction(pcode, BX_INSTR_JUMP);
+	true_label = bx_cgpc_create_address_label(pcode);
+	false_jump_address = bx_cgpc_add_instruction(pcode, BX_INSTR_IPUSH_0);
+	true_jump_address = bx_cgpc_add_instruction(pcode, BX_INSTR_NOP);
+	bx_cgpc_set_address_label(pcode, false_label, false_jump_address);
+	bx_cgpc_set_address_label(pcode, true_label, true_jump_address);
 	return result;
 }
 

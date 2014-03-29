@@ -107,36 +107,36 @@ struct bx_comp_expr *postfix_dec_int(struct bx_comp_expr *operand1) {
 
 	switch (operand1->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_ISUB);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_RLOAD32);
+		bx_cgpc_add_identifier(result->value.pcode, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_DUP32);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IPUSH_1);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_ISUB);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_RSTORE32);
+		bx_cgpc_add_identifier(result->value.pcode, operand1->value.variable->identifier);
 
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_ISUB);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_RLOAD32);
+		bx_cgpc_add_identifier(result->side_effect_pcode, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_IPUSH_1);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_ISUB);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_RSTORE32);
+		bx_cgpc_add_identifier(result->side_effect_pcode, operand1->value.variable->identifier);
 		break;
 	case BX_COMP_VARIABLE_SYMBOL:
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_ISUB);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_VLOAD32);
+		bx_cgpc_add_address(result->value.pcode, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_DUP32);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IPUSH_1);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_ISUB);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_VSTORE32);
+		bx_cgpc_add_address(result->value.pcode, operand1->value.variable->symbol_data.variable_number);
 
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_ISUB);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_VLOAD32);
+		bx_cgpc_add_address(result->side_effect_pcode, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_IPUSH_1);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_ISUB);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_VSTORE32);
+		bx_cgpc_add_address(result->side_effect_pcode, operand1->value.variable->symbol_data.variable_number);
 		break;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression",
@@ -159,36 +159,36 @@ struct bx_comp_expr *postfix_dec_float(struct bx_comp_expr *operand1) {
 
 	switch (operand1->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_FSUB);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_RLOAD32);
+		bx_cgpc_add_identifier(result->value.pcode, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_DUP32);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FPUSH_1);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FSUB);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_RSTORE32);
+		bx_cgpc_add_identifier(result->value.pcode, operand1->value.variable->identifier);
 
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FSUB);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_RLOAD32);
+		bx_cgpc_add_identifier(result->side_effect_pcode, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_FPUSH_1);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_FSUB);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_RSTORE32);
+		bx_cgpc_add_identifier(result->side_effect_pcode, operand1->value.variable->identifier);
 		break;
 	case BX_COMP_VARIABLE_SYMBOL:
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_FSUB);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_VLOAD32);
+		bx_cgpc_add_address(result->value.pcode, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_DUP32);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FPUSH_1);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FSUB);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_VSTORE32);
+		bx_cgpc_add_address(result->value.pcode, operand1->value.variable->symbol_data.variable_number);
 
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FSUB);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_VLOAD32);
+		bx_cgpc_add_address(result->side_effect_pcode, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_FPUSH_1);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_FSUB);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_VSTORE32);
+		bx_cgpc_add_address(result->side_effect_pcode, operand1->value.variable->symbol_data.variable_number);
 		break;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression",
@@ -240,36 +240,36 @@ struct bx_comp_expr *postfix_inc_int(struct bx_comp_expr *operand1) {
 
 	switch (operand1->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_IADD);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_RLOAD32);
+		bx_cgpc_add_identifier(result->value.pcode, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_DUP32);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IPUSH_1);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IADD);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_RSTORE32);
+		bx_cgpc_add_identifier(result->value.pcode, operand1->value.variable->identifier);
 
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_IADD);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_RLOAD32);
+		bx_cgpc_add_identifier(result->side_effect_pcode, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_IPUSH_1);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_IADD);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_RSTORE32);
+		bx_cgpc_add_identifier(result->side_effect_pcode, operand1->value.variable->identifier);
 		break;
 	case BX_COMP_VARIABLE_SYMBOL:
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_IADD);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_VLOAD32);
+		bx_cgpc_add_address(result->value.pcode, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_DUP32);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IPUSH_1);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IADD);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_VSTORE32);
+		bx_cgpc_add_address(result->value.pcode, operand1->value.variable->symbol_data.variable_number);
 
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_IADD);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_VLOAD32);
+		bx_cgpc_add_address(result->side_effect_pcode, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_IPUSH_1);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_IADD);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_VSTORE32);
+		bx_cgpc_add_address(result->side_effect_pcode, operand1->value.variable->symbol_data.variable_number);
 		break;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression",
@@ -292,36 +292,36 @@ struct bx_comp_expr *postfix_inc_float(struct bx_comp_expr *operand1) {
 
 	switch (operand1->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_FADD);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_RLOAD32);
+		bx_cgpc_add_identifier(result->value.pcode, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_DUP32);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FPUSH_1);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FADD);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_RSTORE32);
+		bx_cgpc_add_identifier(result->value.pcode, operand1->value.variable->identifier);
 
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FADD);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_RLOAD32);
+		bx_cgpc_add_identifier(result->side_effect_pcode, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_FPUSH_1);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_FADD);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_RSTORE32);
+		bx_cgpc_add_identifier(result->side_effect_pcode, operand1->value.variable->identifier);
 		break;
 	case BX_COMP_VARIABLE_SYMBOL:
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_FADD);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_VLOAD32);
+		bx_cgpc_add_address(result->value.pcode, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_DUP32);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FPUSH_1);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FADD);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_VSTORE32);
+		bx_cgpc_add_address(result->value.pcode, operand1->value.variable->symbol_data.variable_number);
 
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FADD);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_VLOAD32);
+		bx_cgpc_add_address(result->side_effect_pcode, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_FPUSH_1);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_FADD);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_VSTORE32);
+		bx_cgpc_add_address(result->side_effect_pcode, operand1->value.variable->symbol_data.variable_number);
 		break;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression",
@@ -373,36 +373,36 @@ struct bx_comp_expr *prefix_dec_int(struct bx_comp_expr *operand1) {
 
 	switch (operand1->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_ISUB);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_RLOAD32);
+		bx_cgpc_add_identifier(result->value.pcode, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IPUSH_1);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_ISUB);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_DUP32);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_RSTORE32);
+		bx_cgpc_add_identifier(result->value.pcode, operand1->value.variable->identifier);
 
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_ISUB);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_RLOAD32);
+		bx_cgpc_add_identifier(result->side_effect_pcode, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_IPUSH_1);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_ISUB);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_RSTORE32);
+		bx_cgpc_add_identifier(result->side_effect_pcode, operand1->value.variable->identifier);
 		break;
 	case BX_COMP_VARIABLE_SYMBOL:
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_ISUB);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_VLOAD32);
+		bx_cgpc_add_address(result->value.pcode, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IPUSH_1);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_ISUB);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_DUP32);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_VSTORE32);
+		bx_cgpc_add_address(result->value.pcode, operand1->value.variable->symbol_data.variable_number);
 
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VLOAD32);
-		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_ISUB);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VSTORE32);
-		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_VLOAD32);
+		bx_cgpc_add_identifier(result->side_effect_pcode, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_IPUSH_1);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_ISUB);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_VSTORE32);
+		bx_cgpc_add_identifier(result->side_effect_pcode, operand1->value.variable->identifier);
 		break;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected data type encountered "
@@ -425,36 +425,36 @@ struct bx_comp_expr *prefix_dec_float(struct bx_comp_expr *operand1) {
 
 	switch (operand1->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_FSUB);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_RLOAD32);
+		bx_cgpc_add_identifier(result->value.pcode, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FPUSH_1);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FSUB);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_DUP32);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_RSTORE32);
+		bx_cgpc_add_identifier(result->value.pcode, operand1->value.variable->identifier);
 
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FSUB);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_RLOAD32);
+		bx_cgpc_add_identifier(result->side_effect_pcode, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_FPUSH_1);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_FSUB);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_RSTORE32);
+		bx_cgpc_add_identifier(result->side_effect_pcode, operand1->value.variable->identifier);
 		break;
 	case BX_COMP_VARIABLE_SYMBOL:
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_FSUB);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_VLOAD32);
+		bx_cgpc_add_address(result->value.pcode, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FPUSH_1);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FSUB);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_DUP32);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_VSTORE32);
+		bx_cgpc_add_address(result->value.pcode, operand1->value.variable->symbol_data.variable_number);
 
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FSUB);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_VLOAD32);
+		bx_cgpc_add_address(result->side_effect_pcode, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_FPUSH_1);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_FSUB);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_VSTORE32);
+		bx_cgpc_add_address(result->side_effect_pcode, operand1->value.variable->symbol_data.variable_number);
 		break;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected data type encountered "
@@ -506,36 +506,36 @@ struct bx_comp_expr *prefix_inc_int(struct bx_comp_expr *operand1) {
 
 	switch (operand1->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_IADD);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_RLOAD32);
+		bx_cgpc_add_identifier(result->value.pcode, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IPUSH_1);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IADD);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_DUP32);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_RSTORE32);
+		bx_cgpc_add_identifier(result->value.pcode, operand1->value.variable->identifier);
 
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_IADD);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_RLOAD32);
+		bx_cgpc_add_identifier(result->side_effect_pcode, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_IPUSH_1);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_IADD);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_RSTORE32);
+		bx_cgpc_add_identifier(result->side_effect_pcode, operand1->value.variable->identifier);
 		break;
 	case BX_COMP_VARIABLE_SYMBOL:
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_IADD);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_VLOAD32);
+		bx_cgpc_add_address(result->value.pcode, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IPUSH_1);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IADD);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_DUP32);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_VSTORE32);
+		bx_cgpc_add_address(result->value.pcode, operand1->value.variable->symbol_data.variable_number);
 
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_IPUSH_1);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_IADD);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_VLOAD32);
+		bx_cgpc_add_address(result->side_effect_pcode, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_IPUSH_1);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_IADD);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_VSTORE32);
+		bx_cgpc_add_address(result->side_effect_pcode, operand1->value.variable->symbol_data.variable_number);
 		break;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected data type encountered "
@@ -558,36 +558,36 @@ struct bx_comp_expr *prefix_inc_float(struct bx_comp_expr *operand1) {
 
 	switch (operand1->value.variable->symbol_type) {
 	case BX_COMP_FIELD_SYMBOL:
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_FADD);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(result->value.code, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_RLOAD32);
+		bx_cgpc_add_identifier(result->value.pcode, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FPUSH_1);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FADD);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_DUP32);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_RSTORE32);
+		bx_cgpc_add_identifier(result->value.pcode, operand1->value.variable->identifier);
 
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RLOAD32);
-		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FADD);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_RSTORE32);
-		bx_cgco_add_identifier(result->side_effect_code, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_RLOAD32);
+		bx_cgpc_add_identifier(result->side_effect_pcode, operand1->value.variable->identifier);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_FPUSH_1);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_FADD);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_RSTORE32);
+		bx_cgpc_add_identifier(result->side_effect_pcode, operand1->value.variable->identifier);
 		break;
 	case BX_COMP_VARIABLE_SYMBOL:
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_FADD);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_DUP32);
-		bx_cgco_add_instruction(result->value.code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(result->value.code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_VLOAD32);
+		bx_cgpc_add_address(result->value.pcode, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FPUSH_1);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FADD);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_DUP32);
+		bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_VSTORE32);
+		bx_cgpc_add_address(result->value.pcode, operand1->value.variable->symbol_data.variable_number);
 
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VLOAD32);
-		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FPUSH_1);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_FADD);
-		bx_cgco_add_instruction(result->side_effect_code, BX_INSTR_VSTORE32);
-		bx_cgco_add_address(result->side_effect_code, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_VLOAD32);
+		bx_cgpc_add_address(result->side_effect_pcode, operand1->value.variable->symbol_data.variable_number);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_FPUSH_1);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_FADD);
+		bx_cgpc_add_instruction(result->side_effect_pcode, BX_INSTR_VSTORE32);
+		bx_cgpc_add_address(result->side_effect_pcode, operand1->value.variable->symbol_data.variable_number);
 		break;
 	default:
 		BX_LOG(LOG_ERROR, "codegen_expression", "Unexpected data type encountered "
@@ -679,8 +679,8 @@ static struct bx_comp_expr *unary_minus_int(struct bx_comp_expr *operand1) {
 	}
 
 	result = bx_cgex_create_binary_expression(BX_INT);
-	bx_cgco_append_code(result->value.code, operand1->value.code);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_INEG);
+	bx_cgpc_append_pcode(result->value.pcode, operand1->value.pcode);
+	bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_INEG);
 
 	return result;
 }
@@ -701,8 +701,8 @@ static struct bx_comp_expr *unary_minus_float(struct bx_comp_expr *operand1) {
 	}
 
 	result = bx_cgex_create_binary_expression(BX_FLOAT);
-	bx_cgco_append_code(result->value.code, operand1->value.code);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_FNEG);
+	bx_cgpc_append_pcode(result->value.pcode, operand1->value.pcode);
+	bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FNEG);
 
 	return result;
 }
@@ -759,9 +759,9 @@ static struct bx_comp_expr *add_int(struct bx_comp_expr *operand1, struct bx_com
 	}
 
 	result = bx_cgex_create_binary_expression(BX_INT);
-	bx_cgco_append_code(result->value.code, operand1->value.code);
-	bx_cgco_append_code(result->value.code, operand2->value.code);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_IADD);
+	bx_cgpc_append_pcode(result->value.pcode, operand1->value.pcode);
+	bx_cgpc_append_pcode(result->value.pcode, operand2->value.pcode);
+	bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IADD);
 
 	return result;
 }
@@ -783,9 +783,9 @@ static struct bx_comp_expr *add_float(struct bx_comp_expr *operand1, struct bx_c
 	}
 
 	result = bx_cgex_create_binary_expression(BX_FLOAT);
-	bx_cgco_append_code(result->value.code, operand1->value.code);
-	bx_cgco_append_code(result->value.code, operand2->value.code);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_FADD);
+	bx_cgpc_append_pcode(result->value.pcode, operand1->value.pcode);
+	bx_cgpc_append_pcode(result->value.pcode, operand2->value.pcode);
+	bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FADD);
 
 	return result;
 }
@@ -845,9 +845,9 @@ static struct bx_comp_expr *sub_int(struct bx_comp_expr *operand1, struct bx_com
 	}
 
 	result = bx_cgex_create_binary_expression(BX_INT);
-	bx_cgco_append_code(result->value.code, operand1->value.code);
-	bx_cgco_append_code(result->value.code, operand2->value.code);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_ISUB);
+	bx_cgpc_append_pcode(result->value.pcode, operand1->value.pcode);
+	bx_cgpc_append_pcode(result->value.pcode, operand2->value.pcode);
+	bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_ISUB);
 
 	return result;
 }
@@ -869,9 +869,9 @@ static struct bx_comp_expr *sub_float(struct bx_comp_expr *operand1, struct bx_c
 	}
 
 	result = bx_cgex_create_binary_expression(BX_FLOAT);
-	bx_cgco_append_code(result->value.code, operand1->value.code);
-	bx_cgco_append_code(result->value.code, operand2->value.code);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_FSUB);
+	bx_cgpc_append_pcode(result->value.pcode, operand1->value.pcode);
+	bx_cgpc_append_pcode(result->value.pcode, operand2->value.pcode);
+	bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FSUB);
 
 	return result;
 }
@@ -926,9 +926,9 @@ static struct bx_comp_expr *mul_int(struct bx_comp_expr *operand1, struct bx_com
 	}
 
 	result = bx_cgex_create_binary_expression(BX_INT);
-	bx_cgco_append_code(result->value.code, operand1->value.code);
-	bx_cgco_append_code(result->value.code, operand2->value.code);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_IMUL);
+	bx_cgpc_append_pcode(result->value.pcode, operand1->value.pcode);
+	bx_cgpc_append_pcode(result->value.pcode, operand2->value.pcode);
+	bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IMUL);
 
 	return result;
 }
@@ -950,9 +950,9 @@ static struct bx_comp_expr *mul_float(struct bx_comp_expr *operand1, struct bx_c
 	}
 
 	result = bx_cgex_create_binary_expression(BX_FLOAT);
-	bx_cgco_append_code(result->value.code, operand1->value.code);
-	bx_cgco_append_code(result->value.code, operand2->value.code);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_FMUL);
+	bx_cgpc_append_pcode(result->value.pcode, operand1->value.pcode);
+	bx_cgpc_append_pcode(result->value.pcode, operand2->value.pcode);
+	bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FMUL);
 
 	return result;
 }
@@ -1007,9 +1007,9 @@ static struct bx_comp_expr *div_int(struct bx_comp_expr *operand1, struct bx_com
 	}
 
 	result = bx_cgex_create_binary_expression(BX_INT);
-	bx_cgco_append_code(result->value.code, operand1->value.code);
-	bx_cgco_append_code(result->value.code, operand2->value.code);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_IDIV);
+	bx_cgpc_append_pcode(result->value.pcode, operand1->value.pcode);
+	bx_cgpc_append_pcode(result->value.pcode, operand2->value.pcode);
+	bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IDIV);
 
 	return result;
 }
@@ -1031,9 +1031,9 @@ static struct bx_comp_expr *div_float(struct bx_comp_expr *operand1, struct bx_c
 	}
 
 	result = bx_cgex_create_binary_expression(BX_FLOAT);
-	bx_cgco_append_code(result->value.code, operand1->value.code);
-	bx_cgco_append_code(result->value.code, operand2->value.code);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_FDIV);
+	bx_cgpc_append_pcode(result->value.pcode, operand1->value.pcode);
+	bx_cgpc_append_pcode(result->value.pcode, operand2->value.pcode);
+	bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_FDIV);
 
 	return result;
 }
@@ -1077,9 +1077,9 @@ static struct bx_comp_expr *mod_int(struct bx_comp_expr *operand1, struct bx_com
 	}
 
 	result = bx_cgex_create_binary_expression(BX_INT);
-	bx_cgco_append_code(result->value.code, operand1->value.code);
-	bx_cgco_append_code(result->value.code, operand2->value.code);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_IMOD);
+	bx_cgpc_append_pcode(result->value.pcode, operand1->value.pcode);
+	bx_cgpc_append_pcode(result->value.pcode, operand2->value.pcode);
+	bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IMOD);
 
 	return result;
 }

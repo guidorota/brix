@@ -33,7 +33,7 @@
 #define CODEGEN_WHILE_STATEMENT_H_
 
 #include "types.h"
-#include "compiler/codegen_code.h"
+#include "compiler/codegen_pcode.h"
 
 struct bx_comp_while {
 	bx_comp_label label;

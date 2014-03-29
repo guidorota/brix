@@ -74,8 +74,8 @@ static struct bx_comp_expr *logical_not_bool(struct bx_comp_expr *operand1) {
 		return NULL;
 	}
 
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_IPUSH_1);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_IXOR);
+	bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IPUSH_1);
+	bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IXOR);
 
 	return result;
 }
@@ -120,9 +120,9 @@ static struct bx_comp_expr *logical_or_bool(struct bx_comp_expr *operand1, struc
 	}
 
 	result = bx_cgex_create_binary_expression(BX_BOOL);
-	bx_cgco_append_code(result->value.code, operand1->value.code);
-	bx_cgco_append_code(result->value.code, operand2->value.code);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_IOR);
+	bx_cgpc_append_pcode(result->value.pcode, operand1->value.pcode);
+	bx_cgpc_append_pcode(result->value.pcode, operand2->value.pcode);
+	bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IOR);
 
 	return result;
 }
@@ -167,9 +167,9 @@ static struct bx_comp_expr *logical_and_bool(struct bx_comp_expr *operand1, stru
 	}
 
 	result = bx_cgex_create_binary_expression(BX_BOOL);
-	bx_cgco_append_code(result->value.code, operand1->value.code);
-	bx_cgco_append_code(result->value.code, operand2->value.code);
-	bx_cgco_add_instruction(result->value.code, BX_INSTR_IAND);
+	bx_cgpc_append_pcode(result->value.pcode, operand1->value.pcode);
+	bx_cgpc_append_pcode(result->value.pcode, operand2->value.pcode);
+	bx_cgpc_add_instruction(result->value.pcode, BX_INSTR_IAND);
 
 	return result;
 }

@@ -34,7 +34,7 @@
 
 #include "types.h"
 #include "configuration.h"
-#include "compiler/codegen_code.h"
+#include "compiler/codegen_pcode.h"
 #include "compiler/codegen_symbol_table.h"
 
 enum bx_comp_operator {
@@ -79,9 +79,9 @@ struct bx_comp_expr {
 		bx_float32 float_value;
 		bx_boolean bool_value;
 		struct bx_comp_symbol *variable;
-		struct bx_comp_code *code;
+		struct bx_comp_pcode *pcode;
 	} value;
-	struct bx_comp_code *side_effect_code;
+	struct bx_comp_pcode *side_effect_pcode;
 };
 
 
@@ -180,7 +180,7 @@ bx_int8 bx_cgex_convert_to_binary(struct bx_comp_expr *expression);
  *
  * @return Side effect code, NULL on error
  */
-struct bx_comp_code *bx_cgex_side_effect_code(struct bx_comp_expr *expression);
+struct bx_comp_pcode *bx_cgex_side_effect_pcode(struct bx_comp_expr *expression);
 
 /**
  * Creates an empty code expression.

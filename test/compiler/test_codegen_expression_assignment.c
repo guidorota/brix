@@ -132,7 +132,7 @@ START_TEST (int_assignment) {
 	struct bx_comp_expr *destination;
 	struct bx_comp_expr *expression;
 	struct bx_comp_expr *result;
-	struct bx_comp_code *code;
+	struct bx_comp_pcode *pcode;
 
 	bx_test_field_set_int(&int_test_field, 0);
 	destination = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
@@ -142,10 +142,10 @@ START_TEST (int_assignment) {
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
-	bx_cgco_add_identifier(code, OUTPUT_INT_TEST_FIELD);
-	error = bx_vm_execute(code->data, code->size);
+	pcode = result->value.pcode;
+	bx_cgpc_add_instruction(pcode, BX_INSTR_RSTORE32);
+	bx_cgpc_add_identifier(pcode, OUTPUT_INT_TEST_FIELD);
+	error = bx_vm_execute(pcode->data, pcode->size);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), value);
 	ck_assert_int_eq(bx_test_field_get_int(&output_int_test_field), value);
@@ -157,7 +157,7 @@ START_TEST (float_assignment) {
 	struct bx_comp_expr *destination;
 	struct bx_comp_expr *expression;
 	struct bx_comp_expr *result;
-	struct bx_comp_code *code;
+	struct bx_comp_pcode *pcode;
 
 	bx_test_field_set_float(&float_test_field, 0);
 	destination = bx_cgex_create_variable(symbol_table, FLOAT_TEST_FIELD);
@@ -167,10 +167,10 @@ START_TEST (float_assignment) {
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_FLOAT);
-	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
-	bx_cgco_add_identifier(code, OUTPUT_FLOAT_TEST_FIELD);
-	error = bx_vm_execute(code->data, code->size);
+	pcode = result->value.pcode;
+	bx_cgpc_add_instruction(pcode, BX_INSTR_RSTORE32);
+	bx_cgpc_add_identifier(pcode, OUTPUT_FLOAT_TEST_FIELD);
+	error = bx_vm_execute(pcode->data, pcode->size);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_float(&float_test_field), value);
 	ck_assert_int_eq(bx_test_field_get_float(&output_float_test_field), value);
@@ -181,7 +181,7 @@ START_TEST (bool_assignment) {
 	struct bx_comp_expr *destination;
 	struct bx_comp_expr *expression;
 	struct bx_comp_expr *result;
-	struct bx_comp_code *code;
+	struct bx_comp_pcode *pcode;
 
 	bx_test_field_set_bool(&bool_test_field, BX_BOOLEAN_FALSE);
 	destination = bx_cgex_create_variable(symbol_table, BOOL_TEST_FIELD);
@@ -191,10 +191,10 @@ START_TEST (bool_assignment) {
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_BOOL);
-	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
-	bx_cgco_add_identifier(code, OUTPUT_BOOL_TEST_FIELD);
-	error = bx_vm_execute(code->data, code->size);
+	pcode = result->value.pcode;
+	bx_cgpc_add_instruction(pcode, BX_INSTR_RSTORE32);
+	bx_cgpc_add_identifier(pcode, OUTPUT_BOOL_TEST_FIELD);
+	error = bx_vm_execute(pcode->data, pcode->size);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_bool(&bool_test_field), BX_BOOLEAN_TRUE);
 	ck_assert_int_eq(bx_test_field_get_bool(&output_bool_test_field), BX_BOOLEAN_TRUE);
@@ -206,7 +206,7 @@ START_TEST (local_variable_assignment) {
 	struct bx_comp_expr *destination;
 	struct bx_comp_expr *constant;
 	struct bx_comp_expr *result;
-	struct bx_comp_code *code;
+	struct bx_comp_pcode *pcode;
 
 	bx_test_field_set_int(&int_test_field, 0);
 	destination = bx_cgex_create_variable(symbol_table, LOCAL_VARIABLE_TEST);
@@ -215,14 +215,14 @@ START_TEST (local_variable_assignment) {
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(result->expression_type, BX_COMP_BINARY);
 	ck_assert_int_eq(result->data_type, BX_INT);
-	code = result->value.code;
-	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
-	bx_cgco_add_identifier(code, OUTPUT_INT_TEST_FIELD);
-	bx_cgco_add_instruction(code, BX_INSTR_VLOAD32);
-	bx_cgco_add_address(code, 0);
-	bx_cgco_add_instruction(code, BX_INSTR_RSTORE32);
-	bx_cgco_add_identifier(code, INT_TEST_FIELD);
-	error = bx_vm_execute(code->data, code->size);
+	pcode = result->value.pcode;
+	bx_cgpc_add_instruction(pcode, BX_INSTR_RSTORE32);
+	bx_cgpc_add_identifier(pcode, OUTPUT_INT_TEST_FIELD);
+	bx_cgpc_add_instruction(pcode, BX_INSTR_VLOAD32);
+	bx_cgpc_add_address(pcode, 0);
+	bx_cgpc_add_instruction(pcode, BX_INSTR_RSTORE32);
+	bx_cgpc_add_identifier(pcode, INT_TEST_FIELD);
+	error = bx_vm_execute(pcode->data, pcode->size);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), value);
 	ck_assert_int_eq(bx_test_field_get_int(&output_int_test_field), value);

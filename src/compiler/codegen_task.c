@@ -42,19 +42,19 @@ struct bx_comp_task *bx_cgtk_create_task() {
 	task = BX_MALLOC(struct bx_comp_task);
 	memset((void *) task, 0, sizeof (struct bx_comp_task));
 
-	task->code = bx_cgco_create();
-	if (task->code == NULL) {
+	task->pcode = bx_cgpc_create();
+	if (task->pcode == NULL) {
 		goto cleanup_task;
 	}
 
 	task->symbol_table = bx_cgsy_create_symbol_table();
 	if (task->symbol_table == NULL) {
-		goto cleanup_code;
+		goto cleanup_pcode;
 	}
 	return task;
 
-cleanup_code:
-	free(task->code);
+cleanup_pcode:
+	free(task->pcode);
 cleanup_task:
 	free(task);
 	return NULL;
@@ -78,7 +78,7 @@ bx_int8 bx_cgtk_add_at_execution_condition(struct bx_comp_task *task, struct bx_
 	}
 
 	//TODO: Optimize: if the condition is always false there's no need to create the task
-	task->at_execution_condition = bx_cgco_copy(boolean_condition->value.code);
+	task->at_execution_condition = bx_cgpc_copy(boolean_condition->value.pcode);
 	if (task->at_execution_condition == NULL) {
 		return -1;
 	}
@@ -128,15 +128,15 @@ bx_int8 bx_cgtk_destroy_task(struct bx_comp_task *task) {
 	}
 
 	if (task->at_execution_condition != NULL) {
-		bx_cgco_destroy(task->at_execution_condition);
+		bx_cgpc_destroy(task->at_execution_condition);
 	}
 
 	if (task->on_execution_condition != NULL) {
-		bx_cgco_destroy(task->on_execution_condition);
+		bx_cgpc_destroy(task->on_execution_condition);
 	}
 
-	if (task->code != NULL) {
-		bx_cgco_destroy(task->code);
+	if (task->pcode != NULL) {
+		bx_cgpc_destroy(task->pcode);
 	}
 
 	while (task->child_task_list != NULL) {

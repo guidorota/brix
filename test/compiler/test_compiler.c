@@ -86,8 +86,8 @@ static bx_int8 run_program(char *program) {
 	}
 	fclose(yyin);
 
-	printf("\nCode size: %zu\n\n", main_task->code->size);
-	error = bx_vm_execute(main_task->code->data, main_task->code->size);
+	printf("\nCode size: %zu\n\n", main_task->pcode->size);
+	error = bx_vm_execute(main_task->pcode->data, main_task->pcode->size);
 	if (error != 0) {
 		return -1;
 	}
@@ -160,7 +160,7 @@ START_TEST (assignment_test) {
 	ck_assert_int_eq(parse_result, 0);
 	fclose(yyin);
 
-	error = bx_vm_execute(main_task->code->data, main_task->code->size);
+	error = bx_vm_execute(main_task->pcode->data, main_task->pcode->size);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 5);
 	bx_cgtk_destroy_task(main_task);
