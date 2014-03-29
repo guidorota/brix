@@ -54,15 +54,15 @@ enum vm_operand {
 	BX_VMOP_GE
 };
 
-#define BYTE_AT_PC(vm_status_pointer) (vm_status_pointer->code + vm_status_pointer->program_counter)
+#define BYTE_AT_PC(vm_status_pointer) (vm_status_pointer->pcode + vm_status_pointer->program_counter)
 #define VARIABLE_PTR(vm_status_pointer, variable_number) (void *) (vm_status_pointer->variable_table + variable_number *4)
 
 struct bx_vm_status {
 	bx_size program_counter;
 	struct bx_stack execution_stack;
-	bx_uint8 *code;
+	bx_uint8 *pcode;
 	bx_uint8 variable_table[VM_VARIABLE_TABLE_SIZE];
-	bx_size code_size;
+	bx_size pcode_size;
 	bx_boolean stop;
 };
 
@@ -511,7 +511,7 @@ static bx_int8 bx_jump_function(struct bx_vm_status *vm_status) {
 	if (error == -1) {
 		return -1;
 	}
-	if (address >= vm_status->code_size) {
+	if (address >= vm_status->pcode_size) {
 		return -1;
 	}
 	vm_status->program_counter = address;
@@ -556,7 +556,7 @@ static inline bx_int8 bx_jump_functions(struct bx_vm_status *vm_status, enum vm_
 	if (error == -1) {
 		return -1;
 	}
-	if (address >= vm_status->code_size) {
+	if (address >= vm_status->pcode_size) {
 		return -1;
 	}
 	switch(operand) {
@@ -703,12 +703,12 @@ bx_int8 bx_vm_virtual_machine_init() {
 	return 0;
 }
 
-bx_int8 bx_vm_execute(bx_uint8 *code, bx_size code_size) {
+bx_int8 bx_vm_execute(bx_uint8 *pcode, bx_size pcode_size) {
 	bx_int8 error;
 	bx_uint8 instruction_id;
 
-	vm_status.code = code;
-	vm_status.code_size = code_size;
+	vm_status.pcode = pcode;
+	vm_status.pcode_size = pcode_size;
 	vm_status.program_counter = 0;
 	bx_stack_reset(&vm_status.execution_stack);
 	vm_status.stop = BX_BOOLEAN_FALSE;
@@ -723,7 +723,7 @@ bx_int8 bx_vm_execute(bx_uint8 *code, bx_size code_size) {
 			break;
 		}
 
-	} while(vm_status.stop == BX_BOOLEAN_FALSE && vm_status.program_counter < vm_status.code_size);
+	} while(vm_status.stop == BX_BOOLEAN_FALSE && vm_status.program_counter < vm_status.pcode_size);
 
 	if (error != 0) {
 		BX_LOG(LOG_ERROR, "virtual_machine", "Abnormal virtual machine termination");
@@ -735,7 +735,7 @@ bx_int8 bx_vm_execute(bx_uint8 *code, bx_size code_size) {
 
 static inline bx_int8 bx_fetch_instruction(struct bx_vm_status *vm_status, bx_uint8 *instruction_id) {
 
-	if (vm_status->program_counter > vm_status->code_size) {
+	if (vm_status->program_counter > vm_status->pcode_size) {
 		BX_LOG(LOG_ERROR, "virtual_machine", "Error while fetching instruction: unexpected end of code");
 		return -1;
 	}
@@ -748,7 +748,7 @@ static inline bx_int8 bx_fetch_instruction(struct bx_vm_status *vm_status, bx_ui
 
 static inline bx_int8 bx_fetch(struct bx_vm_status *vm_status, void *data, bx_size data_length) {
 
-	if (vm_status->program_counter + data_length > vm_status->code_size) {
+	if (vm_status->program_counter + data_length > vm_status->pcode_size) {
 		BX_LOG(LOG_ERROR, "virtual_machine", "Error while fetching instruction: unexpected end of code");
 		return -1;
 	}

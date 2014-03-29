@@ -87,6 +87,6 @@ enum bx_instruction {
 
 bx_int8 bx_vm_virtual_machine_init();
 
-bx_int8 bx_vm_execute(bx_uint8 *code, bx_size code_size);
+bx_int8 bx_vm_execute(bx_uint8 *pcode, bx_size pcode_size);
 
 #endif /* VIRTUAL_MACHINE_H_ */
