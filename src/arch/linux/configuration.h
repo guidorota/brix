@@ -36,7 +36,7 @@
 #define VM_STACK_SIZE 512
 #define VM_VARIABLE_TABLE_SIZE 512
 
-// Task repository
+// Pcode repository
 #define PR_CODE_STORAGE_SIZE 4092
 
 // Document manager
@@ -46,9 +46,8 @@
 
 // Timer
 #define TM_TICK_PERIOD_MS 125
-#define TM_MAX_HANDLER_NUMBER 100
 
 // Event handler
-#define EV_BUFFER_SIZE 512
+#define EV_MAX_HANDLER_NUMBER 50
 
 #endif /* CONFIGURATION_H_ */

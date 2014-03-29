@@ -32,12 +32,10 @@
 #ifndef EVENT_HANDLER_H_
 #define EVENT_HANDLER_H_
 
-#include "virtual_machine/virtual_machine.h"
-
 #define BX_EV_TICK 1
 
 #include "types.h"
-#include "runtime/pcode_repository.h"
+#include "runtime/pcode_manager.h"
 
 enum bx_handler_type {
 	BX_HANDLER_NATIVE,	///< Native C handler

@@ -48,7 +48,7 @@
 #include "compiler/test_codegen_expression_assignment.h"
 #include "compiler/test_codegen_task.h"
 #include "compiler/test_compiler.h"
-#include "runtime/test_pcode_repository.h"
+#include "runtime/test_pcode_manager.h"
 #include "runtime/test_timer.h"
 #include "runtime/test_event_handler.h"
 
@@ -74,9 +74,9 @@ int main(void) {
 	srunner_add_suite(runner, test_codegen_expression_assignment_create_suite());
 	srunner_add_suite(runner, test_codegen_task_create_suite());
 	srunner_add_suite(runner, test_compiler_create_suite());
-	srunner_add_suite(runner, test_pcode_repository_create_suite());
-	srunner_add_suite(runner, test_timer_create_suite());
+	srunner_add_suite(runner, test_pcode_manager_create_suite());
 	srunner_add_suite(runner, test_event_handler_create_suite());
+	srunner_add_suite(runner, test_timer_create_suite());
 
 	srunner_run_all(runner, CK_VERBOSE);
 	number_failed = srunner_ntests_failed(runner);

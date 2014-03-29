@@ -32,7 +32,7 @@
 #include "logging.h"
 #include "configuration.h"
 #include "runtime/event_handler.h"
-#include "runtime/pcode_repository.h"
+#include "runtime/pcode_manager.h"
 
 bx_int8 bx_ev_invoke(struct bx_event_handler *event_handler) {
 
@@ -45,7 +45,7 @@ bx_int8 bx_ev_invoke(struct bx_event_handler *event_handler) {
 		event_handler->handler.native_function();
 		return 0;
 	case BX_HANDLER_VM:
-		return bx_pr_execute(event_handler->handler.pcode);
+		return bx_pm_execute(event_handler->handler.pcode);
 	default:
 		BX_LOG(LOG_ERROR, "event_handler", "Unexpected handler type "
 				"encountered in function 'bx_ev_invoke'");

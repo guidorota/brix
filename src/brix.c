@@ -8,7 +8,7 @@
 #include "logging.h"
 #include "document_manager/document_manager.h"
 #include "virtual_machine/virtual_machine.h"
-#include "runtime/pcode_repository.h"
+#include "runtime/pcode_manager.h"
 #include "runtime/timer.h"
 
 int main(int argc, char* argv[]) {

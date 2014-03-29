@@ -1,5 +1,5 @@
 /*
- * pcode_repository.c
+ * pcode_manager.c
  * Created on: Mar 25, 2014
  * Author: Guido Rota
  *
@@ -32,7 +32,7 @@
 #include <string.h>
 #include "configuration.h"
 #include "logging.h"
-#include "runtime/pcode_repository.h"
+#include "runtime/pcode_manager.h"
 #include "virtual_machine/virtual_machine.h"
 
 #define SPACE_USED (pcode_count * sizeof (struct bx_pcode)) + total_instruction_length
@@ -50,14 +50,14 @@ static bx_size pcode_count;
 
 static struct bx_pcode *get_available_pcode();
 
-bx_int8 bx_pr_init() {
+bx_int8 bx_pm_init() {
 	total_instruction_length = 0;
 	pcode_count = 0;
 
 	return 0;
 }
 
-struct bx_pcode *bx_pr_add(void *buffer, bx_size buffer_size) {
+struct bx_pcode *bx_pm_add(void *buffer, bx_size buffer_size) {
 	struct bx_pcode *pcode;
 
 	if (buffer == NULL) {
@@ -95,7 +95,7 @@ static struct bx_pcode *get_available_pcode() {
 	return PCODE_STRUCT(pcode_count++);
 }
 
-bx_int8 bx_pr_execute(struct bx_pcode *pcode) {
+bx_int8 bx_pm_execute(struct bx_pcode *pcode) {
 	if (pcode == NULL) {
 		return -1;
 	}
@@ -114,7 +114,7 @@ bx_int8 bx_pr_execute(struct bx_pcode *pcode) {
 	return bx_vm_execute((bx_uint8 *) pcode->instructions, pcode->size);
 }
 
-bx_int8 bx_pr_remove(struct bx_pcode *pcode) {
+bx_int8 bx_pm_remove(struct bx_pcode *pcode) {
 	void *destination;
 	void *source;
 	bx_size length;

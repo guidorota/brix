@@ -1,5 +1,5 @@
 /*
- * test_pcode_repository.h
+ * pcode_manager.h
  * Created on: Mar 25, 2014
  * Author: Guido Rota
  *
@@ -29,11 +29,47 @@
  *
  */
 
-#ifndef TEST_PCODE_REPOSITORY_H_
-#define TEST_PCODE_REPOSITORY_H_
+#ifndef PCODE_MANAGER_H_
+#define PCODE_MANAGER_H_
 
-#include <check.h>
+#include "types.h"
 
-Suite *test_pcode_repository_create_suite(void);
+struct bx_pcode;
 
-#endif /* TEST_PCODE_REPOSITORY_H_ */
+/**
+ * Initialize pcode repository internal data structures.
+ *
+ * @return 0 on success, -1 on failure
+ */
+bx_int8 bx_pm_init();
+
+/**
+ * Adds a new pcode program into the repository.
+ *
+ * @param buffer Instruction buffer
+ * @param buffer_size Instruction buffer size
+ *
+ * @return New bx_pcode structure, NULL on failure
+ */
+struct bx_pcode *bx_pm_add(void *buffer, bx_size buffer_size);
+
+/**
+ * Invokes the virtual machine and executes a program.
+ *
+ * @param pcode Program to execute
+ *
+ * @return 0 on success, -1 on failure
+ */
+bx_int8 bx_pm_execute(struct bx_pcode *pcode);
+
+/**
+ * Removes a pcode program from the repository.
+ * Space occupied by the program is reclaimed and freed for future uses.
+ *
+ * @param pcode Pointer to the pcode structure to remove
+ *
+ * @return 0 on success, -1 on failure
+ */
+bx_int8 bx_pm_remove(struct bx_pcode *pcode);
+
+#endif /* PCODE_MANAGER_H_ */
