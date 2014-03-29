@@ -29,8 +29,27 @@
  *
  */
 
+#include <string.h>
 #include "test_pcode_repository.h"
 #include "runtime/pcode_repository.h"
+
+#define DATA1 "Test data 1"
+#define DATA2 "Test data number two"
+#define DATA3 "This is data three test data"
+
+#define DATA1_SIZE strlen(DATA1)
+#define DATA2_SIZE strlen(DATA2)
+#define DATA3_SIZE strlen(DATA3)
+
+struct test_bx_pcode *pcode1;
+struct test_bx_pcode *pcode2;
+struct test_bx_pcode *pcode3;
+
+struct test_bx_pcode {
+	bx_boolean valid;
+	void *pcode_instructions;
+	bx_size pcode_size;
+};
 
 START_TEST (init_test) {
 	bx_int8 error;
@@ -39,12 +58,63 @@ START_TEST (init_test) {
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
+START_TEST (add_test) {
+	pcode1 = (struct test_bx_pcode *) bx_pr_add((void *) DATA1, DATA1_SIZE);
+	ck_assert_ptr_ne(pcode1, NULL);
+	pcode2 = (struct test_bx_pcode *) bx_pr_add((void *) DATA2, DATA2_SIZE);
+	ck_assert_ptr_ne(pcode2, NULL);
+
+	ck_assert_int_eq(pcode1->valid, BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(pcode1->pcode_size, DATA1_SIZE);
+	ck_assert_int_eq(memcmp(pcode1->pcode_instructions, DATA1, DATA1_SIZE), 0);
+
+	ck_assert_int_eq(pcode2->valid, BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(pcode2->pcode_size, DATA2_SIZE);
+	ck_assert_int_eq(memcmp(pcode2->pcode_instructions, DATA2, DATA2_SIZE), 0);
+} END_TEST
+
+START_TEST (remove_test) {
+	bx_int8 error;
+	void *data2_pcode_pointer;
+
+	data2_pcode_pointer = pcode2->pcode_instructions;
+	error = bx_pr_remove((struct bx_pcode *) pcode1);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(pcode1->valid, BX_BOOLEAN_FALSE);
+	ck_assert_int_eq(pcode1->pcode_size, 0);
+	ck_assert_ptr_eq(pcode1->pcode_instructions, NULL);
+	ck_assert_ptr_ne(data2_pcode_pointer, pcode2->pcode_instructions);
+	ck_assert_int_eq(pcode2->valid, BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(pcode2->pcode_size, DATA2_SIZE);
+	ck_assert_int_eq(memcmp(pcode2->pcode_instructions, DATA2, DATA2_SIZE), 0);
+
+	pcode3 = (struct test_bx_pcode *) bx_pr_add((void *) DATA3, DATA3_SIZE);
+	ck_assert_ptr_ne(pcode2, NULL);
+	ck_assert_int_eq(pcode3->valid, BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(pcode3->pcode_size, DATA3_SIZE);
+	ck_assert_int_eq(memcmp(pcode3->pcode_instructions, DATA3, DATA3_SIZE), 0);
+	ck_assert_ptr_eq(pcode1, pcode3);
+
+	ck_assert_int_eq(pcode2->valid, BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(pcode2->pcode_size, DATA2_SIZE);
+	ck_assert_int_eq(memcmp(pcode2->pcode_instructions, DATA2, DATA2_SIZE), 0);
+	ck_assert_ptr_eq(pcode3->pcode_instructions, (void *) ((bx_uint8 *) pcode2->pcode_instructions + pcode2->pcode_size));
+} END_TEST
+
 Suite *test_pcode_repository_create_suite() {
 	Suite *suite = suite_create("storage");
 	TCase *tcase;
 
 	tcase = tcase_create("init_test");
 	tcase_add_test(tcase, init_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("add_test");
+	tcase_add_test(tcase, add_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("remove_test");
+	tcase_add_test(tcase, remove_test);
 	suite_add_tcase(suite, tcase);
 
 	return suite;

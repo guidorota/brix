@@ -40,6 +40,6 @@ bx_int8 bx_pr_init();
 
 struct bx_pcode *bx_pr_add(void *pcode_data, bx_size pcode_size);
 
-bx_int8 bx_tr_remove(struct bx_pcode *pcode);
+bx_int8 bx_pr_remove(struct bx_pcode *pcode);
 
 #endif /* PCODE_REPOSITORY_H_ */

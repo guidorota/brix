@@ -39,8 +39,8 @@
 
 struct bx_pcode {
 	bx_boolean valid;
-	void *pcode_instructions;
-	bx_size pcode_size;
+	void *instructions;
+	bx_size size;
 };
 
 static bx_uint8 pcode_storage[PR_CODE_STORAGE_SIZE];
@@ -69,10 +69,10 @@ struct bx_pcode *bx_pr_add(void *pcode_data, bx_size pcode_size) {
 	}
 
 	pcode = get_available_pcode();
-	pcode->pcode_instructions = (void *) (pcode_storage + pcode_storage_used);
-	pcode->pcode_size = pcode_size;
+	pcode->instructions = (void *) (pcode_storage + pcode_storage_used);
+	pcode->size = pcode_size;
 	pcode->valid = BX_BOOLEAN_TRUE;
-	memcpy(pcode->pcode_instructions, pcode_data, pcode_size);
+	memcpy(pcode->instructions, pcode_data, pcode_size);
 
 	pcode_count += 1;
 	pcode_storage_used += pcode_size;
@@ -95,7 +95,7 @@ static struct bx_pcode *get_available_pcode() {
 }
 
 
-bx_int8 bx_tr_remove(struct bx_pcode *pcode) {
+bx_int8 bx_pr_remove(struct bx_pcode *pcode) {
 	void *destination;
 	void *source;
 	bx_size length;
@@ -111,10 +111,22 @@ bx_int8 bx_tr_remove(struct bx_pcode *pcode) {
 	}
 
 	pcode->valid = BX_BOOLEAN_FALSE;
-	destination = (void *) pcode->pcode_instructions;
-	source = (void *) ((bx_uint8 *) pcode->pcode_instructions + pcode->pcode_size);
+	destination = (void *) pcode->instructions;
+	source = (void *) ((bx_uint8 *) pcode->instructions + pcode->size);
 	length = pcode_storage_used - ((bx_uint8 *) source - pcode_storage);
 	memmove(destination, source, length);
+	pcode_storage_used -= pcode->size;
+
+	int i;
+	for (i = 0; i < pcode_count; i++) {
+		struct bx_pcode *current_pcode = PCODE_STRUCT(i);
+		if (current_pcode->instructions > pcode->instructions) {
+			current_pcode->instructions = (void *) ((bx_uint8 *) current_pcode->instructions - pcode->size);
+		}
+	}
+
+	pcode->instructions = NULL;
+	pcode->size = 0;
 
 	return 0;
 }
