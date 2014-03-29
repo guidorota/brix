@@ -36,10 +36,40 @@
 
 struct bx_pcode;
 
+/**
+ * Initialize pcode repository internal data structures.
+ *
+ * @return 0 on success, -1 on failure
+ */
 bx_int8 bx_pr_init();
 
-struct bx_pcode *bx_pr_add(void *pcode_data, bx_size pcode_size);
+/**
+ * Adds a new pcode program into the repository.
+ *
+ * @param buffer Instruction buffer
+ * @param buffer_size Instruction buffer size
+ *
+ * @return New bx_pcode structure, NULL on failure
+ */
+struct bx_pcode *bx_pr_add(void *buffer, bx_size buffer_size);
 
+/**
+ * Invokes the virtual machine and executes a program.
+ *
+ * @param pcode Program to execute
+ *
+ * @return 0 on success, -1 on failure
+ */
+bx_int8 bx_pr_execute(struct bx_pcode *pcode);
+
+/**
+ * Removes a pcode program from the repository.
+ * Space occupied by the program is reclaimed and freed for future uses.
+ *
+ * @param pcode Pointer to the pcode structure to remove
+ *
+ * @return 0 on success, -1 on failure
+ */
 bx_int8 bx_pr_remove(struct bx_pcode *pcode);
 
 #endif /* PCODE_REPOSITORY_H_ */

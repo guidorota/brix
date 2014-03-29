@@ -33,8 +33,9 @@
 #include "configuration.h"
 #include "logging.h"
 #include "runtime/pcode_repository.h"
+#include "virtual_machine/virtual_machine.h"
 
-#define SPACE_USED (pcode_count * sizeof (struct bx_pcode)) + pcode_storage_used
+#define SPACE_USED (pcode_count * sizeof (struct bx_pcode)) + total_instruction_length
 #define PCODE_STRUCT(index) (struct bx_pcode *) (pcode_storage + PR_CODE_STORAGE_SIZE - 1 - (index + 1) * sizeof (struct bx_pcode))
 
 struct bx_pcode {
@@ -44,38 +45,38 @@ struct bx_pcode {
 };
 
 static bx_uint8 pcode_storage[PR_CODE_STORAGE_SIZE];
-static bx_size pcode_storage_used;
+static bx_size total_instruction_length;
 static bx_size pcode_count;
 
 static struct bx_pcode *get_available_pcode();
 
 bx_int8 bx_pr_init() {
-	pcode_storage_used = 0;
+	total_instruction_length = 0;
 	pcode_count = 0;
 
 	return 0;
 }
 
-struct bx_pcode *bx_pr_add(void *pcode_data, bx_size pcode_size) {
+struct bx_pcode *bx_pr_add(void *buffer, bx_size buffer_size) {
 	struct bx_pcode *pcode;
 
-	if (pcode_data == NULL) {
+	if (buffer == NULL) {
 		return NULL;
 	}
 
-	if (pcode_size + sizeof (struct bx_pcode) + SPACE_USED > PR_CODE_STORAGE_SIZE) {
+	if (buffer_size + sizeof (struct bx_pcode) + SPACE_USED > PR_CODE_STORAGE_SIZE) {
 		BX_LOG(LOG_ERROR, "pcode_repository", "Cannot store new pcode program: not enough space");
 		return NULL;
 	}
 
 	pcode = get_available_pcode();
-	pcode->instructions = (void *) (pcode_storage + pcode_storage_used);
-	pcode->size = pcode_size;
+	pcode->instructions = (void *) (pcode_storage + total_instruction_length);
+	pcode->size = buffer_size;
 	pcode->valid = BX_BOOLEAN_TRUE;
-	memcpy(pcode->instructions, pcode_data, pcode_size);
+	memcpy(pcode->instructions, buffer, buffer_size);
 
 	pcode_count += 1;
-	pcode_storage_used += pcode_size;
+	total_instruction_length += buffer_size;
 
 	return pcode;
 }
@@ -94,6 +95,24 @@ static struct bx_pcode *get_available_pcode() {
 	return PCODE_STRUCT(pcode_count++);
 }
 
+bx_int8 bx_pr_execute(struct bx_pcode *pcode) {
+	if (pcode == NULL) {
+		return -1;
+	}
+
+	if ((bx_uint8 *) pcode > pcode_storage + PR_CODE_STORAGE_SIZE - 1 ||
+			(bx_uint8 *) pcode < (bx_uint8 *) PCODE_STRUCT(pcode_count - 1) ) {
+		BX_LOG(LOG_ERROR, "pcode_repository", "Invalid pcode data structure");
+		return -1;
+	}
+
+	if (pcode->valid == BX_BOOLEAN_FALSE) {
+		BX_LOG(LOG_ERROR, "pcode_repository", "Cannot execute: invalid mark set in pcode structure");
+		return -1;
+	}
+
+	return bx_vm_execute((bx_uint8 *) pcode->instructions, pcode->size);
+}
 
 bx_int8 bx_pr_remove(struct bx_pcode *pcode) {
 	void *destination;
@@ -105,7 +124,7 @@ bx_int8 bx_pr_remove(struct bx_pcode *pcode) {
 	}
 
 	if ((bx_uint8 *) pcode > pcode_storage + PR_CODE_STORAGE_SIZE - 1 ||
-			(bx_uint8 *) pcode < pcode_storage) {
+			(bx_uint8 *) pcode < (bx_uint8 *) PCODE_STRUCT(pcode_count - 1)) {
 		BX_LOG(LOG_ERROR, "pcode_repository", "Invalid pcode data structure");
 		return -1;
 	}
@@ -113,9 +132,9 @@ bx_int8 bx_pr_remove(struct bx_pcode *pcode) {
 	pcode->valid = BX_BOOLEAN_FALSE;
 	destination = (void *) pcode->instructions;
 	source = (void *) ((bx_uint8 *) pcode->instructions + pcode->size);
-	length = pcode_storage_used - ((bx_uint8 *) source - pcode_storage);
+	length = total_instruction_length - ((bx_uint8 *) source - pcode_storage);
 	memmove(destination, source, length);
-	pcode_storage_used -= pcode->size;
+	total_instruction_length -= pcode->size;
 
 	int i;
 	for (i = 0; i < pcode_count; i++) {
