@@ -32,7 +32,7 @@
 #include "logging.h"
 #include "configuration.h"
 #include "runtime/event_handler.h"
-#include "utils/byte_buffer.h"
+#include "runtime/pcode_repository.h"
 
 bx_int8 bx_ev_invoke(struct bx_event_handler *event_handler) {
 
@@ -43,15 +43,12 @@ bx_int8 bx_ev_invoke(struct bx_event_handler *event_handler) {
 	switch (event_handler->handler_type) {
 	case BX_HANDLER_NATIVE:
 		event_handler->handler.native_function();
-		break;
+		return 0;
 	case BX_HANDLER_VM:
-		//TODO: Stub
-		break;
+		return bx_pr_execute(event_handler->handler.pcode);
 	default:
 		BX_LOG(LOG_ERROR, "event_handler", "Unexpected handler type "
 				"encountered in function 'bx_ev_invoke'");
 		return -1;
 	}
-
-	return 0;
 }
