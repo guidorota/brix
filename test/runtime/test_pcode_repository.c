@@ -1,6 +1,6 @@
 /*
- * test_mixed_list.h
- * Created on: Feb 22, 2014
+ * test_storage.c
+ * Created on: Mar 25, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,11 +29,23 @@
  *
  */
 
-#ifndef TEST_MIXED_LIST_H_
-#define TEST_MIXED_LIST_H_
+#include "test_pcode_repository.h"
+#include "runtime/pcode_repository.h"
 
-#include <check.h>
+START_TEST (init_test) {
+	bx_int8 error;
 
-Suite *test_mixed_list_create_suite(void);
+	error = bx_pr_init();
+	ck_assert_int_eq(error, 0);
+} END_TEST
 
-#endif /* TEST_MIXED_LIST_H_ */
+Suite *test_pcode_repository_create_suite() {
+	Suite *suite = suite_create("storage");
+	TCase *tcase;
+
+	tcase = tcase_create("init_test");
+	tcase_add_test(tcase, init_test);
+	suite_add_tcase(suite, tcase);
+
+	return suite;
+}

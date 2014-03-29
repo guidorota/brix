@@ -32,12 +32,7 @@
 #include "logging.h"
 #include "configuration.h"
 #include "runtime/event_handler.h"
-#include "runtime/storage.h"
 #include "utils/byte_buffer.h"
-
-static bx_uint8 buffer[EV_BUFFER_SIZE];
-
-static bx_int8 invoke_vm_handler(bx_file_id code_id);
 
 bx_int8 bx_ev_invoke(struct bx_event_handler *event_handler) {
 
@@ -50,7 +45,7 @@ bx_int8 bx_ev_invoke(struct bx_event_handler *event_handler) {
 		event_handler->handler.native_function();
 		break;
 	case BX_HANDLER_VM:
-		invoke_vm_handler(event_handler->handler.code_file_id);
+		//TODO: Stub
 		break;
 	default:
 		BX_LOG(LOG_ERROR, "event_handler", "Unexpected handler type "
@@ -59,16 +54,4 @@ bx_int8 bx_ev_invoke(struct bx_event_handler *event_handler) {
 	}
 
 	return 0;
-}
-
-static bx_int8 invoke_vm_handler(bx_file_id code_id) {
-	bx_int8 error;
-	bx_size data_length;
-
-	error = bx_st_retrieve(code_id, (void *) buffer, EV_BUFFER_SIZE, &data_length);
-	if (error != 0) {
-		return -1;
-	}
-
-	return bx_vm_execute(buffer, data_length);
 }

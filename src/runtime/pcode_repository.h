@@ -1,5 +1,5 @@
 /*
- * test_storage.h
+ * pcode_repository.h
  * Created on: Mar 25, 2014
  * Author: Guido Rota
  *
@@ -29,11 +29,17 @@
  *
  */
 
-#ifndef TEST_STORAGE_H_
-#define TEST_STORAGE_H_
+#ifndef PCODE_REPOSITORY_H_
+#define PCODE_REPOSITORY_H_
 
-#include <check.h>
+#include "types.h"
 
-Suite *test_storage_create_suite(void);
+struct bx_pcode;
 
-#endif /* TEST_STORAGE_H_ */
+bx_int8 bx_pr_init();
+
+struct bx_pcode *bx_pr_add(void *pcode_data, bx_size pcode_size);
+
+bx_int8 bx_tr_remove(struct bx_pcode *pcode);
+
+#endif /* PCODE_REPOSITORY_H_ */

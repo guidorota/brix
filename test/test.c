@@ -33,7 +33,6 @@
 #include <check.h>
 #include "utils/test_stack.h"
 #include "utils/test_list.h"
-#include "utils/test_mixed_list.h"
 #include "utils/test_byte_buffer.h"
 #include "utils/test_linked_list.h"
 #include "utils/test_fmemopen.h"
@@ -49,7 +48,7 @@
 #include "compiler/test_codegen_expression_assignment.h"
 #include "compiler/test_codegen_task.h"
 #include "compiler/test_compiler.h"
-#include "runtime/test_storage.h"
+#include "runtime/test_pcode_repository.h"
 #include "runtime/test_timer.h"
 #include "runtime/test_event_handler.h"
 
@@ -60,7 +59,6 @@ int main(void) {
 	srunner_set_fork_status(runner, CK_NOFORK);
 	srunner_add_suite(runner, test_stack_create_suite());
 	srunner_add_suite(runner, test_list_create_suite());
-	srunner_add_suite(runner, test_mixed_list_create_suite());
 	srunner_add_suite(runner, test_byte_buffer_create_suite());
 	srunner_add_suite(runner, test_document_manager_create_suite());
 	srunner_add_suite(runner, test_virtual_machine_create_suite());
@@ -76,7 +74,7 @@ int main(void) {
 	srunner_add_suite(runner, test_codegen_expression_assignment_create_suite());
 	srunner_add_suite(runner, test_codegen_task_create_suite());
 	srunner_add_suite(runner, test_compiler_create_suite());
-	srunner_add_suite(runner, test_storage_create_suite());
+	srunner_add_suite(runner, test_pcode_repository_create_suite());
 	srunner_add_suite(runner, test_timer_create_suite());
 	srunner_add_suite(runner, test_event_handler_create_suite());
 

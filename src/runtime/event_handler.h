@@ -37,7 +37,7 @@
 #define BX_EV_TICK 1
 
 #include "types.h"
-#include "runtime/storage.h"
+#include "runtime/pcode_repository.h"
 
 enum bx_handler_type {
 	BX_HANDLER_NATIVE,	///< Native C handler
@@ -50,7 +50,7 @@ struct bx_event_handler {
 	enum bx_handler_type handler_type;
 	union bx_event_handler_data {
 		native_handler native_function;
-		bx_size code_file_id;
+		struct bx_pcode *pcode;
 	} handler;
 };
 

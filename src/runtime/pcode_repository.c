@@ -1,0 +1,120 @@
+/*
+ * pcode_repository.c
+ * Created on: Mar 25, 2014
+ * Author: Guido Rota
+ *
+ * Copyright (c) 2014, Guido Rota
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice, 
+ * this list of conditions and the following disclaimer in the documentation and/or 
+ * other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, 
+ * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
+#include <string.h>
+#include "configuration.h"
+#include "logging.h"
+#include "runtime/pcode_repository.h"
+
+#define SPACE_USED (pcode_count * sizeof (struct bx_pcode)) + pcode_storage_used
+#define PCODE_STRUCT(index) (struct bx_pcode *) (pcode_storage + PR_CODE_STORAGE_SIZE - 1 - (index + 1) * sizeof (struct bx_pcode))
+
+struct bx_pcode {
+	bx_boolean valid;
+	void *pcode_instructions;
+	bx_size pcode_size;
+};
+
+static bx_uint8 pcode_storage[PR_CODE_STORAGE_SIZE];
+static bx_size pcode_storage_used;
+static bx_size pcode_count;
+
+static struct bx_pcode *get_available_pcode();
+
+bx_int8 bx_pr_init() {
+	pcode_storage_used = 0;
+	pcode_count = 0;
+
+	return 0;
+}
+
+struct bx_pcode *bx_pr_add(void *pcode_data, bx_size pcode_size) {
+	struct bx_pcode *pcode;
+
+	if (pcode_data == NULL) {
+		return NULL;
+	}
+
+	if (pcode_size + sizeof (struct bx_pcode) + SPACE_USED > PR_CODE_STORAGE_SIZE) {
+		BX_LOG(LOG_ERROR, "pcode_repository", "Cannot store new pcode program: not enough space");
+		return NULL;
+	}
+
+	pcode = get_available_pcode();
+	pcode->pcode_instructions = (void *) (pcode_storage + pcode_storage_used);
+	pcode->pcode_size = pcode_size;
+	pcode->valid = BX_BOOLEAN_TRUE;
+	memcpy(pcode->pcode_instructions, pcode_data, pcode_size);
+
+	pcode_count += 1;
+	pcode_storage_used += pcode_size;
+
+	return pcode;
+}
+
+static struct bx_pcode *get_available_pcode() {
+	struct bx_pcode *pcode;
+	bx_size i;
+
+	for (i = 0; i < pcode_count; i++) {
+		pcode = PCODE_STRUCT(i);
+		if (pcode->valid == BX_BOOLEAN_FALSE) {
+			return pcode;
+		}
+	}
+
+	return PCODE_STRUCT(pcode_count++);
+}
+
+
+bx_int8 bx_tr_remove(struct bx_pcode *pcode) {
+	void *destination;
+	void *source;
+	bx_size length;
+
+	if (pcode == NULL) {
+		return -1;
+	}
+
+	if ((bx_uint8 *) pcode > pcode_storage + PR_CODE_STORAGE_SIZE - 1 ||
+			(bx_uint8 *) pcode < pcode_storage) {
+		BX_LOG(LOG_ERROR, "pcode_repository", "Invalid pcode data structure");
+		return -1;
+	}
+
+	pcode->valid = BX_BOOLEAN_FALSE;
+	destination = (void *) pcode->pcode_instructions;
+	source = (void *) ((bx_uint8 *) pcode->pcode_instructions + pcode->pcode_size);
+	length = pcode_storage_used - ((bx_uint8 *) source - pcode_storage);
+	memmove(destination, source, length);
+
+	return 0;
+}

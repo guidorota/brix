@@ -36,8 +36,8 @@
 #define VM_STACK_SIZE 512
 #define VM_VARIABLE_TABLE_SIZE 512
 
-// Application manager
-#define AM_CODE_STORAGE_SIZE 4092
+// Task repository
+#define PR_CODE_STORAGE_SIZE 4092
 
 // Document manager
 #define DM_MAX_FIELD_NUMBER 512

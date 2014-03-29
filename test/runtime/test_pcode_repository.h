@@ -1,5 +1,5 @@
 /*
- * storage.h
+ * test_pcode_repository.h
  * Created on: Mar 25, 2014
  * Author: Guido Rota
  *
@@ -29,19 +29,11 @@
  *
  */
 
-#ifndef STORAGE_H_
-#define STORAGE_H_
+#ifndef TEST_PCODE_REPOSITORY_H_
+#define TEST_PCODE_REPOSITORY_H_
 
-#include "types.h"
+#include <check.h>
 
-typedef bx_uint16 bx_file_id;
+Suite *test_pcode_repository_create_suite(void);
 
-bx_int8 bx_st_init(void *param);
-
-bx_int8 bx_st_persist(void *buffer, bx_size buffer_size, bx_file_id *file_id);
-
-bx_int8 bx_st_retrieve(bx_file_id file_id, void *buffer, bx_size buffer_size, bx_size *bytes_read);
-
-bx_int8 bx_st_delete(bx_file_id file_id);
-
-#endif /* STORAGE_H_ */
+#endif /* TEST_PCODE_REPOSITORY_H_ */
