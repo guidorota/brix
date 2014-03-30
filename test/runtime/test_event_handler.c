@@ -33,6 +33,7 @@
 #include "virtual_machine/virtual_machine.h"
 #include "document_manager/document_manager.h"
 #include "document_manager/test_field.h"
+#include "runtime/event_handler.h"
 
 #define INT_TEST_FIELD "int_test_field"
 
@@ -52,6 +53,10 @@ START_TEST (init_test) {
 	error = bx_test_field_init(&int_test_field, &int_test_field_data);
 	ck_assert_int_eq(error, 0);
 	error = bx_dm_add_field(&int_test_field, INT_TEST_FIELD);
+	ck_assert_int_eq(error, 0);
+
+	// Init event handler
+	error = bx_ev_init();
 	ck_assert_int_eq(error, 0);
 } END_TEST
 

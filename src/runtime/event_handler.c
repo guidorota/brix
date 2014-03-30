@@ -34,7 +34,29 @@
 #include "runtime/event_handler.h"
 #include "runtime/pcode_manager.h"
 
-bx_int8 bx_ev_invoke(struct bx_event_handler *event_handler) {
+enum bx_handler_type {
+	BX_HANDLER_NATIVE,	///< Native C handler
+	BX_HANDLER_PCODE		///< Virtual machine handler
+};
+
+struct bx_event_handler {
+	enum bx_handler_type handler_type;
+	union bx_event_handler_data {
+		native_handler native_function;
+		struct bx_pcode *pcode;
+	} handler;
+};
+
+static bx_size handler_count;
+//static bx_uint8 event_list_storage[EV_MAX_HANDLER_NUMBER];
+
+bx_int8 bx_ev_init() {
+	handler_count = 0;
+
+	return 0;
+}
+
+bx_int8 bx_ev_invoke_handler(struct bx_event_handler *event_handler) {
 
 	if (event_handler == NULL) {
 		return -1;
@@ -44,11 +66,11 @@ bx_int8 bx_ev_invoke(struct bx_event_handler *event_handler) {
 	case BX_HANDLER_NATIVE:
 		event_handler->handler.native_function();
 		return 0;
-	case BX_HANDLER_VM:
+	case BX_HANDLER_PCODE:
 		return bx_pm_execute(event_handler->handler.pcode);
 	default:
 		BX_LOG(LOG_ERROR, "event_handler", "Unexpected handler type "
-				"encountered in function 'bx_ev_invoke'");
+				"encountered in function 'bx_ev_invoke_handler'");
 		return -1;
 	}
 }

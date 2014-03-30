@@ -32,26 +32,21 @@
 #ifndef EVENT_HANDLER_H_
 #define EVENT_HANDLER_H_
 
-#define BX_EV_TICK 1
-
 #include "types.h"
 #include "runtime/pcode_manager.h"
 
-enum bx_handler_type {
-	BX_HANDLER_NATIVE,	///< Native C handler
-	BX_HANDLER_VM		///< Virtual machine handler
-};
-
 typedef void (*native_handler)();
 
-struct bx_event_handler {
-	enum bx_handler_type handler_type;
-	union bx_event_handler_data {
-		native_handler native_function;
-		struct bx_pcode *pcode;
-	} handler;
-};
+struct bx_event_handler;
 
-bx_int8 bx_ev_invoke(struct bx_event_handler *event_handler);
+bx_int8 bx_ev_init();
+
+struct bx_event_handler *bx_ev_add_native_handler(native_handler function);
+
+struct bx_event_handler *bx_ev_add_pcode_handler(struct bx_pcode *pcode);
+
+bx_int8 bx_ev_invoke_handler(struct bx_event_handler *event_handler);
+
+bx_int8 bx_ev_remove_handler();
 
 #endif /* EVENT_HANDLER_H_ */
