@@ -31,6 +31,7 @@
 
 #include "logging.h"
 #include "configuration.h"
+#include "utils/uniform_allocator.h"
 #include "runtime/event_handler.h"
 #include "runtime/pcode_manager.h"
 
@@ -47,11 +48,16 @@ struct bx_event_handler {
 	} handler;
 };
 
-static bx_size handler_count;
-//static bx_uint8 event_list_storage[EV_MAX_HANDLER_NUMBER];
+static struct bx_ualloc *ualloc = NULL;
+static bx_uint8 event_list_storage[EV_MAX_HANDLER_STORAGE_SIZE];
 
 bx_int8 bx_ev_init() {
-	handler_count = 0;
+
+	ualloc = bx_ualloc_init(event_list_storage,
+			EV_MAX_HANDLER_STORAGE_SIZE, sizeof (struct bx_event_handler));
+	if (ualloc == NULL) {
+		return -1;
+	}
 
 	return 0;
 }

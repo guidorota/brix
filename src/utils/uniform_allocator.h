@@ -39,7 +39,13 @@
 
 #include "types.h"
 
-struct bx_ualloc;
+struct bx_ualloc {
+	bx_size chunk_size;		///< Element size in bytes
+	bx_size size;			///< Current number of elements in the list
+	bx_size capacity;		///< List capacity (max number of elements)
+	void *mam;				///< Pointer to the first MAM block
+	bx_size mam_size;		///< MAM size in blocks of 32 bits
+};
 
 /**
  * Uniform allocator data structure initialization.

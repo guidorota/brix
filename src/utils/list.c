@@ -32,15 +32,6 @@
 #include "list.h"
 #include <string.h>
 
-/**
- * List data structure
- */
-struct bx_list {
-	bx_size element_size;	///< Element size in bytes
-	bx_size size;			///< Current number of elements in the list
-	bx_size capacity;		///< List capacity (max number of elements)
-};
-
 #define STORAGE_POINTER(list_pointer) ((bx_uint8 *) list_pointer + sizeof (struct bx_list))
 
 #define TAIL_POINTER(list_pointer) (STORAGE_POINTER(list_pointer)) + list->element_size * list->size

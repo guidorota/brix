@@ -57,14 +57,6 @@
 
 #define MAM_BLOCK_POINTER(ualloc_pointer, block_number) (bx_uint32 *) ualloc_pointer->mam + block_number
 
-struct bx_ualloc {
-	bx_size chunk_size;		///< Element size in bytes
-	bx_size size;			///< Current number of elements in the list
-	bx_size capacity;		///< List capacity (max number of elements)
-	void *mam;				///< Pointer to the first MAM block
-	bx_size mam_size;		///< MAM size in blocks of 32 bits
-};
-
 static bx_size get_available_chunk_index(struct bx_ualloc *ualloc);
 static void set_unavailable(struct bx_ualloc *ualloc, bx_size index);
 static void set_available(struct bx_ualloc *ualloc, bx_size index);
@@ -74,6 +66,10 @@ struct bx_ualloc *bx_ualloc_init(void *storage, bx_size storage_size, bx_size ch
 	struct bx_ualloc *ualloc;
 
 	if (storage == NULL || storage_size == 0 || chunk_size == 0) {
+		return NULL;
+	}
+
+	if (storage_size <= sizeof (struct bx_ualloc)) {
 		return NULL;
 	}
 

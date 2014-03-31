@@ -32,11 +32,6 @@
 #include "stack.h"
 #include <string.h>
 
-struct bx_stack {
-	size_t top;
-	size_t capacity;
-};
-
 #define STORAGE_POINTER(stack_pointer) ((bx_uint8 *) stack_pointer + sizeof (struct bx_stack))
 
 #define STACK_TOP_POINTER(stack_pointer) (STORAGE_POINTER(stack_pointer) + stack_pointer->top)
