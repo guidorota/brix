@@ -59,6 +59,24 @@ START_TEST (allocation_deallocation_test) {
 	ck_assert_int_eq(bx_ualloc_remaining_capacity(ualloc), capacity);
 } END_TEST
 
+START_TEST (bulk_allocation_test) {
+	bx_uint8 error;
+	void *pointer_array[bx_ualloc_remaining_capacity(ualloc)];
+	bx_size capacity;
+	bx_size i;
+
+	capacity = bx_ualloc_remaining_capacity(ualloc);
+	for (i = 0; i < capacity; i++) {
+		pointer_array[i] = bx_ualloc_alloc(ualloc);
+		ck_assert_ptr_ne(pointer_array[i], NULL);
+	}
+
+	for (i = 0; i < capacity; i++) {
+		error = bx_ualloc_free(ualloc, pointer_array[i]);
+		ck_assert_int_eq(error, 0);
+	}
+} END_TEST
+
 Suite *test_uniform_allocator_create_suite(void) {
 	Suite *suite = suite_create("uniform_allocator");
 	TCase *tcase;
@@ -69,6 +87,10 @@ Suite *test_uniform_allocator_create_suite(void) {
 
 	tcase = tcase_create("allocation_deallocation_test");
 	tcase_add_test(tcase, allocation_deallocation_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("bulk_allocation_test");
+	tcase_add_test(tcase, bulk_allocation_test);
 	suite_add_tcase(suite, tcase);
 
 	return suite;

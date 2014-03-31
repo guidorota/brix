@@ -66,8 +66,8 @@ struct bx_ualloc {
 };
 
 static bx_size get_available_chunk_index(struct bx_ualloc *ualloc);
-static void set_mam_bit(struct bx_ualloc *ualloc, bx_size index);
-static void unset_mam_bit(struct bx_ualloc *ualloc, bx_size index);
+static void set_unavailable(struct bx_ualloc *ualloc, bx_size index);
+static void set_available(struct bx_ualloc *ualloc, bx_size index);
 
 struct bx_ualloc *bx_ualloc_init(void *storage, bx_size storage_size, bx_size chunk_size) {
 	bx_size available_bytes;
@@ -115,7 +115,7 @@ void *bx_ualloc_alloc(struct bx_ualloc *ualloc) {
 
 	index = get_available_chunk_index(ualloc);
 	chunk_pointer = CHUNK_POINTER(ualloc, index);
-	set_mam_bit(ualloc, index);
+	set_unavailable(ualloc, index);
 	++ualloc->size;
 
 	return chunk_pointer;
@@ -158,11 +158,11 @@ static bx_size get_available_chunk_index(struct bx_ualloc *ualloc) {
 	return 32 * i + available_chunk_index;
 }
 
-static void set_mam_bit(struct bx_ualloc *ualloc, bx_size index) {
+static void set_unavailable(struct bx_ualloc *ualloc, bx_size index) {
 	bx_uint32 *mam_block;
 
 	mam_block = MAM_BLOCK_POINTER(ualloc, index / 32);
-	*mam_block |= 0x00000001 << index % 32;
+	*mam_block &= ~(0x00000001 << (31 - index % 32));
 }
 
 bx_int8 bx_ualloc_free(struct bx_ualloc *ualloc, void *chunk_pointer) {
@@ -193,18 +193,19 @@ bx_int8 bx_ualloc_free(struct bx_ualloc *ualloc, void *chunk_pointer) {
 		return -1;
 	}
 
-	unset_mam_bit(ualloc, chunk_offset / ualloc->chunk_size);
+	set_available(ualloc, chunk_offset / ualloc->chunk_size);
 	ualloc->size -=1;
 
 	return 0;
 }
 
-static void unset_mam_bit(struct bx_ualloc *ualloc, bx_size index) {
+static void set_available(struct bx_ualloc *ualloc, bx_size index) {
 	bx_uint32 *mam_block;
 
 	mam_block = MAM_BLOCK_POINTER(ualloc, index / 32);
-	*mam_block &= ~(0x00000001 << index % 32);
+	*mam_block |= 0x00000001 << (31 - index % 32);
 }
+
 
 bx_ssize bx_ualloc_remaining_capacity(struct bx_ualloc *ualloc) {
 
