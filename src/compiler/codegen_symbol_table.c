@@ -29,11 +29,10 @@
  *
  */
 
-#include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <stdlib.h>
 #include "logging.h"
-#include "utils/memory_utils.h"
 #include "utils/linked_list.h"
 #include "compiler/codegen_symbol_table.h"
 
@@ -52,7 +51,7 @@ struct bx_comp_symbol_table *bx_cgsy_create_symbol_table() {
 	bx_int8 error;
 	struct bx_comp_symbol_table *symbol_table;
 
-	symbol_table = BX_MALLOC(struct bx_comp_symbol_table);
+	symbol_table = malloc(sizeof *symbol_table);
 	if (symbol_table == NULL) {
 		return NULL;
 	}
@@ -101,7 +100,7 @@ bx_int8 bx_cgsy_scope_down(struct bx_comp_symbol_table *symbol_table) {
 		return -1;
 	}
 
-	child_scope = BX_MALLOC(struct bx_comp_scope);
+	child_scope = malloc(sizeof *child_scope);
 	if (child_scope == NULL) {
 		return -1;
 	}
@@ -147,7 +146,7 @@ bx_int8 bx_cgsy_add_field(struct bx_comp_symbol_table *symbol_table, char *ident
 		return -1;
 	}
 
-	field_symbol = BX_MALLOC(struct bx_comp_symbol);
+	field_symbol = malloc(sizeof *field_symbol);
 	if (field_symbol == NULL) {
 		return -1;
 	}
@@ -188,7 +187,7 @@ bx_int8 bx_cgsy_add_variable(struct bx_comp_symbol_table *symbol_table, char *id
 		return -1;
 	}
 
-	variable_symbol = BX_MALLOC(struct bx_comp_symbol);
+	variable_symbol = malloc(sizeof *variable_symbol);
 	if (variable_symbol == NULL) {
 		return -1;
 	}

@@ -30,13 +30,13 @@
  */
 
 #include <string.h>
-#include "utils/memory_utils.h"
+#include <stdlib.h>
 #include "compiler/codegen_while_statement.h"
 
 struct bx_comp_while *bx_cgwh_create() {
 	struct bx_comp_while *while_statement;
 
-	while_statement = BX_MALLOC(struct bx_comp_while);
+	while_statement = malloc(sizeof *while_statement);
 	if (while_statement == NULL) {
 		return NULL;
 	}

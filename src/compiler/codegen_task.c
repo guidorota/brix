@@ -30,16 +30,16 @@
  */
 
 #include <string.h>
+#include <stdlib.h>
 #include "logging.h"
 #include "utils/linked_list.h"
-#include "utils/memory_utils.h"
 #include "compiler/codegen_expression_cast.h"
 #include "compiler/codegen_task.h"
 
 struct bx_comp_task *bx_cgtk_create_task() {
 	struct bx_comp_task *task;
 
-	task = BX_MALLOC(struct bx_comp_task);
+	task = malloc(sizeof *task);
 	memset((void *) task, 0, sizeof (struct bx_comp_task));
 
 	task->pcode = bx_cgpc_create();

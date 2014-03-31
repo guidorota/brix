@@ -31,7 +31,7 @@
 
 #include "types.h"
 #include "linked_list.h"
-#include "memory_utils.h"
+#include <stdlib.h>
 
 static bx_int8 default_equals(void *element1, void *element2) {
 	return element1 == element2 ? 1 : 0;
@@ -44,7 +44,7 @@ struct bx_linked_list *bx_llist_add(struct bx_linked_list **linked_list, void *e
 		return NULL;
 	}
 
-	node = BX_MALLOC(struct bx_linked_list);
+	node = malloc(sizeof *node);
 	if (node == NULL) {
 		return NULL;
 	}

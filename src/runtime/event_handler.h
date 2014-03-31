@@ -41,9 +41,9 @@ struct bx_event_handler;
 
 bx_int8 bx_ev_init();
 
-struct bx_event_handler *bx_ev_add_native_handler(native_handler function);
+struct bx_event_handler *bx_ev_create_native_handler(native_handler function);
 
-struct bx_event_handler *bx_ev_add_pcode_handler(struct bx_pcode *pcode);
+struct bx_event_handler *bx_ev_create_pcode_handler(struct bx_pcode *pcode);
 
 bx_int8 bx_ev_invoke_handler(struct bx_event_handler *event_handler);
 

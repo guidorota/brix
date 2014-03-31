@@ -30,8 +30,8 @@
  */
 
 #include <string.h>
+#include <stdlib.h>
 #include "configuration.h"
-#include "utils/memory_utils.h"
 #include "compiler/codegen_pcode.h"
 #include "virtual_machine/virtual_machine.h"
 
@@ -42,7 +42,7 @@ static bx_ssize add_to_code(struct bx_comp_pcode *pcode, void *data, bx_size dat
 struct bx_comp_pcode *bx_cgpc_create() {
 	struct bx_comp_pcode *pcode;
 
-	pcode = BX_MALLOC(struct bx_comp_pcode);
+	pcode = malloc(sizeof *pcode);
 	if (pcode == NULL) {
 		return NULL;
 	}
@@ -66,7 +66,7 @@ struct bx_comp_pcode *bx_cgpc_copy(struct bx_comp_pcode *pcode) {
 		return NULL;
 	}
 
-	copy = BX_MALLOC(struct bx_comp_pcode);
+	copy = malloc(sizeof *copy);
 	if (pcode == NULL) {
 		return NULL;
 	}

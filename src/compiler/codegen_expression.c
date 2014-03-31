@@ -30,8 +30,8 @@
  */
 
 #include <string.h>
+#include <stdlib.h>
 #include "logging.h"
-#include "memory_utils.h"
 #include "compiler/codegen_expression.h"
 #include "compiler/codegen_expression_assignment.h"
 #include "compiler/codegen_expression_arithmetics.h"
@@ -56,7 +56,7 @@ static bx_int8 variable_to_binary(struct bx_comp_expr *expression);
 static struct bx_comp_expr *create_empty_expression() {
 	struct bx_comp_expr *expression;
 
-	expression = BX_MALLOC(struct bx_comp_expr);
+	expression = malloc(sizeof *expression);
 	if (expression == NULL) {
 		return NULL;
 	}

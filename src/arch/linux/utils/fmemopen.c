@@ -30,10 +30,10 @@
  */
 
 #include <string.h>
+#include <stdlib.h>
 #include "types.h"
 #include "logging.h"
 #include "utils/fmemopen.h"
-#include "utils/memory_utils.h"
 
 struct bx_comp_fmem {
 	bx_size size;
@@ -114,7 +114,7 @@ FILE *fmemopen(void *buf, size_t size, const char *mode) {
 		return NULL;
 	}
 
-	instance = BX_MALLOC(struct bx_comp_fmem);
+	instance = malloc(sizeof *instance);
 
 	instance->size = size;
 	instance->data = buf;
