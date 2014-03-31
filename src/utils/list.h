@@ -41,29 +41,20 @@
 #define BX_LIST_GET(list_pointer, index, type) (type *) bx_list_get(list_pointer, index)
 #define BX_LIST_GET_EMPTY(list_pointer, type) (type *) bx_list_get_empty(list_pointer)
 
-/**
- * List data structure
- */
-struct bx_list {
-	void *storage;			///< Byte array
-	bx_size element_size;	///< Element size in bytes
-	bx_size size;			///< Current number of elements in the list
-	bx_size capacity;		///< List capacity (max number of elements)
-};
+struct bx_list;
 
 typedef bx_boolean (*equals_function)(void *list_element, void *comparison_element);
 
 /**
  * List data structure initialization.
  *
- * @param list List to initialize
  * @param storage Storage byte array
  * @param storage_size Size of the storage byte array in bytes
  * @param element_size Size in bytes of a single element of the list
  *
- * @return 0 upon successful initialization, -1 otherwise
+ * @return List instance pointer, NULL on error
  */
-bx_int8 bx_list_init(struct bx_list *list, void *storage, bx_size storage_size, bx_size element_size);
+struct bx_list *bx_list_init(void *storage, bx_size storage_size, bx_size element_size);
 
 /**
  * Appends the element at the end of the list.

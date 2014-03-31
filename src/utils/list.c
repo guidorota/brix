@@ -32,21 +32,35 @@
 #include "list.h"
 #include <string.h>
 
-#define TAIL_POINTER(list_pointer) ((bx_uint8 *) list_pointer->storage) + list->element_size * list->size
-#define ELEMENT_POINTER(list_pointer, element_index) ((bx_uint8 *) list_pointer->storage) + element_index * list_pointer->element_size
+/**
+ * List data structure
+ */
+struct bx_list {
+	bx_size element_size;	///< Element size in bytes
+	bx_size size;			///< Current number of elements in the list
+	bx_size capacity;		///< List capacity (max number of elements)
+};
 
-bx_int8 bx_list_init(struct bx_list *list, void *storage, bx_size storage_size, bx_size element_size) {
+#define STORAGE_POINTER(list_pointer) ((void *) ((bx_uint8 *) list_pointer + sizeof (struct bx_list)))
 
-	if (list == NULL || storage == NULL || storage_size == 0) {
-		return -1;
+#define TAIL_POINTER(list_pointer) ((bx_uint8 *) STORAGE_POINTER(list_pointer)) + list->element_size * list->size
+
+#define ELEMENT_POINTER(list_pointer, element_index) ((bx_uint8 *) STORAGE_POINTER(list_pointer)) + element_index * list_pointer->element_size
+
+struct bx_list *bx_list_init(void *storage, bx_size storage_size, bx_size element_size) {
+	struct bx_list *list;
+
+	if (storage == NULL || storage_size == 0) {
+		return NULL;
 	}
 
-	list->storage = storage;
+	list = (struct bx_list *)storage;
+
 	list->capacity = storage_size / element_size;
 	list->element_size = element_size;
 	list->size = 0;
 
-	return 0;
+	return list;
 }
 
 void * bx_list_add(struct bx_list *list, void *element) {

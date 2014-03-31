@@ -40,14 +40,17 @@ struct internal_field {
 };
 
 static struct internal_field field_list_storage[DM_MAX_FIELD_NUMBER];
-static struct bx_list field_list;
+static struct bx_list *field_list;
 
 bx_boolean compare_by_id(struct internal_field *field, char *identifier);
 
 bx_int8 bx_dm_document_manager_init() {
 	BX_LOG(LOG_INFO, "document_manager", "Initializing document manager...");
 
-	bx_list_init(&field_list, field_list_storage, DM_MAX_FIELD_NUMBER, sizeof (struct internal_field));
+	field_list = bx_list_init(field_list_storage, DM_MAX_FIELD_NUMBER, sizeof (struct internal_field));
+	if (field_list == NULL) {
+		return -1;
+	}
 
 	return 0;
 }
@@ -59,11 +62,11 @@ bx_int8 bx_dm_add_field(struct bx_document_field *field, char *identifier) {
 		return -1;
 	}
 
-	if (bx_list_indexof(&field_list, identifier, (equals_function) compare_by_id) != -1) {
+	if (bx_list_indexof(field_list, identifier, (equals_function) compare_by_id) != -1) {
 		return -1;
 	}
 
-	internal_field = bx_list_get_empty(&field_list);
+	internal_field = bx_list_get_empty(field_list);
 	if (internal_field == NULL) {
 		return -1;
 	}
@@ -80,7 +83,7 @@ bx_int8 bx_dm_invoke_get(char *field_identifier, void *data) {
 		return -1;
 	}
 
-	internal_field = bx_list_search(&field_list, field_identifier, (equals_function) compare_by_id);
+	internal_field = bx_list_search(field_list, field_identifier, (equals_function) compare_by_id);
 	if (internal_field == NULL) {
 		return -1;
 	}
@@ -96,7 +99,7 @@ bx_int8 bx_dm_invoke_set(char *field_identifier, void *data) {
 		return -1;
 	}
 
-	internal_field = bx_list_search(&field_list, field_identifier, (equals_function) compare_by_id);
+	internal_field = bx_list_search(field_list, field_identifier, (equals_function) compare_by_id);
 	if (internal_field == NULL) {
 		return -1;
 	}

@@ -37,7 +37,7 @@
 #define LIST_CAPACITY LIST_STORAGE_SIZE / sizeof (bx_int32)
 
 static bx_uint8 list_storage[LIST_STORAGE_SIZE];
-static struct bx_list list;
+static struct bx_list *list;
 
 static bx_int32 element0 = 54;
 static bx_int32 element1 = 57;
@@ -53,20 +53,17 @@ bx_boolean equals_int32(bx_int32 *element, bx_int32 *comparison_element) {
 }
 
 START_TEST (create_list) {
-	bx_int8 error;
-
-	error = bx_list_init(&list, list_storage, LIST_STORAGE_SIZE, sizeof (bx_int32));
-	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_list_element_size(&list), sizeof (bx_int32));
-	ck_assert_int_eq(bx_list_capacity(&list), LIST_CAPACITY);
-	ck_assert_int_eq(bx_list_size(&list), 0);
-	ck_assert_ptr_eq(list.storage, list_storage);
+	list = bx_list_init(list_storage, LIST_STORAGE_SIZE, sizeof (bx_int32));
+	ck_assert_ptr_ne(list, NULL);
+	ck_assert_int_eq(bx_list_element_size(list), sizeof (bx_int32));
+	ck_assert_int_eq(bx_list_capacity(list), LIST_CAPACITY);
+	ck_assert_int_eq(bx_list_size(list), 0);
 } END_TEST
 
 START_TEST (empty_list_get) {
 	bx_int32 *result;
 
-	result = BX_LIST_GET(&list, 0, bx_int32);
+	result = BX_LIST_GET(list, 0, bx_int32);
 	ck_assert_ptr_eq(result, NULL);
 } END_TEST
 
@@ -74,14 +71,14 @@ START_TEST (empty_list_copy) {
 	bx_int8 error;
 	bx_int32 element;
 
-	error = bx_list_copy(&list, 0, &element);
+	error = bx_list_copy(list, 0, &element);
 	ck_assert_int_ne(error, 0);
 } END_TEST
 
 START_TEST (empty_list_remove) {
 	bx_int8 error;
 
-	error = bx_list_remove(&list, 0);
+	error = bx_list_remove(list, 0);
 	ck_assert_int_ne(error, 0);
 } END_TEST
 
@@ -89,67 +86,61 @@ START_TEST (add_element) {
 	void *result;
 	bx_size previous_size;
 
-	previous_size = bx_list_size(&list);
-	result = bx_list_add(&list, (void *) &element0);
+	previous_size = bx_list_size(list);
+	result = bx_list_add(list, (void *) &element0);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(bx_list_element_size(&list), sizeof (bx_int32));
-	ck_assert_int_eq(bx_list_size(&list), previous_size + 1);
-	ck_assert_int_eq(bx_list_capacity(&list), LIST_CAPACITY);
-	ck_assert_ptr_eq(list.storage, list_storage);
+	ck_assert_int_eq(bx_list_element_size(list), sizeof (bx_int32));
+	ck_assert_int_eq(bx_list_size(list), previous_size + 1);
+	ck_assert_int_eq(bx_list_capacity(list), LIST_CAPACITY);
 
-	previous_size = bx_list_size(&list);
-	result = bx_list_add(&list, (void *) &element1);
+	previous_size = bx_list_size(list);
+	result = bx_list_add(list, (void *) &element1);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(bx_list_element_size(&list), sizeof (bx_int32));
-	ck_assert_int_eq(bx_list_size(&list), previous_size + 1);
-	ck_assert_int_eq(bx_list_capacity(&list), LIST_CAPACITY);
-	ck_assert_ptr_eq(list.storage, list_storage);
+	ck_assert_int_eq(bx_list_element_size(list), sizeof (bx_int32));
+	ck_assert_int_eq(bx_list_size(list), previous_size + 1);
+	ck_assert_int_eq(bx_list_capacity(list), LIST_CAPACITY);
 
-	previous_size = bx_list_size(&list);
-	result = bx_list_add(&list, (void *) &element2);
+	previous_size = bx_list_size(list);
+	result = bx_list_add(list, (void *) &element2);
 	ck_assert_ptr_ne(result, NULL);
-	ck_assert_int_eq(bx_list_element_size(&list), sizeof (bx_int32));
-	ck_assert_int_eq(bx_list_size(&list), previous_size + 1);
-	ck_assert_int_eq(bx_list_capacity(&list), LIST_CAPACITY);
-	ck_assert_ptr_eq(list.storage, list_storage);
+	ck_assert_int_eq(bx_list_element_size(list), sizeof (bx_int32));
+	ck_assert_int_eq(bx_list_size(list), previous_size + 1);
+	ck_assert_int_eq(bx_list_capacity(list), LIST_CAPACITY);
 } END_TEST
 
 START_TEST (get_element) {
 	bx_int32 *result;
 	bx_size previous_size;
 
-	previous_size = bx_list_size(&list);
-	result = BX_LIST_GET(&list, 0, bx_int32);
+	previous_size = bx_list_size(list);
+	result = BX_LIST_GET(list, 0, bx_int32);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(*result, element0);
-	ck_assert_int_eq(bx_list_element_size(&list), sizeof (bx_int32));
-	ck_assert_int_eq(bx_list_size(&list), previous_size);
-	ck_assert_int_eq(bx_list_capacity(&list), LIST_CAPACITY);
-	ck_assert_ptr_eq(list.storage, list_storage);
+	ck_assert_int_eq(bx_list_element_size(list), sizeof (bx_int32));
+	ck_assert_int_eq(bx_list_size(list), previous_size);
+	ck_assert_int_eq(bx_list_capacity(list), LIST_CAPACITY);
 
-	previous_size = bx_list_size(&list);
-	result = BX_LIST_GET(&list, 1, bx_int32);
+	previous_size = bx_list_size(list);
+	result = BX_LIST_GET(list, 1, bx_int32);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(*result, element1);
-	ck_assert_int_eq(bx_list_element_size(&list), sizeof (bx_int32));
-	ck_assert_int_eq(bx_list_size(&list), previous_size);
-	ck_assert_int_eq(bx_list_capacity(&list), LIST_CAPACITY);
-	ck_assert_ptr_eq(list.storage, list_storage);
+	ck_assert_int_eq(bx_list_element_size(list), sizeof (bx_int32));
+	ck_assert_int_eq(bx_list_size(list), previous_size);
+	ck_assert_int_eq(bx_list_capacity(list), LIST_CAPACITY);
 
-	previous_size = bx_list_size(&list);
-	result = BX_LIST_GET(&list, 2, bx_int32);
+	previous_size = bx_list_size(list);
+	result = BX_LIST_GET(list, 2, bx_int32);
 	ck_assert_ptr_ne(result, NULL);
 	ck_assert_int_eq(*result, element2);
-	ck_assert_int_eq(bx_list_element_size(&list), sizeof (bx_int32));
-	ck_assert_int_eq(bx_list_size(&list), previous_size);
-	ck_assert_int_eq(bx_list_capacity(&list), LIST_CAPACITY);
-	ck_assert_ptr_eq(list.storage, list_storage);
+	ck_assert_int_eq(bx_list_element_size(list), sizeof (bx_int32));
+	ck_assert_int_eq(bx_list_size(list), previous_size);
+	ck_assert_int_eq(bx_list_capacity(list), LIST_CAPACITY);
 } END_TEST
 
 START_TEST (out_of_bound_get) {
 	bx_int32 *result;
 
-	result = BX_LIST_GET(&list, 5, bx_int32);
+	result = BX_LIST_GET(list, 5, bx_int32);
 	ck_assert_ptr_eq(result, NULL);
 } END_TEST
 
@@ -158,21 +149,20 @@ START_TEST (copy_element) {
 	bx_size previous_size;
 	bx_int32 element_copy;
 
-	previous_size = bx_list_size(&list);
-	error = bx_list_copy(&list, 1, &element_copy);
+	previous_size = bx_list_size(list);
+	error = bx_list_copy(list, 1, &element_copy);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(element_copy, element1);
-	ck_assert_int_eq(bx_list_element_size(&list), sizeof (bx_int32));
-	ck_assert_int_eq(bx_list_size(&list), previous_size);
-	ck_assert_int_eq(bx_list_capacity(&list), LIST_CAPACITY);
-	ck_assert_ptr_eq(list.storage, list_storage);
+	ck_assert_int_eq(bx_list_element_size(list), sizeof (bx_int32));
+	ck_assert_int_eq(bx_list_size(list), previous_size);
+	ck_assert_int_eq(bx_list_capacity(list), LIST_CAPACITY);
 } END_TEST
 
 START_TEST (out_of_bound_copy) {
 	bx_int8 error;
 	bx_int32 element;
 
-	error = bx_list_copy(&list, 7, &element);
+	error = bx_list_copy(list, 7, &element);
 	ck_assert_int_ne(error, 0);
 } END_TEST
 
@@ -181,21 +171,20 @@ START_TEST (search_element) {
 	bx_int32 *element;
 	bx_int32 comparison_element = 54;
 
-	previous_size = bx_list_size(&list);
-	element = bx_list_search(&list, &comparison_element, (equals_function) &equals_int32);
+	previous_size = bx_list_size(list);
+	element = bx_list_search(list, &comparison_element, (equals_function) &equals_int32);
 	ck_assert_ptr_ne(element, NULL);
 	ck_assert_int_eq(*element, comparison_element);
-	ck_assert_int_eq(bx_list_element_size(&list), sizeof (bx_int32));
-	ck_assert_int_eq(bx_list_size(&list), previous_size);
-	ck_assert_int_eq(bx_list_capacity(&list), LIST_CAPACITY);
-	ck_assert_ptr_eq(list.storage, list_storage);
+	ck_assert_int_eq(bx_list_element_size(list), sizeof (bx_int32));
+	ck_assert_int_eq(bx_list_size(list), previous_size);
+	ck_assert_int_eq(bx_list_capacity(list), LIST_CAPACITY);
 } END_TEST
 
 START_TEST (search_non_existing_element) {
 	bx_int32 *element;
 	bx_int32 non_existing_element = 105;
 
-	element = bx_list_search(&list, &non_existing_element, (equals_function) &equals_int32);
+	element = bx_list_search(list, &non_existing_element, (equals_function) &equals_int32);
 	ck_assert_ptr_eq(element, NULL);
 } END_TEST
 
@@ -203,20 +192,19 @@ START_TEST (indexof) {
 	bx_size previous_size;
 	bx_ssize index;
 
-	previous_size = bx_list_size(&list);
-	index = bx_list_indexof(&list, &element1, (equals_function) &equals_int32);
+	previous_size = bx_list_size(list);
+	index = bx_list_indexof(list, &element1, (equals_function) &equals_int32);
 	ck_assert_int_eq(index, 1);
-	ck_assert_int_eq(bx_list_element_size(&list), sizeof (bx_int32));
-	ck_assert_int_eq(bx_list_size(&list), previous_size);
-	ck_assert_int_eq(bx_list_capacity(&list), LIST_CAPACITY);
-	ck_assert_ptr_eq(list.storage, list_storage);
+	ck_assert_int_eq(bx_list_element_size(list), sizeof (bx_int32));
+	ck_assert_int_eq(bx_list_size(list), previous_size);
+	ck_assert_int_eq(bx_list_capacity(list), LIST_CAPACITY);
 } END_TEST
 
 START_TEST (indexof_non_existing_element) {
 	bx_ssize index;
 	bx_int32 non_existing_element = 105;
 
-	index = bx_list_indexof(&list, &non_existing_element, (equals_function) &equals_int32);
+	index = bx_list_indexof(list, &non_existing_element, (equals_function) &equals_int32);
 	ck_assert_int_eq(index, -1);
 } END_TEST
 
@@ -224,34 +212,31 @@ START_TEST (remove_element) {
 	bx_int8 error;
 	bx_size previous_size;
 
-	previous_size = bx_list_size(&list);
-	error = bx_list_remove(&list, 2);
+	previous_size = bx_list_size(list);
+	error = bx_list_remove(list, 2);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_list_size(&list), previous_size - 1);
-	ck_assert_int_eq(bx_list_capacity(&list), LIST_CAPACITY);
-	ck_assert_ptr_eq(list.storage, list_storage);
-	ck_assert_int_eq(bx_list_element_size(&list), sizeof (bx_int32));
+	ck_assert_int_eq(bx_list_size(list), previous_size - 1);
+	ck_assert_int_eq(bx_list_capacity(list), LIST_CAPACITY);
+	ck_assert_int_eq(bx_list_element_size(list), sizeof (bx_int32));
 } END_TEST
 
 START_TEST (remove_non_existing_element) {
 	bx_int8 error;
 	bx_size previous_size;
 
-	previous_size = bx_list_size(&list);
-	error = bx_list_remove(&list, 5);
+	previous_size = bx_list_size(list);
+	error = bx_list_remove(list, 5);
 	ck_assert_int_ne(error, 0);
-	ck_assert_int_eq(bx_list_size(&list), previous_size);
-	ck_assert_int_eq(bx_list_capacity(&list), LIST_CAPACITY);
-	ck_assert_ptr_eq(list.storage, list_storage);
-	ck_assert_int_eq(bx_list_element_size(&list), sizeof (bx_int32));
+	ck_assert_int_eq(bx_list_size(list), previous_size);
+	ck_assert_int_eq(bx_list_capacity(list), LIST_CAPACITY);
+	ck_assert_int_eq(bx_list_element_size(list), sizeof (bx_int32));
 } END_TEST
 
 START_TEST (reset_list) {
-	bx_list_reset(&list);
-	ck_assert_int_eq(bx_list_size(&list), 0);
-	ck_assert_int_eq(bx_list_capacity(&list), LIST_CAPACITY);
-	ck_assert_ptr_eq(list.storage, list_storage);
-	ck_assert_int_eq(bx_list_element_size(&list), sizeof (bx_int32));
+	bx_list_reset(list);
+	ck_assert_int_eq(bx_list_size(list), 0);
+	ck_assert_int_eq(bx_list_capacity(list), LIST_CAPACITY);
+	ck_assert_int_eq(bx_list_element_size(list), sizeof (bx_int32));
 } END_TEST
 
 Suite *test_list_create_suite() {
