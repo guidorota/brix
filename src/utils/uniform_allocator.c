@@ -50,6 +50,14 @@
  * +--------+--------------------------------+----------+
  */
 
+struct bx_ualloc {
+	bx_size chunk_size;		///< Element size in bytes
+	bx_size size;			///< Current number of elements in the list
+	bx_size capacity;		///< List capacity (max number of elements)
+	void *mam;				///< Pointer to the first MAM block
+	bx_size mam_size;		///< MAM size in blocks of 32 bits
+};
+
 #define CHUNK_BASE_POINTER(ualloc_pointer) ((bx_uint8 *) ualloc_pointer + sizeof (struct bx_ualloc))
 
 #define CHUNK_POINTER(ualloc_pointer, index) \

@@ -38,17 +38,10 @@
 
 #include "types.h"
 
-/**
- * List data structure
- */
-struct bx_list {
-	bx_size element_size;	///< Element size in bytes
-	bx_size size;			///< Current number of elements in the list
-	bx_size capacity;		///< List capacity (max number of elements)
-};
-
 #define BX_LIST_GET(list_pointer, index, type) (type *) bx_list_get(list_pointer, index)
 #define BX_LIST_GET_EMPTY(list_pointer, type) (type *) bx_list_get_empty(list_pointer)
+
+struct bx_list;
 
 typedef bx_boolean (*equals_function)(void *list_element, void *comparison_element);
 
