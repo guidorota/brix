@@ -41,11 +41,11 @@ struct bx_list {
 	bx_size capacity;		///< List capacity (max number of elements)
 };
 
-#define STORAGE_POINTER(list_pointer) ((void *) ((bx_uint8 *) list_pointer + sizeof (struct bx_list)))
+#define STORAGE_POINTER(list_pointer) ((bx_uint8 *) list_pointer + sizeof (struct bx_list))
 
-#define TAIL_POINTER(list_pointer) ((bx_uint8 *) STORAGE_POINTER(list_pointer)) + list->element_size * list->size
+#define TAIL_POINTER(list_pointer) (STORAGE_POINTER(list_pointer)) + list->element_size * list->size
 
-#define ELEMENT_POINTER(list_pointer, element_index) ((bx_uint8 *) STORAGE_POINTER(list_pointer)) + element_index * list_pointer->element_size
+#define ELEMENT_POINTER(list_pointer, element_index) (STORAGE_POINTER(list_pointer)) + element_index * list_pointer->element_size
 
 struct bx_list *bx_list_init(void *storage, bx_size storage_size, bx_size element_size) {
 	struct bx_list *list;
@@ -54,9 +54,13 @@ struct bx_list *bx_list_init(void *storage, bx_size storage_size, bx_size elemen
 		return NULL;
 	}
 
+	if (storage_size <= sizeof (struct bx_list) + element_size) {
+		return NULL;
+	}
+
 	list = (struct bx_list *)storage;
 
-	list->capacity = storage_size / element_size;
+	list->capacity = (storage_size - sizeof (struct bx_list)) / element_size;
 	list->element_size = element_size;
 	list->size = 0;
 

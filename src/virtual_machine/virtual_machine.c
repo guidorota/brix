@@ -59,7 +59,7 @@ enum vm_operand {
 
 struct bx_vm_status {
 	bx_size program_counter;
-	struct bx_stack execution_stack;
+	struct bx_stack *execution_stack;
 	bx_uint8 *pcode;
 	bx_uint8 variable_table[VM_VARIABLE_TABLE_SIZE];
 	bx_size pcode_size;
@@ -88,59 +88,59 @@ static inline bx_int8 bx_jump_functions(struct bx_vm_status *vm_status, enum vm_
 //////////////////
 
 static bx_int8 bx_iadd_function(struct bx_vm_status *vm_status) {
-	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_ADD);
+	return bx_integer_functions(vm_status->execution_stack, BX_VMOP_ADD);
 }
 
 static bx_int8 bx_isub_function(struct bx_vm_status *vm_status) {
-	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_SUB);
+	return bx_integer_functions(vm_status->execution_stack, BX_VMOP_SUB);
 }
 
 static bx_int8 bx_imul_function(struct bx_vm_status *vm_status) {
-	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_MUL);
+	return bx_integer_functions(vm_status->execution_stack, BX_VMOP_MUL);
 }
 
 static bx_int8 bx_idiv_function(struct bx_vm_status *vm_status) {
-	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_DIV);
+	return bx_integer_functions(vm_status->execution_stack, BX_VMOP_DIV);
 }
 
 static bx_int8 bx_imod_function(struct bx_vm_status *vm_status) {
-	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_MOD);
+	return bx_integer_functions(vm_status->execution_stack, BX_VMOP_MOD);
 }
 
 static bx_int8 bx_iand_function(struct bx_vm_status *vm_status) {
-	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_AND);
+	return bx_integer_functions(vm_status->execution_stack, BX_VMOP_AND);
 }
 
 static bx_int8 bx_ior_function(struct bx_vm_status *vm_status) {
-	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_OR);
+	return bx_integer_functions(vm_status->execution_stack, BX_VMOP_OR);
 }
 
 static bx_int8 bx_ixor_function(struct bx_vm_status *vm_status) {
-	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_XOR);
+	return bx_integer_functions(vm_status->execution_stack, BX_VMOP_XOR);
 }
 
 static bx_int8 bx_ieq_function(struct bx_vm_status *vm_status) {
-	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_EQ);
+	return bx_integer_functions(vm_status->execution_stack, BX_VMOP_EQ);
 }
 
 static bx_int8 bx_ine_function(struct bx_vm_status *vm_status) {
-	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_NE);
+	return bx_integer_functions(vm_status->execution_stack, BX_VMOP_NE);
 }
 
 static bx_int8 bx_igt_function(struct bx_vm_status *vm_status) {
-	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_GT);
+	return bx_integer_functions(vm_status->execution_stack, BX_VMOP_GT);
 }
 
 static bx_int8 bx_ige_function(struct bx_vm_status *vm_status) {
-	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_GE);
+	return bx_integer_functions(vm_status->execution_stack, BX_VMOP_GE);
 }
 
 static bx_int8 bx_ilt_function(struct bx_vm_status *vm_status) {
-	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_LT);
+	return bx_integer_functions(vm_status->execution_stack, BX_VMOP_LT);
 }
 
 static bx_int8 bx_ile_function(struct bx_vm_status *vm_status) {
-	return bx_integer_functions(&vm_status->execution_stack, BX_VMOP_LE);
+	return bx_integer_functions(vm_status->execution_stack, BX_VMOP_LE);
 }
 
 static inline bx_int8 bx_integer_functions(struct bx_stack *execution_stack, enum vm_operand operation) {
@@ -217,13 +217,13 @@ static bx_int8 bx_ineg_function(struct bx_vm_status *vm_status) {
 	bx_int32 result;
 	bx_int8 error;
 
-	error = BX_STACK_POP_VARIABLE(&vm_status->execution_stack, operand);
+	error = BX_STACK_POP_VARIABLE(vm_status->execution_stack, operand);
 	if (error != 0) {
 		return -1;
 	}
 	result = - operand;
 
-	error = BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, result);
+	error = BX_STACK_PUSH_VARIABLE(vm_status->execution_stack, result);
 	if (error != 0) {
 		return -1;
 	}
@@ -236,13 +236,13 @@ static bx_int8 bx_inot_function(struct bx_vm_status *vm_status) {
 	bx_int32 result;
 	bx_int8 error;
 
-	error = BX_STACK_POP_VARIABLE(&vm_status->execution_stack, operand);
+	error = BX_STACK_POP_VARIABLE(vm_status->execution_stack, operand);
 	if (error != 0) {
 		return -1;
 	}
 	result = ~operand;
 
-	error = BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, result);
+	error = BX_STACK_PUSH_VARIABLE(vm_status->execution_stack, result);
 	if (error != 0) {
 		return -1;
 	}
@@ -251,43 +251,43 @@ static bx_int8 bx_inot_function(struct bx_vm_status *vm_status) {
 }
 
 static bx_int8 bx_fadd_function(struct bx_vm_status *vm_status) {
-	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_ADD);
+	return bx_float_functions(vm_status->execution_stack, BX_VMOP_ADD);
 }
 
 static bx_int8 bx_fsub_function(struct bx_vm_status *vm_status) {
-	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_SUB);
+	return bx_float_functions(vm_status->execution_stack, BX_VMOP_SUB);
 }
 
 static bx_int8 bx_fmul_function(struct bx_vm_status *vm_status) {
-	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_MUL);
+	return bx_float_functions(vm_status->execution_stack, BX_VMOP_MUL);
 }
 
 static bx_int8 bx_fdiv_function(struct bx_vm_status *vm_status) {
-	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_DIV);
+	return bx_float_functions(vm_status->execution_stack, BX_VMOP_DIV);
 }
 
 static bx_int8 bx_feq_function(struct bx_vm_status *vm_status) {
-	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_EQ);
+	return bx_float_functions(vm_status->execution_stack, BX_VMOP_EQ);
 }
 
 static bx_int8 bx_fne_function(struct bx_vm_status *vm_status) {
-	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_NE);
+	return bx_float_functions(vm_status->execution_stack, BX_VMOP_NE);
 }
 
 static bx_int8 bx_fgt_function(struct bx_vm_status *vm_status) {
-	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_GT);
+	return bx_float_functions(vm_status->execution_stack, BX_VMOP_GT);
 }
 
 static bx_int8 bx_fge_function(struct bx_vm_status *vm_status) {
-	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_GE);
+	return bx_float_functions(vm_status->execution_stack, BX_VMOP_GE);
 }
 
 static bx_int8 bx_flt_function(struct bx_vm_status *vm_status) {
-	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_LT);
+	return bx_float_functions(vm_status->execution_stack, BX_VMOP_LT);
 }
 
 static bx_int8 bx_fle_function(struct bx_vm_status *vm_status) {
-	return bx_float_functions(&vm_status->execution_stack, BX_VMOP_LE);
+	return bx_float_functions(vm_status->execution_stack, BX_VMOP_LE);
 }
 
 static inline bx_int8 bx_float_functions(struct bx_stack *execution_stack, enum vm_operand operation) {
@@ -362,13 +362,13 @@ static bx_int8 bx_fneg_function(struct bx_vm_status *vm_status) {
 	bx_float32 result;
 	bx_int8 error;
 
-	error = BX_STACK_POP_VARIABLE(&vm_status->execution_stack, operand);
+	error = BX_STACK_POP_VARIABLE(vm_status->execution_stack, operand);
 	if (error != 0) {
 		return -1;
 	}
 	result = - operand;
 
-	error = BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, result);
+	error = BX_STACK_PUSH_VARIABLE(vm_status->execution_stack, result);
 	if (error != 0) {
 		return -1;
 	}
@@ -384,7 +384,7 @@ static bx_int8 bx_push32_function(struct bx_vm_status *vm_status) {
 	if (error == -1) {
 		return -1;
 	}
-	error = BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, data);
+	error = BX_STACK_PUSH_VARIABLE(vm_status->execution_stack, data);
 	if (error == -1) {
 		return -1;
 	}
@@ -394,22 +394,22 @@ static bx_int8 bx_push32_function(struct bx_vm_status *vm_status) {
 
 static bx_int8 bx_ipush_0_function(struct bx_vm_status *vm_status) {
 
-	return BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, int_const_0);
+	return BX_STACK_PUSH_VARIABLE(vm_status->execution_stack, int_const_0);
 }
 
 static bx_int8 bx_ipush_1_function(struct bx_vm_status *vm_status) {
 
-	return BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, int_const_1);
+	return BX_STACK_PUSH_VARIABLE(vm_status->execution_stack, int_const_1);
 }
 
 static bx_int8 bx_fpush_0_function(struct bx_vm_status *vm_status) {
 
-	return BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, float_const_0);
+	return BX_STACK_PUSH_VARIABLE(vm_status->execution_stack, float_const_0);
 }
 
 static bx_int8 bx_fpush_1_function(struct bx_vm_status *vm_status) {
 
-	return BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, float_const_1);
+	return BX_STACK_PUSH_VARIABLE(vm_status->execution_stack, float_const_1);
 }
 
 static bx_int8 bx_rload32_function(struct bx_vm_status *vm_status) {
@@ -425,7 +425,7 @@ static bx_int8 bx_rload32_function(struct bx_vm_status *vm_status) {
 	if (error == -1) {
 		return -1;
 	}
-	error = BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, data);
+	error = BX_STACK_PUSH_VARIABLE(vm_status->execution_stack, data);
 	if (error == -1) {
 		return -1;
 	}
@@ -442,7 +442,7 @@ static bx_int8 bx_rstore32_function(struct bx_vm_status *vm_status) {
 	if (error == -1) {
 		return -1;
 	}
-	error = BX_STACK_POP_VARIABLE(&vm_status->execution_stack, data);
+	error = BX_STACK_POP_VARIABLE(vm_status->execution_stack, data);
 	if (error == -1) {
 		return -1;
 	}
@@ -462,7 +462,7 @@ static bx_int8 bx_vload32_function(struct bx_vm_status *vm_status) {
 	if (error == -1) {
 		return -1;
 	}
-	error = bx_stack_push(&vm_status->execution_stack,
+	error = bx_stack_push(vm_status->execution_stack,
 			VARIABLE_PTR(vm_status, variable_number), 4);
 	if (error == -1) {
 		return -1;
@@ -480,7 +480,7 @@ static bx_int8 bx_vstore32_function(struct bx_vm_status *vm_status) {
 		return -1;
 	}
 
-	error = bx_stack_pop(&vm_status->execution_stack,
+	error = bx_stack_pop(vm_status->execution_stack,
 			VARIABLE_PTR(vm_status, variable_number), 4);
 	if (error == -1) {
 		return -1;
@@ -493,9 +493,9 @@ static bx_int8 bx_dup32_function(struct bx_vm_status *vm_status) {
 	bx_int8 error;
 	bx_uint32 data;
 
-	error = BX_STACK_POP_VARIABLE(&vm_status->execution_stack, data);
-	error += BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, data);
-	error += BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, data);
+	error = BX_STACK_POP_VARIABLE(vm_status->execution_stack, data);
+	error += BX_STACK_PUSH_VARIABLE(vm_status->execution_stack, data);
+	error += BX_STACK_PUSH_VARIABLE(vm_status->execution_stack, data);
 	if (error == -1) {
 		return -1;
 	}
@@ -552,7 +552,7 @@ static inline bx_int8 bx_jump_functions(struct bx_vm_status *vm_status, enum vm_
 	if (error == -1) {
 		return -1;
 	}
-	error = BX_STACK_POP_VARIABLE(&vm_status->execution_stack, data);
+	error = BX_STACK_POP_VARIABLE(vm_status->execution_stack, data);
 	if (error == -1) {
 		return -1;
 	}
@@ -606,12 +606,12 @@ static bx_int8 bx_i2f_function(struct bx_vm_status *vm_status) {
 	bx_int32 int_value;
 	bx_float32 float_value;
 
-	error = BX_STACK_POP_VARIABLE(&vm_status->execution_stack, int_value);
+	error = BX_STACK_POP_VARIABLE(vm_status->execution_stack, int_value);
 	if (error == -1) {
 		return -1;
 	}
 	float_value = int_value;
-	error = BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, float_value);
+	error = BX_STACK_PUSH_VARIABLE(vm_status->execution_stack, float_value);
 	if (error == -1) {
 		return -1;
 	}
@@ -624,12 +624,12 @@ static bx_int8 bx_f2i_function(struct bx_vm_status *vm_status) {
 	bx_int32 int_value;
 	bx_float32 float_value;
 
-	error = BX_STACK_POP_VARIABLE(&vm_status->execution_stack, float_value);
+	error = BX_STACK_POP_VARIABLE(vm_status->execution_stack, float_value);
 	if (error == -1) {
 		return -1;
 	}
 	int_value = float_value;
-	error = BX_STACK_PUSH_VARIABLE(&vm_status->execution_stack, int_value);
+	error = BX_STACK_PUSH_VARIABLE(vm_status->execution_stack, int_value);
 	if (error == -1) {
 		return -1;
 	}
@@ -698,7 +698,7 @@ static const bx_instruction instruction_array[256] = {
 bx_int8 bx_vm_virtual_machine_init() {
 
 	BX_LOG(LOG_INFO, "virtual_machine", "Initializing virtual machine data structures...");
-	bx_stack_init(&vm_status.execution_stack, stack_byte_array, VM_STACK_SIZE);
+	vm_status.execution_stack = bx_stack_init(stack_byte_array, VM_STACK_SIZE);
 
 	return 0;
 }
@@ -710,7 +710,7 @@ bx_int8 bx_vm_execute(bx_uint8 *pcode, bx_size pcode_size) {
 	vm_status.pcode = pcode;
 	vm_status.pcode_size = pcode_size;
 	vm_status.program_counter = 0;
-	bx_stack_reset(&vm_status.execution_stack);
+	bx_stack_reset(vm_status.execution_stack);
 	vm_status.stop = BX_BOOLEAN_FALSE;
 
 	do {

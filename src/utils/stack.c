@@ -32,19 +32,31 @@
 #include "stack.h"
 #include <string.h>
 
-#define STACK_TOP_POINTER(stack_pointer) ((uint8_t *) stack_pointer->stack + stack_pointer->top)
+struct bx_stack {
+	size_t top;
+	size_t capacity;
+};
 
-bx_int8 bx_stack_init(struct bx_stack *stack, void *storage, bx_size storage_size) {
+#define STORAGE_POINTER(stack_pointer) ((bx_uint8 *) stack_pointer + sizeof (struct bx_stack))
 
-	if (stack == NULL || storage == NULL) {
-		return -1;
+#define STACK_TOP_POINTER(stack_pointer) (STORAGE_POINTER(stack_pointer) + stack_pointer->top)
+
+struct bx_stack *bx_stack_init(void *storage, bx_size storage_size) {
+	struct bx_stack *stack;
+
+	if (storage == NULL) {
+		return NULL;
 	}
 
-	stack->stack = storage;
-	stack->capacity = storage_size;
+	if (storage_size <= sizeof (struct bx_stack)) {
+		return NULL;
+	}
+
+	stack = (struct bx_stack *) storage;
+	stack->capacity = storage_size - sizeof (struct bx_stack);
 	stack->top = 0;
 
-	return 0;
+	return stack;
 }
 
 bx_int8 bx_stack_push(struct bx_stack *stack, const void *from, bx_size size) {

@@ -41,22 +41,15 @@
 #define BX_STACK_PUSH_VARIABLE(stack_pointer, variable) bx_stack_push(stack_pointer, &variable, sizeof variable)
 #define BX_STACK_POP_VARIABLE(stack_pointer, variable) bx_stack_pop(stack_pointer, &variable, sizeof variable)
 
-struct bx_stack {
-	void *stack;
-	size_t top;
-	size_t capacity;
-};
-
 /**
  * Initializes the stack data structure.
  *
- * @param stack Stack data structure to initialize
  * @param storage Pointer to the storage memory reserved for the stack
  * @param storage_size Size of the storage memory reserved for the stack
  *
- * @return 0 on success, -1 on error
+ * @return Stack instance pointer, NULL on error
  */
-bx_int8 bx_stack_init(struct bx_stack *stack, void *storage, bx_size storage_size);
+struct bx_stack *bx_stack_init(void *storage, bx_size storage_size);
 
 /**
  * Pushes bytes from a variable the stack.
