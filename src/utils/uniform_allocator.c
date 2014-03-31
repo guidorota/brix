@@ -90,7 +90,7 @@ struct bx_ualloc *bx_ualloc_init(void *storage, bx_size storage_size, bx_size ch
 		ualloc->capacity += available_bytes / chunk_size;
 	}
 	ualloc->mam = (void *) ((bx_uint8 *) storage + storage_size - 4 * ualloc->mam_size);
-	memset(ualloc->mam, 0, 4 * ualloc->mam_size);
+	memset(ualloc->mam, 0xFF, 4 * ualloc->mam_size);
 
 	if (ualloc->capacity == 0) {
 		return NULL;
@@ -127,11 +127,9 @@ static bx_size get_available_chunk_index(struct bx_ualloc *ualloc) {
 	bx_size available_chunk_index;
 
 	available_chunk_index = 0;
+	i = 0;
 	for (i = 0; i < ualloc->mam_size; i++) {
 		mam_block_copy = *MAM_BLOCK_POINTER(ualloc, i);
-		if (mam_block_copy == 0) {
-			available_chunk_index = 0;
-		}
 		if ((mam_block_copy & 0xFFFF0000) == 0) {
 			available_chunk_index += 16;
 			mam_block_copy = mam_block_copy << 16;
@@ -150,6 +148,10 @@ static bx_size get_available_chunk_index(struct bx_ualloc *ualloc) {
 		}
 		if ((mam_block_copy & 0x80000000) == 0) {
 			available_chunk_index += 1;
+			mam_block_copy = mam_block_copy << 1;
+		}
+		if ((mam_block_copy & 0x80000000) != 0) {
+			break;
 		}
 	}
 
@@ -165,6 +167,7 @@ static void set_mam_bit(struct bx_ualloc *ualloc, bx_size index) {
 
 bx_int8 bx_ualloc_free(struct bx_ualloc *ualloc, void *chunk_pointer) {
 	bx_size chunk_offset;
+	bx_size chunk_index;
 
 	if (ualloc == NULL || chunk_pointer == NULL) {
 		return -1;
@@ -182,7 +185,16 @@ bx_int8 bx_ualloc_free(struct bx_ualloc *ualloc, void *chunk_pointer) {
 				"Pointer being freed is not a valid chunk pointer");
 		return -1;
 	}
+
+	chunk_index = chunk_offset / ualloc->chunk_size;
+	if (chunk_index >= ualloc->capacity) {
+		BX_LOG(LOG_ERROR, "uniform_allocator",
+				"Pointer being freed is not a valid chunk pointer");
+		return -1;
+	}
+
 	unset_mam_bit(ualloc, chunk_offset / ualloc->chunk_size);
+	ualloc->size -=1;
 
 	return 0;
 }

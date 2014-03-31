@@ -36,14 +36,27 @@
 #define CHUNK_SIZE 128
 
 static bx_uint8 storage[STORAGE_SIZE];
+static struct bx_ualloc *ualloc;
 
 START_TEST (init_test) {
-	struct bx_ualloc *ualloc;
-
 	ualloc = bx_ualloc_init((void *) storage, STORAGE_SIZE, CHUNK_SIZE);
 	ck_assert_ptr_ne(ualloc, NULL);
 	ck_assert_int_gt(bx_ualloc_remaining_capacity(ualloc), 0);
 	ck_assert_int_eq(bx_ualloc_chunk_size(ualloc), CHUNK_SIZE);
+} END_TEST
+
+START_TEST (allocation_deallocation_test) {
+	bx_uint8 error;
+	bx_size capacity;
+	void *chunk_pointer;
+
+	capacity = bx_ualloc_remaining_capacity(ualloc);
+	chunk_pointer = bx_ualloc_alloc(ualloc);
+	ck_assert_ptr_ne(chunk_pointer, NULL);
+	ck_assert_int_eq(bx_ualloc_remaining_capacity(ualloc), capacity - 1);
+	error = bx_ualloc_free(ualloc, chunk_pointer);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_ualloc_remaining_capacity(ualloc), capacity);
 } END_TEST
 
 Suite *test_uniform_allocator_create_suite(void) {
@@ -52,6 +65,10 @@ Suite *test_uniform_allocator_create_suite(void) {
 
 	tcase = tcase_create("init_test");
 	tcase_add_test(tcase, init_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("allocation_deallocation_test");
+	tcase_add_test(tcase, allocation_deallocation_test);
 	suite_add_tcase(suite, tcase);
 
 	return suite;
