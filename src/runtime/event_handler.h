@@ -47,6 +47,6 @@ struct bx_event_handler *bx_ev_create_pcode_handler(struct bx_pcode *pcode);
 
 bx_int8 bx_ev_invoke_handler(struct bx_event_handler *event_handler);
 
-bx_int8 bx_ev_remove_handler();
+bx_int8 bx_ev_remove_handler(struct bx_event_handler *event_handler);
 
 #endif /* EVENT_HANDLER_H_ */

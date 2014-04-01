@@ -62,6 +62,26 @@ bx_int8 bx_ev_init() {
 	return 0;
 }
 
+struct bx_event_handler *bx_ev_create_native_handler(native_handler function) {
+	struct bx_event_handler *native_handler;
+
+	native_handler = bx_ualloc_alloc(ualloc);
+	native_handler->handler_type = BX_HANDLER_NATIVE;
+	native_handler->handler.native_function = function;
+
+	return native_handler;
+}
+
+struct bx_event_handler *bx_ev_create_pcode_handler(struct bx_pcode *pcode) {
+	struct bx_event_handler *pcode_handler;
+
+	pcode_handler = bx_ualloc_alloc(ualloc);
+	pcode_handler->handler_type = BX_HANDLER_PCODE;
+	pcode_handler->handler.pcode = pcode;
+
+	return pcode_handler;
+}
+
 bx_int8 bx_ev_invoke_handler(struct bx_event_handler *event_handler) {
 
 	if (event_handler == NULL) {
@@ -79,4 +99,8 @@ bx_int8 bx_ev_invoke_handler(struct bx_event_handler *event_handler) {
 				"encountered in function 'bx_ev_invoke_handler'");
 		return -1;
 	}
+}
+
+bx_int8 bx_ev_remove_handler(struct bx_event_handler *event_handler) {
+	return bx_ualloc_free(ualloc, event_handler);
 }
