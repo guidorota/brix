@@ -46,7 +46,7 @@ bx_int8 bx_tm_init();
 
 bx_int64 bx_tm_get_tick_count();
 
-bx_int8 bx_tm_set_timer(enum bx_timer_type timer_type,
+bx_int8 bx_tm_add_timer(enum bx_timer_type timer_type,
 		bx_int64 time_msec, struct bx_event_handler *handler);
 
 bx_int8 bx_tm_destroy();

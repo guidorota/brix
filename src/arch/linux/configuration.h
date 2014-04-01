@@ -46,8 +46,9 @@
 
 // Timer
 #define TM_TICK_PERIOD_MS 125
+#define TM_TIMER_STORAGE_SIZE 512
 
 // Event handler
-#define EV_MAX_HANDLER_STORAGE_SIZE 512
+#define EV_HANDLER_STORAGE_SIZE 512
 
 #endif /* CONFIGURATION_H_ */

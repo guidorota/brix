@@ -37,7 +37,7 @@
 
 enum bx_handler_type {
 	BX_HANDLER_NATIVE,	///< Native C handler
-	BX_HANDLER_PCODE		///< Virtual machine handler
+	BX_HANDLER_PCODE	///< Virtual machine handler
 };
 
 struct bx_event_handler {
@@ -49,12 +49,12 @@ struct bx_event_handler {
 };
 
 static struct bx_ualloc *ualloc = NULL;
-static bx_uint8 event_list_storage[EV_MAX_HANDLER_STORAGE_SIZE];
+static bx_uint8 event_list_storage[EV_HANDLER_STORAGE_SIZE];
 
 bx_int8 bx_ev_init() {
 
 	ualloc = bx_ualloc_init(event_list_storage,
-			EV_MAX_HANDLER_STORAGE_SIZE, sizeof (struct bx_event_handler));
+			EV_HANDLER_STORAGE_SIZE, sizeof (struct bx_event_handler));
 	if (ualloc == NULL) {
 		return -1;
 	}
@@ -64,6 +64,10 @@ bx_int8 bx_ev_init() {
 
 struct bx_event_handler *bx_ev_create_native_handler(native_handler function) {
 	struct bx_event_handler *native_handler;
+
+	if (function == NULL) {
+		return NULL;
+	}
 
 	native_handler = bx_ualloc_alloc(ualloc);
 	native_handler->handler_type = BX_HANDLER_NATIVE;
@@ -75,6 +79,10 @@ struct bx_event_handler *bx_ev_create_native_handler(native_handler function) {
 struct bx_event_handler *bx_ev_create_pcode_handler(void *buffer, bx_size buffer_size) {
 	struct bx_pcode *pcode;
 	struct bx_event_handler *pcode_handler;
+
+	if (buffer == NULL) {
+		return NULL;
+	}
 
 	pcode = bx_pm_add(buffer, buffer_size);
 	if (pcode == NULL) {
@@ -108,6 +116,10 @@ bx_int8 bx_ev_invoke_handler(struct bx_event_handler *event_handler) {
 }
 
 bx_int8 bx_ev_remove_handler(struct bx_event_handler *event_handler) {
+
+	if (event_handler == NULL) {
+		return NULL;
+	}
 
 	if (event_handler->handler_type == BX_HANDLER_PCODE) {
 		bx_pm_remove(event_handler->handler.pcode);
