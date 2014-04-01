@@ -39,14 +39,50 @@ typedef void (*native_handler)();
 
 struct bx_event_handler;
 
+/**
+ * Initializes the internal data structures of the event_handler.
+ *
+ * @return 0 on successful initialization, -1 on error
+ */
 bx_int8 bx_ev_init();
 
+/**
+ * Creates an event handler based on a native C funtion.
+ *
+ * @param function Handler function.
+ *
+ * @return Event handler instance pointer, NULL on error
+ */
 struct bx_event_handler *bx_ev_create_native_handler(native_handler function);
 
+/**
+ * Creates an event handler based on a pcode routine.
+ * The event_handler invokes the pcode_manager to store the pcode instructions
+ * inside a bx_pcode struct.
+ *
+ * @param buffer Pcode instruction buffer
+ * @param buffer_size Pcode instruction buffer size
+ *
+ * @return Event handler instance pointer, NULL on error
+ */
 struct bx_event_handler *bx_ev_create_pcode_handler(void *buffer, bx_size buffer_size);
 
+/**
+ * Invokes the native handler passed as parameter.
+ *
+ * @param event_handler Event handler instance to invoke
+ *
+ * @return 0 on successful invocation, -1 on error
+ */
 bx_int8 bx_ev_invoke_handler(struct bx_event_handler *event_handler);
 
+/**
+ * Removes an event handler instance, and frees memory for new instances.
+ *
+ * @param event_handler Event handler instance to remove
+ *
+ * @return 0 on successful removal, -1 on error
+ */
 bx_int8 bx_ev_remove_handler(struct bx_event_handler *event_handler);
 
 #endif /* EVENT_HANDLER_H_ */
