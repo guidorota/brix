@@ -72,8 +72,14 @@ struct bx_event_handler *bx_ev_create_native_handler(native_handler function) {
 	return native_handler;
 }
 
-struct bx_event_handler *bx_ev_create_pcode_handler(struct bx_pcode *pcode) {
+struct bx_event_handler *bx_ev_create_pcode_handler(void *buffer, bx_size buffer_size) {
+	struct bx_pcode *pcode;
 	struct bx_event_handler *pcode_handler;
+
+	pcode = bx_pm_add(buffer, buffer_size);
+	if (pcode == NULL) {
+		return NULL;
+	}
 
 	pcode_handler = bx_ualloc_alloc(ualloc);
 	pcode_handler->handler_type = BX_HANDLER_PCODE;
@@ -102,5 +108,10 @@ bx_int8 bx_ev_invoke_handler(struct bx_event_handler *event_handler) {
 }
 
 bx_int8 bx_ev_remove_handler(struct bx_event_handler *event_handler) {
+
+	if (event_handler->handler_type == BX_HANDLER_PCODE) {
+		bx_pm_remove(event_handler->handler.pcode);
+	}
+
 	return bx_ualloc_free(ualloc, event_handler);
 }

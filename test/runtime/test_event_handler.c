@@ -34,11 +34,19 @@
 #include "document_manager/document_manager.h"
 #include "document_manager/test_field.h"
 #include "runtime/event_handler.h"
+#include "compiler/codegen_pcode.h"
+#include "virtual_machine/virtual_machine.h"
 
 #define INT_TEST_FIELD "int_test_field"
 
 static struct bx_document_field int_test_field;
 static struct bx_test_field_data int_test_field_data;
+
+static bx_uint8 native_function_value;
+
+static void native_event_function() {
+	native_function_value = 1;
+}
 
 START_TEST (init_test) {
 	bx_int8 error;
@@ -60,12 +68,59 @@ START_TEST (init_test) {
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
+START_TEST (native_handler_test) {
+	bx_int8 error;
+	struct bx_event_handler *native_handler;
+
+	native_function_value = 0;
+	native_handler = bx_ev_create_native_handler(*native_event_function);
+	ck_assert_ptr_ne(native_handler, NULL);
+	ck_assert_int_ne(native_function_value, 1);
+	error = bx_ev_invoke_handler(native_handler);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(native_function_value, 1);
+	error = bx_ev_remove_handler(native_handler);
+	ck_assert_int_eq(error, 0);
+} END_TEST
+
+START_TEST (pcode_handler_test) {
+	bx_int8 error;
+	struct bx_event_handler *pcode_handler;
+	struct bx_comp_pcode *comp_pcode;
+
+	comp_pcode = bx_cgpc_create();
+	ck_assert_ptr_ne(comp_pcode, NULL);
+	bx_test_field_set_int(&int_test_field, 0);
+	bx_cgpc_add_instruction(comp_pcode, BX_INSTR_IPUSH_1);
+	bx_cgpc_add_instruction(comp_pcode, BX_INSTR_RSTORE32);
+	bx_cgpc_add_identifier(comp_pcode, INT_TEST_FIELD);
+	bx_cgpc_add_instruction(comp_pcode, BX_INSTR_HALT);
+
+	pcode_handler = bx_ev_create_pcode_handler(comp_pcode->data, comp_pcode->size);
+	ck_assert_ptr_ne(pcode_handler, NULL);
+	ck_assert_int_ne(bx_test_field_get_int(&int_test_field), 1);
+	error = bx_ev_invoke_handler(pcode_handler);
+	ck_assert_int_eq(error, 0);
+	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
+
+	error = bx_ev_remove_handler(pcode_handler);
+	ck_assert_int_eq(error, 0);
+} END_TEST
+
 Suite *test_event_handler_create_suite() {
 	Suite *suite = suite_create("event_handler");
 	TCase *tcase;
 
 	tcase = tcase_create("init_test");
 	tcase_add_test(tcase, init_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("native_handler_test");
+	tcase_add_test(tcase, native_handler_test);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("pcode_handler_test");
+	tcase_add_test(tcase, pcode_handler_test);
 	suite_add_tcase(suite, tcase);
 
 	return suite;
