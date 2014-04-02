@@ -9,7 +9,7 @@
 #include "document_manager/document_manager.h"
 #include "virtual_machine/virtual_machine.h"
 #include "runtime/pcode_manager.h"
-#include "runtime/event_handler.h"
+#include "runtime/task_scheduler.h"
 #include "runtime/timer.h"
 
 int main(int argc, char* argv[]) {
@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
 	bx_dm_document_manager_init();
 	bx_pr_init();
 	bx_tm_init();
-	bx_ev_init();
+	bx_ts_init();
 
 	printf("Type q :return to quit\n");
 	char input = 0;

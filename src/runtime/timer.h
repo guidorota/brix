@@ -34,8 +34,7 @@
 
 #include "types.h"
 #include "runtime/tick.h"
-#include "runtime/event_handler.h"
-#include "runtime/event_handler.h"
+#include "runtime/task_scheduler.h"
 
 enum bx_timer_type {
 	BX_TIMER_PERIODIC,
@@ -60,17 +59,16 @@ bx_uint64 bx_tm_get_tick_count();
  * Adds a new timer in the system.
  * There are 2 different types of timers: Periodic and One-off.
  * Periodic timers are executed periodically.
- * One-off timers are only fired once. Their event handlers are
- * destroyed by the timer after they are executed
+ * One-off timers are only fired once.
  *
  * @param timer_type Type of timer (periodic or one-off)
  * @param time_msec Timer fire delay
- * @param handler Event handler to invoke once the timer fires
+ * @param task Task to schedule when the timer fires
  *
  * @return 0 on successful addition, -1 on error
  */
 bx_int8 bx_tm_add_timer(enum bx_timer_type timer_type,
-		bx_int64 time_msec, struct bx_event_handler *handler);
+		bx_int64 time_msec, struct bx_task *task);
 
 /**
  * Destroys the timer.

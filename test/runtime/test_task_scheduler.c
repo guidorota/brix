@@ -29,11 +29,11 @@
  *
  */
 
-#include "test_event_handler.h"
+#include "test_task_scheduler.h"
 #include "virtual_machine/virtual_machine.h"
 #include "document_manager/document_manager.h"
 #include "document_manager/test_field.h"
-#include "runtime/event_handler.h"
+#include "runtime/task_scheduler.h"
 #include "compiler/codegen_pcode.h"
 #include "virtual_machine/virtual_machine.h"
 
@@ -64,13 +64,13 @@ START_TEST (init_test) {
 	ck_assert_int_eq(error, 0);
 
 	// Init event handler
-	error = bx_ev_init();
+	error = bx_ts_init();
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
 START_TEST (native_handler_test) {
 	bx_int8 error;
-	struct bx_event_handler *native_handler;
+	struct bx_task *native_handler;
 
 	native_function_value = 0;
 	native_handler = bx_ev_create_native_handler(*native_event_function);
@@ -85,7 +85,7 @@ START_TEST (native_handler_test) {
 
 START_TEST (pcode_handler_test) {
 	bx_int8 error;
-	struct bx_event_handler *pcode_handler;
+	struct bx_task *pcode_handler;
 	struct bx_comp_pcode *comp_pcode;
 
 	comp_pcode = bx_cgpc_create();

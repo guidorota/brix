@@ -34,13 +34,13 @@
 #include "utils/uniform_allocator.h"
 #include "runtime/timer.h"
 #include "runtime/tick.h"
-#include "runtime/event_handler.h"
+#include "runtime/task_scheduler.h"
 
 struct timer_entry {
 	enum bx_timer_type timer_type;		///< Type of timer (native or pcode)
 	bx_uint64 period_msec;				///< Timer firing period in milliseconds
 	bx_uint64 period_ticks;				///< Timer firing period in ticks
-	struct bx_event_handler *handler;	///< Handler instance
+	struct bx_task *task;				///< Task instance
 	bx_uint64 ticks_to_next_timer;		///< Number of ticks between this timer and the next one
 	struct timer_entry *next_timer;		///< Next timer entry in the list
 };
@@ -71,14 +71,11 @@ static void tick_callback() {
 		timer_fired = next_to_fire;
 		ticks_to_next_to_fire = next_to_fire->ticks_to_next_timer;
 		next_to_fire = next_to_fire->next_timer;
-		//TODO: This should invoke the scheduler, calling the function directly
-		// from the tick callback is very bad practice
-		bx_ev_invoke_handler(timer_fired->handler);
+		bx_ts_schedule_task(timer_fired->task);
 
 		if (timer_fired->timer_type == BX_TIMER_PERIODIC) {
 			add_to_timer_list(timer_fired);
 		} else {
-			bx_ev_remove_handler(timer_fired->handler);
 			bx_ualloc_free(timer_entry_ualloc, timer_fired);
 		}
 
@@ -118,10 +115,10 @@ bx_uint64 bx_tm_get_tick_count() {
 }
 
 bx_int8 bx_tm_add_timer(enum bx_timer_type timer_type,
-		bx_int64 period_msec, struct bx_event_handler *handler) {
+		bx_int64 period_msec, struct bx_task *task) {
 	struct timer_entry *new_timer;
 
-	if (handler == NULL) {
+	if (task == NULL) {
 		return -1;
 	}
 
@@ -130,7 +127,7 @@ bx_int8 bx_tm_add_timer(enum bx_timer_type timer_type,
 		return -1;
 	}
 
-	new_timer->handler = handler;
+	new_timer->task = task;
 	new_timer->period_msec = period_msec;
 	new_timer->period_ticks = period_msec / TM_TICK_PERIOD_MS;
 	new_timer->timer_type = timer_type;

@@ -1,5 +1,5 @@
 /*
- * event_handler.h
+ * task_scheduler.h
  * Created on: Mar 25, 2014
  * Author: Guido Rota
  *
@@ -29,60 +29,69 @@
  *
  */
 
-#ifndef EVENT_HANDLER_H_
-#define EVENT_HANDLER_H_
+#ifndef TASK_SCHEDULER_H_
+#define TASK_SCHEDULER_H_
 
 #include "types.h"
 #include "runtime/pcode_manager.h"
 
-typedef void (*native_handler)();
+typedef void (*native_function)();
 
-struct bx_event_handler;
+typedef bx_ssize bx_task_id;
 
 /**
- * Initializes the internal data structures of the event_handler.
+ * Initializes the task scheduler
  *
  * @return 0 on successful initialization, -1 on error
  */
-bx_int8 bx_ev_init();
+bx_int8 bx_ts_init();
 
 /**
- * Creates an event handler based on a native C funtion.
+ * Adds a task based on a native C function.
  *
  * @param function Handler function.
  *
- * @return Event handler instance pointer, NULL on error
+ * @return Task id, -1 on error
  */
-struct bx_event_handler *bx_ev_create_native_handler(native_handler function);
+bx_task_id bx_ts_add_native_handler(native_function function);
 
 /**
- * Creates an event handler based on a pcode routine.
- * The event_handler invokes the pcode_manager to store the pcode instructions
+ * Adds a task based on a pcode routine.
+ * The task_manager invokes the pcode_manager to store the pcode instructions
  * inside a bx_pcode struct.
  *
  * @param buffer Pcode instruction buffer
  * @param buffer_size Pcode instruction buffer size
  *
- * @return Event handler instance pointer, NULL on error
+ * @return Task id, -1 on error
  */
-struct bx_event_handler *bx_ev_create_pcode_handler(void *buffer, bx_size buffer_size);
+bx_task_id bx_ts_add_pcode_handler(void *buffer, bx_size buffer_size);
 
 /**
- * Invokes the native handler passed as parameter.
+ * Schedules a task for execution
  *
- * @param event_handler Event handler instance to invoke
+ * @param task_id Id of the task to schedule
  *
- * @return 0 on successful invocation, -1 on error
+ * @return 0 on successful schedulation, -1 on error
  */
-bx_int8 bx_ev_invoke_handler(struct bx_event_handler *event_handler);
+bx_int8 bx_ts_schedule_task(bx_task_id task_id);
 
 /**
- * Removes an event handler instance, and frees memory for new instances.
+ * Checks if the task is scheduled.
  *
- * @param event_handler Event handler instance to remove
+ * @task_id Task id
+ *
+ * @return 1 if the task is scheduled, 0 if the task isn't scheduled, -1 on error
+ */
+bx_int8 bx_ts_is_scheduled(bx_task_id task_id);
+
+/**
+ * Removes the task.
+ *
+ * @param task_id Id of the task to remove
  *
  * @return 0 on successful removal, -1 on error
  */
-bx_int8 bx_ev_remove_handler(struct bx_event_handler *event_handler);
+bx_int8 bx_ts_remove_task(bx_task_id task_id);
 
-#endif /* EVENT_HANDLER_H_ */
+#endif /* TASK_SCHEDULER_H_ */

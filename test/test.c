@@ -51,7 +51,7 @@
 #include "compiler/test_compiler.h"
 #include "runtime/test_pcode_manager.h"
 #include "runtime/test_timer.h"
-#include "runtime/test_event_handler.h"
+#include "runtime/test_task_scheduler.h"
 
 int main(void) {
 	int number_failed = 0;
