@@ -118,7 +118,7 @@ bx_int8 bx_ev_invoke_handler(struct bx_event_handler *event_handler) {
 bx_int8 bx_ev_remove_handler(struct bx_event_handler *event_handler) {
 
 	if (event_handler == NULL) {
-		return NULL;
+		return -1;
 	}
 
 	if (event_handler->handler_type == BX_HANDLER_PCODE) {

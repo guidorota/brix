@@ -37,22 +37,23 @@
 #include "runtime/event_handler.h"
 
 struct timer_entry {
-	enum bx_timer_type timer_type;
-	bx_uint64 period_msec;
-	struct bx_event_handler *handler;
-	bx_uint64 ticks_to_next_timer;
-	struct timer_entry *next_timer;
+	enum bx_timer_type timer_type;		///< Type of timer (native or pcode)
+	bx_uint64 period_msec;				///< Timer firing period in milliseconds
+	bx_uint64 period_ticks;				///< Timer firing period in ticks
+	struct bx_event_handler *handler;	///< Handler instance
+	bx_uint64 ticks_to_next_timer;		///< Number of ticks between this timer and the next one
+	struct timer_entry *next_timer;		///< Next timer entry in the list
 };
 
 static bx_uint64 tick_count;
 
-static bx_uint64 ticks_to_next_fire;
+static bx_uint64 ticks_to_next_to_fire;
 static struct timer_entry *next_to_fire;
 
 static struct bx_ualloc *timer_entry_ualloc;
 static bx_uint8 timer_entry_storage[TM_TIMER_STORAGE_SIZE];
 
-static void add_to_timer_list(struct timer_entry *timer_entry);
+static void add_to_timer_list(struct timer_entry *new_timer);
 
 static void tick_callback() {
 	++tick_count;
@@ -61,8 +62,8 @@ static void tick_callback() {
 		return;
 	}
 
-	if (--ticks_to_next_fire == 0) {
-		bx_ev_invoke_handler(next_to_fire);
+	if (--ticks_to_next_to_fire == 0) {
+		bx_ev_invoke_handler(next_to_fire->handler);
 		//TODO: Continue here
 	}
 }
@@ -71,7 +72,7 @@ bx_int8 bx_tm_init() {
 	bx_int8 error;
 
 	tick_count = 0;
-	ticks_to_next_fire = 0;
+	ticks_to_next_to_fire = 0;
 	next_to_fire = NULL;
 
 	timer_entry_ualloc = bx_ualloc_init(timer_entry_storage,
@@ -97,7 +98,7 @@ bx_int8 bx_tm_add_timer(enum bx_timer_type timer_type,
 	struct timer_entry *new_timer;
 
 	if (handler == NULL) {
-		return NULL;
+		return -1;
 	}
 
 	new_timer = bx_ualloc_alloc(timer_entry_ualloc);
@@ -107,28 +108,48 @@ bx_int8 bx_tm_add_timer(enum bx_timer_type timer_type,
 
 	new_timer->handler = handler;
 	new_timer->period_msec = period_msec;
+	new_timer->period_ticks = period_msec / TM_TICK_PERIOD_MS;
 	new_timer->timer_type = timer_type;
+	add_to_timer_list(new_timer);
 
-	return -1; //TODO: Stub
+	return 0;
 }
 
-static void add_to_timer_list(struct timer_entry *timer_entry) {
-	struct timer_entry next_timer_entry;
-	bx_uint64 accumulated_period;
+static void add_to_timer_list(struct timer_entry *new_timer) {
+	struct timer_entry *timer_list_entry;
+	bx_uint64 accumulated_ticks;
 
-	next_timer_entry = next_to_fire;
-	accumulated_period = 0;
-	while (next_timer_entry != NULL) {
-		accumulated_period += next_timer_entry->ticks_to_next_timer;
-		if (timer_entry->period_msec > accumulated_period) {
-			break;
-		}
+	if (next_to_fire == NULL) {
+		next_to_fire = new_timer;
+		ticks_to_next_to_fire = new_timer->period_msec;
+		new_timer->next_timer = NULL;
+		new_timer->ticks_to_next_timer = 0;
+		return;
 	}
 
-	if (next_timer_entry == NULL) {
-		next_timer_entry = timer_entry;
-		ticks_to_next_fire = timer_entry->period_msec;
+	if (new_timer->period_ticks < ticks_to_next_to_fire) {
+		new_timer->next_timer = next_to_fire;
+		new_timer->ticks_to_next_timer = ticks_to_next_to_fire - new_timer->period_msec;
+		ticks_to_next_to_fire = new_timer->period_ticks;
+		next_to_fire = new_timer;
+		return;
 	}
+
+	timer_list_entry = next_to_fire;
+	accumulated_ticks = ticks_to_next_to_fire;
+	while (timer_list_entry->next_timer != NULL &&
+			new_timer->period_ticks < accumulated_ticks + timer_list_entry->ticks_to_next_timer) {
+		accumulated_ticks += timer_list_entry->ticks_to_next_timer;
+		timer_list_entry = timer_list_entry->next_timer;
+	}
+
+	new_timer->next_timer = timer_list_entry->next_timer;
+	if (new_timer->next_timer != NULL) {
+		new_timer->ticks_to_next_timer =
+				new_timer->next_timer->period_ticks - new_timer->period_ticks;
+	}
+	timer_list_entry->next_timer = new_timer;
+	timer_list_entry->ticks_to_next_timer = new_timer->period_ticks - accumulated_ticks;
 
 }
 
