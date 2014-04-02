@@ -53,7 +53,7 @@ bx_int8 bx_ts_init();
  *
  * @return Task id, -1 on error
  */
-bx_task_id bx_ts_add_native_handler(native_function function);
+bx_task_id bx_ts_add_native_task(native_function function);
 
 /**
  * Adds a task based on a pcode routine.
@@ -65,7 +65,7 @@ bx_task_id bx_ts_add_native_handler(native_function function);
  *
  * @return Task id, -1 on error
  */
-bx_task_id bx_ts_add_pcode_handler(void *buffer, bx_size buffer_size);
+bx_task_id bx_ts_add_pcode_task(void *buffer, bx_size buffer_size);
 
 /**
  * Schedules a task for execution

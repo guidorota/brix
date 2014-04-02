@@ -62,7 +62,7 @@ static void task_list_add(struct bx_task *task) {
 	task_list = task;
 }
 
-static struct bx_task task_list_search(bx_task_id task_id) {
+static struct bx_task *task_list_search(bx_task_id task_id) {
 	struct bx_task *current_task;
 
 	current_task = task_list;
@@ -89,7 +89,7 @@ bx_int8 bx_ts_init() {
 	return 0;
 }
 
-bx_task_id bx_ts_add_native_handler(native_function function) {
+bx_task_id bx_ts_add_native_task(native_function function) {
 	struct bx_task *native_task;
 
 	if (function == NULL) {
@@ -107,7 +107,7 @@ bx_task_id bx_ts_add_native_handler(native_function function) {
 	return native_task->id;
 }
 
-bx_task_id bx_ts_add_pcode_handler(void *buffer, bx_size buffer_size) {
+bx_task_id bx_ts_add_pcode_task(void *buffer, bx_size buffer_size) {
 	struct bx_pcode *pcode;
 	struct bx_task *pcode_task;
 
@@ -136,7 +136,7 @@ bx_int8 bx_ts_schedule_task(bx_task_id task_id) {
 
 	task = task_list_search(task_id);
 	if (task == NULL) {
-		BX_LOG(LOG_ERROR, "task_scheduler"
+		BX_LOG(LOG_ERROR, "task_scheduler",
 				"Cannot schedule: Task %zu not found", task_id);
 		return -1;
 	}
@@ -151,7 +151,7 @@ bx_int8 bx_ts_is_scheduled(bx_task_id task_id) {
 
 	task = task_list_search(task_id);
 	if (task == NULL) {
-		BX_LOG(LOG_ERROR, "task_scheduler"
+		BX_LOG(LOG_ERROR, "task_scheduler",
 				"Cannot schedule: Task %zu not found", task_id);
 		return -1;
 	}
@@ -174,7 +174,7 @@ bx_int8 bx_ts_remove_task(bx_task_id task_id) {
 	}
 
 	if (current_task == NULL) {
-		BX_LOG(LOG_ERROR, "task_scheduler"
+		BX_LOG(LOG_ERROR, "task_scheduler",
 				"Cannot remove: Task %zu not found", task_id);
 		return -1;
 	}

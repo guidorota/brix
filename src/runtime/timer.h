@@ -68,7 +68,7 @@ bx_uint64 bx_tm_get_tick_count();
  * @return 0 on successful addition, -1 on error
  */
 bx_int8 bx_tm_add_timer(enum bx_timer_type timer_type,
-		bx_int64 time_msec, struct bx_task *task);
+		bx_int64 time_msec, bx_task_id task_id);
 
 /**
  * Destroys the timer.

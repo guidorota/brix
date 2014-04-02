@@ -40,7 +40,7 @@ struct timer_entry {
 	enum bx_timer_type timer_type;		///< Type of timer (native or pcode)
 	bx_uint64 period_msec;				///< Timer firing period in milliseconds
 	bx_uint64 period_ticks;				///< Timer firing period in ticks
-	struct bx_task *task;				///< Task instance
+	bx_task_id task;					///< Task instance
 	bx_uint64 ticks_to_next_timer;		///< Number of ticks between this timer and the next one
 	struct timer_entry *next_timer;		///< Next timer entry in the list
 };
@@ -115,10 +115,10 @@ bx_uint64 bx_tm_get_tick_count() {
 }
 
 bx_int8 bx_tm_add_timer(enum bx_timer_type timer_type,
-		bx_int64 period_msec, struct bx_task *task) {
+		bx_int64 time_msec, bx_task_id task_id) {
 	struct timer_entry *new_timer;
 
-	if (task == NULL) {
+	if (task_id < 0) {
 		return -1;
 	}
 
@@ -127,9 +127,9 @@ bx_int8 bx_tm_add_timer(enum bx_timer_type timer_type,
 		return -1;
 	}
 
-	new_timer->task = task;
-	new_timer->period_msec = period_msec;
-	new_timer->period_ticks = period_msec / TM_TICK_PERIOD_MS;
+	new_timer->task = task_id;
+	new_timer->period_msec = time_msec;
+	new_timer->period_ticks = time_msec / TM_TICK_PERIOD_MS;
 	new_timer->timer_type = timer_type;
 
 	bx_tk_pause();

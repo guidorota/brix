@@ -70,22 +70,23 @@ START_TEST (init_test) {
 
 START_TEST (native_handler_test) {
 	bx_int8 error;
-	struct bx_task *native_handler;
+	bx_task_id native_task_id;
 
 	native_function_value = 0;
-	native_handler = bx_ev_create_native_handler(*native_event_function);
-	ck_assert_ptr_ne(native_handler, NULL);
+	native_task_id = bx_ts_add_native_task(*native_event_function);
+	ck_assert_int_ne(native_task_id, -1);
 	ck_assert_int_ne(native_function_value, 1);
-	error = bx_ev_invoke_handler(native_handler);
+	error = bx_ts_schedule_task(native_task_id);
+	ck_assert_int_eq(bx_ts_is_scheduled(native_task_id), 1);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(native_function_value, 1);
-	error = bx_ev_remove_handler(native_handler);
+	error = bx_ts_remove_task(native_task_id);
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
 START_TEST (pcode_handler_test) {
 	bx_int8 error;
-	struct bx_task *pcode_handler;
+	bx_task_id pcode_task_id;
 	struct bx_comp_pcode *comp_pcode;
 
 	comp_pcode = bx_cgpc_create();
@@ -96,14 +97,15 @@ START_TEST (pcode_handler_test) {
 	bx_cgpc_add_identifier(comp_pcode, INT_TEST_FIELD);
 	bx_cgpc_add_instruction(comp_pcode, BX_INSTR_HALT);
 
-	pcode_handler = bx_ev_create_pcode_handler(comp_pcode->data, comp_pcode->size);
-	ck_assert_ptr_ne(pcode_handler, NULL);
+	pcode_task_id = bx_ts_add_pcode_task(comp_pcode->data, comp_pcode->size);
+	ck_assert_int_ne(pcode_task_id, -1);
 	ck_assert_int_ne(bx_test_field_get_int(&int_test_field), 1);
-	error = bx_ev_invoke_handler(pcode_handler);
+	error = bx_ts_schedule_task(pcode_task_id);
+	ck_assert_int_eq(bx_ts_is_scheduled(pcode_task_id), 1);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
 
-	error = bx_ev_remove_handler(pcode_handler);
+	error = bx_ts_remove_task(pcode_task_id);
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
