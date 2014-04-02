@@ -66,8 +66,24 @@ bx_int8 bx_docman_init(void);
  */
 bx_int8 bx_docman_add_field(struct bx_document_field *field, char *identifier);
 
+/**
+ * Invokes the getter method of a field managed by the document manager
+ *
+ * @param field_identifier Field identifier
+ * @param data Destination memory location
+ *
+ * @return 0 on success, -1 on error
+ */
 bx_int8 bx_docman_invoke_get(char *field_identifier, void *data);
 
+/**
+ * Invokes the setter method of a field managed by the document manager
+ *
+ * @param field_identifier Field identifier
+ * @param data Source memory location
+ *
+ * @return 0 on success, -1 on error
+ */
 bx_int8 bx_docman_invoke_set(char *field_identifier, void *data);
 
 #endif /* TEST_DOCUMENT_MANAGER_H_ */
