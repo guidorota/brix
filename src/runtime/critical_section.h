@@ -1,6 +1,6 @@
 /*
- * test_timer.c
- * Created on: Mar 26, 2014
+ * critical_section.h
+ * Created on: Apr 2, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,50 +29,12 @@
  *
  */
 
-#include "test_timer.h"
-#include <unistd.h>
-#include "runtime/timer.h"
-#include "runtime/critical_section.h"
-#include "configuration.h"
+#include "types.h"
 
-START_TEST (timer_init) {
-	bx_int8 error;
-	bx_uint64 previous_count;
+bx_int8 bx_critical_init();
 
-	// Initializing critical section
-	error = bx_critical_init();
-	ck_assert_int_eq(error, 0);
+bx_int8 bx_critical_enter();
 
-	// Initializing timer
-	error = bx_tm_init();
-	ck_assert_int_eq(error, 0);
-	previous_count = bx_tm_get_tick_count();
-	sleep(1);
-	ck_assert_int_gt(bx_tm_get_tick_count(), previous_count);
-} END_TEST
+bx_int8 bx_critical_exit();
 
-START_TEST (timer_stop) {
-	bx_int8 error;
-	bx_uint64 previous_count;
-
-	error = bx_tm_destroy();
-	ck_assert_int_eq(error, 0);
-	previous_count = bx_tm_get_tick_count();
-	sleep(1);
-	ck_assert_int_eq(bx_tm_get_tick_count(), previous_count);
-} END_TEST
-
-Suite *test_timer_create_suite() {
-	Suite *suite = suite_create("timer");
-	TCase *tcase;
-
-	tcase = tcase_create("timer_init");
-	tcase_add_test(tcase, timer_init);
-	suite_add_tcase(suite, tcase);
-
-	tcase = tcase_create("timer_stop");
-	tcase_add_test(tcase, timer_stop);
-	suite_add_tcase(suite, tcase);
-
-	return suite;
-}
+bx_int8 bx_critical_destroy();

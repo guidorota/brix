@@ -132,6 +132,10 @@ bx_int8 bx_ts_init() {
 	return 0;
 }
 
+void bx_ts_scheduler_loop() {
+	//TODO: Stub
+}
+
 bx_task_id bx_ts_add_native_task(native_function function) {
 	struct bx_task *native_task;
 

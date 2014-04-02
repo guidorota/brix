@@ -34,6 +34,7 @@
 #include <errno.h>
 #include "logging.h"
 #include "runtime/tick.h"
+#include "runtime/critical_section.h"
 
 static pthread_t thread;
 static pthread_attr_t attr;
@@ -43,7 +44,6 @@ static int tick_period_msec;
 
 static bx_uint64 tick_count;
 
-static pthread_mutex_t tick_mutex = PTHREAD_MUTEX_INITIALIZER;
 static bx_boolean paused;
 
 void *tick_routine(void *arg) {
@@ -54,20 +54,14 @@ void *tick_routine(void *arg) {
 	period.tv_nsec = (1000 * 1000 * tick_period_msec) % (1000 * 1000 * 1000);
 
 	while (1) {
-		error = pthread_mutex_lock(&tick_mutex);
-		if (error != 0) {
-			BX_LOG(LOG_DEBUG, "tick", "Error acquiring paused_mutex: %i", errno);
-		}
+		bx_critical_enter();
 
 		++tick_count;
 		if (!paused) {
 			tick_callback();
 		}
 
-		error = pthread_mutex_unlock(&tick_mutex);
-		if (error != 0) {
-			BX_LOG(LOG_DEBUG, "tick", "Error releasing paused_mutex: %i", errno);
-		}
+		bx_critical_exit();
 
 		error = nanosleep(&period, NULL);
 		if (error != 0) {
@@ -104,23 +98,23 @@ bx_int8 bx_tk_start(bx_int32 period_msec, bx_tick_callback callback) {
 }
 
 void bx_tk_pause() {
-	pthread_mutex_lock(&tick_mutex);
+	bx_critical_enter();
 	paused = BX_BOOLEAN_TRUE;
-	pthread_mutex_unlock(&tick_mutex);
+	bx_critical_exit();
 }
 
 void bx_tk_resume() {
-	pthread_mutex_lock(&tick_mutex);
+	bx_critical_enter();
 	paused = BX_BOOLEAN_FALSE;
-	pthread_mutex_unlock(&tick_mutex);
+	bx_critical_exit();
 }
 
 bx_uint64 bx_tk_get_tick_count() {
 	bx_uint64 tick_count_copy;
 
-	pthread_mutex_lock(&tick_mutex);
+	bx_critical_enter();
 	tick_count_copy = tick_count;
-	pthread_mutex_unlock(&tick_mutex);
+	bx_critical_exit();
 
 	return tick_count_copy;
 }
@@ -131,7 +125,6 @@ bx_int8 bx_tk_stop() {
 	pthread_cancel(thread);
 	pthread_join(thread, NULL);
 	pthread_attr_destroy(&attr);
-	pthread_mutex_destroy(&tick_mutex);
 	BX_LOG(LOG_DEBUG, "tick", "Tick process halted");
 
 	return 0;

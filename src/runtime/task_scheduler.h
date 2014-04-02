@@ -47,6 +47,11 @@ typedef bx_ssize bx_task_id;
 bx_int8 bx_ts_init();
 
 /**
+ * Starts the scheduler loop.
+ */
+void bx_ts_scheduler_loop();
+
+/**
  * Adds a task based on a native C function.
  *
  * @param function Handler function.
