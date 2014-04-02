@@ -45,8 +45,6 @@ struct timer_entry {
 	struct timer_entry *next_timer;		///< Next timer entry in the list
 };
 
-static bx_uint64 tick_count;
-
 static bx_uint64 ticks_to_next_to_fire;
 static struct timer_entry *next_to_fire;
 
@@ -56,22 +54,48 @@ static bx_uint8 timer_entry_storage[TM_TIMER_STORAGE_SIZE];
 static void add_to_timer_list(struct timer_entry *new_timer);
 
 static void tick_callback() {
-	++tick_count;
+	struct timer_entry *timer_fired;
+	bx_uint64 start_tick_count;
+	bx_uint64 ticks_elapsed;
 
 	if (next_to_fire == NULL) {
 		return;
 	}
 
-	if (--ticks_to_next_to_fire == 0) {
-		bx_ev_invoke_handler(next_to_fire->handler);
-		//TODO: Continue here
+	bx_tk_pause();
+
+	--ticks_to_next_to_fire;
+	while (ticks_to_next_to_fire == 0) {
+		start_tick_count = bx_tk_get_tick_count();
+
+		timer_fired = next_to_fire;
+		ticks_to_next_to_fire = next_to_fire->ticks_to_next_timer;
+		next_to_fire = next_to_fire->next_timer;
+		//TODO: This should invoke the scheduler, calling the function directly
+		// from the tick callback is very bad practice
+		bx_ev_invoke_handler(timer_fired->handler);
+
+		if (timer_fired->timer_type == BX_TIMER_PERIODIC) {
+			add_to_timer_list(timer_fired);
+		} else {
+			bx_ev_remove_handler(timer_fired->handler);
+			bx_ualloc_free(timer_entry_ualloc, timer_fired);
+		}
+
+		ticks_elapsed = bx_tk_get_tick_count() - start_tick_count;
+		if (ticks_to_next_to_fire <= ticks_elapsed) {
+			ticks_to_next_to_fire = 0;
+		} else {
+			ticks_to_next_to_fire -= ticks_elapsed;
+		}
 	}
+
+	bx_tk_resume();
 }
 
 bx_int8 bx_tm_init() {
 	bx_int8 error;
 
-	tick_count = 0;
 	ticks_to_next_to_fire = 0;
 	next_to_fire = NULL;
 
@@ -89,8 +113,8 @@ bx_int8 bx_tm_init() {
 	return 0;
 }
 
-bx_int64 bx_tm_get_tick_count() {
-	return tick_count;
+bx_uint64 bx_tm_get_tick_count() {
+	return bx_tk_get_tick_count();
 }
 
 bx_int8 bx_tm_add_timer(enum bx_timer_type timer_type,
@@ -110,7 +134,10 @@ bx_int8 bx_tm_add_timer(enum bx_timer_type timer_type,
 	new_timer->period_msec = period_msec;
 	new_timer->period_ticks = period_msec / TM_TICK_PERIOD_MS;
 	new_timer->timer_type = timer_type;
+
+	bx_tk_pause();
 	add_to_timer_list(new_timer);
+	bx_tk_resume();
 
 	return 0;
 }
@@ -150,7 +177,6 @@ static void add_to_timer_list(struct timer_entry *new_timer) {
 	}
 	timer_list_entry->next_timer = new_timer;
 	timer_list_entry->ticks_to_next_timer = new_timer->period_ticks - accumulated_ticks;
-
 }
 
 bx_int8 bx_tm_destroy() {

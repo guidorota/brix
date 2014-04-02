@@ -41,6 +41,11 @@ static pthread_attr_t attr;
 static bx_tick_callback tick_callback;
 static int tick_period_msec;
 
+static bx_uint64 tick_count;
+
+static pthread_mutex_t tick_mutex = PTHREAD_MUTEX_INITIALIZER;
+static bx_boolean paused;
+
 void *tick_routine(void *arg) {
 	int error;
 	struct timespec period;
@@ -49,7 +54,21 @@ void *tick_routine(void *arg) {
 	period.tv_nsec = (1000 * 1000 * tick_period_msec) % (1000 * 1000 * 1000);
 
 	while (1) {
-		tick_callback();
+		error = pthread_mutex_lock(&tick_mutex);
+		if (error != 0) {
+			BX_LOG(LOG_DEBUG, "tick", "Error acquiring paused_mutex: %i", errno);
+		}
+
+		++tick_count;
+		if (!paused) {
+			tick_callback();
+		}
+
+		error = pthread_mutex_unlock(&tick_mutex);
+		if (error != 0) {
+			BX_LOG(LOG_DEBUG, "tick", "Error releasing paused_mutex: %i", errno);
+		}
+
 		error = nanosleep(&period, NULL);
 		if (error != 0) {
 			BX_LOG(LOG_DEBUG, "tick", "Error sleeping: %i", errno);
@@ -66,6 +85,7 @@ bx_int8 bx_tk_start(bx_int32 period_msec, bx_tick_callback callback) {
 	BX_LOG(LOG_DEBUG, "tick", "Starting tick process...");
 	tick_callback = callback;
 	tick_period_msec = period_msec;
+	tick_count = 0;
 
 	error = pthread_attr_init(&attr);
 	if (error != 0) {
@@ -77,9 +97,32 @@ bx_int8 bx_tk_start(bx_int32 period_msec, bx_tick_callback callback) {
 		return -1;
 	}
 
+	paused = BX_BOOLEAN_FALSE;
 	BX_LOG(LOG_DEBUG, "tick", "Tick process started");
 
 	return 0;
+}
+
+void bx_tk_pause() {
+	pthread_mutex_lock(&tick_mutex);
+	paused = BX_BOOLEAN_TRUE;
+	pthread_mutex_unlock(&tick_mutex);
+}
+
+void bx_tk_resume() {
+	pthread_mutex_lock(&tick_mutex);
+	paused = BX_BOOLEAN_FALSE;
+	pthread_mutex_unlock(&tick_mutex);
+}
+
+bx_uint64 bx_tk_get_tick_count() {
+	bx_uint64 tick_count_copy;
+
+	pthread_mutex_lock(&tick_mutex);
+	tick_count_copy = tick_count;
+	pthread_mutex_unlock(&tick_mutex);
+
+	return tick_count_copy;
 }
 
 bx_int8 bx_tk_stop() {
@@ -88,6 +131,7 @@ bx_int8 bx_tk_stop() {
 	pthread_cancel(thread);
 	pthread_join(thread, NULL);
 	pthread_attr_destroy(&attr);
+	pthread_mutex_destroy(&tick_mutex);
 	BX_LOG(LOG_DEBUG, "tick", "Tick process halted");
 
 	return 0;

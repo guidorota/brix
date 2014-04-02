@@ -38,6 +38,12 @@ typedef void (*bx_tick_callback)();
 
 bx_int8 bx_tk_start(bx_int32 period_msec, bx_tick_callback callback);
 
+void bx_tk_pause();
+
+void bx_tk_resume();
+
+bx_uint64 bx_tk_get_tick_count();
+
 bx_int8 bx_tk_stop();
 
 #endif /* TICK_H_ */
