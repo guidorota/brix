@@ -55,14 +55,28 @@ static struct bx_ualloc *task_ualloc = NULL;
 static bx_uint8 task_storage[EV_HANDLER_STORAGE_SIZE];
 
 static bx_uint16 current_id;
-static struct bx_task *task_list;
+static struct bx_task *scheduled_list;
+static struct bx_task *stopped_list;
 
-static void task_list_add(struct bx_task *task) {
-	task->next = task_list;
-	task_list = task;
+static void task_list_add(struct bx_task **task_list, struct bx_task *task) {
+	struct bx_task *current_element;
+
+	task->next = NULL;
+
+	if (*task_list == NULL) {
+		*task_list = task;
+		return;
+	}
+
+	current_element = *task_list;
+	while (current_element->next != NULL) {
+		current_element = current_element->next;
+	}
+
+	current_element->next = task;
 }
 
-static struct bx_task *task_list_search(bx_task_id task_id) {
+static struct bx_task *task_list_search(struct bx_task *task_list, bx_task_id task_id) {
 	struct bx_task *current_task;
 
 	current_task = task_list;
@@ -70,9 +84,37 @@ static struct bx_task *task_list_search(bx_task_id task_id) {
 		if (current_task->id == task_id) {
 			break;
 		}
+		current_task = current_task->next;
 	}
 
 	return current_task;
+}
+
+static struct bx_task *task_list_remove(struct bx_task **task_list, bx_task_id task_id) {
+	struct bx_task *current_task;
+	struct bx_task *previous_task;
+
+	if (*task_list == NULL) {
+		return NULL;
+	}
+
+	previous_task = NULL;
+	current_task = *task_list;
+	while (current_task != NULL) {
+		if (current_task->id != task_id) {
+			previous_task = current_task;
+			current_task = current_task->next;
+			continue;
+		}
+		if (previous_task == NULL) {
+			*task_list = current_task->next;
+		} else {
+			previous_task->next = current_task->next;
+		}
+		return current_task;
+	}
+
+	return NULL;
 }
 
 bx_int8 bx_ts_init() {
@@ -84,7 +126,8 @@ bx_int8 bx_ts_init() {
 	}
 
 	current_id = 0;
-	task_list = NULL;
+	scheduled_list = NULL;
+	stopped_list = NULL;
 
 	return 0;
 }
@@ -102,7 +145,7 @@ bx_task_id bx_ts_add_native_task(native_function function) {
 	native_task->task.native_function = function;
 	native_task->scheduled = BX_BOOLEAN_FALSE;
 
-	task_list_add(native_task);
+	task_list_add(&stopped_list, native_task);
 
 	return native_task->id;
 }
@@ -126,7 +169,7 @@ bx_task_id bx_ts_add_pcode_task(void *buffer, bx_size buffer_size) {
 	pcode_task->task.pcode = pcode;
 	pcode_task->scheduled = BX_BOOLEAN_FALSE;
 
-	task_list_add(pcode_task);
+	task_list_add(&stopped_list, pcode_task);
 
 	return pcode_task->id;
 }
@@ -134,14 +177,15 @@ bx_task_id bx_ts_add_pcode_task(void *buffer, bx_size buffer_size) {
 bx_int8 bx_ts_schedule_task(bx_task_id task_id) {
 	struct bx_task *task;
 
-	task = task_list_search(task_id);
+	task = task_list_search(stopped_list, task_id);
 	if (task == NULL) {
 		BX_LOG(LOG_ERROR, "task_scheduler",
-				"Cannot schedule: Task %zu not found", task_id);
+				"Cannot schedule: Task %zu not found or already scheduled", task_id);
 		return -1;
 	}
 
-	task->scheduled = BX_BOOLEAN_TRUE;
+	task_list_remove(&stopped_list, task->id);
+	task_list_add(&scheduled_list, task);
 
 	return 0;
 }
@@ -149,41 +193,38 @@ bx_int8 bx_ts_schedule_task(bx_task_id task_id) {
 bx_int8 bx_ts_is_scheduled(bx_task_id task_id) {
 	struct bx_task *task;
 
-	task = task_list_search(task_id);
-	if (task == NULL) {
-		BX_LOG(LOG_ERROR, "task_scheduler",
-				"Cannot schedule: Task %zu not found", task_id);
-		return -1;
+	task = task_list_search(scheduled_list, task_id);
+	if (task != NULL) {
+		return 1;
 	}
 
-	return task->scheduled == BX_BOOLEAN_TRUE ? 1 : 0;
+	task = task_list_search(stopped_list, task_id);
+	if (task != NULL) {
+		return 0;
+
+	} else {
+		BX_LOG(LOG_ERROR, "task_scheduler",
+				"Cannot find: Task %zu not found", task_id);
+		return -1;
+	}
 }
 
 bx_int8 bx_ts_remove_task(bx_task_id task_id) {
-	struct bx_task *current_task;
-	struct bx_task *previous_task;
+	struct bx_task *task;
 
-	previous_task = NULL;
-	current_task = task_list;
-	while (current_task == NULL) {
-		if (current_task->id == task_id) {
-			break;
-		}
-		previous_task = current_task;
-		current_task = current_task->next;
+	task = task_list_remove(&stopped_list, task_id);
+	if (task != NULL) {
+		bx_ualloc_free(task_ualloc, task);
+		return 0;
 	}
 
-	if (current_task == NULL) {
-		BX_LOG(LOG_ERROR, "task_scheduler",
-				"Cannot remove: Task %zu not found", task_id);
-		return -1;
+	task = task_list_remove(&scheduled_list, task_id);
+	if (task != NULL) {
+		bx_ualloc_free(task_ualloc, task);
+		return 0;
 	}
 
-	if (previous_task == NULL) {
-		task_list = current_task->next;
-	} else {
-		previous_task->next = current_task->next;
-	}
-
-	return bx_ualloc_free(task_ualloc, current_task);
+	BX_LOG(LOG_ERROR, "task_scheduler",
+			"Cannot remove: Task %zu not found", task_id);
+	return -1;
 }

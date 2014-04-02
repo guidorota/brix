@@ -34,6 +34,6 @@
 
 #include <check.h>
 
-Suite *test_event_handler_create_suite(void);
+Suite *test_task_scheduler_create_suite(void);
 
 #endif /* TEST_EVENT_HANDLER_H_ */

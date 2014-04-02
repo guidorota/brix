@@ -77,7 +77,7 @@ int main(void) {
 	srunner_add_suite(runner, test_codegen_task_create_suite());
 	srunner_add_suite(runner, test_compiler_create_suite());
 	srunner_add_suite(runner, test_pcode_manager_create_suite());
-	srunner_add_suite(runner, test_event_handler_create_suite());
+	srunner_add_suite(runner, test_task_scheduler_create_suite());
 	srunner_add_suite(runner, test_timer_create_suite());
 
 	srunner_run_all(runner, CK_VERBOSE);

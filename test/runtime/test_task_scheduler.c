@@ -29,6 +29,7 @@
  *
  */
 
+#include <stdio.h>
 #include "test_task_scheduler.h"
 #include "virtual_machine/virtual_machine.h"
 #include "document_manager/document_manager.h"
@@ -109,7 +110,7 @@ START_TEST (pcode_handler_test) {
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
-Suite *test_event_handler_create_suite() {
+Suite *test_task_scheduler_create_suite() {
 	Suite *suite = suite_create("event_handler");
 	TCase *tcase;
 
