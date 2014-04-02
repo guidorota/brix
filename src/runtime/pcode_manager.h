@@ -41,7 +41,7 @@ struct bx_pcode;
  *
  * @return 0 on success, -1 on failure
  */
-bx_int8 bx_pm_init();
+bx_int8 bx_pcode_init();
 
 /**
  * Adds a new pcode program into the repository.
@@ -51,7 +51,7 @@ bx_int8 bx_pm_init();
  *
  * @return New bx_pcode structure, NULL on failure
  */
-struct bx_pcode *bx_pm_add(void *buffer, bx_size buffer_size);
+struct bx_pcode *bx_pcode_add(void *buffer, bx_size buffer_size);
 
 /**
  * Invokes the virtual machine and executes a program.
@@ -60,7 +60,7 @@ struct bx_pcode *bx_pm_add(void *buffer, bx_size buffer_size);
  *
  * @return 0 on success, -1 on failure
  */
-bx_int8 bx_pm_execute(struct bx_pcode *pcode);
+bx_int8 bx_pcode_execute(struct bx_pcode *pcode);
 
 /**
  * Removes a pcode program from the repository.
@@ -70,6 +70,6 @@ bx_int8 bx_pm_execute(struct bx_pcode *pcode);
  *
  * @return 0 on success, -1 on failure
  */
-bx_int8 bx_pm_remove(struct bx_pcode *pcode);
+bx_int8 bx_pcode_remove(struct bx_pcode *pcode);
 
 #endif /* PCODE_MANAGER_H_ */

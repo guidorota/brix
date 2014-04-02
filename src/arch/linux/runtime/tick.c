@@ -73,7 +73,7 @@ void *tick_routine(void *arg) {
 	return NULL;
 }
 
-bx_int8 bx_tk_start(bx_int32 period_msec, bx_tick_callback callback) {
+bx_int8 bx_tick_start(bx_int32 period_msec, bx_tick_callback callback) {
 	int error;
 
 	BX_LOG(LOG_DEBUG, "tick", "Starting tick process...");
@@ -97,19 +97,19 @@ bx_int8 bx_tk_start(bx_int32 period_msec, bx_tick_callback callback) {
 	return 0;
 }
 
-void bx_tk_pause() {
+void bx_tick_pause() {
 	bx_critical_enter();
 	paused = BX_BOOLEAN_TRUE;
 	bx_critical_exit();
 }
 
-void bx_tk_resume() {
+void bx_tick_resume() {
 	bx_critical_enter();
 	paused = BX_BOOLEAN_FALSE;
 	bx_critical_exit();
 }
 
-bx_uint64 bx_tk_get_tick_count() {
+bx_uint64 bx_tick_get_count() {
 	bx_uint64 tick_count_copy;
 
 	bx_critical_enter();
@@ -119,7 +119,7 @@ bx_uint64 bx_tk_get_tick_count() {
 	return tick_count_copy;
 }
 
-bx_int8 bx_tk_stop() {
+bx_int8 bx_tick_stop() {
 
 	BX_LOG(LOG_DEBUG, "tick", "Stopping tick process...");
 	pthread_cancel(thread);

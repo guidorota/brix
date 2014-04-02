@@ -52,7 +52,7 @@ struct bx_document_field {
  *
  * @return 0 on success, -1 on failure.
  */
-bx_int8 bx_dm_document_manager_init(void);
+bx_int8 bx_docman_init(void);
 
 /**
  * Adds a new field to the document manager.
@@ -64,10 +64,10 @@ bx_int8 bx_dm_document_manager_init(void);
  *
  * @return 0 on success, -1 on failure
  */
-bx_int8 bx_dm_add_field(struct bx_document_field *field, char *identifier);
+bx_int8 bx_docman_add_field(struct bx_document_field *field, char *identifier);
 
-bx_int8 bx_dm_invoke_get(char *field_identifier, void *data);
+bx_int8 bx_docman_invoke_get(char *field_identifier, void *data);
 
-bx_int8 bx_dm_invoke_set(char *field_identifier, void *data);
+bx_int8 bx_docman_invoke_set(char *field_identifier, void *data);
 
 #endif /* TEST_DOCUMENT_MANAGER_H_ */

@@ -36,14 +36,14 @@
 
 typedef void (*bx_tick_callback)();
 
-bx_int8 bx_tk_start(bx_int32 period_msec, bx_tick_callback callback);
+bx_int8 bx_tick_start(bx_int32 period_msec, bx_tick_callback callback);
 
-void bx_tk_pause();
+void bx_tick_pause();
 
-void bx_tk_resume();
+void bx_tick_resume();
 
-bx_uint64 bx_tk_get_tick_count();
+bx_uint64 bx_tick_get_count();
 
-bx_int8 bx_tk_stop();
+bx_int8 bx_tick_stop();
 
 #endif /* TICK_H_ */

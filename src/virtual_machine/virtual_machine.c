@@ -421,7 +421,7 @@ static bx_int8 bx_rload32_function(struct bx_vm_status *vm_status) {
 	if (error == -1) {
 		return -1;
 	}
-	error = bx_dm_invoke_get(identifier, &data);
+	error = bx_docman_invoke_get(identifier, &data);
 	if (error == -1) {
 		return -1;
 	}
@@ -446,7 +446,7 @@ static bx_int8 bx_rstore32_function(struct bx_vm_status *vm_status) {
 	if (error == -1) {
 		return -1;
 	}
-	error = bx_dm_invoke_set(identifier, &data);
+	error = bx_docman_invoke_set(identifier, &data);
 	if (error == -1) {
 		return -1;
 	}

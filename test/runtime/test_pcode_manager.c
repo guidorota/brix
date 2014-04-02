@@ -54,14 +54,14 @@ struct test_bx_pcode {
 START_TEST (init_test) {
 	bx_int8 error;
 
-	error = bx_pm_init();
+	error = bx_pcode_init();
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
 START_TEST (add_test) {
-	pcode1 = (struct test_bx_pcode *) bx_pm_add((void *) DATA1, DATA1_SIZE);
+	pcode1 = (struct test_bx_pcode *) bx_pcode_add((void *) DATA1, DATA1_SIZE);
 	ck_assert_ptr_ne(pcode1, NULL);
-	pcode2 = (struct test_bx_pcode *) bx_pm_add((void *) DATA2, DATA2_SIZE);
+	pcode2 = (struct test_bx_pcode *) bx_pcode_add((void *) DATA2, DATA2_SIZE);
 	ck_assert_ptr_ne(pcode2, NULL);
 
 	ck_assert_int_eq(pcode1->valid, BX_BOOLEAN_TRUE);
@@ -78,7 +78,7 @@ START_TEST (remove_test) {
 	void *data2_pcode_pointer;
 
 	data2_pcode_pointer = pcode2->instructions;
-	error = bx_pm_remove((struct bx_pcode *) pcode1);
+	error = bx_pcode_remove((struct bx_pcode *) pcode1);
 	ck_assert_int_eq(error, 0);
 	ck_assert_int_eq(pcode1->valid, BX_BOOLEAN_FALSE);
 	ck_assert_int_eq(pcode1->size, 0);
@@ -88,7 +88,7 @@ START_TEST (remove_test) {
 	ck_assert_int_eq(pcode2->size, DATA2_SIZE);
 	ck_assert_int_eq(memcmp(pcode2->instructions, DATA2, DATA2_SIZE), 0);
 
-	pcode3 = (struct test_bx_pcode *) bx_pm_add((void *) DATA3, DATA3_SIZE);
+	pcode3 = (struct test_bx_pcode *) bx_pcode_add((void *) DATA3, DATA3_SIZE);
 	ck_assert_ptr_ne(pcode2, NULL);
 	ck_assert_int_eq(pcode3->valid, BX_BOOLEAN_TRUE);
 	ck_assert_int_eq(pcode3->size, DATA3_SIZE);

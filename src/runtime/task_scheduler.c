@@ -159,7 +159,7 @@ static struct bx_task *task_list_extract_head(struct bx_task **task_list) {
 	return head;
 }
 
-bx_int8 bx_ts_init() {
+bx_int8 bx_sched_init() {
 
 	task_ualloc = bx_ualloc_init(task_storage,
 			EV_HANDLER_STORAGE_SIZE, sizeof (struct bx_task));
@@ -175,7 +175,7 @@ bx_int8 bx_ts_init() {
 	return 0;
 }
 
-void bx_ts_scheduler_loop(bx_boolean stop_if_empty) {
+void bx_sched_scheduler_loop(bx_boolean stop_if_empty) {
 
 	while (1) {
 		bx_critical_enter();
@@ -193,7 +193,7 @@ void bx_ts_scheduler_loop(bx_boolean stop_if_empty) {
 			running->task.native_function();
 			break;
 		case BX_HANDLER_PCODE:
-			bx_pm_execute(running->task.pcode);
+			bx_pcode_execute(running->task.pcode);
 		}
 
 		bx_critical_enter();
@@ -203,7 +203,7 @@ void bx_ts_scheduler_loop(bx_boolean stop_if_empty) {
 	}
 }
 
-bx_task_id bx_ts_add_native_task(native_function function) {
+bx_task_id bx_sched_add_native_task(native_function function) {
 	struct bx_task *native_task;
 
 	if (function == NULL) {
@@ -223,7 +223,7 @@ bx_task_id bx_ts_add_native_task(native_function function) {
 	return native_task->id;
 }
 
-bx_task_id bx_ts_add_pcode_task(void *buffer, bx_size buffer_size) {
+bx_task_id bx_sched_add_pcode_task(void *buffer, bx_size buffer_size) {
 	struct bx_pcode *pcode;
 	struct bx_task *pcode_task;
 
@@ -231,7 +231,7 @@ bx_task_id bx_ts_add_pcode_task(void *buffer, bx_size buffer_size) {
 		return -1;
 	}
 
-	pcode = bx_pm_add(buffer, buffer_size);
+	pcode = bx_pcode_add(buffer, buffer_size);
 	if (pcode == NULL) {
 		return -1;
 	}
@@ -249,7 +249,7 @@ bx_task_id bx_ts_add_pcode_task(void *buffer, bx_size buffer_size) {
 	return pcode_task->id;
 }
 
-bx_int8 bx_ts_schedule_task(bx_task_id task_id) {
+bx_int8 bx_sched_schedule_task(bx_task_id task_id) {
 	struct bx_task *task;
 
 	bx_critical_enter();
@@ -269,7 +269,7 @@ bx_int8 bx_ts_schedule_task(bx_task_id task_id) {
 	return 0;
 }
 
-bx_int8 bx_ts_is_scheduled(bx_task_id task_id) {
+bx_int8 bx_sched_is_scheduled(bx_task_id task_id) {
 	struct bx_task *task_scheduled;
 	struct bx_task *task_stopped;
 
@@ -289,7 +289,7 @@ bx_int8 bx_ts_is_scheduled(bx_task_id task_id) {
 	}
 }
 
-bx_int8 bx_ts_remove_task(bx_task_id task_id) {
+bx_int8 bx_sched_remove_task(bx_task_id task_id) {
 	struct bx_task *task_scheduled;
 	struct bx_task *task_stopped;
 

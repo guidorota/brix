@@ -51,11 +51,11 @@ START_TEST (init_test) {
 	ck_assert_int_eq(error, 0);
 
 	// Init document manager
-	error = bx_dm_document_manager_init();
+	error = bx_docman_init();
 	ck_assert_int_eq(error, 0);
-	error = bx_test_field_init(&bool_test_field, &bool_test_field_data);
+	error = bx_tfield_init(&bool_test_field, &bool_test_field_data);
 	ck_assert_int_eq(error, 0);
-	error = bx_dm_add_field(&bool_test_field, BOOL_TEST_FIELD);
+	error = bx_docman_add_field(&bool_test_field, BOOL_TEST_FIELD);
 	ck_assert_int_eq(error, 0);
 
 	// Setup compiler symbol table
@@ -86,7 +86,7 @@ START_TEST (logical_or_test) {
 	bx_cgex_destroy_expression(result);
 
 	// TRUE binary, TRUE binary
-	bx_test_field_set_bool(&bool_test_field, BX_BOOLEAN_TRUE);
+	bx_tfield_set_bool(&bool_test_field, BX_BOOLEAN_TRUE);
 	operand1 = bx_cgex_create_variable(symbol_table, BOOL_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
 	operand2 = bx_cgex_create_variable(symbol_table, BOOL_TEST_FIELD);
@@ -100,7 +100,7 @@ START_TEST (logical_or_test) {
 	bx_cgpc_add_identifier(result->value.pcode, BOOL_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&bool_test_field), BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(bx_tfield_get_int(&bool_test_field), BX_BOOLEAN_TRUE);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(operand2);
 	bx_cgex_destroy_expression(result);
@@ -108,7 +108,7 @@ START_TEST (logical_or_test) {
 	// TRUE constant, FALSE binary
 	operand1 = bx_cgex_create_bool_constant(BX_BOOLEAN_TRUE);
 	ck_assert_ptr_ne(operand1, NULL);
-	bx_test_field_set_bool(&bool_test_field, BX_BOOLEAN_FALSE);
+	bx_tfield_set_bool(&bool_test_field, BX_BOOLEAN_FALSE);
 	operand2 = bx_cgex_create_variable(symbol_table, BOOL_TEST_FIELD);
 	ck_assert_ptr_ne(operand2, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_OR);
@@ -120,13 +120,13 @@ START_TEST (logical_or_test) {
 	bx_cgpc_add_identifier(result->value.pcode, BOOL_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_bool(&bool_test_field), BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(bx_tfield_get_bool(&bool_test_field), BX_BOOLEAN_TRUE);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(operand2);
 	bx_cgex_destroy_expression(result);
 
 	// FALSE binary, TRUE constant
-	bx_test_field_set_bool(&bool_test_field, BX_BOOLEAN_FALSE);
+	bx_tfield_set_bool(&bool_test_field, BX_BOOLEAN_FALSE);
 	operand2 = bx_cgex_create_variable(symbol_table, BOOL_TEST_FIELD);
 	operand1 = bx_cgex_create_bool_constant(BX_BOOLEAN_TRUE);
 	ck_assert_ptr_ne(operand1, NULL);
@@ -140,7 +140,7 @@ START_TEST (logical_or_test) {
 	bx_cgpc_add_identifier(result->value.pcode, BOOL_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_bool(&bool_test_field), BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(bx_tfield_get_bool(&bool_test_field), BX_BOOLEAN_TRUE);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(operand2);
 	bx_cgex_destroy_expression(result);
@@ -167,7 +167,7 @@ START_TEST (logical_and_test) {
 	bx_cgex_destroy_expression(result);
 
 	// TRUE binary, TRUE binary
-	bx_test_field_set_bool(&bool_test_field, BX_BOOLEAN_TRUE);
+	bx_tfield_set_bool(&bool_test_field, BX_BOOLEAN_TRUE);
 	operand1 = bx_cgex_create_variable(symbol_table, BOOL_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
 	operand2 = bx_cgex_create_variable(symbol_table, BOOL_TEST_FIELD);
@@ -181,7 +181,7 @@ START_TEST (logical_and_test) {
 	bx_cgpc_add_identifier(result->value.pcode, BOOL_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&bool_test_field), BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(bx_tfield_get_int(&bool_test_field), BX_BOOLEAN_TRUE);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(operand2);
 	bx_cgex_destroy_expression(result);
@@ -189,7 +189,7 @@ START_TEST (logical_and_test) {
 	// TRUE constant, FALSE binary
 	operand1 = bx_cgex_create_bool_constant(BX_BOOLEAN_TRUE);
 	ck_assert_ptr_ne(operand1, NULL);
-	bx_test_field_set_bool(&bool_test_field, BX_BOOLEAN_FALSE);
+	bx_tfield_set_bool(&bool_test_field, BX_BOOLEAN_FALSE);
 	operand2 = bx_cgex_create_variable(symbol_table, BOOL_TEST_FIELD);
 	ck_assert_ptr_ne(operand2, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_AND);
@@ -201,13 +201,13 @@ START_TEST (logical_and_test) {
 	bx_cgpc_add_identifier(result->value.pcode, BOOL_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_bool(&bool_test_field), BX_BOOLEAN_FALSE);
+	ck_assert_int_eq(bx_tfield_get_bool(&bool_test_field), BX_BOOLEAN_FALSE);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(operand2);
 	bx_cgex_destroy_expression(result);
 
 	// FALSE binary, TRUE constant
-	bx_test_field_set_bool(&bool_test_field, BX_BOOLEAN_FALSE);
+	bx_tfield_set_bool(&bool_test_field, BX_BOOLEAN_FALSE);
 	operand2 = bx_cgex_create_variable(symbol_table, BOOL_TEST_FIELD);
 	operand1 = bx_cgex_create_bool_constant(BX_BOOLEAN_TRUE);
 	ck_assert_ptr_ne(operand1, NULL);
@@ -221,7 +221,7 @@ START_TEST (logical_and_test) {
 	bx_cgpc_add_identifier(result->value.pcode, BOOL_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_bool(&bool_test_field), BX_BOOLEAN_FALSE);
+	ck_assert_int_eq(bx_tfield_get_bool(&bool_test_field), BX_BOOLEAN_FALSE);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(operand2);
 	bx_cgex_destroy_expression(result);
@@ -255,7 +255,7 @@ START_TEST (logical_not_test) {
 	bx_cgex_destroy_expression(result);
 
 	// FALSE binary
-	bx_test_field_set_bool(&bool_test_field, BX_BOOLEAN_FALSE);
+	bx_tfield_set_bool(&bool_test_field, BX_BOOLEAN_FALSE);
 	operand1 = bx_cgex_create_variable(symbol_table, BOOL_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_NOT);
@@ -267,12 +267,12 @@ START_TEST (logical_not_test) {
 	bx_cgpc_add_identifier(result->value.pcode, BOOL_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_bool(&bool_test_field), BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(bx_tfield_get_bool(&bool_test_field), BX_BOOLEAN_TRUE);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(result);
 
 	// TRUE binary
-	bx_test_field_set_bool(&bool_test_field, BX_BOOLEAN_TRUE);
+	bx_tfield_set_bool(&bool_test_field, BX_BOOLEAN_TRUE);
 	operand1 = bx_cgex_create_variable(symbol_table, BOOL_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_NOT);
@@ -284,7 +284,7 @@ START_TEST (logical_not_test) {
 	bx_cgpc_add_identifier(result->value.pcode, BOOL_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_bool(&bool_test_field), BX_BOOLEAN_FALSE);
+	ck_assert_int_eq(bx_tfield_get_bool(&bool_test_field), BX_BOOLEAN_FALSE);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(result);
 } END_TEST

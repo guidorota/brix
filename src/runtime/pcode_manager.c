@@ -50,14 +50,14 @@ static bx_size pcode_count;
 
 static struct bx_pcode *get_available_pcode();
 
-bx_int8 bx_pm_init() {
+bx_int8 bx_pcode_init() {
 	total_instruction_length = 0;
 	pcode_count = 0;
 
 	return 0;
 }
 
-struct bx_pcode *bx_pm_add(void *buffer, bx_size buffer_size) {
+struct bx_pcode *bx_pcode_add(void *buffer, bx_size buffer_size) {
 	struct bx_pcode *pcode;
 
 	if (buffer == NULL) {
@@ -95,7 +95,7 @@ static struct bx_pcode *get_available_pcode() {
 	return PCODE_STRUCT(pcode_count++);
 }
 
-bx_int8 bx_pm_execute(struct bx_pcode *pcode) {
+bx_int8 bx_pcode_execute(struct bx_pcode *pcode) {
 	if (pcode == NULL) {
 		return -1;
 	}
@@ -114,7 +114,7 @@ bx_int8 bx_pm_execute(struct bx_pcode *pcode) {
 	return bx_vm_execute((bx_uint8 *) pcode->instructions, pcode->size);
 }
 
-bx_int8 bx_pm_remove(struct bx_pcode *pcode) {
+bx_int8 bx_pcode_remove(struct bx_pcode *pcode) {
 	void *destination;
 	void *source;
 	bx_size length;

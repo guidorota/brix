@@ -52,11 +52,11 @@ START_TEST (init_test) {
 	ck_assert_int_eq(error, 0);
 
 	// Init document manager
-	error = bx_dm_document_manager_init();
+	error = bx_docman_init();
 	ck_assert_int_eq(error, 0);
-	error = bx_test_field_init(&int_test_field, &int_test_field_data);
+	error = bx_tfield_init(&int_test_field, &int_test_field_data);
 	ck_assert_int_eq(error, 0);
-	error = bx_dm_add_field(&int_test_field, INT_TEST_FIELD);
+	error = bx_docman_add_field(&int_test_field, INT_TEST_FIELD);
 	ck_assert_int_eq(error, 0);
 
 	// Setup compiler symbol table
@@ -89,7 +89,7 @@ START_TEST (bitwise_or_test) {
 	bx_cgex_destroy_expression(result);
 
 	// Operand1 Int, Operand2 Int, binary
-	bx_test_field_set_int(&int_test_field, int_operand1);
+	bx_tfield_set_int(&int_test_field, int_operand1);
 	operand1 = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
 	operand2 = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
@@ -103,7 +103,7 @@ START_TEST (bitwise_or_test) {
 	bx_cgpc_add_identifier(result->value.pcode, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), int_operand1 | int_operand1);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), int_operand1 | int_operand1);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(operand2);
 	bx_cgex_destroy_expression(result);
@@ -111,7 +111,7 @@ START_TEST (bitwise_or_test) {
 	// Operand1 Int constant, Operand2 Int binary
 	operand1 = bx_cgex_create_int_constant(int_operand1);
 	ck_assert_ptr_ne(operand1, NULL);
-	bx_test_field_set_int(&int_test_field, int_operand2);
+	bx_tfield_set_int(&int_test_field, int_operand2);
 	operand2 = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(operand2, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_BITWISE_OR);
@@ -123,13 +123,13 @@ START_TEST (bitwise_or_test) {
 	bx_cgpc_add_identifier(result->value.pcode, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), int_operand1 | int_operand2);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), int_operand1 | int_operand2);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(operand2);
 	bx_cgex_destroy_expression(result);
 
 	// Operand1 Int binary, Operand2 Int constant
-	bx_test_field_set_int(&int_test_field, int_operand1);
+	bx_tfield_set_int(&int_test_field, int_operand1);
 	operand2 = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	operand1 = bx_cgex_create_int_constant(int_operand2);
 		ck_assert_ptr_ne(operand1, NULL);
@@ -143,7 +143,7 @@ START_TEST (bitwise_or_test) {
 	bx_cgpc_add_identifier(result->value.pcode, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), int_operand2 | int_operand1);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), int_operand2 | int_operand1);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(operand2);
 	bx_cgex_destroy_expression(result);
@@ -172,7 +172,7 @@ START_TEST (bitwise_xor_test) {
 	bx_cgex_destroy_expression(result);
 
 	// Operand1 Int, Operand2 Int, binary
-	bx_test_field_set_int(&int_test_field, int_operand1);
+	bx_tfield_set_int(&int_test_field, int_operand1);
 	operand1 = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
 	operand2 = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
@@ -186,7 +186,7 @@ START_TEST (bitwise_xor_test) {
 	bx_cgpc_add_identifier(result->value.pcode, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), int_operand1 ^ int_operand1);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), int_operand1 ^ int_operand1);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(operand2);
 	bx_cgex_destroy_expression(result);
@@ -194,7 +194,7 @@ START_TEST (bitwise_xor_test) {
 	// Operand1 Int constant, Operand2 Int binary
 	operand1 = bx_cgex_create_int_constant(int_operand1);
 	ck_assert_ptr_ne(operand1, NULL);
-	bx_test_field_set_int(&int_test_field, int_operand2);
+	bx_tfield_set_int(&int_test_field, int_operand2);
 	operand2 = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(operand2, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_BITWISE_XOR);
@@ -206,13 +206,13 @@ START_TEST (bitwise_xor_test) {
 	bx_cgpc_add_identifier(result->value.pcode, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), int_operand1 ^ int_operand2);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), int_operand1 ^ int_operand2);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(operand2);
 	bx_cgex_destroy_expression(result);
 
 	// Operand1 Int binary, Operand2 Int constant
-	bx_test_field_set_int(&int_test_field, int_operand1);
+	bx_tfield_set_int(&int_test_field, int_operand1);
 	operand2 = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	operand1 = bx_cgex_create_int_constant(int_operand2);
 		ck_assert_ptr_ne(operand1, NULL);
@@ -226,7 +226,7 @@ START_TEST (bitwise_xor_test) {
 	bx_cgpc_add_identifier(result->value.pcode, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), int_operand2 ^ int_operand1);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), int_operand2 ^ int_operand1);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(operand2);
 	bx_cgex_destroy_expression(result);
@@ -255,7 +255,7 @@ START_TEST (bitwise_and_test) {
 	bx_cgex_destroy_expression(result);
 
 	// Operand1 Int, Operand2 Int, binary
-	bx_test_field_set_int(&int_test_field, int_operand1);
+	bx_tfield_set_int(&int_test_field, int_operand1);
 	operand1 = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
 	operand2 = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
@@ -269,7 +269,7 @@ START_TEST (bitwise_and_test) {
 	bx_cgpc_add_identifier(result->value.pcode, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), int_operand1 & int_operand1);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), int_operand1 & int_operand1);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(operand2);
 	bx_cgex_destroy_expression(result);
@@ -277,7 +277,7 @@ START_TEST (bitwise_and_test) {
 	// Operand1 Int constant, Operand2 Int binary
 	operand1 = bx_cgex_create_int_constant(int_operand1);
 	ck_assert_ptr_ne(operand1, NULL);
-	bx_test_field_set_int(&int_test_field, int_operand2);
+	bx_tfield_set_int(&int_test_field, int_operand2);
 	operand2 = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(operand2, NULL);
 	result = bx_cgex_binary_expression(operand1, operand2, BX_COMP_OP_BITWISE_AND);
@@ -289,13 +289,13 @@ START_TEST (bitwise_and_test) {
 	bx_cgpc_add_identifier(result->value.pcode, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), int_operand1 & int_operand2);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), int_operand1 & int_operand2);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(operand2);
 	bx_cgex_destroy_expression(result);
 
 	// Operand1 Int binary, Operand2 Int constant
-	bx_test_field_set_int(&int_test_field, int_operand1);
+	bx_tfield_set_int(&int_test_field, int_operand1);
 	operand2 = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	operand1 = bx_cgex_create_int_constant(int_operand2);
 		ck_assert_ptr_ne(operand1, NULL);
@@ -309,7 +309,7 @@ START_TEST (bitwise_and_test) {
 	bx_cgpc_add_identifier(result->value.pcode, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), int_operand2 & int_operand1);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), int_operand2 & int_operand1);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(operand2);
 	bx_cgex_destroy_expression(result);
@@ -357,7 +357,7 @@ START_TEST (bitwise_not_test) {
 	bx_cgex_destroy_expression(result);
 
 	// Int operand, binary
-	bx_test_field_set_int(&int_test_field, int_value0);
+	bx_tfield_set_int(&int_test_field, int_value0);
 	operand1 = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_BITWISE_COMPLEMENT);
@@ -369,12 +369,12 @@ START_TEST (bitwise_not_test) {
 	bx_cgpc_add_identifier(result->value.pcode, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), ~int_value0);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), ~int_value0);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(result);
 
 	// Int operand, binary
-	bx_test_field_set_int(&int_test_field, int_value1);
+	bx_tfield_set_int(&int_test_field, int_value1);
 	operand1 = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_BITWISE_COMPLEMENT);
@@ -386,12 +386,12 @@ START_TEST (bitwise_not_test) {
 	bx_cgpc_add_identifier(result->value.pcode, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), ~int_value1);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), ~int_value1);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(result);
 
 	// Int operand, binary
-	bx_test_field_set_int(&int_test_field, int_value2);
+	bx_tfield_set_int(&int_test_field, int_value2);
 	operand1 = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(operand1, NULL);
 	result = bx_cgex_unary_expression(operand1, BX_COMP_OP_BITWISE_COMPLEMENT);
@@ -403,7 +403,7 @@ START_TEST (bitwise_not_test) {
 	bx_cgpc_add_identifier(result->value.pcode, INT_TEST_FIELD);
 	error = bx_vm_execute(result->value.pcode->data, result->value.pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), ~int_value2);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), ~int_value2);
 	bx_cgex_destroy_expression(operand1);
 	bx_cgex_destroy_expression(result);
 } END_TEST

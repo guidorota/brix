@@ -47,68 +47,68 @@ static bx_int32 value = 52;
 START_TEST (test_field_init) {
 	bx_int8 error;
 
-	error = bx_test_field_init(&test_field1, &test_field_data1);
+	error = bx_tfield_init(&test_field1, &test_field_data1);
 	ck_assert_int_eq(error, 0);
-	error = bx_test_field_init(&test_field2, &test_field_data2);
+	error = bx_tfield_init(&test_field2, &test_field_data2);
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
 START_TEST (document_manager_init) {
 	bx_int8 error;
 
-	error = bx_dm_document_manager_init();
+	error = bx_docman_init();
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
 START_TEST (add_test_field) {
 	bx_int8 error;
 
-	error = bx_dm_add_field(&test_field1, FIELD_ID1);
+	error = bx_docman_add_field(&test_field1, FIELD_ID1);
 	ck_assert_int_eq(error, 0);
-	error = bx_dm_add_field(&test_field2, FIELD_ID2);
+	error = bx_docman_add_field(&test_field2, FIELD_ID2);
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
 START_TEST (reject_duplicate_id) {
 	bx_int8 error;
 
-	error = bx_dm_add_field(&test_field1, FIELD_ID1);
+	error = bx_docman_add_field(&test_field1, FIELD_ID1);
 	ck_assert_int_ne(error, 0);
-	error = bx_dm_add_field(&test_field2, FIELD_ID2);
+	error = bx_docman_add_field(&test_field2, FIELD_ID2);
 	ck_assert_int_ne(error, 0);
 } END_TEST
 
 START_TEST (set_field_value) {
 	bx_int8 error;
 
-	bx_test_field_set_int(&test_field1, 0);
-	ck_assert_int_ne(bx_test_field_get_int(&test_field1), value);
-	error = bx_dm_invoke_set(FIELD_ID1, &value);
+	bx_tfield_set_int(&test_field1, 0);
+	ck_assert_int_ne(bx_tfield_get_int(&test_field1), value);
+	error = bx_docman_invoke_set(FIELD_ID1, &value);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&test_field1), value);
+	ck_assert_int_eq(bx_tfield_get_int(&test_field1), value);
 
-	bx_test_field_set_int(&test_field2, 0);
-	ck_assert_int_ne(bx_test_field_get_int(&test_field2), value);
-	error = bx_dm_invoke_set(FIELD_ID2, &value);
+	bx_tfield_set_int(&test_field2, 0);
+	ck_assert_int_ne(bx_tfield_get_int(&test_field2), value);
+	error = bx_docman_invoke_set(FIELD_ID2, &value);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&test_field2), value);
+	ck_assert_int_eq(bx_tfield_get_int(&test_field2), value);
 } END_TEST
 
 START_TEST (get_field_value) {
 	bx_int8 error;
 	bx_int32 out_value;
 
-	bx_test_field_set_int(&test_field1, value);
-	ck_assert_int_eq(bx_test_field_get_int(&test_field1), value);
-	error = bx_dm_invoke_get(FIELD_ID1, &out_value);
+	bx_tfield_set_int(&test_field1, value);
+	ck_assert_int_eq(bx_tfield_get_int(&test_field1), value);
+	error = bx_docman_invoke_get(FIELD_ID1, &out_value);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(out_value, bx_test_field_get_int(&test_field1));
+	ck_assert_int_eq(out_value, bx_tfield_get_int(&test_field1));
 
-	bx_test_field_set_int(&test_field2, value);
-	ck_assert_int_eq(bx_test_field_get_int(&test_field2), value);
-	error = bx_dm_invoke_get(FIELD_ID2, &out_value);
+	bx_tfield_set_int(&test_field2, value);
+	ck_assert_int_eq(bx_tfield_get_int(&test_field2), value);
+	error = bx_docman_invoke_get(FIELD_ID2, &out_value);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(out_value, bx_test_field_get_int(&test_field2));
+	ck_assert_int_eq(out_value, bx_tfield_get_int(&test_field2));
 } END_TEST
 
 Suite *test_document_manager_create_suite() {

@@ -46,14 +46,14 @@ enum bx_timer_type {
  *
  * @return 0 on successful initialization, -1 on error
  */
-bx_int8 bx_tm_init();
+bx_int8 bx_timer_init();
 
 /**
  * Returns the number of ticks elapsed since the start of the system.
  *
  * @return Number of ticks since system start
  */
-bx_uint64 bx_tm_get_tick_count();
+bx_uint64 bx_timer_get_tick_count();
 
 /**
  * Adds a new timer in the system.
@@ -67,7 +67,7 @@ bx_uint64 bx_tm_get_tick_count();
  *
  * @return 0 on successful addition, -1 on error
  */
-bx_int8 bx_tm_add_timer(enum bx_timer_type timer_type,
+bx_int8 bx_timer_add_timer(enum bx_timer_type timer_type,
 		bx_int64 time_msec, bx_task_id task_id);
 
 /**
@@ -75,6 +75,6 @@ bx_int8 bx_tm_add_timer(enum bx_timer_type timer_type,
  *
  * @return 0 on successful desctruction, -1 on error
  */
-bx_int8 bx_tm_destroy();
+bx_int8 bx_timer_destroy();
 
 #endif /* TIMER_H_ */

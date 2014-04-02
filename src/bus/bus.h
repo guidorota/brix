@@ -33,7 +33,14 @@
 #define BUS_H_
 
 #include "types.h"
+#include "bus/interface.h"
 
 bx_int8 ha_bus_init();
+
+bx_int8 ha_bus_add_interface(struct bx_interface *interface);
+
+bx_int8 ha_bus_receive_callback(struct bx_interface *interface, void *endpoint, void *message, bx_size message_length);
+
+bx_int8 ha_bus_destroy();
 
 #endif /* BUS_H_ */

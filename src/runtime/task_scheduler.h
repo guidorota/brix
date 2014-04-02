@@ -44,7 +44,7 @@ typedef bx_ssize bx_task_id;
  *
  * @return 0 on successful initialization, -1 on error
  */
-bx_int8 bx_ts_init();
+bx_int8 bx_sched_init();
 
 /**
  * Starts the scheduler loop.
@@ -52,7 +52,7 @@ bx_int8 bx_ts_init();
  * @param stop_if_empty If set to 1 the loop ends as soon as the
  * scheduled queue is empty
  */
-void bx_ts_scheduler_loop(bx_boolean stop_if_empty);
+void bx_sched_scheduler_loop(bx_boolean stop_if_empty);
 
 /**
  * Adds a task based on a native C function.
@@ -61,7 +61,7 @@ void bx_ts_scheduler_loop(bx_boolean stop_if_empty);
  *
  * @return Task id, -1 on error
  */
-bx_task_id bx_ts_add_native_task(native_function function);
+bx_task_id bx_sched_add_native_task(native_function function);
 
 /**
  * Adds a task based on a pcode routine.
@@ -73,7 +73,7 @@ bx_task_id bx_ts_add_native_task(native_function function);
  *
  * @return Task id, -1 on error
  */
-bx_task_id bx_ts_add_pcode_task(void *buffer, bx_size buffer_size);
+bx_task_id bx_sched_add_pcode_task(void *buffer, bx_size buffer_size);
 
 /**
  * Schedules a task for execution
@@ -82,7 +82,7 @@ bx_task_id bx_ts_add_pcode_task(void *buffer, bx_size buffer_size);
  *
  * @return 0 on successful schedulation, -1 on error
  */
-bx_int8 bx_ts_schedule_task(bx_task_id task_id);
+bx_int8 bx_sched_schedule_task(bx_task_id task_id);
 
 /**
  * Checks if the task is scheduled.
@@ -91,7 +91,7 @@ bx_int8 bx_ts_schedule_task(bx_task_id task_id);
  *
  * @return 1 if the task is scheduled, 0 if the task isn't scheduled, -1 on error
  */
-bx_int8 bx_ts_is_scheduled(bx_task_id task_id);
+bx_int8 bx_sched_is_scheduled(bx_task_id task_id);
 
 /**
  * Removes the task.
@@ -100,6 +100,6 @@ bx_int8 bx_ts_is_scheduled(bx_task_id task_id);
  *
  * @return 0 on successful removal, -1 on error
  */
-bx_int8 bx_ts_remove_task(bx_task_id task_id);
+bx_int8 bx_sched_remove_task(bx_task_id task_id);
 
 #endif /* TASK_SCHEDULER_H_ */

@@ -18,17 +18,17 @@ int main(int argc, char* argv[]) {
 	BX_LOG(LOG_INFO, "main", "Initializing...");
 	bx_critical_init();
 	bx_vm_virtual_machine_init();
-	bx_dm_document_manager_init();
-	bx_pm_init();
-	bx_tm_init();
-	bx_ts_init();
+	bx_docman_init();
+	bx_pcode_init();
+	bx_timer_init();
+	bx_sched_init();
 
 	printf("Type q :return to quit\n");
 	char input = 0;
 	while(input != 'q') {
 		input = getchar();
 	}
-	bx_tm_destroy();
+	bx_timer_destroy();
 	bx_critical_destroy();
 
 	return 0;

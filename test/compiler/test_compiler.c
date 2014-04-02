@@ -103,31 +103,31 @@ START_TEST (init_test) {
 	ck_assert_int_eq(error, 0);
 
 	// Init document manager
-	error = bx_dm_document_manager_init();
+	error = bx_docman_init();
 	ck_assert_int_eq(error, 0);
-	error = bx_test_field_init(&int_test_field, &int_test_field_data);
+	error = bx_tfield_init(&int_test_field, &int_test_field_data);
 	ck_assert_int_eq(error, 0);
-	error = bx_test_field_init(&float_test_field, &float_test_field_data);
+	error = bx_tfield_init(&float_test_field, &float_test_field_data);
 	ck_assert_int_eq(error, 0);
-	error = bx_test_field_init(&boolean_test_field, &boolean_test_field_data);
+	error = bx_tfield_init(&boolean_test_field, &boolean_test_field_data);
 	ck_assert_int_eq(error, 0);
-	error = bx_dm_add_field(&int_test_field, INT_TEST_FIELD);
+	error = bx_docman_add_field(&int_test_field, INT_TEST_FIELD);
 	ck_assert_int_eq(error, 0);
-	error = bx_dm_add_field(&float_test_field, FLOAT_TEST_FIELD);
+	error = bx_docman_add_field(&float_test_field, FLOAT_TEST_FIELD);
 	ck_assert_int_eq(error, 0);
-	error = bx_dm_add_field(&boolean_test_field, BOOLEAN_TEST_FIELD);
+	error = bx_docman_add_field(&boolean_test_field, BOOLEAN_TEST_FIELD);
 	ck_assert_int_eq(error, 0);
-	error = bx_test_field_init(&int_output_test_field, &int_output_test_field_data);
+	error = bx_tfield_init(&int_output_test_field, &int_output_test_field_data);
 	ck_assert_int_eq(error, 0);
-	error = bx_test_field_init(&float_output_test_field, &float_output_test_field_data);
+	error = bx_tfield_init(&float_output_test_field, &float_output_test_field_data);
 	ck_assert_int_eq(error, 0);
-	error = bx_test_field_init(&boolean_output_test_field, &boolean_output_test_field_data);
+	error = bx_tfield_init(&boolean_output_test_field, &boolean_output_test_field_data);
 	ck_assert_int_eq(error, 0);
-	error = bx_dm_add_field(&int_output_test_field, INT_OUTPUT_TEST_FIELD);
+	error = bx_docman_add_field(&int_output_test_field, INT_OUTPUT_TEST_FIELD);
 	ck_assert_int_eq(error, 0);
-	error = bx_dm_add_field(&float_output_test_field, FLOAT_OUTPUT_TEST_FIELD);
+	error = bx_docman_add_field(&float_output_test_field, FLOAT_OUTPUT_TEST_FIELD);
 	ck_assert_int_eq(error, 0);
-	error = bx_dm_add_field(&boolean_output_test_field, BOOLEAN_OUTPUT_TEST_FIELD);
+	error = bx_docman_add_field(&boolean_output_test_field, BOOLEAN_OUTPUT_TEST_FIELD);
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
@@ -162,7 +162,7 @@ START_TEST (assignment_test) {
 
 	error = bx_vm_execute(main_task->pcode->data, main_task->pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 5);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 5);
 	bx_cgtk_destroy_task(main_task);
 } END_TEST
 
@@ -175,7 +175,7 @@ START_TEST (local_variable_assignment_test) {
 			"temp = 5;"
 			"int_test_field = temp + 12;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 17);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 17);
 } END_TEST
 
 START_TEST (declaration_assignment_test) {
@@ -188,8 +188,8 @@ START_TEST (declaration_assignment_test) {
 			"int_output_test_field = temp;"
 			);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 5);
-	ck_assert_int_eq(bx_test_field_get_int(&int_output_test_field), 12);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 5);
+	ck_assert_int_eq(bx_tfield_get_int(&int_output_test_field), 12);
 } END_TEST
 
 START_TEST (post_increment_test) {
@@ -200,7 +200,7 @@ START_TEST (post_increment_test) {
 			"int_test_field = 0;"
 			"int_test_field++;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 1);
 
 	error = run_program(
 			"field int int_test_field;"
@@ -209,8 +209,8 @@ START_TEST (post_increment_test) {
 			"int_output_test_field = 1;"
 			"int_output_test_field = int_test_field++;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
-	ck_assert_int_eq(bx_test_field_get_int(&int_output_test_field), 0);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 1);
+	ck_assert_int_eq(bx_tfield_get_int(&int_output_test_field), 0);
 
 	error = run_program(
 			"field int int_test_field;"
@@ -220,7 +220,7 @@ START_TEST (post_increment_test) {
 			"temp++;"
 			"int_test_field = temp;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 1);
 
 	error = run_program(
 			"field int int_test_field;"
@@ -229,7 +229,7 @@ START_TEST (post_increment_test) {
 			"temp = 0;"
 			"int_test_field = temp++;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 0);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 0);
 } END_TEST
 
 START_TEST (pre_increment_test) {
@@ -240,7 +240,7 @@ START_TEST (pre_increment_test) {
 			"int_test_field = 0;"
 			"++int_test_field;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 1);
 
 	error = run_program(
 			"field int int_test_field;"
@@ -249,8 +249,8 @@ START_TEST (pre_increment_test) {
 			"int_output_test_field = 0;"
 			"int_output_test_field = ++int_test_field;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
-	ck_assert_int_eq(bx_test_field_get_int(&int_output_test_field), 1);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 1);
+	ck_assert_int_eq(bx_tfield_get_int(&int_output_test_field), 1);
 
 	error = run_program(
 			"field int int_test_field;"
@@ -260,7 +260,7 @@ START_TEST (pre_increment_test) {
 			"++temp;"
 			"int_test_field = temp;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 1);
 
 	error = run_program(
 			"field int int_test_field;"
@@ -269,7 +269,7 @@ START_TEST (pre_increment_test) {
 			"temp = 0;"
 			"int_test_field = ++temp;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 1);
 } END_TEST
 
 START_TEST (expression_test) {
@@ -277,27 +277,27 @@ START_TEST (expression_test) {
 
 	error = run_program("field int int_test_field; int_test_field = 5 + 10;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 15);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 15);
 
 	error = run_program("field int int_test_field; int_test_field = 5 * 10;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 50);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 50);
 
 	error = run_program("field int int_test_field; int_test_field = 5 * 10 + 5;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 55);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 55);
 
 	error = run_program("field int int_test_field; int_test_field = 5 * (10 + 5);");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 75);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 75);
 
 	error = run_program("field int int_test_field; int_test_field = 5 * (10 + 5);");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 75);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 75);
 
 	error = run_program("field int int_test_field; int_test_field = 5 * (11 / 5);");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 10);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 10);
 
 	error = run_program(
 			"field int int_test_field;"
@@ -305,13 +305,13 @@ START_TEST (expression_test) {
 			"float_test_field = 12.5;"
 			"int_test_field = 5 + float_test_field; ");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 17);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 17);
 
 	error = run_program(
 			"field bool boolean_test_field;"
 			"boolean_test_field = true;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_bool(&boolean_test_field), BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(bx_tfield_get_bool(&boolean_test_field), BX_BOOLEAN_TRUE);
 
 	error = run_program(
 			"field bool boolean_test_field;"
@@ -319,7 +319,7 @@ START_TEST (expression_test) {
 			"boolean_test_field = true;"
 			"int_test_field = (int) boolean_test_field;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 1);
 } END_TEST
 
 START_TEST (selection_statement_test) {
@@ -330,28 +330,28 @@ START_TEST (selection_statement_test) {
 			"int_test_field = 0;"
 			"if (12) int_test_field = 12;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 12);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 12);
 
 	error = run_program(
 			"field int int_test_field;"
 			"int_test_field = 0;"
 			"if (0) int_test_field = 12;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 0);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 0);
 
 	error = run_program(
 			"field int int_test_field;"
 			"int_test_field = 0;"
 			"if (3) int_test_field = 12; else int_test_field = 6;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 12);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 12);
 
 	error = run_program(
 			"field int int_test_field;"
 			"int_test_field = 0;"
 			"if (0) int_test_field = 12; else int_test_field = 6;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 6);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 6);
 } END_TEST
 
 START_TEST (while_statement_test) {
@@ -364,7 +364,7 @@ START_TEST (while_statement_test) {
 			"while (temp < 0) temp++;"
 			"int_test_field = temp;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 0);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 0);
 
 	error = run_program(
 			"field int int_test_field;"
@@ -373,7 +373,7 @@ START_TEST (while_statement_test) {
 			"while (temp < 10) temp++;"
 			"int_test_field = temp;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 10);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 10);
 } END_TEST
 
 START_TEST (do_while_statement_test) {
@@ -386,7 +386,7 @@ START_TEST (do_while_statement_test) {
 			"do temp++; while (temp < 0);"
 			"int_test_field = temp;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 1);
 
 	error = run_program(
 			"field int int_test_field;"
@@ -395,7 +395,7 @@ START_TEST (do_while_statement_test) {
 			"do temp++; while (temp < 10);"
 			"int_test_field = temp;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 10);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 10);
 } END_TEST
 
 START_TEST (for_statement_test) {
@@ -406,28 +406,28 @@ START_TEST (for_statement_test) {
 			"int temp;"
 			"for (temp = 0; temp < 0; temp++) ; int_test_field = temp;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 0);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 0);
 
 	error = run_program(
 			"field int int_test_field;"
 			"int temp;"
 			"for (temp = 0; temp < 10; temp++) ; int_test_field = temp;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 10);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 10);
 
 	error = run_program(
 			"field int int_test_field;"
 			"int temp;"
 			"for (temp = 0; temp < 0; ) temp++; int_test_field = temp;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 0);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 0);
 
 	error = run_program(
 			"field int int_test_field;"
 			"int temp;"
 			"for (temp = 0; temp < 10; ) temp++; int_test_field = temp;");
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 10);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 10);
 } END_TEST
 
 START_TEST (automatic_variable) {
@@ -446,8 +446,8 @@ START_TEST (automatic_variable) {
 			"int_test_field = var;"
 			);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_output_test_field), 5);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 0);
+	ck_assert_int_eq(bx_tfield_get_int(&int_output_test_field), 5);
 } END_TEST
 
 Suite *test_compiler_create_suite(void) {

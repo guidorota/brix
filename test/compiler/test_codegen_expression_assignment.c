@@ -75,33 +75,33 @@ START_TEST (init_test) {
 	ck_assert_int_eq(error, 0);
 
 	// Init document manager
-	error = bx_dm_document_manager_init();
+	error = bx_docman_init();
 	ck_assert_int_eq(error, 0);
-	error = bx_test_field_init(&int_test_field, &int_test_field_data);
+	error = bx_tfield_init(&int_test_field, &int_test_field_data);
 	ck_assert_int_eq(error, 0);
-	error = bx_dm_add_field(&int_test_field, INT_TEST_FIELD);
+	error = bx_docman_add_field(&int_test_field, INT_TEST_FIELD);
 	ck_assert_int_eq(error, 0);
-	error = bx_test_field_init(&output_int_test_field, &output_int_test_field_data);
+	error = bx_tfield_init(&output_int_test_field, &output_int_test_field_data);
 	ck_assert_int_eq(error, 0);
-	error = bx_dm_add_field(&output_int_test_field, OUTPUT_INT_TEST_FIELD);
-	ck_assert_int_eq(error, 0);
-
-	error = bx_test_field_init(&float_test_field, &float_test_field_data);
-	ck_assert_int_eq(error, 0);
-	error = bx_dm_add_field(&float_test_field, FLOAT_TEST_FIELD);
-	ck_assert_int_eq(error, 0);
-	error = bx_test_field_init(&output_float_test_field, &output_float_test_field_data);
-	ck_assert_int_eq(error, 0);
-	error = bx_dm_add_field(&output_float_test_field, OUTPUT_FLOAT_TEST_FIELD);
+	error = bx_docman_add_field(&output_int_test_field, OUTPUT_INT_TEST_FIELD);
 	ck_assert_int_eq(error, 0);
 
-	error = bx_test_field_init(&bool_test_field, &bool_test_field_data);
+	error = bx_tfield_init(&float_test_field, &float_test_field_data);
 	ck_assert_int_eq(error, 0);
-	error = bx_dm_add_field(&bool_test_field, BOOL_TEST_FIELD);
+	error = bx_docman_add_field(&float_test_field, FLOAT_TEST_FIELD);
 	ck_assert_int_eq(error, 0);
-	error = bx_test_field_init(&output_bool_test_field, &output_bool_test_field_data);
+	error = bx_tfield_init(&output_float_test_field, &output_float_test_field_data);
 	ck_assert_int_eq(error, 0);
-	error = bx_dm_add_field(&output_bool_test_field, OUTPUT_BOOL_TEST_FIELD);
+	error = bx_docman_add_field(&output_float_test_field, OUTPUT_FLOAT_TEST_FIELD);
+	ck_assert_int_eq(error, 0);
+
+	error = bx_tfield_init(&bool_test_field, &bool_test_field_data);
+	ck_assert_int_eq(error, 0);
+	error = bx_docman_add_field(&bool_test_field, BOOL_TEST_FIELD);
+	ck_assert_int_eq(error, 0);
+	error = bx_tfield_init(&output_bool_test_field, &output_bool_test_field_data);
+	ck_assert_int_eq(error, 0);
+	error = bx_docman_add_field(&output_bool_test_field, OUTPUT_BOOL_TEST_FIELD);
 	ck_assert_int_eq(error, 0);
 
 	// Setup compiler symbol table
@@ -134,7 +134,7 @@ START_TEST (int_assignment) {
 	struct bx_comp_expr *result;
 	struct bx_comp_pcode *pcode;
 
-	bx_test_field_set_int(&int_test_field, 0);
+	bx_tfield_set_int(&int_test_field, 0);
 	destination = bx_cgex_create_variable(symbol_table, INT_TEST_FIELD);
 	ck_assert_ptr_ne(destination, NULL);
 	expression = bx_cgex_create_int_constant(value);
@@ -147,8 +147,8 @@ START_TEST (int_assignment) {
 	bx_cgpc_add_identifier(pcode, OUTPUT_INT_TEST_FIELD);
 	error = bx_vm_execute(pcode->data, pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), value);
-	ck_assert_int_eq(bx_test_field_get_int(&output_int_test_field), value);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), value);
+	ck_assert_int_eq(bx_tfield_get_int(&output_int_test_field), value);
 } END_TEST
 
 START_TEST (float_assignment) {
@@ -159,7 +159,7 @@ START_TEST (float_assignment) {
 	struct bx_comp_expr *result;
 	struct bx_comp_pcode *pcode;
 
-	bx_test_field_set_float(&float_test_field, 0);
+	bx_tfield_set_float(&float_test_field, 0);
 	destination = bx_cgex_create_variable(symbol_table, FLOAT_TEST_FIELD);
 	ck_assert_ptr_ne(destination, NULL);
 	expression = bx_cgex_create_float_constant(value);
@@ -172,8 +172,8 @@ START_TEST (float_assignment) {
 	bx_cgpc_add_identifier(pcode, OUTPUT_FLOAT_TEST_FIELD);
 	error = bx_vm_execute(pcode->data, pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_float(&float_test_field), value);
-	ck_assert_int_eq(bx_test_field_get_float(&output_float_test_field), value);
+	ck_assert_int_eq(bx_tfield_get_float(&float_test_field), value);
+	ck_assert_int_eq(bx_tfield_get_float(&output_float_test_field), value);
 } END_TEST
 
 START_TEST (bool_assignment) {
@@ -183,7 +183,7 @@ START_TEST (bool_assignment) {
 	struct bx_comp_expr *result;
 	struct bx_comp_pcode *pcode;
 
-	bx_test_field_set_bool(&bool_test_field, BX_BOOLEAN_FALSE);
+	bx_tfield_set_bool(&bool_test_field, BX_BOOLEAN_FALSE);
 	destination = bx_cgex_create_variable(symbol_table, BOOL_TEST_FIELD);
 	ck_assert_ptr_ne(destination, NULL);
 	expression = bx_cgex_create_bool_constant(BX_BOOLEAN_TRUE);
@@ -196,8 +196,8 @@ START_TEST (bool_assignment) {
 	bx_cgpc_add_identifier(pcode, OUTPUT_BOOL_TEST_FIELD);
 	error = bx_vm_execute(pcode->data, pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_bool(&bool_test_field), BX_BOOLEAN_TRUE);
-	ck_assert_int_eq(bx_test_field_get_bool(&output_bool_test_field), BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(bx_tfield_get_bool(&bool_test_field), BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(bx_tfield_get_bool(&output_bool_test_field), BX_BOOLEAN_TRUE);
 } END_TEST
 
 START_TEST (local_variable_assignment) {
@@ -208,7 +208,7 @@ START_TEST (local_variable_assignment) {
 	struct bx_comp_expr *result;
 	struct bx_comp_pcode *pcode;
 
-	bx_test_field_set_int(&int_test_field, 0);
+	bx_tfield_set_int(&int_test_field, 0);
 	destination = bx_cgex_create_variable(symbol_table, LOCAL_VARIABLE_TEST);
 	constant = bx_cgex_create_int_constant(value);
 	result =  bx_cgex_assignment_expression(destination, constant);
@@ -224,8 +224,8 @@ START_TEST (local_variable_assignment) {
 	bx_cgpc_add_identifier(pcode, INT_TEST_FIELD);
 	error = bx_vm_execute(pcode->data, pcode->size);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), value);
-	ck_assert_int_eq(bx_test_field_get_int(&output_int_test_field), value);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), value);
+	ck_assert_int_eq(bx_tfield_get_int(&output_int_test_field), value);
 } END_TEST
 
 START_TEST (cleanup) {

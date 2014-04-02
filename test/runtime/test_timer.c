@@ -43,27 +43,27 @@ START_TEST (timer_init) {
 	ck_assert_int_eq(error, 0);
 
 	// Initializing timer
-	error = bx_tm_init();
+	error = bx_timer_init();
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
 START_TEST (timer_ticking) {
 	bx_uint64 previous_count;
 
-	previous_count = bx_tm_get_tick_count();
+	previous_count = bx_timer_get_tick_count();
 	sleep(1);
-	ck_assert_int_gt(bx_tm_get_tick_count(), previous_count);
+	ck_assert_int_gt(bx_timer_get_tick_count(), previous_count);
 } END_TEST
 
 START_TEST (timer_stop) {
 	bx_int8 error;
 	bx_uint64 previous_count;
 
-	error = bx_tm_destroy();
+	error = bx_timer_destroy();
 	ck_assert_int_eq(error, 0);
-	previous_count = bx_tm_get_tick_count();
+	previous_count = bx_timer_get_tick_count();
 	sleep(1);
-	ck_assert_int_eq(bx_tm_get_tick_count(), previous_count);
+	ck_assert_int_eq(bx_timer_get_tick_count(), previous_count);
 } END_TEST
 
 Suite *test_timer_create_suite() {

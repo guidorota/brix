@@ -62,15 +62,15 @@ START_TEST (init_test) {
 	ck_assert_int_eq(error, 0);
 
 	// Init document manager
-	error = bx_dm_document_manager_init();
+	error = bx_docman_init();
 	ck_assert_int_eq(error, 0);
-	error = bx_test_field_init(&int_test_field, &int_test_field_data);
+	error = bx_tfield_init(&int_test_field, &int_test_field_data);
 	ck_assert_int_eq(error, 0);
-	error = bx_dm_add_field(&int_test_field, INT_TEST_FIELD);
+	error = bx_docman_add_field(&int_test_field, INT_TEST_FIELD);
 	ck_assert_int_eq(error, 0);
 
 	// Init event handler
-	error = bx_ts_init();
+	error = bx_sched_init();
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
@@ -79,15 +79,15 @@ START_TEST (native_handler_test) {
 	bx_task_id native_task_id;
 
 	native_function_value = 0;
-	native_task_id = bx_ts_add_native_task(*native_event_function);
+	native_task_id = bx_sched_add_native_task(*native_event_function);
 	ck_assert_int_ne(native_task_id, -1);
 	ck_assert_int_ne(native_function_value, 1);
-	error = bx_ts_schedule_task(native_task_id);
-	ck_assert_int_eq(bx_ts_is_scheduled(native_task_id), 1);
+	error = bx_sched_schedule_task(native_task_id);
+	ck_assert_int_eq(bx_sched_is_scheduled(native_task_id), 1);
 	ck_assert_int_eq(error, 0);
-	bx_ts_scheduler_loop(BX_BOOLEAN_TRUE);
+	bx_sched_scheduler_loop(BX_BOOLEAN_TRUE);
 	ck_assert_int_eq(native_function_value, 1);
-	error = bx_ts_remove_task(native_task_id);
+	error = bx_sched_remove_task(native_task_id);
 	ck_assert_int_eq(error, 0);
 } END_TEST
 
@@ -98,22 +98,22 @@ START_TEST (pcode_handler_test) {
 
 	comp_pcode = bx_cgpc_create();
 	ck_assert_ptr_ne(comp_pcode, NULL);
-	bx_test_field_set_int(&int_test_field, 0);
+	bx_tfield_set_int(&int_test_field, 0);
 	bx_cgpc_add_instruction(comp_pcode, BX_INSTR_IPUSH_1);
 	bx_cgpc_add_instruction(comp_pcode, BX_INSTR_RSTORE32);
 	bx_cgpc_add_identifier(comp_pcode, INT_TEST_FIELD);
 	bx_cgpc_add_instruction(comp_pcode, BX_INSTR_HALT);
 
-	pcode_task_id = bx_ts_add_pcode_task(comp_pcode->data, comp_pcode->size);
+	pcode_task_id = bx_sched_add_pcode_task(comp_pcode->data, comp_pcode->size);
 	ck_assert_int_ne(pcode_task_id, -1);
-	ck_assert_int_ne(bx_test_field_get_int(&int_test_field), 1);
-	error = bx_ts_schedule_task(pcode_task_id);
-	ck_assert_int_eq(bx_ts_is_scheduled(pcode_task_id), 1);
+	ck_assert_int_ne(bx_tfield_get_int(&int_test_field), 1);
+	error = bx_sched_schedule_task(pcode_task_id);
+	ck_assert_int_eq(bx_sched_is_scheduled(pcode_task_id), 1);
 	ck_assert_int_eq(error, 0);
-	bx_ts_scheduler_loop(BX_BOOLEAN_TRUE);
-	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
+	bx_sched_scheduler_loop(BX_BOOLEAN_TRUE);
+	ck_assert_int_eq(bx_tfield_get_int(&int_test_field), 1);
 
-	error = bx_ts_remove_task(pcode_task_id);
+	error = bx_sched_remove_task(pcode_task_id);
 	ck_assert_int_eq(error, 0);
 } END_TEST
 

@@ -35,14 +35,10 @@
 #include "types.h"
 #include "bus/bus.h"
 
-typedef (*bx_receive_callback)(void *endpoint, void *message, bx_size message_length);
-
 struct bx_interface {
-	bx_int8 (*init)(bx_receive_callback receive_callback);
-	bx_int8 (*send)(struct bx_interface *instance, void *endpoint, void *message, bx_size message_length);
-	bx_int8 (*broadcast)(struct bx_interface *instance, void *message, bx_size	 message_length);
-	void (*destroy)(struct bx_interface *instance);
-	bx_receive_callback receive_callback;
+	bx_int8 (*send)(struct bx_interface *interface, void *endpoint, void *message, bx_size message_length);
+	bx_int8 (*broadcast)(struct bx_interface *interface, void *message, bx_size	 message_length);
+	void (*destroy)(struct bx_interface *interface);
 	bx_int8 error;
 	void *configuration;
 	void *data;

@@ -37,7 +37,7 @@
 static bx_int8 test_field_get(struct bx_document_field *instance, void *data);
 static bx_int8 test_field_set(struct bx_document_field *instance, void *data);
 
-bx_int8 bx_test_field_init(struct bx_document_field *instance, struct bx_test_field_data *data) {
+bx_int8 bx_tfield_init(struct bx_document_field *instance, struct bx_test_field_data *data) {
 
 	if (instance == NULL || data == NULL) {
 		return -1;
@@ -51,27 +51,27 @@ bx_int8 bx_test_field_init(struct bx_document_field *instance, struct bx_test_fi
 	return 0;
 }
 
-void bx_test_field_set_int(struct bx_document_field *instance, bx_int32 value) {
+void bx_tfield_set_int(struct bx_document_field *instance, bx_int32 value) {
 	*(bx_int32 *) GET_DATA(instance)->internal_value = value;
 }
 
-void bx_test_field_set_bool(struct bx_document_field *instance, bx_int32 value) {
+void bx_tfield_set_bool(struct bx_document_field *instance, bx_int32 value) {
 	*(bx_int32 *) GET_DATA(instance)->internal_value = value;
 }
 
-void bx_test_field_set_float(struct bx_document_field *instance, bx_float32 value) {
+void bx_tfield_set_float(struct bx_document_field *instance, bx_float32 value) {
 	*(bx_float32 *) GET_DATA(instance)->internal_value = value;
 }
 
-bx_int32 bx_test_field_get_int(struct bx_document_field *instance) {
+bx_int32 bx_tfield_get_int(struct bx_document_field *instance) {
 	return *(bx_int32 *) GET_DATA(instance)->internal_value;
 }
 
-bx_int32 bx_test_field_get_bool(struct bx_document_field *instance) {
+bx_int32 bx_tfield_get_bool(struct bx_document_field *instance) {
 	return *(bx_int32 *) GET_DATA(instance)->internal_value;
 }
 
-bx_float32 bx_test_field_get_float(struct bx_document_field *instance) {
+bx_float32 bx_tfield_get_float(struct bx_document_field *instance) {
 	return *(bx_float32 *) GET_DATA(instance)->internal_value;
 }
 
