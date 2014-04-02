@@ -34,6 +34,7 @@
 #include "utils/uniform_allocator.h"
 #include "runtime/task_scheduler.h"
 #include "runtime/pcode_manager.h"
+#include "runtime/critical_section.h"
 
 enum bx_task_type {
 	BX_HANDLER_NATIVE,	///< Native C function
@@ -149,7 +150,9 @@ bx_task_id bx_ts_add_native_task(native_function function) {
 	native_task->task.native_function = function;
 	native_task->scheduled = BX_BOOLEAN_FALSE;
 
+	bx_critical_enter();
 	task_list_add(&stopped_list, native_task);
+	bx_critical_exit();
 
 	return native_task->id;
 }
@@ -173,13 +176,17 @@ bx_task_id bx_ts_add_pcode_task(void *buffer, bx_size buffer_size) {
 	pcode_task->task.pcode = pcode;
 	pcode_task->scheduled = BX_BOOLEAN_FALSE;
 
+	bx_critical_enter();
 	task_list_add(&stopped_list, pcode_task);
+	bx_critical_exit();
 
 	return pcode_task->id;
 }
 
 bx_int8 bx_ts_schedule_task(bx_task_id task_id) {
 	struct bx_task *task;
+
+	bx_critical_enter();
 
 	task = task_list_search(stopped_list, task_id);
 	if (task == NULL) {
@@ -191,21 +198,24 @@ bx_int8 bx_ts_schedule_task(bx_task_id task_id) {
 	task_list_remove(&stopped_list, task->id);
 	task_list_add(&scheduled_list, task);
 
+	bx_critical_exit();
+
 	return 0;
 }
 
 bx_int8 bx_ts_is_scheduled(bx_task_id task_id) {
-	struct bx_task *task;
+	struct bx_task *task_scheduled;
+	struct bx_task *task_stopped;
 
-	task = task_list_search(scheduled_list, task_id);
-	if (task != NULL) {
+	bx_critical_enter();
+	task_scheduled = task_list_search(scheduled_list, task_id);
+	task_stopped = task_list_search(stopped_list, task_id);
+	bx_critical_exit();
+
+	if (task_scheduled != NULL) {
 		return 1;
-	}
-
-	task = task_list_search(stopped_list, task_id);
-	if (task != NULL) {
+	} else if (task_stopped != NULL) {
 		return 0;
-
 	} else {
 		BX_LOG(LOG_ERROR, "task_scheduler",
 				"Cannot find: Task %zu not found", task_id);
@@ -214,17 +224,21 @@ bx_int8 bx_ts_is_scheduled(bx_task_id task_id) {
 }
 
 bx_int8 bx_ts_remove_task(bx_task_id task_id) {
-	struct bx_task *task;
+	struct bx_task *task_scheduled;
+	struct bx_task *task_stopped;
 
-	task = task_list_remove(&stopped_list, task_id);
-	if (task != NULL) {
-		bx_ualloc_free(task_ualloc, task);
+	bx_critical_enter();
+	task_scheduled = task_list_remove(&stopped_list, task_id);
+	task_stopped = task_list_remove(&scheduled_list, task_id);
+	bx_critical_exit();
+
+	if (task_scheduled != NULL) {
+		bx_ualloc_free(task_ualloc, task_scheduled);
 		return 0;
 	}
 
-	task = task_list_remove(&scheduled_list, task_id);
-	if (task != NULL) {
-		bx_ualloc_free(task_ualloc, task);
+	if (task_stopped != NULL) {
+		bx_ualloc_free(task_ualloc, task_stopped);
 		return 0;
 	}
 

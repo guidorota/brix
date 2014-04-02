@@ -102,7 +102,7 @@ START_TEST (remove_test) {
 } END_TEST
 
 Suite *test_pcode_manager_create_suite() {
-	Suite *suite = suite_create("storage");
+	Suite *suite = suite_create("pcode_manager");
 	TCase *tcase;
 
 	tcase = tcase_create("init_test");

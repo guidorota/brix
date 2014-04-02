@@ -37,6 +37,7 @@
 #include "runtime/task_scheduler.h"
 #include "compiler/codegen_pcode.h"
 #include "virtual_machine/virtual_machine.h"
+#include "runtime/critical_section.h"
 
 #define INT_TEST_FIELD "int_test_field"
 
@@ -51,6 +52,10 @@ static void native_event_function() {
 
 START_TEST (init_test) {
 	bx_int8 error;
+
+	// Init critical section
+	error = bx_critical_init();
+	ck_assert_int_eq(error, 0);
 
 	// Init virtual machine
 	error = bx_vm_virtual_machine_init();
@@ -111,7 +116,7 @@ START_TEST (pcode_handler_test) {
 } END_TEST
 
 Suite *test_task_scheduler_create_suite() {
-	Suite *suite = suite_create("event_handler");
+	Suite *suite = suite_create("task_scheduler");
 	TCase *tcase;
 
 	tcase = tcase_create("init_test");
