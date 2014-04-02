@@ -85,6 +85,7 @@ START_TEST (native_handler_test) {
 	error = bx_ts_schedule_task(native_task_id);
 	ck_assert_int_eq(bx_ts_is_scheduled(native_task_id), 1);
 	ck_assert_int_eq(error, 0);
+	bx_ts_scheduler_loop(BX_BOOLEAN_TRUE);
 	ck_assert_int_eq(native_function_value, 1);
 	error = bx_ts_remove_task(native_task_id);
 	ck_assert_int_eq(error, 0);
@@ -109,6 +110,7 @@ START_TEST (pcode_handler_test) {
 	error = bx_ts_schedule_task(pcode_task_id);
 	ck_assert_int_eq(bx_ts_is_scheduled(pcode_task_id), 1);
 	ck_assert_int_eq(error, 0);
+	bx_ts_scheduler_loop(BX_BOOLEAN_TRUE);
 	ck_assert_int_eq(bx_test_field_get_int(&int_test_field), 1);
 
 	error = bx_ts_remove_task(pcode_task_id);

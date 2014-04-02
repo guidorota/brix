@@ -48,8 +48,11 @@ bx_int8 bx_ts_init();
 
 /**
  * Starts the scheduler loop.
+ *
+ * @param stop_if_empty If set to 1 the loop ends as soon as the
+ * scheduled queue is empty
  */
-void bx_ts_scheduler_loop();
+void bx_ts_scheduler_loop(bx_boolean stop_if_empty);
 
 /**
  * Adds a task based on a native C function.

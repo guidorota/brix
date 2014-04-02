@@ -56,9 +56,16 @@ static struct bx_ualloc *task_ualloc = NULL;
 static bx_uint8 task_storage[EV_HANDLER_STORAGE_SIZE];
 
 static bx_uint16 current_id;
+static struct bx_task *running;
 static struct bx_task *scheduled_list;
 static struct bx_task *stopped_list;
 
+/**
+ * Adds a new task to the list
+ *
+ * @param task_list Target list
+ * @param task Task to add
+ */
 static void task_list_add(struct bx_task **task_list, struct bx_task *task) {
 	struct bx_task *current_element;
 
@@ -77,6 +84,14 @@ static void task_list_add(struct bx_task **task_list, struct bx_task *task) {
 	current_element->next = task;
 }
 
+/**
+ * Searches a task inside the task list
+ *
+ * @param task_list Target list
+ * @param task_id Id of the task to find
+ *
+ * @return Task instance, NULL if not found
+ */
 static struct bx_task *task_list_search(struct bx_task *task_list, bx_task_id task_id) {
 	struct bx_task *current_task;
 
@@ -91,6 +106,14 @@ static struct bx_task *task_list_search(struct bx_task *task_list, bx_task_id ta
 	return current_task;
 }
 
+/**
+ * Removes a task from the task list
+ *
+ * @param task_list Target list
+ * @param task_id Id of the task to remove
+ *
+ * @return Pointer to the removed task, NULL the task is not found
+ */
 static struct bx_task *task_list_remove(struct bx_task **task_list, bx_task_id task_id) {
 	struct bx_task *current_task;
 	struct bx_task *previous_task;
@@ -118,6 +141,24 @@ static struct bx_task *task_list_remove(struct bx_task **task_list, bx_task_id t
 	return NULL;
 }
 
+/**
+ * Removes the first element of the list and returns it.
+ *
+ * @param task_list Target list
+ *
+ * @return Head of the list, NULL if the list is empty
+ */
+static struct bx_task *task_list_extract_head(struct bx_task **task_list) {
+	struct bx_task *head;
+
+	head = *task_list;
+	if (head != NULL) {
+		*task_list = (*task_list)->next;
+	}
+
+	return head;
+}
+
 bx_int8 bx_ts_init() {
 
 	task_ualloc = bx_ualloc_init(task_storage,
@@ -129,12 +170,37 @@ bx_int8 bx_ts_init() {
 	current_id = 0;
 	scheduled_list = NULL;
 	stopped_list = NULL;
+	running = NULL;
 
 	return 0;
 }
 
-void bx_ts_scheduler_loop() {
-	//TODO: Stub
+void bx_ts_scheduler_loop(bx_boolean stop_if_empty) {
+
+	while (1) {
+		bx_critical_enter();
+		running = task_list_extract_head(&scheduled_list);
+		bx_critical_exit();
+
+		if (running == NULL && stop_if_empty == BX_BOOLEAN_TRUE) {
+			break;
+		} else if (running == NULL && stop_if_empty == BX_BOOLEAN_FALSE) {
+			continue; //TODO: Is this busy waiting the best way to do it? I don't think so...
+		}
+
+		switch (running->task_type) {
+		case BX_HANDLER_NATIVE:
+			running->task.native_function();
+			break;
+		case BX_HANDLER_PCODE:
+			bx_pm_execute(running->task.pcode);
+		}
+
+		bx_critical_enter();
+		task_list_add(&stopped_list, running);
+		running = NULL;
+		bx_critical_exit();
+	}
 }
 
 bx_task_id bx_ts_add_native_task(native_function function) {

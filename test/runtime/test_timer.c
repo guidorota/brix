@@ -37,7 +37,6 @@
 
 START_TEST (timer_init) {
 	bx_int8 error;
-	bx_uint64 previous_count;
 
 	// Initializing critical section
 	error = bx_critical_init();
@@ -46,6 +45,11 @@ START_TEST (timer_init) {
 	// Initializing timer
 	error = bx_tm_init();
 	ck_assert_int_eq(error, 0);
+} END_TEST
+
+START_TEST (timer_ticking) {
+	bx_uint64 previous_count;
+
 	previous_count = bx_tm_get_tick_count();
 	sleep(1);
 	ck_assert_int_gt(bx_tm_get_tick_count(), previous_count);
@@ -68,6 +72,10 @@ Suite *test_timer_create_suite() {
 
 	tcase = tcase_create("timer_init");
 	tcase_add_test(tcase, timer_init);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("timer_ticking");
+	tcase_add_test(tcase, timer_ticking);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("timer_stop");

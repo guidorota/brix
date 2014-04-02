@@ -11,13 +11,15 @@
 #include "runtime/pcode_manager.h"
 #include "runtime/task_scheduler.h"
 #include "runtime/timer.h"
+#include "runtime/critical_section.h"
 
 int main(int argc, char* argv[]) {
 
 	BX_LOG(LOG_INFO, "main", "Initializing...");
+	bx_critical_init();
 	bx_vm_virtual_machine_init();
 	bx_dm_document_manager_init();
-	bx_pr_init();
+	bx_pm_init();
 	bx_tm_init();
 	bx_ts_init();
 
@@ -27,6 +29,7 @@ int main(int argc, char* argv[]) {
 		input = getchar();
 	}
 	bx_tm_destroy();
+	bx_critical_destroy();
 
 	return 0;
 }
