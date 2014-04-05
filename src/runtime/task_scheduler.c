@@ -37,8 +37,8 @@
 #include "runtime/critical_section.h"
 
 enum bx_task_type {
-	BX_HANDLER_NATIVE,	///< Native C function
-	BX_HANDLER_PCODE	///< Virtual machine function
+	BX_TASK_NATIVE,	///< Native C function
+	BX_TASK_PCODE	///< Virtual machine function
 };
 
 struct bx_task {
@@ -182,7 +182,7 @@ bx_int8 bx_sched_init() {
  */
 void free_task(struct bx_task *task) {
 
-	if (task->task_type == BX_HANDLER_PCODE) {
+	if (task->task_type == BX_TASK_PCODE) {
 		bx_pcode_remove(task->task.pcode);
 	}
 
@@ -203,10 +203,10 @@ void bx_sched_scheduler_loop(bx_boolean stop_if_empty) {
 		}
 
 		switch (running->task_type) {
-		case BX_HANDLER_NATIVE:
+		case BX_TASK_NATIVE:
 			running->task.native_function();
 			break;
-		case BX_HANDLER_PCODE:
+		case BX_TASK_PCODE:
 			bx_pcode_execute(running->task.pcode);
 		}
 
@@ -226,7 +226,7 @@ bx_task_id bx_sched_add_native_task(native_function function) {
 
 	native_task = bx_ualloc_alloc(task_ualloc);
 	native_task->id = current_id++;
-	native_task->task_type = BX_HANDLER_NATIVE;
+	native_task->task_type = BX_TASK_NATIVE;
 	native_task->task.native_function = function;
 	native_task->scheduled = BX_BOOLEAN_FALSE;
 
@@ -252,7 +252,7 @@ bx_task_id bx_sched_add_pcode_task(void *buffer, bx_size buffer_size) {
 
 	pcode_task = bx_ualloc_alloc(task_ualloc);
 	pcode_task->id = current_id++;
-	pcode_task->task_type = BX_HANDLER_PCODE;
+	pcode_task->task_type = BX_TASK_PCODE;
 	pcode_task->task.pcode = pcode;
 	pcode_task->scheduled = BX_BOOLEAN_FALSE;
 

@@ -40,7 +40,6 @@ struct bx_interface {
 	bx_int8 (*broadcast)(struct bx_interface *interface, void *message, bx_size	 message_length);
 	void (*destroy)(struct bx_interface *interface);
 	bx_int8 error;
-	void *configuration;
 	void *data;
 };
 
