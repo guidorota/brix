@@ -175,6 +175,20 @@ bx_int8 bx_sched_init() {
 	return 0;
 }
 
+/**
+ * Frees the memory occupied by a task
+ *
+ * @param task Task to remove
+ */
+void free_task(struct bx_task *task) {
+
+	if (task->task_type == BX_HANDLER_PCODE) {
+		bx_pcode_remove(task->task.pcode);
+	}
+
+	bx_ualloc_free(task_ualloc, task);
+}
+
 void bx_sched_scheduler_loop(bx_boolean stop_if_empty) {
 
 	while (1) {
@@ -299,12 +313,12 @@ bx_int8 bx_sched_remove_task(bx_task_id task_id) {
 	bx_critical_exit();
 
 	if (task_scheduled != NULL) {
-		bx_ualloc_free(task_ualloc, task_scheduled);
+		free_task(task_scheduled);
 		return 0;
 	}
 
 	if (task_stopped != NULL) {
-		bx_ualloc_free(task_ualloc, task_stopped);
+		free_task(task_stopped);
 		return 0;
 	}
 
