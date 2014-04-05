@@ -35,8 +35,9 @@
 #include "runtime/pcode_manager.h"
 #include "virtual_machine/virtual_machine.h"
 
-#define SPACE_USED (pcode_count * sizeof (struct bx_pcode)) + total_instruction_length
-#define PCODE_STRUCT(index) (struct bx_pcode *) (pcode_storage + PR_CODE_STORAGE_SIZE - 1 - (index + 1) * sizeof (struct bx_pcode))
+#define SPACE_USED (pcode_manager.pcode_count * sizeof (struct bx_pcode)) + pcode_manager.total_instruction_length
+#define PCODE_STRUCT(index) \
+	(struct bx_pcode *) (pcode_manager.pcode_storage + PR_CODE_STORAGE_SIZE - 1 - (index + 1) * sizeof (struct bx_pcode))
 
 struct bx_pcode {
 	bx_boolean valid;
@@ -44,15 +45,17 @@ struct bx_pcode {
 	bx_size size;
 };
 
-static bx_uint8 pcode_storage[PR_CODE_STORAGE_SIZE];
-static bx_size total_instruction_length;
-static bx_size pcode_count;
+static struct bx_pcode_manager {
+	bx_uint8 pcode_storage[PR_CODE_STORAGE_SIZE];
+	bx_size total_instruction_length;
+	bx_size pcode_count;
+} pcode_manager;
 
 static struct bx_pcode *get_available_pcode();
 
 bx_int8 bx_pcode_init() {
-	total_instruction_length = 0;
-	pcode_count = 0;
+	pcode_manager.total_instruction_length = 0;
+	pcode_manager.pcode_count = 0;
 
 	return 0;
 }
@@ -70,13 +73,13 @@ struct bx_pcode *bx_pcode_add(void *buffer, bx_size buffer_size) {
 	}
 
 	pcode = get_available_pcode();
-	pcode->instructions = (void *) (pcode_storage + total_instruction_length);
+	pcode->instructions = (void *) (pcode_manager.pcode_storage + pcode_manager.total_instruction_length);
 	pcode->size = buffer_size;
 	pcode->valid = BX_BOOLEAN_TRUE;
 	memcpy(pcode->instructions, buffer, buffer_size);
 
-	pcode_count += 1;
-	total_instruction_length += buffer_size;
+	pcode_manager.pcode_count += 1;
+	pcode_manager.total_instruction_length += buffer_size;
 
 	return pcode;
 }
@@ -85,14 +88,14 @@ static struct bx_pcode *get_available_pcode() {
 	struct bx_pcode *pcode;
 	bx_size i;
 
-	for (i = 0; i < pcode_count; i++) {
+	for (i = 0; i < pcode_manager.pcode_count; i++) {
 		pcode = PCODE_STRUCT(i);
 		if (pcode->valid == BX_BOOLEAN_FALSE) {
 			return pcode;
 		}
 	}
 
-	return PCODE_STRUCT(pcode_count++);
+	return PCODE_STRUCT(pcode_manager.pcode_count++);
 }
 
 bx_int8 bx_pcode_execute(struct bx_pcode *pcode) {
@@ -100,8 +103,8 @@ bx_int8 bx_pcode_execute(struct bx_pcode *pcode) {
 		return -1;
 	}
 
-	if ((bx_uint8 *) pcode > pcode_storage + PR_CODE_STORAGE_SIZE - 1 ||
-			(bx_uint8 *) pcode < (bx_uint8 *) PCODE_STRUCT(pcode_count - 1) ) {
+	if ((bx_uint8 *) pcode > pcode_manager.pcode_storage + PR_CODE_STORAGE_SIZE - 1 ||
+			(bx_uint8 *) pcode < (bx_uint8 *) PCODE_STRUCT(pcode_manager.pcode_count - 1) ) {
 		BX_LOG(LOG_ERROR, "pcode_repository", "Invalid pcode data structure");
 		return -1;
 	}
@@ -114,6 +117,10 @@ bx_int8 bx_pcode_execute(struct bx_pcode *pcode) {
 	return bx_vm_execute((bx_uint8 *) pcode->instructions, pcode->size);
 }
 
+bx_size bx_pcode_current_capacity() {
+	return SPACE_USED - sizeof (struct bx_pcode);
+}
+
 bx_int8 bx_pcode_remove(struct bx_pcode *pcode) {
 	void *destination;
 	void *source;
@@ -123,8 +130,8 @@ bx_int8 bx_pcode_remove(struct bx_pcode *pcode) {
 		return -1;
 	}
 
-	if ((bx_uint8 *) pcode > pcode_storage + PR_CODE_STORAGE_SIZE - 1 ||
-			(bx_uint8 *) pcode < (bx_uint8 *) PCODE_STRUCT(pcode_count - 1)) {
+	if ((bx_uint8 *) pcode > pcode_manager.pcode_storage + PR_CODE_STORAGE_SIZE - 1 ||
+			(bx_uint8 *) pcode < (bx_uint8 *) PCODE_STRUCT(pcode_manager.pcode_count - 1)) {
 		BX_LOG(LOG_ERROR, "pcode_repository", "Invalid pcode data structure");
 		return -1;
 	}
@@ -132,12 +139,12 @@ bx_int8 bx_pcode_remove(struct bx_pcode *pcode) {
 	pcode->valid = BX_BOOLEAN_FALSE;
 	destination = (void *) pcode->instructions;
 	source = (void *) ((bx_uint8 *) pcode->instructions + pcode->size);
-	length = total_instruction_length - ((bx_uint8 *) source - pcode_storage);
+	length = pcode_manager.total_instruction_length - ((bx_uint8 *) source - pcode_manager.pcode_storage);
 	memmove(destination, source, length);
-	total_instruction_length -= pcode->size;
+	pcode_manager.total_instruction_length -= pcode->size;
 
 	int i;
-	for (i = 0; i < pcode_count; i++) {
+	for (i = 0; i < pcode_manager.pcode_count; i++) {
 		struct bx_pcode *current_pcode = PCODE_STRUCT(i);
 		if (current_pcode->instructions > pcode->instructions) {
 			current_pcode->instructions = (void *) ((bx_uint8 *) current_pcode->instructions - pcode->size);

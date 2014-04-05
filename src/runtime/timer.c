@@ -45,11 +45,12 @@ struct timer_entry {
 	struct timer_entry *next_timer;		///< Next timer entry in the list
 };
 
-static bx_uint64 ticks_to_next_to_fire;
-static struct timer_entry *next_to_fire;
-
-static struct bx_ualloc *timer_entry_ualloc;
-static bx_uint8 timer_entry_storage[TM_TIMER_STORAGE_SIZE];
+static struct bx_timer {
+	bx_uint64 ticks_to_next_to_fire;
+	struct timer_entry *next_to_fire;
+	struct bx_ualloc *timer_entry_ualloc;
+	bx_uint8 timer_entry_storage[TM_TIMER_STORAGE_SIZE];
+} timer;
 
 static void add_to_timer_list(struct timer_entry *new_timer);
 
@@ -58,32 +59,32 @@ static void tick_callback() {
 	bx_uint64 start_tick_count;
 	bx_uint64 ticks_elapsed;
 
-	if (next_to_fire == NULL) {
+	if (timer.next_to_fire == NULL) {
 		return;
 	}
 
 	bx_tick_pause();
 
-	--ticks_to_next_to_fire;
-	while (ticks_to_next_to_fire == 0) {
+	--timer.ticks_to_next_to_fire;
+	while (timer.ticks_to_next_to_fire == 0) {
 		start_tick_count = bx_tick_get_count();
 
-		timer_fired = next_to_fire;
-		ticks_to_next_to_fire = next_to_fire->ticks_to_next_timer;
-		next_to_fire = next_to_fire->next_timer;
+		timer_fired = timer.next_to_fire;
+		timer.ticks_to_next_to_fire = timer.next_to_fire->ticks_to_next_timer;
+		timer.next_to_fire = timer.next_to_fire->next_timer;
 		bx_sched_schedule_task(timer_fired->task);
 
 		if (timer_fired->timer_type == BX_TIMER_PERIODIC) {
 			add_to_timer_list(timer_fired);
 		} else {
-			bx_ualloc_free(timer_entry_ualloc, timer_fired);
+			bx_ualloc_free(timer.timer_entry_ualloc, timer_fired);
 		}
 
 		ticks_elapsed = bx_tick_get_count() - start_tick_count;
-		if (ticks_to_next_to_fire <= ticks_elapsed) {
-			ticks_to_next_to_fire = 0;
+		if (timer.ticks_to_next_to_fire <= ticks_elapsed) {
+			timer.ticks_to_next_to_fire = 0;
 		} else {
-			ticks_to_next_to_fire -= ticks_elapsed;
+			timer.ticks_to_next_to_fire -= ticks_elapsed;
 		}
 	}
 
@@ -93,12 +94,12 @@ static void tick_callback() {
 bx_int8 bx_timer_init() {
 	bx_int8 error;
 
-	ticks_to_next_to_fire = 0;
-	next_to_fire = NULL;
+	timer.ticks_to_next_to_fire = 0;
+	timer.next_to_fire = NULL;
 
-	timer_entry_ualloc = bx_ualloc_init(timer_entry_storage,
+	timer.timer_entry_ualloc = bx_ualloc_init(timer.timer_entry_storage,
 			TM_TIMER_STORAGE_SIZE, sizeof (struct timer_entry));
-	if (timer_entry_ualloc == NULL) {
+	if (timer.timer_entry_ualloc == NULL) {
 		return -1;
 	}
 
@@ -122,7 +123,7 @@ bx_int8 bx_timer_add_timer(enum bx_timer_type timer_type,
 		return -1;
 	}
 
-	new_timer = bx_ualloc_alloc(timer_entry_ualloc);
+	new_timer = bx_ualloc_alloc(timer.timer_entry_ualloc);
 	if (new_timer == NULL) {
 		return -1;
 	}
@@ -143,24 +144,24 @@ static void add_to_timer_list(struct timer_entry *new_timer) {
 	struct timer_entry *timer_list_entry;
 	bx_uint64 accumulated_ticks;
 
-	if (next_to_fire == NULL) {
-		next_to_fire = new_timer;
-		ticks_to_next_to_fire = new_timer->period_msec;
+	if (timer.next_to_fire == NULL) {
+		timer.next_to_fire = new_timer;
+		timer.ticks_to_next_to_fire = new_timer->period_msec;
 		new_timer->next_timer = NULL;
 		new_timer->ticks_to_next_timer = 0;
 		return;
 	}
 
-	if (new_timer->period_ticks < ticks_to_next_to_fire) {
-		new_timer->next_timer = next_to_fire;
-		new_timer->ticks_to_next_timer = ticks_to_next_to_fire - new_timer->period_msec;
-		ticks_to_next_to_fire = new_timer->period_ticks;
-		next_to_fire = new_timer;
+	if (new_timer->period_ticks < timer.ticks_to_next_to_fire) {
+		new_timer->next_timer = timer.next_to_fire;
+		new_timer->ticks_to_next_timer = timer.ticks_to_next_to_fire - new_timer->period_msec;
+		timer.ticks_to_next_to_fire = new_timer->period_ticks;
+		timer.next_to_fire = new_timer;
 		return;
 	}
 
-	timer_list_entry = next_to_fire;
-	accumulated_ticks = ticks_to_next_to_fire;
+	timer_list_entry = timer.next_to_fire;
+	accumulated_ticks = timer.ticks_to_next_to_fire;
 	while (timer_list_entry->next_timer != NULL &&
 			new_timer->period_ticks < accumulated_ticks + timer_list_entry->ticks_to_next_timer) {
 		accumulated_ticks += timer_list_entry->ticks_to_next_timer;

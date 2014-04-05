@@ -36,29 +36,28 @@
 #include "runtime/tick.h"
 #include "runtime/critical_section.h"
 
-static pthread_t thread;
-static pthread_attr_t attr;
-
-static bx_tick_callback tick_callback;
-static int tick_period_msec;
-
-static bx_uint64 tick_count;
-
-static bx_boolean paused;
+static struct bx_tick {
+	pthread_t thread;
+	pthread_attr_t attr;
+	bx_tick_callback callback;
+	int period_msec;
+	bx_uint64 count;
+	bx_boolean paused;
+} tick;
 
 void *tick_routine(void *arg) {
 	int error;
 	struct timespec period;
 
-	period.tv_sec = (1000 * 1000 * tick_period_msec) / (1000 * 1000 * 1000);
-	period.tv_nsec = (1000 * 1000 * tick_period_msec) % (1000 * 1000 * 1000);
+	period.tv_sec = (1000 * 1000 * tick.period_msec) / (1000 * 1000 * 1000);
+	period.tv_nsec = (1000 * 1000 * tick.period_msec) % (1000 * 1000 * 1000);
 
 	while (1) {
 		bx_critical_enter();
 
-		++tick_count;
-		if (!paused) {
-			tick_callback();
+		++tick.count;
+		if (!tick.paused) {
+			tick.callback();
 		}
 
 		bx_critical_exit();
@@ -77,21 +76,21 @@ bx_int8 bx_tick_start(bx_int32 period_msec, bx_tick_callback callback) {
 	int error;
 
 	BX_LOG(LOG_DEBUG, "tick", "Starting tick process...");
-	tick_callback = callback;
-	tick_period_msec = period_msec;
-	tick_count = 0;
+	tick.callback = callback;
+	tick.period_msec = period_msec;
+	tick.count = 0;
 
-	error = pthread_attr_init(&attr);
+	error = pthread_attr_init(&tick.attr);
 	if (error != 0) {
 		return -1;
 	}
-	error = pthread_create(&thread, &attr, tick_routine, NULL);
+	error = pthread_create(&tick.thread, &tick.attr, tick_routine, NULL);
 	if (error != 0) {
-		pthread_attr_destroy(&attr);
+		pthread_attr_destroy(&tick.attr);
 		return -1;
 	}
 
-	paused = BX_BOOLEAN_FALSE;
+	tick.paused = BX_BOOLEAN_FALSE;
 	BX_LOG(LOG_DEBUG, "tick", "Tick process started");
 
 	return 0;
@@ -99,13 +98,13 @@ bx_int8 bx_tick_start(bx_int32 period_msec, bx_tick_callback callback) {
 
 void bx_tick_pause() {
 	bx_critical_enter();
-	paused = BX_BOOLEAN_TRUE;
+	tick.paused = BX_BOOLEAN_TRUE;
 	bx_critical_exit();
 }
 
 void bx_tick_resume() {
 	bx_critical_enter();
-	paused = BX_BOOLEAN_FALSE;
+	tick.paused = BX_BOOLEAN_FALSE;
 	bx_critical_exit();
 }
 
@@ -113,7 +112,7 @@ bx_uint64 bx_tick_get_count() {
 	bx_uint64 tick_count_copy;
 
 	bx_critical_enter();
-	tick_count_copy = tick_count;
+	tick_count_copy = tick.count;
 	bx_critical_exit();
 
 	return tick_count_copy;
@@ -122,9 +121,9 @@ bx_uint64 bx_tick_get_count() {
 bx_int8 bx_tick_stop() {
 
 	BX_LOG(LOG_DEBUG, "tick", "Stopping tick process...");
-	pthread_cancel(thread);
-	pthread_join(thread, NULL);
-	pthread_attr_destroy(&attr);
+	pthread_cancel(tick.thread);
+	pthread_join(tick.thread, NULL);
+	pthread_attr_destroy(&tick.attr);
 	BX_LOG(LOG_DEBUG, "tick", "Tick process halted");
 
 	return 0;

@@ -34,27 +34,29 @@
 #include "logging.h"
 #include "runtime/critical_section.h"
 
-static pthread_mutex_t critical_mutex;
-static pthread_mutexattr_t critical_mutex_attr;
+static struct bx_critical_section {
+	pthread_mutex_t mutex;
+	pthread_mutexattr_t mutex_attr;
+} critical_section;
 
 bx_int8 bx_critical_init() {
 	int error;
 
-	error = pthread_mutexattr_init(&critical_mutex_attr);
+	error = pthread_mutexattr_init(&critical_section.mutex_attr);
 	if (error != 0) {
 		BX_LOG(LOG_DEBUG, "critical_section", "Error initializing mutex attributes: %i", errno);
 		return -1;
 	}
-	error = pthread_mutexattr_settype(&critical_mutex_attr, PTHREAD_MUTEX_RECURSIVE);
+	error = pthread_mutexattr_settype(&critical_section.mutex_attr, PTHREAD_MUTEX_RECURSIVE);
 	if (error != 0) {
 		BX_LOG(LOG_DEBUG, "critical_section", "Error setting mutex attributes: %i", errno);
-		pthread_mutexattr_destroy(&critical_mutex_attr);
+		pthread_mutexattr_destroy(&critical_section.mutex_attr);
 		return -1;
 	}
-	error = pthread_mutex_init(&critical_mutex, &critical_mutex_attr);
+	error = pthread_mutex_init(&critical_section.mutex, &critical_section.mutex_attr);
 	if (error != 0) {
 		BX_LOG(LOG_DEBUG, "critical_section", "Error initializing mutex: %i", errno);
-		pthread_mutexattr_destroy(&critical_mutex_attr);
+		pthread_mutexattr_destroy(&critical_section.mutex_attr);
 		return -1;
 	}
 
@@ -64,7 +66,7 @@ bx_int8 bx_critical_init() {
 bx_int8 bx_critical_enter() {
 	int error;
 
-	error = pthread_mutex_lock(&critical_mutex);
+	error = pthread_mutex_lock(&critical_section.mutex);
 	if (error != 0) {
 		BX_LOG(LOG_DEBUG, "critical_section", "Error acquiring mutex: %i", errno);
 		return -1;
@@ -76,7 +78,7 @@ bx_int8 bx_critical_enter() {
 bx_int8 bx_critical_exit() {
 	int error;
 
-	error = pthread_mutex_unlock(&critical_mutex);
+	error = pthread_mutex_unlock(&critical_section.mutex);
 	if (error != 0) {
 		BX_LOG(LOG_DEBUG, "critical_section", "Error releasing mutex: %i", errno);
 		return -1;
@@ -88,8 +90,8 @@ bx_int8 bx_critical_exit() {
 bx_int8 bx_critical_destroy() {
 	int error;
 
-	error = pthread_mutex_destroy(&critical_mutex);
-	error += pthread_mutexattr_destroy(&critical_mutex_attr);
+	error = pthread_mutex_destroy(&critical_section.mutex);
+	error += pthread_mutexattr_destroy(&critical_section.mutex_attr);
 
 	return error == 0 ? 0 : -1;
 }

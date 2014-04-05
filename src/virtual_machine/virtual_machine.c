@@ -57,18 +57,17 @@ enum vm_operand {
 #define BYTE_AT_PC(vm_status_pointer) (vm_status_pointer->pcode + vm_status_pointer->program_counter)
 #define VARIABLE_PTR(vm_status_pointer, variable_number) (void *) (vm_status_pointer->variable_table + variable_number *4)
 
-struct bx_vm_status {
+static struct bx_vm_status {
 	bx_size program_counter;
 	struct bx_stack *execution_stack;
 	bx_uint8 *pcode;
 	bx_uint8 variable_table[VM_VARIABLE_TABLE_SIZE];
 	bx_size pcode_size;
 	bx_boolean stop;
-};
+} vm_status;
 
 typedef bx_int8 (*bx_instruction)(struct bx_vm_status *);
 
-static struct bx_vm_status vm_status;
 static bx_int8 stack_byte_array[VM_STACK_SIZE];
 
 static const bx_int32 int_const_0 = 0;

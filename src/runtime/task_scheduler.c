@@ -52,13 +52,14 @@ struct bx_task {
 	struct bx_task *next;
 };
 
-static struct bx_ualloc *task_ualloc = NULL;
-static bx_uint8 task_storage[EV_HANDLER_STORAGE_SIZE];
-
-static bx_uint16 current_id;
-static struct bx_task *running;
-static struct bx_task *scheduled_list;
-static struct bx_task *stopped_list;
+static struct bx_task_manager {
+	struct bx_ualloc *task_ualloc;
+	bx_uint8 task_storage[EV_HANDLER_STORAGE_SIZE];
+	bx_uint16 current_id;
+	struct bx_task *running;
+	struct bx_task *scheduled_list;
+	struct bx_task *stopped_list;
+} task_manager;
 
 /**
  * Adds a new task to the list
@@ -161,16 +162,16 @@ static struct bx_task *task_list_extract_head(struct bx_task **task_list) {
 
 bx_int8 bx_sched_init() {
 
-	task_ualloc = bx_ualloc_init(task_storage,
+	task_manager.task_ualloc = bx_ualloc_init(task_manager.task_storage,
 			EV_HANDLER_STORAGE_SIZE, sizeof (struct bx_task));
-	if (task_ualloc == NULL) {
+	if (task_manager.task_ualloc == NULL) {
 		return -1;
 	}
 
-	current_id = 0;
-	scheduled_list = NULL;
-	stopped_list = NULL;
-	running = NULL;
+	task_manager.current_id = 0;
+	task_manager.scheduled_list = NULL;
+	task_manager.stopped_list = NULL;
+	task_manager.running = NULL;
 
 	return 0;
 }
@@ -186,33 +187,33 @@ void free_task(struct bx_task *task) {
 		bx_pcode_remove(task->task.pcode);
 	}
 
-	bx_ualloc_free(task_ualloc, task);
+	bx_ualloc_free(task_manager.task_ualloc, task);
 }
 
 void bx_sched_scheduler_loop(bx_boolean stop_if_empty) {
 
 	while (1) {
 		bx_critical_enter();
-		running = task_list_extract_head(&scheduled_list);
+		task_manager.running = task_list_extract_head(&task_manager.scheduled_list);
 		bx_critical_exit();
 
-		if (running == NULL && stop_if_empty == BX_BOOLEAN_TRUE) {
+		if (task_manager.running == NULL && stop_if_empty == BX_BOOLEAN_TRUE) {
 			break;
-		} else if (running == NULL && stop_if_empty == BX_BOOLEAN_FALSE) {
+		} else if (task_manager.running == NULL && stop_if_empty == BX_BOOLEAN_FALSE) {
 			continue; //TODO: Is this busy waiting the best way to do it? I don't think so...
 		}
 
-		switch (running->task_type) {
+		switch (task_manager.running->task_type) {
 		case BX_TASK_NATIVE:
-			running->task.native_function();
+			task_manager.running->task.native_function();
 			break;
 		case BX_TASK_PCODE:
-			bx_pcode_execute(running->task.pcode);
+			bx_pcode_execute(task_manager.running->task.pcode);
 		}
 
 		bx_critical_enter();
-		task_list_add(&stopped_list, running);
-		running = NULL;
+		task_list_add(&task_manager.stopped_list, task_manager.running);
+		task_manager.running = NULL;
 		bx_critical_exit();
 	}
 }
@@ -224,14 +225,14 @@ bx_task_id bx_sched_add_native_task(native_function function) {
 		return -1;
 	}
 
-	native_task = bx_ualloc_alloc(task_ualloc);
-	native_task->id = current_id++;
+	native_task = bx_ualloc_alloc(task_manager.task_ualloc);
+	native_task->id = task_manager.current_id++;
 	native_task->task_type = BX_TASK_NATIVE;
 	native_task->task.native_function = function;
 	native_task->scheduled = BX_BOOLEAN_FALSE;
 
 	bx_critical_enter();
-	task_list_add(&stopped_list, native_task);
+	task_list_add(&task_manager.stopped_list, native_task);
 	bx_critical_exit();
 
 	return native_task->id;
@@ -250,14 +251,14 @@ bx_task_id bx_sched_add_pcode_task(void *buffer, bx_size buffer_size) {
 		return -1;
 	}
 
-	pcode_task = bx_ualloc_alloc(task_ualloc);
-	pcode_task->id = current_id++;
+	pcode_task = bx_ualloc_alloc(task_manager.task_ualloc);
+	pcode_task->id = task_manager.current_id++;
 	pcode_task->task_type = BX_TASK_PCODE;
 	pcode_task->task.pcode = pcode;
 	pcode_task->scheduled = BX_BOOLEAN_FALSE;
 
 	bx_critical_enter();
-	task_list_add(&stopped_list, pcode_task);
+	task_list_add(&task_manager.stopped_list, pcode_task);
 	bx_critical_exit();
 
 	return pcode_task->id;
@@ -268,15 +269,15 @@ bx_int8 bx_sched_schedule_task(bx_task_id task_id) {
 
 	bx_critical_enter();
 
-	task = task_list_search(stopped_list, task_id);
+	task = task_list_search(task_manager.stopped_list, task_id);
 	if (task == NULL) {
 		BX_LOG(LOG_ERROR, "task_scheduler",
 				"Cannot schedule: Task %zu not found or already scheduled", task_id);
 		return -1;
 	}
 
-	task_list_remove(&stopped_list, task->id);
-	task_list_add(&scheduled_list, task);
+	task_list_remove(&task_manager.stopped_list, task->id);
+	task_list_add(&task_manager.scheduled_list, task);
 
 	bx_critical_exit();
 
@@ -288,8 +289,8 @@ bx_int8 bx_sched_is_scheduled(bx_task_id task_id) {
 	struct bx_task *task_stopped;
 
 	bx_critical_enter();
-	task_scheduled = task_list_search(scheduled_list, task_id);
-	task_stopped = task_list_search(stopped_list, task_id);
+	task_scheduled = task_list_search(task_manager.scheduled_list, task_id);
+	task_stopped = task_list_search(task_manager.stopped_list, task_id);
 	bx_critical_exit();
 
 	if (task_scheduled != NULL) {
@@ -308,8 +309,8 @@ bx_int8 bx_sched_remove_task(bx_task_id task_id) {
 	struct bx_task *task_stopped;
 
 	bx_critical_enter();
-	task_scheduled = task_list_remove(&stopped_list, task_id);
-	task_stopped = task_list_remove(&scheduled_list, task_id);
+	task_scheduled = task_list_remove(&task_manager.stopped_list, task_id);
+	task_stopped = task_list_remove(&task_manager.scheduled_list, task_id);
 	bx_critical_exit();
 
 	if (task_scheduled != NULL) {

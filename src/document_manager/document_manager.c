@@ -39,16 +39,19 @@ struct internal_field {
 	struct bx_document_field field;
 };
 
-static struct internal_field field_list_storage[DM_MAX_FIELD_NUMBER];
-static struct bx_list *field_list;
+static struct bx_document_manager {
+	struct internal_field field_list_storage[DM_MAX_FIELD_NUMBER];
+	struct bx_list *field_list;
+} document_manager;
 
 bx_boolean compare_by_id(struct internal_field *field, char *identifier);
 
 bx_int8 bx_docman_init() {
 	BX_LOG(LOG_INFO, "document_manager", "Initializing document manager...");
 
-	field_list = bx_list_init(field_list_storage, DM_MAX_FIELD_NUMBER, sizeof (struct internal_field));
-	if (field_list == NULL) {
+	document_manager.field_list = bx_list_init(document_manager.field_list_storage,
+			DM_MAX_FIELD_NUMBER, sizeof (struct internal_field));
+	if (document_manager.field_list == NULL) {
 		return -1;
 	}
 
@@ -62,11 +65,11 @@ bx_int8 bx_docman_add_field(struct bx_document_field *field, char *identifier) {
 		return -1;
 	}
 
-	if (bx_list_indexof(field_list, identifier, (equals_function) compare_by_id) != -1) {
+	if (bx_list_indexof(document_manager.field_list, identifier, (equals_function) compare_by_id) != -1) {
 		return -1;
 	}
 
-	internal_field = bx_list_get_empty(field_list);
+	internal_field = bx_list_get_empty(document_manager.field_list);
 	if (internal_field == NULL) {
 		return -1;
 	}
@@ -83,7 +86,7 @@ bx_int8 bx_docman_invoke_get(char *field_identifier, void *data) {
 		return -1;
 	}
 
-	internal_field = bx_list_search(field_list, field_identifier, (equals_function) compare_by_id);
+	internal_field = bx_list_search(document_manager.field_list, field_identifier, (equals_function) compare_by_id);
 	if (internal_field == NULL) {
 		return -1;
 	}
@@ -99,7 +102,7 @@ bx_int8 bx_docman_invoke_set(char *field_identifier, void *data) {
 		return -1;
 	}
 
-	internal_field = bx_list_search(field_list, field_identifier, (equals_function) compare_by_id);
+	internal_field = bx_list_search(document_manager.field_list, field_identifier, (equals_function) compare_by_id);
 	if (internal_field == NULL) {
 		return -1;
 	}

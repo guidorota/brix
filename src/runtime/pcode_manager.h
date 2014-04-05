@@ -45,22 +45,35 @@ bx_int8 bx_pcode_init();
 
 /**
  * Adds a new pcode program into the repository.
+ * This function creates a copy of the buffer content inside the pcode_manager
+ * data structures. This memory can be relinquished by removing the pcode
+ * pointer through the bx_pcode_remove function.
  *
  * @param buffer Instruction buffer
  * @param buffer_size Instruction buffer size
  *
- * @return New bx_pcode structure, NULL on failure
+ * @return New bx_pcode structure, NULL on failure or not enough memory
  */
 struct bx_pcode *bx_pcode_add(void *buffer, bx_size buffer_size);
 
 /**
- * Invokes the virtual machine and executes a program.
+ * Invokes the virtual machine and executes a pcode program.
  *
  * @param pcode Program to execute
  *
  * @return 0 on success, -1 on failure
  */
 bx_int8 bx_pcode_execute(struct bx_pcode *pcode);
+
+/**
+ * Returns the remaining storage capacity in bytes.
+ * This method should be invoked prior to trying to add new pcode data, to
+ * check whether the remaining storage capacity is enough to contain the code
+ * buffer.
+ *
+ * @return Remaining storage capacity in bytes
+ */
+bx_size bx_pcode_current_capacity();
 
 /**
  * Removes a pcode program from the repository.
