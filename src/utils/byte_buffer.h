@@ -34,6 +34,10 @@
 
 #include "types.h"
 
+#define BX_BYTE_BUFFER_SIZE 6
+
+#define BX_BBUF_STORAGE_SIZE(desired_capacity) (BX_BYTE_BUFFER_SIZE + desired_capacity)
+
 /**
  * A circular FIFO byte buffer.
  */

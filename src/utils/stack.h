@@ -34,6 +34,10 @@
 
 #include "types.h"
 
+#define BX_STACK_SIZE 4
+
+#define BX_STACK_STORAGE_SIZE(desired_capacity) (desired_capacity + BX_STACK_SIZE)
+
 #define BX_STACK_PUSH_VARIABLE(stack_pointer, variable) bx_stack_push(stack_pointer, &variable, sizeof variable)
 #define BX_STACK_POP_VARIABLE(stack_pointer, variable) bx_stack_pop(stack_pointer, &variable, sizeof variable)
 

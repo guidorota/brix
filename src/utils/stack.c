@@ -30,14 +30,15 @@
  */
 
 #include "stack.h"
+#include "compile_assert.h"
 #include <string.h>
 
 /**
  * Stack data structure.
  */
 struct bx_stack {
-	size_t top;
-	size_t capacity;
+	bx_size top;
+	bx_size capacity;
 };
 
 #define STORAGE_POINTER(stack_pointer) ((bx_uint8 *) stack_pointer + sizeof (struct bx_stack))
@@ -46,6 +47,8 @@ struct bx_stack {
 
 struct bx_stack *bx_stack_init(void *storage, bx_size storage_size) {
 	struct bx_stack *stack;
+
+	BX_COMPILE_ASSERT((sizeof (struct bx_stack)) == BX_STACK_SIZE);
 
 	if (storage == NULL) {
 		return NULL;

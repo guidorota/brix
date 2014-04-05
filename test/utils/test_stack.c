@@ -34,10 +34,10 @@
 #include "utils/stack.h"
 #include <stdio.h>
 
-#define STACK_SIZE 20
+#define STACK_SIZE 4
 
 static struct bx_stack *stack;
-static bx_int8 byte_array[STACK_SIZE];
+static bx_int8 byte_array[BX_STACK_STORAGE_SIZE(STACK_SIZE)];
 
 static bx_size empty_stack_capacity;
 
@@ -45,7 +45,7 @@ static bx_int8 byte_var = 12;
 static bx_int32 int_value = 987364758;
 
 START_TEST (create_stack) {
-	stack = bx_stack_init((void *) byte_array, STACK_SIZE);
+	stack = bx_stack_init((void *) byte_array, BX_STACK_STORAGE_SIZE(STACK_SIZE));
 
 	ck_assert_ptr_ne(stack, NULL);
 	ck_assert_int_eq(bx_stack_size(stack), 0);

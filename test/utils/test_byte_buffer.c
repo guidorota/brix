@@ -33,15 +33,15 @@
 #include "test_byte_buffer.h"
 #include "utils/byte_buffer.h"
 
-#define STORAGE_CAPACITY 50
+#define STORAGE_CAPACITY 20
 
 static struct bx_byte_buffer *buffer;
-static bx_uint8 byte_buffer_storage[STORAGE_CAPACITY];
+static bx_uint8 byte_buffer_storage[BX_BBUF_STORAGE_SIZE(STORAGE_CAPACITY)];
 
 START_TEST (create_byte_buffer) {
-	buffer = bx_bbuf_init(byte_buffer_storage, STORAGE_CAPACITY);
+	buffer = bx_bbuf_init(byte_buffer_storage, BX_BBUF_STORAGE_SIZE(STORAGE_CAPACITY));
 	ck_assert_ptr_ne(buffer, NULL);
-	ck_assert_int_gt(bx_bbuf_capacity(buffer), 0);
+	ck_assert_int_eq(bx_bbuf_capacity(buffer), STORAGE_CAPACITY);
 	ck_assert_int_eq(bx_bbuf_size(buffer), 0);
 	ck_assert_ptr_eq(buffer, byte_buffer_storage);
 } END_TEST
@@ -119,8 +119,8 @@ START_TEST (fill_test) {
 
 START_TEST (write_and_read_around) {
 	bx_int8 error;
-	bx_uint8 source[10];
-	bx_uint8 destination[10];
+	bx_uint8 source[STORAGE_CAPACITY - 1];
+	bx_uint8 destination[STORAGE_CAPACITY - 1];
 
 	error = bx_bbuf_reset(buffer);
 	ck_assert_int_eq(error, 0);

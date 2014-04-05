@@ -38,6 +38,10 @@
 
 #include "types.h"
 
+#define BX_LIST_SIZE 6
+
+#define BX_LIST_STORAGE_SIZE(element_size, element_number) (BX_LIST_SIZE + element_size * element_number)
+
 #define BX_LIST_GET(list_pointer, index, type) (type *) bx_list_get(list_pointer, index)
 #define BX_LIST_GET_EMPTY(list_pointer, type) (type *) bx_list_get_empty(list_pointer)
 

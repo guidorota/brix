@@ -30,6 +30,7 @@
  */
 
 #include "utils/byte_buffer.h"
+#include "compile_assert.h"
 
 #define BBUF_DATA(buffer_pointer) ((bx_uint8 *) buffer_pointer + sizeof (struct bx_byte_buffer))
 
@@ -44,6 +45,8 @@ struct bx_byte_buffer {
 
 struct bx_byte_buffer *bx_bbuf_init(bx_uint8 *storage, bx_size storage_size) {
 	struct bx_byte_buffer *buffer;
+
+	BX_COMPILE_ASSERT(sizeof (struct bx_byte_buffer) == BX_BYTE_BUFFER_SIZE);
 
 	if (storage == NULL) {
 		return NULL;

@@ -33,7 +33,9 @@
 #include "test_list.h"
 #include "utils/list.h"
 
-#define LIST_STORAGE_SIZE 512
+#define ELEMENT_NUMBER 20
+
+#define LIST_STORAGE_SIZE BX_LIST_STORAGE_SIZE(sizeof (bx_int32), ELEMENT_NUMBER)
 
 static bx_uint8 list_storage[LIST_STORAGE_SIZE];
 static struct bx_list *list;

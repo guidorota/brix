@@ -30,6 +30,7 @@
  */
 
 #include "list.h"
+#include "compile_assert.h"
 #include <string.h>
 
 /**
@@ -49,6 +50,8 @@ struct bx_list {
 
 struct bx_list *bx_list_init(void *storage, bx_size storage_size, bx_size element_size) {
 	struct bx_list *list;
+
+	BX_COMPILE_ASSERT((sizeof (struct bx_list)) == BX_LIST_SIZE);
 
 	if (storage == NULL || storage_size == 0) {
 		return NULL;
