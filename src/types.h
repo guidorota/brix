@@ -64,7 +64,7 @@ typedef uint64_t bx_uint64;
 
 typedef float bx_float32;
 
-typedef size_t bx_size;
-typedef ssize_t bx_ssize;
+typedef bx_uint16 bx_size;
+typedef bx_int16 bx_ssize;
 
 #endif /* TYPES_H_ */

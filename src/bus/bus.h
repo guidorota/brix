@@ -35,6 +35,8 @@
 #include "types.h"
 #include "bus/interface.h"
 
+struct bx_bus_address;
+
 bx_int8 ha_bus_init();
 
 bx_int8 ha_bus_add_interface(struct bx_interface *interface);

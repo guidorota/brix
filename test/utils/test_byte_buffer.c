@@ -33,19 +33,17 @@
 #include "test_byte_buffer.h"
 #include "utils/byte_buffer.h"
 
-#define BYTE_BUFFER_CAPACITY 10
+#define STORAGE_CAPACITY 50
 
-static struct bx_byte_buffer buffer;
-static bx_uint8 byte_buffer_storage[BYTE_BUFFER_CAPACITY];
+static struct bx_byte_buffer *buffer;
+static bx_uint8 byte_buffer_storage[STORAGE_CAPACITY];
 
 START_TEST (create_byte_buffer) {
-	bx_int8 error;
-
-	error = bx_bbuf_init(&buffer, byte_buffer_storage, BYTE_BUFFER_CAPACITY);
-	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_bbuf_capacity(&buffer), BYTE_BUFFER_CAPACITY);
-	ck_assert_int_eq(bx_bbuf_size(&buffer), 0);
-	ck_assert_ptr_eq(buffer.data, byte_buffer_storage);
+	buffer = bx_bbuf_init(byte_buffer_storage, STORAGE_CAPACITY);
+	ck_assert_ptr_ne(buffer, NULL);
+	ck_assert_int_gt(bx_bbuf_capacity(buffer), 0);
+	ck_assert_int_eq(bx_bbuf_size(buffer), 0);
+	ck_assert_ptr_eq(buffer, byte_buffer_storage);
 } END_TEST
 
 START_TEST (normal_usage_test) {
@@ -58,48 +56,48 @@ START_TEST (normal_usage_test) {
 	bx_int32 out_value2 = 0;
 	bx_int8 out_value3 = 0;
 
-	previous_size = bx_bbuf_size(&buffer);
-	error = bx_bbuf_append(&buffer, (void *) &value1, sizeof value1);
+	previous_size = bx_bbuf_size(buffer);
+	error = bx_bbuf_append(buffer, (void *) &value1, sizeof value1);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_bbuf_size(&buffer), previous_size + sizeof value1);
+	ck_assert_int_eq(bx_bbuf_size(buffer), previous_size + sizeof value1);
 
-	previous_size = bx_bbuf_size(&buffer);
-	error = bx_bbuf_append(&buffer, (void *) &value2, sizeof value2);
+	previous_size = bx_bbuf_size(buffer);
+	error = bx_bbuf_append(buffer, (void *) &value2, sizeof value2);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_bbuf_size(&buffer), previous_size + sizeof value2);
+	ck_assert_int_eq(bx_bbuf_size(buffer), previous_size + sizeof value2);
 
-	previous_size = bx_bbuf_size(&buffer);
-	error = bx_bbuf_append(&buffer, (void *) &value3, sizeof value3);
+	previous_size = bx_bbuf_size(buffer);
+	error = bx_bbuf_append(buffer, (void *) &value3, sizeof value3);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_bbuf_size(&buffer), previous_size + sizeof value3);
+	ck_assert_int_eq(bx_bbuf_size(buffer), previous_size + sizeof value3);
 
-	previous_size = bx_bbuf_size(&buffer);
-	error = bx_bbuf_get(&buffer, (void *) &out_value1, sizeof out_value1);
+	previous_size = bx_bbuf_size(buffer);
+	error = bx_bbuf_get(buffer, (void *) &out_value1, sizeof out_value1);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_bbuf_size(&buffer), previous_size - sizeof value1);
+	ck_assert_int_eq(bx_bbuf_size(buffer), previous_size - sizeof value1);
 	ck_assert_int_eq(out_value1, value1);
 
-	previous_size = bx_bbuf_size(&buffer);
-	error = bx_bbuf_get(&buffer, (void *) &out_value2, sizeof out_value2);
+	previous_size = bx_bbuf_size(buffer);
+	error = bx_bbuf_get(buffer, (void *) &out_value2, sizeof out_value2);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_bbuf_size(&buffer), previous_size - sizeof value2);
+	ck_assert_int_eq(bx_bbuf_size(buffer), previous_size - sizeof value2);
 	ck_assert_int_eq(out_value1, value1);
 
-	previous_size = bx_bbuf_size(&buffer);
-	error = bx_bbuf_get(&buffer, (void *) &out_value3, sizeof out_value3);
+	previous_size = bx_bbuf_size(buffer);
+	error = bx_bbuf_get(buffer, (void *) &out_value3, sizeof out_value3);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_bbuf_size(&buffer), previous_size - sizeof value3);
+	ck_assert_int_eq(bx_bbuf_size(buffer), previous_size - sizeof value3);
 	ck_assert_int_eq(out_value1, value1);
 } END_TEST
 
 START_TEST (reset_byte_buffer) {
 	bx_int8 error;
 
-	error = bx_bbuf_reset(&buffer);
+	error = bx_bbuf_reset(buffer);
 	ck_assert_int_eq(error, 0);
-	ck_assert_int_eq(bx_bbuf_capacity(&buffer), BYTE_BUFFER_CAPACITY);
-	ck_assert_int_eq(bx_bbuf_size(&buffer), 0);
-	ck_assert_ptr_eq(buffer.data, byte_buffer_storage);
+	ck_assert_int_gt(bx_bbuf_capacity(buffer), 0);
+	ck_assert_int_eq(bx_bbuf_size(buffer), 0);
+	ck_assert_ptr_eq(buffer, byte_buffer_storage);
 } END_TEST
 
 START_TEST (fill_test) {
@@ -107,24 +105,24 @@ START_TEST (fill_test) {
 	bx_uint8 value = 1;
 	bx_size previous_size;
 
-	while (bx_bbuf_size(&buffer) < BYTE_BUFFER_CAPACITY) {
-		error = bx_bbuf_append(&buffer, (void *) &value, sizeof value);
+	while (bx_bbuf_capacity(buffer) - bx_bbuf_size(buffer) != 0) {
+		error = bx_bbuf_append(buffer, (void *) &value, sizeof value);
 		ck_assert_int_eq(error, 0);
-		ck_assert_int_ne(bx_bbuf_size(&buffer), 0);
+		ck_assert_int_ne(bx_bbuf_size(buffer), 0);
 	}
 
-	previous_size = bx_bbuf_size(&buffer);
-	error = bx_bbuf_append(&buffer, (void *) &value, sizeof value);
+	previous_size = bx_bbuf_size(buffer);
+	error = bx_bbuf_append(buffer, (void *) &value, sizeof value);
 	ck_assert_int_eq(error, -1);
-	ck_assert_int_eq(bx_bbuf_size(&buffer), previous_size);
+	ck_assert_int_eq(bx_bbuf_size(buffer), previous_size);
 } END_TEST
 
 START_TEST (write_and_read_around) {
 	bx_int8 error;
-	bx_uint8 source[BYTE_BUFFER_CAPACITY - 1];
-	bx_uint8 destination[BYTE_BUFFER_CAPACITY - 1];
+	bx_uint8 source[10];
+	bx_uint8 destination[10];
 
-	error = bx_bbuf_reset(&buffer);
+	error = bx_bbuf_reset(buffer);
 	ck_assert_int_eq(error, 0);
 
 	bx_size i;
@@ -133,9 +131,9 @@ START_TEST (write_and_read_around) {
 	}
 
 	for (i = 0; i < 10; i++) {
-		error = bx_bbuf_append(&buffer, source, sizeof source);
+		error = bx_bbuf_append(buffer, source, sizeof source);
 		ck_assert_int_eq(error, 0);
-		error = bx_bbuf_get(&buffer, destination, sizeof destination);
+		error = bx_bbuf_get(buffer, destination, sizeof destination);
 		ck_assert_int_eq(error, 0);
 		ck_assert_int_eq(memcmp((void *) source, (void *) destination, sizeof source), 0);
 	}

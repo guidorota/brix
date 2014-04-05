@@ -31,8 +31,12 @@
 
 #include "bus/bus.h"
 
+#define BX_BUS_ADDRESS_LENGTH 16
+
+struct bx_bus_address {
+	bx_uint8 data[BX_BUS_ADDRESS_LENGTH];
+};
+
 bx_int8 ha_bus_init() {
 	return -1; //TODO: Stub
 }
-
-struct bx_bus_address;

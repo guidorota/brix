@@ -35,18 +35,9 @@
 #include "types.h"
 
 /**
- * A FIFO byte buffer.
+ * A circular FIFO byte buffer.
  */
-
-/**
- * Buffer data structure
- */
-struct bx_byte_buffer {
-	bx_uint8 *data;		///< Byte array
-	bx_size capacity;		///< Byte buffer capacity in byte
-	bx_size head;			///< Pointer to the first readable byte
-	bx_size size;			///< Number of bytes in the buffer
-};
+struct bx_byte_buffer;
 
 /**
  * Byte buffer data structure initialization.
@@ -56,9 +47,9 @@ struct bx_byte_buffer {
  * @param storage_size Size of the storage byte array in bytes
  * @param element_size Size in bytes of a single element of the list
  *
- * @return 0 upon successful initialization, -1 otherwise
+ * @return Byte buffer instance pointer
  */
-bx_int8 bx_bbuf_init(struct bx_byte_buffer *buffer, bx_uint8 *storage, bx_size storage_size);
+struct bx_byte_buffer *bx_bbuf_init(bx_uint8 *storage, bx_size storage_size);
 
 /**
  * Append data to the byte buffer.
@@ -93,7 +84,7 @@ bx_int8 bx_bbuf_get(struct bx_byte_buffer *buffer, void *data, bx_size length);
 bx_ssize bx_bbuf_size(struct bx_byte_buffer *buffer);
 
 /**
- * Retrieves the capacity of the byte buffer
+ * Retrieves the maximum number of bytes that the byte buffer can contain
  *
  * @param buffer Byte buffer pointer
  *

@@ -59,10 +59,20 @@ START_TEST (init_test) {
 } END_TEST
 
 START_TEST (add_test) {
+	bx_size capacity_before;
+	bx_size capacity_after;
+
+	capacity_before = bx_pcode_current_capacity();
 	pcode1 = (struct test_bx_pcode *) bx_pcode_add((void *) DATA1, DATA1_SIZE);
 	ck_assert_ptr_ne(pcode1, NULL);
+	capacity_after = bx_pcode_current_capacity();
+	ck_assert_int_lt(capacity_after, capacity_before);
+
+	capacity_before = bx_pcode_current_capacity();
 	pcode2 = (struct test_bx_pcode *) bx_pcode_add((void *) DATA2, DATA2_SIZE);
 	ck_assert_ptr_ne(pcode2, NULL);
+	capacity_after = bx_pcode_current_capacity();
+	ck_assert_int_lt(capacity_after, capacity_before);
 
 	ck_assert_int_eq(pcode1->valid, BX_BOOLEAN_TRUE);
 	ck_assert_int_eq(pcode1->size, DATA1_SIZE);

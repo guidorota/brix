@@ -31,18 +31,34 @@
 
 #include "utils/byte_buffer.h"
 
-bx_int8 bx_bbuf_init(struct bx_byte_buffer *buffer, bx_uint8 *storage, bx_size storage_size) {
+#define BBUF_DATA(buffer_pointer) ((bx_uint8 *) buffer_pointer + sizeof (struct bx_byte_buffer))
 
-	if (buffer == NULL || storage == NULL) {
-		return -1;
+/**
+ * Buffer data structure
+ */
+struct bx_byte_buffer {
+	bx_size capacity;		///< Byte buffer capacity in byte
+	bx_size head;			///< Pointer to the first readable byte
+	bx_size size;			///< Number of bytes in the buffer
+};
+
+struct bx_byte_buffer *bx_bbuf_init(bx_uint8 *storage, bx_size storage_size) {
+	struct bx_byte_buffer *buffer;
+
+	if (storage == NULL) {
+		return NULL;
 	}
 
-	buffer->data = storage;
-	buffer->capacity = storage_size;
+	if (sizeof (struct bx_byte_buffer) >= storage_size) {
+		return NULL;
+	}
+
+	buffer = (struct bx_byte_buffer *) storage;
+	buffer->capacity = storage_size - sizeof (struct bx_byte_buffer);
 	buffer->head = 0;
 	buffer->size = 0;
 
-	return 0;
+	return buffer;
 }
 
 bx_int8 bx_bbuf_append(struct bx_byte_buffer *buffer, void *data, bx_size length) {
@@ -61,7 +77,7 @@ bx_int8 bx_bbuf_append(struct bx_byte_buffer *buffer, void *data, bx_size length
 	tail = (buffer->head + buffer->size) % buffer->capacity;
 	buffer->size += length;
 	while(length > 0) {
-		*(buffer->data + tail) = *source++;
+		*(BBUF_DATA(buffer) + tail) = *source++;
 		tail = (tail + 1) % buffer->capacity;
 		length--;
 	}
@@ -85,7 +101,7 @@ bx_int8 bx_bbuf_get(struct bx_byte_buffer *buffer, void *data, bx_size length) {
 	i = buffer->head;
 	buffer->size -= length;
 	while(length > 0) {
-		*destination++ = *(buffer->data + i);
+		*destination++ = *(BBUF_DATA(buffer) + i);
 		i = (i + 1) % buffer->capacity;
 		length--;
 	}

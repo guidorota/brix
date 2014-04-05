@@ -118,7 +118,7 @@ bx_int8 bx_pcode_execute(struct bx_pcode *pcode) {
 }
 
 bx_size bx_pcode_current_capacity() {
-	return SPACE_USED - sizeof (struct bx_pcode);
+	return PR_CODE_STORAGE_SIZE - SPACE_USED - sizeof (struct bx_pcode);
 }
 
 bx_int8 bx_pcode_remove(struct bx_pcode *pcode) {

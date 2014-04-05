@@ -29,7 +29,6 @@
  *
  */
 
-#include <stdio.h>
 #include <string.h>
 #include "test_compiler.h"
 #include "utils/fmemopen.h"
@@ -86,7 +85,6 @@ static bx_int8 run_program(char *program) {
 	}
 	fclose(yyin);
 
-	printf("\nCode size: %zu\n\n", main_task->pcode->size);
 	error = bx_vm_execute(main_task->pcode->data, main_task->pcode->size);
 	if (error != 0) {
 		return -1;
