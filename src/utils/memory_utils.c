@@ -1,6 +1,6 @@
 /*
- * configuration.h
- * Created on: Feb 16, 2014
+ * memory_utils.c
+ * Created on: Apr 6, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,29 +29,50 @@
  *
  */
 
-#ifndef CONFIGURATION_H_
-#define CONFIGURATION_H_
+#include "utils/memory_utils.h"
 
-// Define native byte order (NATIVE_LITTLE_ENDIAN or NATIVE_BIG_ENDIAN)
-#define NATIVE_LITTLE_ENDIAN
+void *bx_mutils_byte_order_switch_copy(void *to, const void *from, bx_size length) {
+	bx_size n;
+	bx_uint8 *from_ptr;
+	bx_uint8 *to_ptr;
 
-// Virtual machine
-#define VM_STACK_SIZE 512
-#define VM_VARIABLE_TABLE_SIZE 512
+	n = (length + 7) / 8;
+	from_ptr = (bx_uint8 *) from + length - 1;
+	to_ptr = (bx_uint8 *) to;
 
-// Pcode repository
-#define PR_CODE_STORAGE_SIZE 4092
+	switch(length % 8) {
+	case 0:	do {	*to_ptr++ = *from_ptr--;
+	case 7:		*to_ptr++ = *from_ptr--;
+	case 6:		*to_ptr++ = *from_ptr--;
+	case 5:		*to_ptr++ = *from_ptr--;
+	case 4:		*to_ptr++ = *from_ptr--;
+	case 3:		*to_ptr++ = *from_ptr--;
+	case 2:		*to_ptr++ = *from_ptr--;
+	case 1:		*to_ptr++ = *from_ptr--;
+			} while(--n > 0);
+	}
 
-// Document manager
-#define DM_MAX_FIELD_NUMBER 512
-#define DM_FIELD_IDENTIFIER_LENGTH 16
-#define DM_MMAP_STORAGE_SIZE 512
+	return to;
+}
 
-// Timer
-#define TM_TICK_PERIOD_MS 125
-#define TM_TIMER_STORAGE_SIZE 512
+bx_uint16 bx_mutils_swap16(bx_uint16 data) {
+	bx_uint16 data_swapped;
 
-// Event handler
-#define EV_HANDLER_STORAGE_SIZE 512
+	data_swapped = 0;
+	data_swapped += 0x00FF & (data >> 8);
+	data_swapped += 0xFF00 & (data << 8);
 
-#endif /* CONFIGURATION_H_ */
+	return data_swapped;
+}
+
+bx_uint32 bx_mutils_swap32(bx_uint32 data) {
+	bx_uint32 data_swapped;
+
+	data_swapped = 0;
+	data_swapped += 0x000000FF & (data >> 24);
+	data_swapped += 0x0000FF00 & (data >> 8);
+	data_swapped += 0x00FF0000 & (data << 8);
+	data_swapped += 0xFF000000 & (data << 24);
+
+	return data_swapped;
+}

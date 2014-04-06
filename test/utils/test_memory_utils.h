@@ -1,6 +1,6 @@
 /*
- * configuration.h
- * Created on: Feb 16, 2014
+ * test_memory_utils.h
+ * Created on: Apr 6, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,29 +29,11 @@
  *
  */
 
-#ifndef CONFIGURATION_H_
-#define CONFIGURATION_H_
+#ifndef TEST_MEMORY_UTILS_H_
+#define TEST_MEMORY_UTILS_H_
 
-// Define native byte order (NATIVE_LITTLE_ENDIAN or NATIVE_BIG_ENDIAN)
-#define NATIVE_LITTLE_ENDIAN
+#include <check.h>
 
-// Virtual machine
-#define VM_STACK_SIZE 512
-#define VM_VARIABLE_TABLE_SIZE 512
+Suite *test_memory_utils_create_suite(void);
 
-// Pcode repository
-#define PR_CODE_STORAGE_SIZE 4092
-
-// Document manager
-#define DM_MAX_FIELD_NUMBER 512
-#define DM_FIELD_IDENTIFIER_LENGTH 16
-#define DM_MMAP_STORAGE_SIZE 512
-
-// Timer
-#define TM_TICK_PERIOD_MS 125
-#define TM_TIMER_STORAGE_SIZE 512
-
-// Event handler
-#define EV_HANDLER_STORAGE_SIZE 512
-
-#endif /* CONFIGURATION_H_ */
+#endif /* TEST_MEMORY_UTILS_H_ */

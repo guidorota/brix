@@ -1,6 +1,6 @@
 /*
- * configuration.h
- * Created on: Feb 16, 2014
+ * memory_utils.h
+ * Created on: Apr 6, 2014
  * Author: Guido Rota
  *
  * Copyright (c) 2014, Guido Rota
@@ -29,29 +29,45 @@
  *
  */
 
-#ifndef CONFIGURATION_H_
-#define CONFIGURATION_H_
+#ifndef MEMORY_UTILS_H_
+#define MEMORY_UTILS_H_
 
-// Define native byte order (NATIVE_LITTLE_ENDIAN or NATIVE_BIG_ENDIAN)
-#define NATIVE_LITTLE_ENDIAN
+#include "types.h"
+#include <string.h>
+#include "configuration.h"
 
-// Virtual machine
-#define VM_STACK_SIZE 512
-#define VM_VARIABLE_TABLE_SIZE 512
+/*
+ * Architecture dependent defines.
+ */
+#ifdef NATIVE_LITTLE_ENDIAN
+#	define BX_MUTILS_HTB_COPY(to_ptr, from_ptr, length) bx_mutils_byte_order_switch_copy(to_ptr, from_ptr, length)
+#	define BX_MUTILS_HTB16(data) bx_mutils_swap16(data)
+#elif defined NATIVE_BIG_ENDIAN
+#	define BX_MUTILS_HTB_COPY memcpy(to_ptr, from_ptr, length)
+#	define BX_MUTILS_HTB16(data) data
+#endif
 
-// Pcode repository
-#define PR_CODE_STORAGE_SIZE 4092
 
-// Document manager
-#define DM_MAX_FIELD_NUMBER 512
-#define DM_FIELD_IDENTIFIER_LENGTH 16
-#define DM_MMAP_STORAGE_SIZE 512
+/**
+ * Copies memory and swaps the byte order
+ *
+ * @param to Destination memory location
+ * @param from Source memory location
+ * @param length Memory length
+ *
+ * @return Pointer to destination memory location
+ */
+void *bx_mutils_byte_order_switch_copy(void *to, const void *from, bx_size length);
 
-// Timer
-#define TM_TICK_PERIOD_MS 125
-#define TM_TIMER_STORAGE_SIZE 512
+/**
+ * Swaps the byte order of a 16 bit long variable
+ *
+ * @param data Data
+ *
+ * @return Data with inverted byte order
+ */
+bx_uint16 bx_mutils_swap16(bx_uint16 data);
 
-// Event handler
-#define EV_HANDLER_STORAGE_SIZE 512
+bx_uint32 bx_mutils_swap32(bx_uint32 data);
 
-#endif /* CONFIGURATION_H_ */
+#endif /* MEMORY_UTILS_H_ */
