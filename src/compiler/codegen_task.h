@@ -70,8 +70,18 @@ bx_int8 bx_cgtk_add_at_execution_condition(struct bx_comp_task *task, struct bx_
 //TODO: Interface stub
 bx_int8 bx_cgtk_add_on_execution_condition(struct bx_comp_task *task, struct bx_comp_expr *execution_condition);
 
-//TODO: Interface stub
-bx_int8 bx_cgtk_add_every_execution_condition(struct bx_comp_task *task, struct bx_comp_expr *execution_condition);
+/**
+ * Adds the every execution condition to the task passed as parameter.
+ * The expression passed as parameter is converted as needed to the data type
+ * int. Conversion errors may arise if the execution condition cannot be
+ * converted to the target type.
+ *
+ * @param task Target task
+ * @param period Period between task invocations
+ *
+ * @return 0 on success, -1 on failure
+ */
+bx_int8 bx_cgtk_add_every_execution_condition(struct bx_comp_task *task, struct bx_comp_expr *period_expression);
 
 /**
  * Creates a new empty child task and returns its pointer.

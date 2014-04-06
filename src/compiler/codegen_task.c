@@ -68,18 +68,25 @@ bx_int8 bx_cgtk_add_at_execution_condition(struct bx_comp_task *task, struct bx_
 		return -1;
 	}
 
+	if (task->at_execution_condition != NULL) {
+		BX_LOG(LOG_ERROR, "compiler",
+				"Use of multiple '@' execution conditions is forbidden.");
+		return -1;
+	}
+
 	boolean_condition = bx_cgex_cast_to_bool(execution_condition);
 	if (boolean_condition == NULL) {
 		return -1;
 	}
 	error = bx_cgex_convert_to_binary(boolean_condition);
 	if (error != 0) {
+		bx_cgex_destroy_expression(boolean_condition);
 		return -1;
 	}
 
-	//TODO: Optimize: if the condition is always false there's no need to create the task
 	task->at_execution_condition = bx_cgpc_copy(boolean_condition->value.pcode);
 	if (task->at_execution_condition == NULL) {
+		bx_cgex_destroy_expression(boolean_condition);
 		return -1;
 	}
 
@@ -93,8 +100,45 @@ bx_int8 bx_cgtk_add_on_execution_condition(struct bx_comp_task *task, struct bx_
 	return -1; //TODO: Stub
 }
 
-bx_int8 bx_cgtk_add_every_execution_condition(struct bx_comp_task *task, struct bx_comp_expr *execution_condition) {
-	return -1; //TODO: Stub
+bx_int8 bx_cgtk_add_every_execution_condition(struct bx_comp_task *task, struct bx_comp_expr *period_expression) {
+	bx_int8 error;
+	struct bx_comp_expr *int_period;
+
+	if (task == NULL || period_expression == NULL) {
+		return -1;
+	}
+
+	if (task->on_execution_condition != NULL) {
+		BX_LOG(LOG_ERROR, "compiler",
+				"Cannot create task with both 'every' and 'on' execution conditions.");
+		return -1;
+	}
+
+	if (task->every_execution_condition != NULL) {
+		BX_LOG(LOG_ERROR, "compiler",
+				"Use of multiple 'every' execution conditions is forbidden.");
+		return -1;
+	}
+
+	int_period = bx_cgex_cast_to_int(period_expression);
+	if (int_period == NULL) {
+		return -1;
+	}
+	error = bx_cgex_convert_to_binary(int_period);
+	if (error != 0) {
+		bx_cgex_destroy_expression(int_period);
+		return -1;
+	}
+
+	task->at_execution_condition = bx_cgpc_copy(int_period->value.pcode);
+	if (task->at_execution_condition == NULL) {
+		bx_cgex_destroy_expression(int_period);
+		return -1;
+	}
+
+	bx_cgex_destroy_expression(int_period);
+
+	return 0;
 }
 
 struct bx_comp_task *bx_cgtk_create_child_task(struct bx_comp_task *task) {
