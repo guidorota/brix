@@ -29,11 +29,12 @@
  *
  */
 
-#include <string.h>
 #include <stdlib.h>
+#include "utils/memory_utils.h"
 #include "configuration.h"
 #include "compiler/codegen_pcode.h"
 #include "virtual_machine/virtual_machine.h"
+#include "utils/memory_utils.h"
 
 #define DEFAULT_SIZE 256
 
@@ -104,22 +105,34 @@ bx_ssize bx_cgpc_add_identifier(struct bx_comp_pcode *pcode, char *identifier) {
 }
 
 bx_ssize bx_cgpc_add_int_constant(struct bx_comp_pcode *pcode, bx_int32 value) {
-	return add_to_code(pcode, (void *) &value, sizeof value, BX_BOOLEAN_FALSE);
+	bx_int32 brix_byte_order_value;
+
+	BX_MUTILS_HTB_COPY(&brix_byte_order_value, &value, 4);
+	return add_to_code(pcode, (void *) &brix_byte_order_value, 4, BX_BOOLEAN_FALSE);
 }
 
-bx_ssize bx_cgpc_add_address(struct bx_comp_pcode *pcode, bx_int16 address) {
-	return add_to_code(pcode, (void *) &address, sizeof address, BX_BOOLEAN_FALSE);
+bx_ssize bx_cgpc_add_address(struct bx_comp_pcode *pcode, bx_uint16 address) {
+	bx_uint16 brix_byte_order_address;
+
+	BX_MUTILS_HTB_COPY(&brix_byte_order_address, &address, 2);
+	return add_to_code(pcode, (void *) &brix_byte_order_address, 2, BX_BOOLEAN_FALSE);
 }
 
 bx_ssize bx_cgpc_add_float_constant(struct bx_comp_pcode *pcode, bx_float32 value) {
-	return add_to_code(pcode, (void *) &value, sizeof value, BX_BOOLEAN_FALSE);
+	bx_float32 brix_byte_order_value;
+
+	BX_MUTILS_HTB_COPY(&brix_byte_order_value, &value, 4);
+	return add_to_code(pcode, (void *) &brix_byte_order_value, 4, BX_BOOLEAN_FALSE);
 }
 
 bx_ssize bx_cgpc_add_bool_constant(struct bx_comp_pcode *pcode, bx_uint32 value) {
+	bx_int32 brix_byte_order_value;
+
 	if (value != 0) {
 		value = 1;
 	}
-	return add_to_code(pcode, (void *) &value, sizeof value, BX_BOOLEAN_FALSE);
+	BX_MUTILS_HTB_COPY(&brix_byte_order_value, &value, 4);
+	return add_to_code(pcode, (void *) &brix_byte_order_value, 4, BX_BOOLEAN_FALSE);
 }
 
 bx_ssize bx_cgpc_append_pcode(struct bx_comp_pcode *destination, struct bx_comp_pcode *source) {
@@ -169,6 +182,5 @@ bx_comp_label bx_cgpc_create_address_label(struct bx_comp_pcode *pcode) {
 }
 
 void bx_cgpc_set_address_label(struct bx_comp_pcode *pcode, bx_comp_label label, bx_uint16 address) {
-
-	memcpy((bx_uint8 *) pcode->data + (bx_size) label, &address, sizeof address);
+	BX_MUTILS_HTB_COPY((bx_uint8 *) pcode->data + (bx_size) label, &address, 2);
 }

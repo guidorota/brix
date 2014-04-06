@@ -29,10 +29,10 @@
  *
  */
 
-#include <strings.h>
 #include "virtual_machine.h"
 #include "configuration.h"
 #include "utils/stack.h"
+#include "utils/memory_utils.h"
 #include "logging.h"
 #include "document_manager/document_manager.h"
 
@@ -79,7 +79,9 @@ static const bx_float32 float_const_1 = 1.0;
 static inline bx_int8 bx_integer_functions(struct bx_stack *execution_stack, enum vm_operand operation);
 static inline bx_int8 bx_float_functions(struct bx_stack *execution_stack, enum vm_operand operation);
 static inline bx_int8 bx_fetch_instruction(struct bx_vm_status *vm_status, bx_uint8 *instruction_id);
-static inline bx_int8 bx_fetch(struct bx_vm_status *vm_status, void *data, bx_size data_length);
+static inline bx_int8 bx_fetch16(struct bx_vm_status *vm_status, void *data);
+static inline bx_int8 bx_fetch32(struct bx_vm_status *vm_status, void *data);
+static inline bx_int8 bx_fetch_identifier(struct bx_vm_status *vm_status, void *data);
 static inline bx_int8 bx_jump_functions(struct bx_vm_status *vm_status, enum vm_operand comparison);
 
 //////////////////
@@ -379,7 +381,7 @@ static bx_int8 bx_push32_function(struct bx_vm_status *vm_status) {
 	bx_int8 error;
 	bx_uint32 data;
 
-	error = bx_fetch(vm_status, &data, sizeof data);
+	error = bx_fetch32(vm_status, &data);
 	if (error == -1) {
 		return -1;
 	}
@@ -416,7 +418,7 @@ static bx_int8 bx_rload32_function(struct bx_vm_status *vm_status) {
 	char identifier[DM_FIELD_IDENTIFIER_LENGTH];
 	bx_uint32 data;
 
-	error = bx_fetch(vm_status, &identifier, DM_FIELD_IDENTIFIER_LENGTH);
+	error = bx_fetch_identifier(vm_status, &identifier);
 	if (error == -1) {
 		return -1;
 	}
@@ -437,7 +439,7 @@ static bx_int8 bx_rstore32_function(struct bx_vm_status *vm_status) {
 	char identifier[DM_FIELD_IDENTIFIER_LENGTH];
 	bx_uint32 data;
 
-	error = bx_fetch(vm_status, &identifier, DM_FIELD_IDENTIFIER_LENGTH);
+	error = bx_fetch_identifier(vm_status, &identifier);
 	if (error == -1) {
 		return -1;
 	}
@@ -457,7 +459,7 @@ static bx_int8 bx_vload32_function(struct bx_vm_status *vm_status) {
 	bx_int8 error;
 	bx_uint16 variable_number;
 
-	error = bx_fetch(vm_status, &variable_number, sizeof (bx_uint16));
+	error = bx_fetch16(vm_status, &variable_number);
 	if (error == -1) {
 		return -1;
 	}
@@ -474,7 +476,7 @@ static bx_int8 bx_vstore32_function(struct bx_vm_status *vm_status) {
 	bx_int8 error;
 	bx_uint16 variable_number;
 
-	error = bx_fetch(vm_status, &variable_number, sizeof (bx_uint16));
+	error = bx_fetch16(vm_status, &variable_number);
 	if (error == -1) {
 		return -1;
 	}
@@ -506,7 +508,7 @@ static bx_int8 bx_jump_function(struct bx_vm_status *vm_status) {
 	bx_int8 error;
 	bx_uint16 address;
 
-	error = bx_fetch(vm_status, &address, sizeof address);
+	error = bx_fetch16(vm_status, &address);
 	if (error == -1) {
 		return -1;
 	}
@@ -547,7 +549,7 @@ static inline bx_int8 bx_jump_functions(struct bx_vm_status *vm_status, enum vm_
 	bx_uint16 address;
 	bx_int32 data;
 
-	error = bx_fetch(vm_status, &address, sizeof address);
+	error = bx_fetch16(vm_status, &address);
 	if (error == -1) {
 		return -1;
 	}
@@ -745,15 +747,41 @@ static inline bx_int8 bx_fetch_instruction(struct bx_vm_status *vm_status, bx_ui
 	return 0;
 }
 
-static inline bx_int8 bx_fetch(struct bx_vm_status *vm_status, void *data, bx_size data_length) {
+static inline bx_int8 bx_fetch_identifier(struct bx_vm_status *vm_status, void *data) {
 
-	if (vm_status->program_counter + data_length > vm_status->pcode_size) {
-		BX_LOG(LOG_ERROR, "virtual_machine", "Error while fetching instruction: unexpected end of code");
+	if (vm_status->program_counter + DM_FIELD_IDENTIFIER_LENGTH > vm_status->pcode_size) {
+		BX_LOG(LOG_ERROR, "virtual_machine", "Error while fetching identifier: unexpected end of code");
 		return -1;
 	}
 
-	memcpy(data, (void *) BYTE_AT_PC(vm_status), data_length);
-	vm_status->program_counter += data_length;
+	memcpy(data, BYTE_AT_PC(vm_status), DM_FIELD_IDENTIFIER_LENGTH);
+	vm_status->program_counter += DM_FIELD_IDENTIFIER_LENGTH;
+
+	return 0;
+}
+
+static inline bx_int8 bx_fetch16(struct bx_vm_status *vm_status, void *data) {
+
+	if (vm_status->program_counter + 2 > vm_status->pcode_size) {
+		BX_LOG(LOG_ERROR, "virtual_machine", "Error while fetching 32 bit data: unexpected end of code");
+		return -1;
+	}
+
+	BX_MUTILS_BTH_COPY(data, BYTE_AT_PC(vm_status), 2);
+	vm_status->program_counter += 2;
+
+	return 0;
+}
+
+static inline bx_int8 bx_fetch32(struct bx_vm_status *vm_status, void *data) {
+
+	if (vm_status->program_counter + 4 > vm_status->pcode_size) {
+		BX_LOG(LOG_ERROR, "virtual_machine", "Error while fetching 32 bit data: unexpected end of code");
+		return -1;
+	}
+
+	BX_MUTILS_BTH_COPY(data, BYTE_AT_PC(vm_status), 4);
+	vm_status->program_counter += 4;
 
 	return 0;
 }

@@ -42,9 +42,17 @@
 #ifdef NATIVE_LITTLE_ENDIAN
 #	define BX_MUTILS_HTB_COPY(to_ptr, from_ptr, length) bx_mutils_byte_order_switch_copy(to_ptr, from_ptr, length)
 #	define BX_MUTILS_HTB16(data) bx_mutils_swap16(data)
+#	define BX_MUTILS_HTB32(data) bx_mutils_swap32(data)
+#	define BX_MUTILS_BTH_COPY(to_ptr, from_ptr, length) bx_mutils_byte_order_switch_copy(to_ptr, from_ptr, length)
+#	define BX_MUTILS_BTH16(data) bx_mutils_swap16(data)
+#	define BX_MUTILS_BTH32(data) bx_mutils_swap32(data)
 #elif defined NATIVE_BIG_ENDIAN
-#	define BX_MUTILS_HTB_COPY memcpy(to_ptr, from_ptr, length)
+#	define BX_MUTILS_HTB_COPY(to_ptr, from_ptr, length) memcpy(to_ptr, from_ptr, length)
 #	define BX_MUTILS_HTB16(data) data
+#	define BX_MUTILS_HTB32(data) data
+#	define BX_MUTILS_BTH_COPY(to_ptr, from_ptr, length) memcpy(to_ptr, from_ptr, length)
+#	define BX_MUTILS_BTH16(data) data
+#	define BX_MUTILS_BTH32(data) data
 #endif
 
 
@@ -68,6 +76,13 @@ void *bx_mutils_byte_order_switch_copy(void *to, const void *from, bx_size lengt
  */
 bx_uint16 bx_mutils_swap16(bx_uint16 data);
 
+/**
+ * Swaps the byte order of a 32 bit long variable
+ *
+ * @param data Data
+ *
+ * @return Data with inverted byte order
+ */
 bx_uint32 bx_mutils_swap32(bx_uint32 data);
 
 #endif /* MEMORY_UTILS_H_ */

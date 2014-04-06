@@ -32,6 +32,7 @@
 #include "types.h"
 #include "test_codegen_pcode.h"
 #include "compiler/codegen_pcode.h"
+#include "utils/memory_utils.h"
 
 START_TEST (test_create_destroy) {
 	struct bx_comp_pcode *pcode;
@@ -44,7 +45,7 @@ START_TEST (test_create_destroy) {
 	bx_cgpc_destroy(pcode);
 } END_TEST
 
-START_TEST (data_addition) {
+START_TEST (add_integer_constant) {
 	bx_int8 error;
 	struct bx_comp_pcode *pcode;
 
@@ -57,9 +58,66 @@ START_TEST (data_addition) {
 		ck_assert_int_ne(error, -1);
 	}
 
+	bx_int32 host_byte_order_int;
 	for (i = 0; i < 10; i++) {
-		ck_assert_int_eq(*((bx_int32 *) pcode->data + i), i);
+		host_byte_order_int = BX_MUTILS_BTH32(*((bx_int32 *) pcode->data + i));
+		ck_assert_int_eq(host_byte_order_int, i);
 	}
+
+	bx_cgpc_destroy(pcode);
+} END_TEST
+
+START_TEST (add_float_constant) {
+	bx_int8 error;
+	struct bx_comp_pcode *pcode;
+	bx_float32 float_value;
+
+	pcode = bx_cgpc_create();
+	ck_assert_ptr_ne(pcode, NULL);
+
+	bx_int32 i;
+	float_value = 0;
+	for (i = 0; i < 10; i += 1) {
+		error = bx_cgpc_add_float_constant(pcode, float_value);
+		ck_assert_int_ne(error, -1);
+		float_value += 1;
+	}
+
+	bx_float32 host_byte_order_float;
+	float_value = 0;
+	for (i = 0; i < 10; i++) {
+		BX_MUTILS_BTH_COPY(&host_byte_order_float, ((bx_float32 *) pcode->data + i), 4);
+		ck_assert_int_eq(host_byte_order_float, float_value);
+		float_value += 1;
+	}
+
+	bx_cgpc_destroy(pcode);
+} END_TEST
+
+START_TEST (add_boolean_constant) {
+	bx_int8 error;
+	bx_int32 host_byte_order_bool_value;
+	struct bx_comp_pcode *pcode;
+
+	pcode = bx_cgpc_create();
+	ck_assert_ptr_ne(pcode, NULL);
+
+	error = bx_cgpc_add_bool_constant(pcode, BX_BOOLEAN_FALSE);
+	ck_assert_int_ne(error, -1);
+	host_byte_order_bool_value = BX_MUTILS_BTH32(*((bx_int32 *) pcode->data));
+	ck_assert_int_eq(host_byte_order_bool_value, BX_BOOLEAN_FALSE);
+
+	bx_cgpc_destroy(pcode);
+
+	pcode = bx_cgpc_create();
+	ck_assert_ptr_ne(pcode, NULL);
+
+	error = bx_cgpc_add_bool_constant(pcode, BX_BOOLEAN_TRUE);
+	ck_assert_int_ne(error, -1);
+	host_byte_order_bool_value = BX_MUTILS_BTH32(*((bx_int32 *) pcode->data));
+	ck_assert_int_eq(host_byte_order_bool_value, BX_BOOLEAN_TRUE);
+
+	bx_cgpc_destroy(pcode);
 } END_TEST
 
 START_TEST (expand_size) {
@@ -87,6 +145,7 @@ START_TEST (append_test) {
 	bx_size capacity;
 	bx_int8 error;
 	bx_int32 i;
+	bx_int32 host_byte_order_value;
 
 	source = bx_cgpc_create();
 	destination = bx_cgpc_create();
@@ -106,8 +165,10 @@ START_TEST (append_test) {
 
 	bx_int32 *value = (bx_int32 *) destination->data;
 	for (i = 0; i < 10; i++) {
-		ck_assert_int_eq(*(value + i), 3);
-		ck_assert_int_eq(*(value + i + 10), 5);
+		host_byte_order_value = BX_MUTILS_BTH32(*(value + i));
+		ck_assert_int_eq(host_byte_order_value, 3);
+		host_byte_order_value = BX_MUTILS_BTH32(*(value + i + 10));
+		ck_assert_int_eq(host_byte_order_value, 5);
 	}
 
 	bx_cgpc_destroy(source);
@@ -120,6 +181,7 @@ START_TEST (replace_test) {
 	bx_size capacity;
 	bx_int8 error;
 	bx_int32 i;
+	bx_int32 host_byte_order_value;
 
 	source = bx_cgpc_create();
 	destination = bx_cgpc_create();
@@ -139,7 +201,8 @@ START_TEST (replace_test) {
 
 	bx_int32 *value = (bx_int32 *) destination->data;
 	for (i = 0; i < 10; i++) {
-		ck_assert_int_eq(*(value + i), 5);
+		host_byte_order_value = BX_MUTILS_BTH32(*(value + i));
+		ck_assert_int_eq(host_byte_order_value, 5);
 	}
 
 	bx_cgpc_destroy(source);
@@ -178,6 +241,7 @@ START_TEST (address_label) {
 	struct bx_comp_pcode *pcode;
 	bx_comp_label false_label, true_label;
 	bx_ssize false_jump_address, true_jump_address;
+	bx_uint16 host_byte_order_address;
 
 	pcode = bx_cgpc_create();
 	ck_assert_ptr_ne(pcode, NULL);
@@ -192,8 +256,10 @@ START_TEST (address_label) {
 	bx_cgpc_set_address_label(pcode, false_label, false_jump_address);
 	bx_cgpc_set_address_label(pcode, true_label, true_jump_address);
 
-	ck_assert_int_eq(*(bx_uint16 *) ((bx_uint8 *) pcode->data + false_label), (bx_uint16) false_jump_address);
-	ck_assert_int_eq(*(bx_uint16 *) ((bx_uint8 *) pcode->data + true_label), (bx_uint16) true_jump_address);
+	host_byte_order_address = BX_MUTILS_BTH16(*(bx_uint16 *) ((bx_uint8 *) pcode->data + false_label));
+	ck_assert_int_eq(host_byte_order_address, (bx_uint16) false_jump_address);
+	host_byte_order_address = BX_MUTILS_BTH16(*(bx_uint16 *) ((bx_uint8 *) pcode->data + true_label));
+	ck_assert_int_eq(host_byte_order_address, (bx_uint16) true_jump_address);
 	bx_cgpc_destroy(pcode);
 } END_TEST
 
@@ -205,8 +271,16 @@ Suite *test_codegen_pcode_create_suite(void) {
 	tcase_add_test(tcase, test_create_destroy);
 	suite_add_tcase(suite, tcase);
 
-	tcase = tcase_create("data_addition");
-	tcase_add_test(tcase, data_addition);
+	tcase = tcase_create("add_integer_constant");
+	tcase_add_test(tcase, add_integer_constant);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("add_float_constant");
+	tcase_add_test(tcase, add_float_constant);
+	suite_add_tcase(suite, tcase);
+
+	tcase = tcase_create("add_boolean_constant");
+	tcase_add_test(tcase, add_boolean_constant);
 	suite_add_tcase(suite, tcase);
 
 	tcase = tcase_create("expand_size");

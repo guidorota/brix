@@ -127,7 +127,7 @@ bx_ssize bx_cgpc_add_bool_constant(struct bx_comp_pcode *pcode, bx_uint32 value)
  *
  * @return Starting address of the address in the bx_comp_pcode structure, -1 on failure
  */
-bx_ssize bx_cgpc_add_address(struct bx_comp_pcode *pcode, bx_int16 address);
+bx_ssize bx_cgpc_add_address(struct bx_comp_pcode *pcode, bx_uint16 address);
 
 /**
  * Appends the code content of the source bx_comp_pcode structure to the
