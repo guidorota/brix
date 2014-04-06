@@ -39,7 +39,7 @@ bx_int8 bx_vmutils_add_instruction(struct bx_byte_buffer *buffer, enum bx_instru
 
 bx_int8 bx_vmutils_add_int(struct bx_byte_buffer *buffer, bx_int32 data);
 
-bx_int8 bx_vmutils_add_short(struct bx_byte_buffer *buffer, bx_int16 data);
+bx_int8 bx_vmutils_add_short(struct bx_byte_buffer *buffer, bx_uint16 data);
 
 bx_int8 bx_vmutils_add_float(struct bx_byte_buffer *buffer, bx_float32 data);
 

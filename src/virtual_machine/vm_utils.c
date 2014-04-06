@@ -31,6 +31,7 @@
 
 #include "vm_utils.h"
 #include "configuration.h"
+#include "utils/memory_utils.h"
 
 bx_int8 bx_vmutils_add_instruction(struct bx_byte_buffer *buffer, enum bx_instruction instruction) {
 	bx_uint8 uint8_instruction;
@@ -40,7 +41,7 @@ bx_int8 bx_vmutils_add_instruction(struct bx_byte_buffer *buffer, enum bx_instru
 	}
 
 	uint8_instruction = (bx_uint8) instruction;
-	return bx_bbuf_append(buffer, &uint8_instruction, sizeof uint8_instruction);
+	return bx_bbuf_append(buffer, &uint8_instruction, 1);
 }
 
 bx_int8 bx_vmutils_add_int(struct bx_byte_buffer *buffer, bx_int32 data) {
@@ -49,25 +50,29 @@ bx_int8 bx_vmutils_add_int(struct bx_byte_buffer *buffer, bx_int32 data) {
 		return -1;
 	}
 
-	return bx_bbuf_append(buffer, &data, sizeof data);
+	data = BX_MUTILS_HTB32(data);
+	return bx_bbuf_append(buffer, &data, 4);
 }
 
-bx_int8 bx_vmutils_add_short(struct bx_byte_buffer *buffer, bx_int16 data) {
+bx_int8 bx_vmutils_add_short(struct bx_byte_buffer *buffer, bx_uint16 data) {
 
 	if (buffer == NULL) {
 		return -1;
 	}
 
-	return bx_bbuf_append(buffer, &data, sizeof data);
+	data = BX_MUTILS_HTB16(data);
+	return bx_bbuf_append(buffer, &data, 2);
 }
 
 bx_int8 bx_vmutils_add_float(struct bx_byte_buffer *buffer, bx_float32 data) {
+	bx_float32 brix_byte_order_float;
 
 	if (buffer == NULL) {
 		return -1;
 	}
 
-	return bx_bbuf_append(buffer, &data, sizeof data);
+	BX_MUTILS_HTB_COPY(&brix_byte_order_float, &data, 4);
+	return bx_bbuf_append(buffer, &brix_byte_order_float, 4);
 }
 
 bx_int8 bx_vmutils_add_identifier(struct bx_byte_buffer *buffer, char *identifier) {
